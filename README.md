@@ -13,11 +13,11 @@ For tutorials,examples and support,please see the project.You can also discuss t
 
 The Free version is compatible with MacOSX,Windows,Linux and Android.The Pro version is compatible with MacOSX,Windows,Linux,IOS and Android etc.Check out the Pro version if you want more platforms and full source code.
 
-Tested in Unity 3D on the following platforms:
-PC/Mac/Linux
-Android
+Tested in Unity 3D on the following platforms:  
+PC/Mac/Linux  
+Android  
 
-IL2CPP is supported, however there are some gotchas.
+IL2CPP is supported, however there are some gotchas.  
 
 ## Release Download
 
@@ -51,7 +51,7 @@ IL2CPP is supported, however there are some gotchas.
 
 
 ## Contact us
-Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com) <br>
+Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
 Website: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)
 
 
