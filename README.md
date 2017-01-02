@@ -227,7 +227,7 @@ namespace Loxodon.Framework.Tutorials
 ```
 
 ## Contact us
-Email: yangpc.china@gmail.com <br>
-Website: https://cocowolf.github.io/loxodon-framework/
+Email: [yangpc.china@gmail.com](yangpc.china@gmail.com) <br>
+Website: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)
 
 
