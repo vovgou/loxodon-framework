@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Loxodon.Framework.Binding</name>
+    </assembly>
+    <members>
+        <member name="M:Loxodon.Framework.Binding.Paths.IPathParser.Parse(System.Linq.Expressions.LambdaExpression)">
+            <summary>
+            Parser object instance path.eg:vm => vm.User.Username
+            </summary>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TResult"></typeparam>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Binding.Paths.IPathParser.Parse(System.String)">
+            <summary>
+            Parser text path.eg:User.Username
+            </summary>
+            <param name="pathText"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Binding.Paths.IPathParser.ParseStaticPath(System.String)">
+            <summary>
+            Parser static type path.
+            </summary>
+            <param name="pathText"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Binding.Paths.IPathParser.ParseStaticPath(System.Linq.Expressions.LambdaExpression)">
+            <summary>
+            Parser static type path.eg:System.Int32.MaxValue
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Binding.Paths.IPathParser.ParseMemberName(System.Linq.Expressions.LambdaExpression)">
+            <summary>
+            Parser member name.eg:vm => vm.User
+            </summary>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TResult"></typeparam>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Binding.Reflection.ProxyObject.OnParent_ValueChanged(System.Object,System.EventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Binding.Reflection.ProxyObject.OnParent_PropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>
+            
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+    </members>
+</doc>

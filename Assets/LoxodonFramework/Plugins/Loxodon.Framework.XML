@@ -1,0 +1,1978 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Loxodon.Framework</name>
+    </assembly>
+    <members>
+        <member name="P:Loxodon.Framework.Asynchronous.AsyncResult.Exception">
+            <summary>
+            Exception
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.AsyncResult.IsDone">
+            <summary>
+            Returns  "true" if this task finished.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.AsyncResult.Result">
+            <summary>
+            The execution result
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.AsyncResult.IsCancelled">
+            <summary>
+            Returns "true" if this task was cancelled before it completed normally.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult.Cancel">
+            <summary>
+            Attempts to cancel execution of this task.  This attempt will 
+            fail if the task has already completed, has already been cancelled,
+            or could not be cancelled for some other reason.If successful,
+            and this task has not started when "Cancel" is called,
+            this task should never run. 
+            </summary>
+            <exception cref="T:System.NotSupportedException">If not supported, throw an exception.</exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult.WaitForDone">
+            <summary>
+            Wait for the result,suspends the coroutine.
+            eg:
+            IAsyncResult result;
+            yiled return result.WaitForDone();
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult.SynchronizableAndCallbackable.WaitForDone">
+            <summary>
+            Wait for done,will block the current thread.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult.SynchronizableAndCallbackable.WaitForResult(System.Int32)">
+            <summary>
+            Wait for the result,will block the current thread.
+            </summary>
+            <param name="millisecondsTimeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="P:Loxodon.Framework.Asynchronous.AsyncResult.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult.SynchronizableAndCallbackable.WaitForResult(System.TimeSpan)">
+            <summary>
+             Wait for the result,will block the current thread.
+            </summary>
+            <param name="timeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="P:Loxodon.Framework.Asynchronous.AsyncResult.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.AsyncResult`1.Result">
+            <summary>
+            The execution result
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult`1.SynchronizableAndCallbackable.WaitForDone">
+            <summary>
+            Wait for done,will block the current thread.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult`1.SynchronizableAndCallbackable.WaitForResult(System.Int32)">
+            <summary>
+            Wait for the result,will block the current thread.
+            </summary>
+            <param name="millisecondsTimeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult`1.SynchronizableAndCallbackable.WaitForResult(System.TimeSpan)">
+            <summary>
+            Wait for the result,will block the current thread.
+            </summary>
+            <param name="timeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IAsyncTask">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask.OnPreExecute(System.Action,System.Boolean)">
+            <summary>
+            Triggered when a task starts.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask.OnPostExecute(System.Action,System.Boolean)">
+            <summary>
+            Triggered when the task is completed.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask.OnError(System.Action{System.Exception},System.Boolean)">
+            <summary>
+            Triggered when an error occurs.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask.OnFinish(System.Action,System.Boolean)">
+            <summary>
+            Always call the end of the task.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask.Start(System.Int32)">
+            <summary>
+            Start the task after the given delay.
+            </summary>
+            <param name="delay">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask.Start">
+            <summary>
+            Start the task.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IAsyncTask`1">
+            <summary>
+            
+            </summary>
+            <typeparam name="TResult"></typeparam>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask`1.OnPreExecute(System.Action,System.Boolean)">
+            <summary>
+            Triggered when a task starts.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask`1.OnPostExecute(System.Action{`0},System.Boolean)">
+            <summary>
+            Triggered when the task is completed.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask`1.OnError(System.Action{System.Exception},System.Boolean)">
+            <summary>
+            Triggered when an error occurs.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask`1.OnFinish(System.Action,System.Boolean)">
+            <summary>
+            Always call the end of the task.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask`1.Start(System.Int32)">
+            <summary>
+            Start the task after the given delay.
+            </summary>
+            <param name="delay">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncTask`1.Start">
+            <summary>
+            Start the task.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IProgressPromise`1">
+            <summary>
+            
+            </summary>
+            <typeparam name="TProgress"></typeparam>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IProgressPromise`1.Progress">
+            <summary>
+            The task's progress.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressPromise`1.UpdateProgress(`0)">
+            <summary>
+            Update progress
+            </summary>
+            <param name="progress"></param>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IProgressPromise`2">
+            <summary>
+            
+            </summary>
+            <typeparam name="TProgress"></typeparam>
+            <typeparam name="TResult"></typeparam>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IProgressResult`1">
+            <summary>
+            
+            </summary>
+            <typeparam name="TProgress"></typeparam>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IProgressResult`1.Progress">
+            <summary>
+            The task's progress.
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IProgressResult`2">
+            <summary>
+            
+            </summary>
+            <typeparam name="TProgress"></typeparam>
+            <typeparam name="TResult"></typeparam>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IProgressTask`1">
+            <summary>
+            
+            </summary>
+            <typeparam name="TProgress"></typeparam>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`1.OnPreExecute(System.Action,System.Boolean)">
+            <summary>
+            Triggered when a task starts.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`1.OnPostExecute(System.Action,System.Boolean)">
+            <summary>
+            Triggered when the task is completed.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`1.OnError(System.Action{System.Exception},System.Boolean)">
+            <summary>
+            Triggered when an error occurs.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`1.OnFinish(System.Action,System.Boolean)">
+            <summary>
+            Always call the end of the task.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`1.OnProgressUpdate(System.Action{`0},System.Boolean)">
+            <summary>
+            Update the progress.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`1.Start(System.Int32)">
+            <summary>
+            Start the task after the given delay.
+            </summary>
+            <param name="delay">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`1.Start">
+            <summary>
+            Start the task.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IProgressTask`2">
+            <summary>
+            
+            </summary>
+            <typeparam name="TProgress"></typeparam>
+            <typeparam name="TResult"></typeparam>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`2.OnPreExecute(System.Action,System.Boolean)">
+            <summary>
+            Triggered when a task starts.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`2.OnPostExecute(System.Action{`1},System.Boolean)">
+            <summary>
+            Triggered when the task is completed.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`2.OnError(System.Action{System.Exception},System.Boolean)">
+            <summary>
+            Triggered when an error occurs.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`2.OnFinish(System.Action,System.Boolean)">
+            <summary>
+            Always call the end of the task.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`2.OnProgressUpdate(System.Action{`0},System.Boolean)">
+            <summary>
+            Update the progress.
+            </summary>
+            <param name="callback"></param>
+            <param name="runOnMainThread"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`2.Start(System.Int32)">
+            <summary>
+            Start the task after the given delay.
+            </summary>
+            <param name="delay">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressTask`2.Start">
+            <summary>
+            Start the task.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IPromise">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IPromise.Result">
+            <summary>
+            The execution result
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IPromise.Exception">
+            <summary>
+            Exception
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IPromise.IsDone">
+            <summary>
+            Returns  "true" if this task finished.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IPromise.IsCancelled">
+            <summary>
+            Returns "true" if this task was cancelled before it completed normally.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IPromise.IsCancellationRequested">
+            <summary>
+            Returns  "true" if there is a cancellation request.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IPromise.SetCancelled">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IPromise.SetException(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="error"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IPromise.SetException(System.Exception)">
+            <summary>
+            
+            </summary>
+            <param name="exception"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IPromise.SetResult(System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IPromise`1">
+            <summary>
+            
+            </summary>
+            <typeparam name="TResult"></typeparam>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IPromise`1.Result">
+            <summary>
+            The execution result
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IPromise`1.SetResult(`0)">
+            <summary>
+            
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.ProgressResult.Progress">
+            <summary>
+            The task's progress.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.ProgressResult`1.Progress">
+            <summary>
+            The task's progress.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.ProgressResult`2.Result">
+            <summary>
+            The execution result
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ProgressResult`2.SynchronizableAndCallbackable.WaitForDone">
+            <summary>
+            Wait for done,will block the current thread.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ProgressResult`2.SynchronizableAndCallbackable.WaitForResult(System.Int32)">
+            <summary>
+            Wait for the result,will block the current thread.
+            </summary>
+            <param name="millisecondsTimeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ProgressResult`2.SynchronizableAndCallbackable.WaitForResult(System.TimeSpan)">
+            <summary>
+            Wait for the result,will block the current thread.
+            </summary>
+            <param name="timeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ProgressTask`1.#ctor(System.Action{Loxodon.Framework.Asynchronous.IProgressPromise{`0}},System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="task"></param>
+            <param name="runOnMainThread"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ProgressTask`1.#ctor(System.Func{Loxodon.Framework.Asynchronous.IProgressPromise{`0},System.Collections.IEnumerator},System.Boolean)">
+            <summary>
+            run on main thread.
+            </summary>
+            <param name="task"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ISynchronizable.WaitForDone">
+            <summary>
+             Wait for done,will block the current thread.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ISynchronizable.WaitForResult(System.Int32)">
+            <summary>
+            Wait for the result,will block the current thread.
+            </summary>
+            <param name="millisecondsTimeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ISynchronizable.WaitForResult(System.TimeSpan)">
+            <summary>
+             Wait for the result,will block the current thread.
+            </summary>
+            <param name="timeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ISynchronizable`1.WaitForDone">
+            <summary>
+             Wait for done,will block the current thread.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ISynchronizable`1.WaitForResult(System.Int32)">
+            <summary>
+            Wait for the result,will block the current thread.
+            </summary>
+            <param name="millisecondsTimeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ISynchronizable`1.WaitForResult(System.TimeSpan)">
+            <summary>
+            Wait for the result,will block the current thread.
+            </summary>
+            <param name="timeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ICallbackable.OnCallback(System.Action{Loxodon.Framework.Asynchronous.IAsyncResult})">
+            <summary>
+            Called when the task is finished.
+            </summary>
+            <param name="callback"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ICallbackable`1.OnCallback(System.Action{Loxodon.Framework.Asynchronous.IAsyncResult{`0}})">
+            <summary>
+            Called when the task is finished.
+            </summary>
+            <param name="callback"></param>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IAsyncResult">
+            <summary>
+            IAsyncResult
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IAsyncResult.Result">
+            <summary>
+            Gets the result of the asynchronous operation.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IAsyncResult.Exception">
+            <summary>
+            Gets the cause of the asynchronous operation.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IAsyncResult.IsDone">
+            <summary>
+            Returns <code>true</code> if the asynchronous operation is finished.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IAsyncResult.IsCancelled">
+            <summary>
+            Returns <code>true</code> if the asynchronous operation was cancelled before it completed normally.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncResult.Cancel">
+            <summary>
+            Attempts to cancel execution of this task.  This attempt will 
+            fail if the task has already completed, has already been cancelled,
+            or could not be cancelled for some other reason.If successful,
+            and this task has not started when "Cancel" is called,
+            this task should never run. 
+            </summary>
+            <exception cref="T:System.NotSupportedException">If not supported, throw an exception.</exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncResult.Callbackable">
+            <summary>
+            Gets a callbackable object.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncResult.Synchronized">
+            <summary>
+            Gets a synchronized object.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncResult.WaitForDone">
+            <summary>
+            Wait for the result,suspends the coroutine.
+            eg:
+            IAsyncResult result;
+            yiled return result.WaitForDone();
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Asynchronous.IAsyncResult`1">
+            <summary>
+            IAsyncResult
+            </summary>
+            <typeparam name="TResult"></typeparam>
+        </member>
+        <member name="P:Loxodon.Framework.Asynchronous.IAsyncResult`1.Result">
+            <summary>
+            Gets the result of the asynchronous operation.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncResult`1.Callbackable">
+            <summary>
+            Gets a callbackable object.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IAsyncResult`1.Synchronized">
+            <summary>
+            Gets a synchronized object.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask.#ctor(System.Action,System.Boolean)">
+             <summary>
+            
+             </summary>
+             <param name="task"></param>
+             <param name="runOnMainThread"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask.#ctor(System.Action{Loxodon.Framework.Asynchronous.IPromise},System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="task"></param>
+            <param name="runOnMainThread"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask.#ctor(System.Collections.IEnumerator)">
+            <summary>
+            run on main thread
+            </summary>
+            <param name="task"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask.#ctor(System.Func{Loxodon.Framework.Asynchronous.IPromise,System.Collections.IEnumerator},System.Boolean)">
+            <summary>
+            run on main thread.
+            </summary>
+            <param name="task"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask`1.#ctor(System.Func{`0},System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="task"></param>
+            <param name="runOnMainThread"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask`1.#ctor(System.Action{Loxodon.Framework.Asynchronous.IPromise{`0}},System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="task"></param>
+            <param name="runOnMainThread"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask`1.#ctor(System.Func{Loxodon.Framework.Asynchronous.IPromise{`0},System.Collections.IEnumerator},System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="task"></param>
+        </member>
+        <member name="T:Loxodon.Framework.Commands.ICommand">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Commands.ICommand.CanExecuteChanged">
+            <summary>
+            Occurs when can execute changed.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Commands.ICommand.CanExecute(System.Object)">
+            <summary>
+            Determines whether this instance can execute the specified parameter.
+            </summary>
+            <param name="parameter">Parameter.</param>
+            <returns><c>true</c> if this instance can execute the specified parameter; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Commands.ICommand.Execute(System.Object)">
+            <summary>
+            Execute the specified parameter.
+            </summary>
+            <param name="parameter">Parameter.</param>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.AbstractFactory">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.AbstractFactory.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.AbstractFactory.#ctor(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter)">
+            <summary>
+            
+            </summary>
+            <param name="formatter"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.AbstractFactory.#ctor(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter,Loxodon.Framework.Prefs.IEncryptor)">
+            <summary>
+            
+            </summary>
+            <param name="formatter"></param>
+            <param name="encryptor"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.AbstractFactory.CreateBinaryFormatter">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Loxodon.Framework.Prefs.AbstractFactory.Encryptor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Prefs.AbstractFactory.Formatter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.AbstractFactory.Create(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.Preferences">
+            <summary>
+            Abstract class for accessing and modifying preference data
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Prefs.Preferences.GLOBAL_NAME">
+            <summary>
+            The name of global preferences.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetFactory">
+            <summary>
+            Retrieve a factory of Preferences.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetGlobalPreferences">
+            <summary>
+            Retrieve a global preferences.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetPreferences(System.String)">
+            <summary>
+            Retrieve a user's preferences.
+            </summary>
+            <param name="name">The name of the preferences to retrieve.eg:username or username@zone</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.Register(Loxodon.Framework.Prefs.IFactory)">
+            <summary>
+            Register a factory of Preferences.
+            </summary>
+            <param name="factory"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.SaveAll">
+            <summary>
+            Save all these preferences.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.DeleteAll">
+            <summary>
+            Delete all these preferences.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.#ctor(System.String)">
+            <summary>
+            Preferences
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="P:Loxodon.Framework.Prefs.Preferences.Name">
+            <summary>
+            The name of the preferences
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.Load">
+            <summary>
+            Load the preferences from the local file system.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetString(System.String)">
+            <summary>
+            Retrieve a string value from the preferences.
+            The method returns null if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a string.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetString(System.String,System.String)">
+            <summary>
+            Retrieve a string value from the preferences. 
+            The method returns defaultValue if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <param name="defaultValue">Value to return if this preference does not exist</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a string.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.SetString(System.String,System.String)">
+            <summary>
+            Set a string value in the preferences
+            </summary>
+            <param name="key">The name of the preference</param>
+            <param name="value">The new value for the preference</param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetFloat(System.String)">
+            <summary>
+            Retrieve a float value from the preferences.
+            The method returns 0f if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a float.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetFloat(System.String,System.Single)">
+            <summary>
+            Retrieve a float value from the preferences. 
+            The method returns defaultValue if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <param name="defaultValue">Value to return if this preference does not exist</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a float.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.SetFloat(System.String,System.Single)">
+            <summary>
+            Set a float value in the preferences
+            </summary>
+            <param name="key">The name of the preference</param>
+            <param name="value">The new value for the preference</param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetDouble(System.String)">
+            <summary>
+            Retrieve a double value from the preferences.
+            The method returns 0d if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a double.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetDouble(System.String,System.Double)">
+            <summary>
+            Retrieve a double value from the preferences. 
+            The method returns defaultValue if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <param name="defaultValue">Value to return if this preference does not exist</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a double.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.SetDouble(System.String,System.Double)">
+            <summary>
+            Set a double value in the preferences
+            </summary>
+            <param name="key">The name of the preference</param>
+            <param name="value">The new value for the preference</param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetBool(System.String)">
+            <summary>
+            Retrieve a bool value from the preferences.
+            The method returns false if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a bool.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetBool(System.String,System.Boolean)">
+            <summary>
+            Retrieve a bool value from the preferences. 
+            The method returns defaultValue if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <param name="defaultValue">Value to return if this preference does not exist</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a bool.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.SetBool(System.String,System.Boolean)">
+            <summary>
+            Set a bool value in the preferences
+            </summary>
+            <param name="key">The name of the preference</param>
+            <param name="value">The new value for the preference</param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetInt(System.String)">
+            <summary>
+            Retrieve a int value from the preferences.
+            The method returns 0 if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a int.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetInt(System.String,System.Int32)">
+            <summary>
+            Retrieve a int value from the preferences. 
+            The method returns defaultValue if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <param name="defaultValue">Value to return if this preference does not exist</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a int.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.SetInt(System.String,System.Int32)">
+            <summary>
+            Set a int value in the preferences
+            </summary>
+            <param name="key">The name of the preference</param>
+            <param name="value">The new value for the preference</param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetLong(System.String)">
+            <summary>
+            Retrieve a long value from the preferences.
+            The method returns 0L if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a long.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetLong(System.String,System.Int64)">
+            <summary>
+            Retrieve a long value from the preferences. 
+            The method returns defaultValue if the key is not found.
+            </summary>
+            <param name="key">The name of the preference to retrieve</param>
+            <param name="defaultValue">Value to return if this preference does not exist</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a long.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.SetLong(System.String,System.Int64)">
+            <summary>
+            Set a long value in the preferences
+            </summary>
+            <param name="key">The name of the preference</param>
+            <param name="value">The new value for the preference</param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetObject``1(System.String)">
+            <summary>
+            Retrieve a T value from the preferences.
+            The method returns default(T) if the key is not found.
+            Supported Types:ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types
+            </summary>
+            <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
+            <param name="key">The name of the preference to retrieve</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a T.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.GetObject``1(System.String,``0)">
+            <summary>
+            Retrieve a T value from the preferences. 
+            The method returns defaultValue if the key is not found.
+            Supported Types:ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types
+            </summary>
+            <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
+            <param name="key">The name of the preference to retrieve</param>
+            <param name="defaultValue">Value to return if this preference does not exist</param>
+            <exception cref="T:System.Exception"></exception>
+            <returns>Returns the preference value if it exists, or defaultValue.  Throws
+            Exception if there is a preference with this name that is not a T.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.SetObject``1(System.String,``0)">
+            <summary>
+            Set a T value in the preferences
+            Supported Types:ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types
+            </summary>
+            <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
+            <param name="key">The name of the preference</param>
+            <param name="value">The new value for the preference</param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.ContainsKey(System.String)">
+            <summary>
+            Checks whether the preferences contains a preference.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.Remove(System.String)">
+            <summary>
+            Remove a value from the preferences.
+            </summary>
+            <param name="key">The name of the preference to remove</param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.RemoveAll">
+            <summary>
+            Remove all values.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.Save">
+            <summary>
+            Save the preferences to the local disk
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Preferences.Delete">
+            <summary>
+            Delete the preferences file.
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.DefaultEncryptor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.DefaultEncryptor.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.DefaultEncryptor.#ctor(System.Byte[],System.Byte[])">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <param name="iv"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.DefaultEncryptor.CheckKey(System.Byte[])">
+            <summary>
+            
+            </summary>
+            <param name="bytes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.DefaultEncryptor.CheckIV(System.Byte[])">
+            <summary>
+            
+            </summary>
+            <param name="bytes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.DefaultEncryptor.Encode(System.Byte[])">
+            <summary>
+            encryption
+            </summary>
+            <param name="plainData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.DefaultEncryptor.Decode(System.Byte[])">
+            <summary>
+            decryption
+            </summary>
+            <param name="cipherData"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.BinaryFilePreferencesFactory">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferencesFactory.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferencesFactory.#ctor(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter)">
+            <summary>
+            
+            </summary>
+            <param name="formatter"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferencesFactory.#ctor(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter,Loxodon.Framework.Prefs.IEncryptor)">
+            <summary>
+            
+            </summary>
+            <param name="formatter"></param>
+            <param name="encryptor"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferencesFactory.Create(System.String)">
+            <summary>
+            Create an instance of the BinaryFilePreferences.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.BinaryFilePreferences">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Prefs.BinaryFilePreferences.dict">
+            <summary>
+            cache.
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Prefs.BinaryFilePreferences.formatter">
+            <summary>
+            formatter
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Prefs.BinaryFilePreferences.encryptor">
+            <summary>
+            encryptor
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.#ctor(System.String,System.Runtime.Serialization.Formatters.Binary.BinaryFormatter,Loxodon.Framework.Prefs.IEncryptor)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <param name="formatter"></param>
+            <param name="encryptor"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.GetDirectory">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.GetFullFileName">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.Load">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.GetObject``1(System.String,``0)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.SetObject``1(System.String,``0)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.ContainsKey(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.Remove(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.RemoveAll">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.Save">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.BinaryFilePreferences.Delete">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.IFactory">
+            <summary>
+            IFactory
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.IFactory.Create(System.String)">
+            <summary>
+            Create an instance of the preferences.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.IEncryptor">
+            <summary>
+            A interface for encoding and decoding preference data.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.IEncryptor.Encode(System.Byte[])">
+            <summary>
+            encryption
+            </summary>
+            <param name="plainData">The plain data.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.IEncryptor.Decode(System.Byte[])">
+            <summary>
+            decryption
+            </summary>
+            <param name="cipherData">The cipher data.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.PlayerPrefsPreferencesFactory">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferencesFactory.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferencesFactory.#ctor(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter)">
+            <summary>
+            
+            </summary>
+            <param name="formatter"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferencesFactory.#ctor(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter,Loxodon.Framework.Prefs.IEncryptor)">
+            <summary>
+            
+            </summary>
+            <param name="formatter"></param>
+            <param name="encryptor"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferencesFactory.Create(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.PlayerPrefsPreferences">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Prefs.PlayerPrefsPreferences.KEYS">
+            <summary>
+            Default key
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Prefs.PlayerPrefsPreferences.formatter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Prefs.PlayerPrefsPreferences.encryptor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Prefs.PlayerPrefsPreferences.keys">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.#ctor(System.String,System.Runtime.Serialization.Formatters.Binary.BinaryFormatter,Loxodon.Framework.Prefs.IEncryptor)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <param name="formatter"></param>
+            <param name="encryptor"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.Load">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.Key(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.LoadKeys">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.SaveKeys">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.GetObject``1(System.String,``0)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.SetObject``1(System.String,``0)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.ContainsKey(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.Remove(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.RemoveAll">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.Save">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.PlayerPrefsPreferences.Delete">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.Vector2SerializationSurrogate">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Vector2SerializationSurrogate.GetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Vector2SerializationSurrogate.SetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext,System.Runtime.Serialization.ISurrogateSelector)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="info"></param>
+            <param name="context"></param>
+            <param name="selector"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.Vector3SerializationSurrogate">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Vector3SerializationSurrogate.GetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Vector3SerializationSurrogate.SetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext,System.Runtime.Serialization.ISurrogateSelector)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="info"></param>
+            <param name="context"></param>
+            <param name="selector"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.Vector4SerializationSurrogate">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Vector4SerializationSurrogate.GetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Vector4SerializationSurrogate.SetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext,System.Runtime.Serialization.ISurrogateSelector)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="info"></param>
+            <param name="context"></param>
+            <param name="selector"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.ColorSerializationSurrogate">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.ColorSerializationSurrogate.GetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.ColorSerializationSurrogate.SetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext,System.Runtime.Serialization.ISurrogateSelector)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="info"></param>
+            <param name="context"></param>
+            <param name="selector"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Prefs.Color32SerializationSurrogate">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Color32SerializationSurrogate.GetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Prefs.Color32SerializationSurrogate.SetObjectData(System.Object,System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext,System.Runtime.Serialization.ISurrogateSelector)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="info"></param>
+            <param name="context"></param>
+            <param name="selector"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Contexts.ApplicationContext">
+            <summary>
+            ApplicationContext
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Contexts.ApplicationContext.GetMainLoopExcutor">
+            <summary>
+            Retrieve a executor on the main thread.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Contexts.ApplicationContext.GetGlobalPreferences">
+            <summary>
+            Retrieve a global preferences.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Contexts.ApplicationContext.GetUserPreferences(System.String)">
+            <summary>
+            Retrieve a user's preferences.
+            </summary>
+            <param name="name">The name of the preferences to retrieve.eg:username or username@zone</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Start">
+            <summary>
+            Start the service.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Stop">
+            <summary>
+            Stop the service.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule``1(System.Func{``0},System.Int64)">
+            <summary>
+            Creates and executes a task that becomes enabled after the given delay.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="command"></param>
+            <param name="delay">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule``1(System.Func{``0},System.TimeSpan)">
+            <summary>
+            Creates and executes a task that becomes enabled after the given delay.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="command"></param>
+            <param name="delay"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule(System.Action,System.Int64)">
+            <summary>
+            Creates and executes a one-shot action that becomes enabled after the given delay.
+            </summary>
+            <param name="command"></param>
+            <param name="delay">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule(System.Action,System.TimeSpan)">
+            <summary>
+            Creates and executes a one-shot action that becomes enabled after the given delay.
+            </summary>
+            <param name="command"></param>
+            <param name="delay"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleAtFixedRate(System.Action,System.Int64,System.Int64)">
+            <summary>
+            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given period; that is executions will commence after initialDelay then initialDelay+period, then initialDelay + 2 * period, and so on.
+            </summary>
+            <param name="command"></param>
+            <param name="initialDelay">millisecond</param>
+            <param name="period">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleAtFixedRate(System.Action,System.TimeSpan,System.TimeSpan)">
+            <summary>
+            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given period; that is executions will commence after initialDelay then initialDelay+period, then initialDelay + 2 * period, and so on.
+            </summary>
+            <param name="command"></param>
+            <param name="initialDelay"></param>
+            <param name="period"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleWithFixedDelay(System.Action,System.Int64,System.Int64)">
+            <summary>
+            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given delay between the termination of one execution and the commencement of the next.
+            </summary>
+            <param name="command"></param>
+            <param name="initialDelay">millisecond</param>
+            <param name="delay">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleWithFixedDelay(System.Action,System.TimeSpan,System.TimeSpan)">
+            <summary>
+            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given delay between the termination of one execution and the commencement of the next.
+            </summary>
+            <param name="command"></param>
+            <param name="initialDelay"></param>
+            <param name="delay"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.Executors.MainThreadExecutor.Stop(System.Collections.IEnumerator)">
+            <summary>
+            Stop Coroutine
+            </summary>
+            <param name="routine"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.Executors.MainThreadExecutor.Stop(UnityEngine.Coroutine)">
+            <summary>
+            Stop Coroutine
+            </summary>
+            <param name="routine"></param>
+        </member>
+        <member name="P:Loxodon.Framework.Messaging.MessageBase.Sender">
+            <summary>
+            Gets or sets the message's sender.
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Messaging.IMessenger">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.IMessenger.Subscribe``1(System.Action{``0})">
+            <summary>
+            Subscribe message
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.IMessenger.Subscribe``1(System.String,System.Action{``0})">
+            <summary>
+            Subscribe message
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.IMessenger.Publish``1(``0)">
+            <summary>
+            Publish message
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="message"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.IMessenger.Publish``1(System.String,``0)">
+            <summary>
+            Publish message
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Observables.ObservableObject.RaisePropertyChanged(System.String)">
+            <summary>
+            Raises the PropertyChanging event.
+            </summary>
+            <param name="propertyName">Property name.</param>
+        </member>
+        <member name="M:Loxodon.Framework.Observables.ObservableObject.Set``1(``0@,``0,System.String)">
+            <summary>
+             Set the specified propertyName, field, newValue.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="field"></param>
+            <param name="newValue"></param>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Views.IViewGroup">
+            <summary>
+            View group
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Visibles">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Get(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Add(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Remove(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.RemoveAt(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Contains(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.IndexOf(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Find(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="visible"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Find``1">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Find``1(System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.FindAll``1">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Clear">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Show(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Hide(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <param name="dismiss"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Dismiss(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.WindowContainer.Passivate(System.Boolean)">
+            <summary>
+            Passivate
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IDialog.Show">
+            <summary>
+            Show the dialog box.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IDialog.Cancel">
+            <summary>
+            Cancel the dialog box.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IDialog.WaitForClosed">
+            <summary>
+            Suspend the coroutine,until the dialog box closed.
+            eg:
+            yiled return dialog.WaitForClosed();
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Views.ITransition">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.ITransition.IsDone">
+            <summary>
+            Returns  "true" if this transition finished.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.ITransition.WaitForDone">
+            <summary>
+            Wait for the result,suspends the coroutine execution.
+            eg: yield return transition.WaitForDone();
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.ITransition.DisableAnimation(System.Boolean)">
+            <summary>
+            Disable animation
+            </summary>
+            <param name="disabled"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.ITransition.OnStart(System.Action)">
+            <summary>
+            
+            </summary>
+            <param name="callback"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.ITransition.OnStateChanged(System.Action{Loxodon.Framework.Views.IWindow,Loxodon.Framework.Views.WindowState})">
+            <summary>
+            
+            </summary>
+            <param name="callback"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.ITransition.OnFinish(System.Action)">
+            <summary>
+            
+            </summary>
+            <param name="callback"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Views.IUIView">
+            <summary>
+            UI view
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Views.IView">
+            <summary>
+            View, it's anything that display layer.Such as scene , character , UI, etc
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IView.ExtraAttributes">
+            <summary>
+            External extended attributes
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Views.WindowType.FULL">
+            <summary>
+            Full screen window.
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Views.WindowType.POPUP">
+            <summary>
+            The pop-up window
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Views.WindowType.DIALOG">
+            <summary>
+            Dialog window
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Views.WindowType.PROGRESS">
+            <summary>
+            The progress bar dialog window
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Views.IWindow">
+            <summary>
+            Window
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Views.IWindow.VisibilityChanged">
+            <summary>
+            Triggered when the Visibility's value to be changed.
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Views.IWindow.ActivatedChanged">
+            <summary>
+            Triggered when the Activated's value to be changed.
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Views.IWindow.OnDismissed">
+            <summary>
+            Triggered when the window is dismissed.
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Views.IWindow.StateChanged">
+            <summary>
+            Triggered when the WindowState's value to be changed.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.Name">
+            <summary>
+            The name of the window.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.Created">
+            <summary>
+            Returns  "true" if this window created.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.Dismissed">
+            <summary>
+            Returns  "true" if this window dismissed.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.Visibility">
+            <summary>
+            Returns  "true" if this window visibility.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.Activated">
+            <summary>
+            Returns  "true" if this window activated.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.WindowType">
+            <summary>
+            window type.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindow.Create(Loxodon.Framework.Views.IBundle)">
+            <summary>
+            Create window
+            </summary>
+            <param name="bundle"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindow.Show(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindow.Hide(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindow.Dismiss(System.Boolean)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindowView.ActivationAnimation">
+            <summary>
+            Activation animation
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindowView.PassivationAnimation">
+            <summary>
+            Passivation animation
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.Window.Activate(System.Boolean)">
+            <summary>
+            Activate
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.Window.Passivate(System.Boolean)">
+            <summary>
+            Passivate
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.Window.OnShow">
+            <summary>
+            在显示动画开始前调用
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.Window.OnHide">
+            <summary>
+            在隐藏动画结束后调用
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.ViewModels.ViewModelBase.Set``1(``0@,``0,System.String,System.Boolean)">
+            <summary>
+             Set the specified propertyName, field, newValue and broadcast.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="propertyName"></param>
+            <param name="field"></param>
+            <param name="newValue"></param>
+            <param name="broadcast"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

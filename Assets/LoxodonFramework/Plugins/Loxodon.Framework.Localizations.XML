@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Loxodon.Framework.Localizations</name>
+    </assembly>
+    <members>
+        <member name="T:Loxodon.Framework.Localizations.AssetBundleDataProvider">
+            <summary>
+            AssetBundle data provider.
+            dir:
+            root/default/
+            
+            root/zh/
+            root/zh-CN/
+            root/zh-TW/
+            root/zh-HK/
+            
+            root/en/
+            root/en-US/
+            root/en-CA/
+            root/en-AU/
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Localizations.DefaultDataProvider">
+            <summary>
+            Resources data provider.
+            dir:
+            root/default/
+            
+            root/zh/
+            root/zh-CN/
+            root/zh-TW/
+            root/zh-HK/
+            
+            root/en/
+            root/en-US/
+            root/en-CA/
+            root/en-AU/
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Localizations.XmlDocumentParser">
+            <summary>
+            XML document parser
+            </summary>
+        </member>
+    </members>
+</doc>
