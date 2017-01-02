@@ -19,12 +19,12 @@ Android
 
 IL2CPP is supported, however there are some gotchas.
 
-# Release Download
+## Release Download
 
 - [Loxodon Framework Pro](https://www.assetstore.unity3d.com/#!/content/79304)
 - [Loxodon Framework Free](https://www.assetstore.unity3d.com/#!/content/77446)
 
-# Key features:
+## Key features:
 - Mvvm Framework;
 - Multiple platforms;
 - Higher Extensibility;
