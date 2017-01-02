@@ -1,8 +1,8 @@
 # Loxodon Framework
 
-MVVM Framework for Unity3D
+**MVVM Framework for Unity3D**
 
-Developed by Clark
+*Developed by Clark*
 
 Requires Unity 5.3.0 or higher.
 
@@ -13,7 +13,7 @@ For tutorials,examples and support,please see the project.You can also discuss t
 
 The Free version is compatible with MacOSX,Windows,Linux and Android.The Pro version is compatible with MacOSX,Windows,Linux,IOS and Android etc.Check out the Pro version if you want more platforms and full source code.
 
-Tested in Unity 3D on the following platforms:  
+**Tested in Unity 3D on the following platforms:**  
 PC/Mac/Linux  
 Android  
 
