@@ -36,13 +36,13 @@ IL2CPP is supported, however there are some gotchas.
 - Databinding support:
     - Field binding;
     - Property binding;
-    - Dictinary,list and array binding;
+    - Dictionary,list and array binding;
     - Event binding;
     - Unity3d's EventBase binding;
     - Static property and field binding;
     - Method binding;
     - Command binding;
-    - ObservableProperty,ObservableDictinary and ObservableList binding;
+    - ObservableProperty,ObservableDictionary and ObservableList binding;
     
 ## Tutorials and Examples
 
