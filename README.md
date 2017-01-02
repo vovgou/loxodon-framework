@@ -49,16 +49,6 @@ IL2CPP is supported, however there are some gotchas.
 - [Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 - [Examples](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
 
-    ### Localization  
-    
-    
-    ### Databinding
-    
-    
-    ### MVVM 
-    
-    
-
 ## Contact us
 Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
 Website: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)
