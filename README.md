@@ -9,11 +9,9 @@ Requires Unity 5.3.0 or higher.
 LoxodonFramework is a lightweight MVVM(Model-View-ViewModel) framework built specifically to target Unity3D.
 Databinding and localization are supported.It has a very flexible extensibility.It makes your game development faster and easier.
 
-<p>For tutorials,examples and support,please see the project.You can also discuss the project in the Unity Forums.</p>
+For tutorials,examples and support,please see the project.You can also discuss the project in the Unity Forums.
 
-<p>The Free version is compatible with MacOSX,Windows,Linux and Android.Check out the Pro version if you want more platforms and full source code.</p>
-
-<p><a href="https://www.assetstore.unity3d.com/#!/content/79304">Checkout the Pro version.</a></p>
+The Free version is compatible with MacOSX,Windows,Linux and Android.Check out the Pro version if you want more platforms and full source code.
 
 Tested in Unity 3D on the following platforms:
 PC/Mac/Linux
