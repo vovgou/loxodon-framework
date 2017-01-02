@@ -11,7 +11,7 @@ Databinding and localization are supported.It has a very flexible extensibility.
 
 For tutorials,examples and support,please see the project.You can also discuss the project in the Unity Forums.
 
-The Free version is compatible with MacOSX,Windows,Linux and Android.Check out the Pro version if you want more platforms and full source code.
+The Free version is compatible with MacOSX,Windows,Linux and Android.The Pro version is compatible with MacOSX,Windows,Linux,IOS and Android etc.Check out the Pro version if you want more platforms and full source code.
 
 Tested in Unity 3D on the following platforms:
 PC/Mac/Linux
