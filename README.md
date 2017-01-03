@@ -44,6 +44,11 @@ IL2CPP is supported, however there are some gotchas.
     - Command binding;
     - ObservableProperty,ObservableDictionary and ObservableList binding;
     
+## Use Notes  
+- LoxodonFramework supports .Net2.0 and .Net2.0 Subset  
+- LoxodonFramework supports Mono2x and IL2CPP  
+- AOT Compilation Options: "nrgctx-trampolines=8192;nimt-trampolines=8192;ntrampolines=8192;" for IOS  
+
 ## Tutorials and Examples
 
 - [Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
