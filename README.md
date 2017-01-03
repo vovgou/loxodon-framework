@@ -15,16 +15,16 @@ The Free version is compatible with MacOSX,Windows,Linux and Android.The Pro ver
 
 **Tested in Unity 3D on the following platforms:**  
 PC/Mac/Linux  
+IOS  
 Android  
 
 IL2CPP is supported, however there are some gotchas.  
 
-## Release Download
-
+## Downloads  
 - [Loxodon Framework Pro](https://www.assetstore.unity3d.com/#!/content/79304)
 - [Loxodon Framework Free](https://www.assetstore.unity3d.com/#!/content/77446)
 
-## Key features:
+## Key Features:
 - Mvvm Framework;
 - Multiple platforms;
 - Higher Extensibility;
@@ -49,7 +49,7 @@ IL2CPP is supported, however there are some gotchas.
 - [Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 - [Examples](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
 
-## Contact us
+## Contact Us
 Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
 Website: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)
 
