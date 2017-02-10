@@ -1,5 +1,5 @@
 ﻿Loxodon Framework Free
-Version: 1.0.0
+Version: 1.0.1
 © 2016, Clark Yang
 =======================================
 
@@ -17,5 +17,6 @@ Please email yangpc.china@gmail.com for any help or issues.
 UPDATE NOTES
 ----------------------------------------
 
-
+version 1.0.1
+	Removed unused assets for the examples.
 
