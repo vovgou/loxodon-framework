@@ -19,4 +19,5 @@ UPDATE NOTES
 
 version 1.0.1
 	Removed unused assets for the examples.
+	Fixed a bug,an exception occurred when InputField.text bind to the "Null" in Unity3.5.0 version.
 
