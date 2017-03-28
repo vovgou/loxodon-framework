@@ -1,5 +1,5 @@
 ﻿Loxodon Framework Free
-Version: 1.0.1
+Version: 1.0.2
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,10 @@ Please email yangpc.china@gmail.com for any help or issues.
 
 UPDATE NOTES
 ----------------------------------------
+
+version 1.0.2
+	IProgressResult: Added callback about the Progress value.
+	Improved the ICache and ProgressResult and ObservableObject etc.
 
 version 1.0.1
 	Removed unused assets for the examples.

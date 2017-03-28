@@ -44,58 +44,46 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult.SynchronizableAndCallbackable.WaitForDone">
-            <summary>
-            Wait for done,will block the current thread.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult.SynchronizableAndCallbackable.WaitForResult(System.Int32)">
-            <summary>
-            Wait for the result,will block the current thread.
-            </summary>
-            <param name="millisecondsTimeout"></param>
-            <exception cref="T:System.TimeoutException"></exception>
-            <exception cref="P:Loxodon.Framework.Asynchronous.AsyncResult.Exception"></exception>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult.SynchronizableAndCallbackable.WaitForResult(System.TimeSpan)">
-            <summary>
-             Wait for the result,will block the current thread.
-            </summary>
-            <param name="timeout"></param>
-            <exception cref="T:System.TimeoutException"></exception>
-            <exception cref="P:Loxodon.Framework.Asynchronous.AsyncResult.Exception"></exception>
-            <returns></returns>
-        </member>
         <member name="P:Loxodon.Framework.Asynchronous.AsyncResult`1.Result">
             <summary>
             The execution result
             </summary>
         </member>
-        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult`1.SynchronizableAndCallbackable.WaitForDone">
+        <member name="M:Loxodon.Framework.Asynchronous.ICallbackable.OnCallback(System.Action{Loxodon.Framework.Asynchronous.IAsyncResult})">
             <summary>
-            Wait for done,will block the current thread.
+            Called when the task is finished.
             </summary>
-            <returns></returns>
+            <param name="callback"></param>
         </member>
-        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult`1.SynchronizableAndCallbackable.WaitForResult(System.Int32)">
+        <member name="M:Loxodon.Framework.Asynchronous.ICallbackable`1.OnCallback(System.Action{Loxodon.Framework.Asynchronous.IAsyncResult{`0}})">
             <summary>
-            Wait for the result,will block the current thread.
+            Called when the task is finished.
             </summary>
-            <param name="millisecondsTimeout"></param>
-            <exception cref="T:System.TimeoutException"></exception>
-            <exception cref="T:System.Exception"></exception>
-            <returns></returns>
+            <param name="callback"></param>
         </member>
-        <member name="M:Loxodon.Framework.Asynchronous.AsyncResult`1.SynchronizableAndCallbackable.WaitForResult(System.TimeSpan)">
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressCallbackable`1.OnCallback(System.Action{Loxodon.Framework.Asynchronous.IProgressResult{`0}})">
             <summary>
-            Wait for the result,will block the current thread.
+            Called when the task is finished.
             </summary>
-            <param name="timeout"></param>
-            <exception cref="T:System.TimeoutException"></exception>
-            <exception cref="T:System.Exception"></exception>
-            <returns></returns>
+            <param name="callback"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressCallbackable`1.OnProgressCallback(System.Action{`0})">
+            <summary>
+            Called when the progress update.
+            </summary>
+            <param name="callback"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressCallbackable`2.OnCallback(System.Action{Loxodon.Framework.Asynchronous.IProgressResult{`0,`1}})">
+            <summary>
+            Called when the task is finished.
+            </summary>
+            <param name="callback"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressCallbackable`2.OnProgressCallback(System.Action{`0})">
+            <summary>
+            Called when the progress update.
+            </summary>
+            <param name="callback"></param>
         </member>
         <member name="T:Loxodon.Framework.Asynchronous.IAsyncTask">
             <summary>
@@ -233,12 +221,24 @@
             The task's progress.
             </summary>
         </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressResult`1.Callbackable">
+            <summary>
+            Gets a callbackable object.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Loxodon.Framework.Asynchronous.IProgressResult`2">
             <summary>
             
             </summary>
             <typeparam name="TProgress"></typeparam>
             <typeparam name="TResult"></typeparam>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.IProgressResult`2.Callbackable">
+            <summary>
+            Gets a callbackable object.
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Loxodon.Framework.Asynchronous.IProgressTask`1">
             <summary>
@@ -429,11 +429,6 @@
             </summary>
             <param name="result"></param>
         </member>
-        <member name="P:Loxodon.Framework.Asynchronous.ProgressResult.Progress">
-            <summary>
-            The task's progress.
-            </summary>
-        </member>
         <member name="P:Loxodon.Framework.Asynchronous.ProgressResult`1.Progress">
             <summary>
             The task's progress.
@@ -443,30 +438,6 @@
             <summary>
             The execution result
             </summary>
-        </member>
-        <member name="M:Loxodon.Framework.Asynchronous.ProgressResult`2.SynchronizableAndCallbackable.WaitForDone">
-            <summary>
-            Wait for done,will block the current thread.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Asynchronous.ProgressResult`2.SynchronizableAndCallbackable.WaitForResult(System.Int32)">
-            <summary>
-            Wait for the result,will block the current thread.
-            </summary>
-            <param name="millisecondsTimeout"></param>
-            <exception cref="T:System.TimeoutException"></exception>
-            <exception cref="T:System.Exception"></exception>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Asynchronous.ProgressResult`2.SynchronizableAndCallbackable.WaitForResult(System.TimeSpan)">
-            <summary>
-            Wait for the result,will block the current thread.
-            </summary>
-            <param name="timeout"></param>
-            <exception cref="T:System.TimeoutException"></exception>
-            <exception cref="T:System.Exception"></exception>
-            <returns></returns>
         </member>
         <member name="M:Loxodon.Framework.Asynchronous.ProgressTask`1.#ctor(System.Action{Loxodon.Framework.Asynchronous.IProgressPromise{`0}},System.Boolean,System.Boolean)">
             <summary>
@@ -529,17 +500,53 @@
             <exception cref="T:System.Exception"></exception>
             <returns></returns>
         </member>
-        <member name="M:Loxodon.Framework.Asynchronous.ICallbackable.OnCallback(System.Action{Loxodon.Framework.Asynchronous.IAsyncResult})">
+        <member name="M:Loxodon.Framework.Asynchronous.Synchronizable.WaitForDone">
             <summary>
-            Called when the task is finished.
+            Wait for done,will block the current thread.
             </summary>
-            <param name="callback"></param>
+            <returns></returns>
         </member>
-        <member name="M:Loxodon.Framework.Asynchronous.ICallbackable`1.OnCallback(System.Action{Loxodon.Framework.Asynchronous.IAsyncResult{`0}})">
+        <member name="M:Loxodon.Framework.Asynchronous.Synchronizable.WaitForResult(System.Int32)">
             <summary>
-            Called when the task is finished.
+            Wait for the result,will block the current thread.
             </summary>
-            <param name="callback"></param>
+            <param name="millisecondsTimeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.Synchronizable.WaitForResult(System.TimeSpan)">
+            <summary>
+             Wait for the result,will block the current thread.
+            </summary>
+            <param name="timeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.Synchronizable`1.WaitForDone">
+            <summary>
+            Wait for done,will block the current thread.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.Synchronizable`1.WaitForResult(System.Int32)">
+            <summary>
+            Wait for the result,will block the current thread.
+            </summary>
+            <param name="millisecondsTimeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.Synchronizable`1.WaitForResult(System.TimeSpan)">
+            <summary>
+            Wait for the result,will block the current thread.
+            </summary>
+            <param name="timeout"></param>
+            <exception cref="T:System.TimeoutException"></exception>
+            <exception cref="T:System.Exception"></exception>
+            <returns></returns>
         </member>
         <member name="T:Loxodon.Framework.Asynchronous.IAsyncResult">
             <summary>
@@ -689,6 +696,108 @@
             Execute the specified parameter.
             </summary>
             <param name="parameter">Parameter.</param>
+        </member>
+        <member name="T:Loxodon.Framework.Execution.CountDownEvent">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Execution.CountFinishedEvent">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Start">
+            <summary>
+            Start the service.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Stop">
+            <summary>
+            Stop the service.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule``1(System.Func{``0},System.Int64)">
+            <summary>
+            Creates and executes a task that becomes enabled after the given delay.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="command"></param>
+            <param name="delay">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule``1(System.Func{``0},System.TimeSpan)">
+            <summary>
+            Creates and executes a task that becomes enabled after the given delay.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="command"></param>
+            <param name="delay"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule(System.Action,System.Int64)">
+            <summary>
+            Creates and executes a one-shot action that becomes enabled after the given delay.
+            </summary>
+            <param name="command"></param>
+            <param name="delay">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule(System.Action,System.TimeSpan)">
+            <summary>
+            Creates and executes a one-shot action that becomes enabled after the given delay.
+            </summary>
+            <param name="command"></param>
+            <param name="delay"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleAtFixedRate(System.Action,System.Int64,System.Int64)">
+            <summary>
+            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given period; that is executions will commence after initialDelay then initialDelay+period, then initialDelay + 2 * period, and so on.
+            </summary>
+            <param name="command"></param>
+            <param name="initialDelay">millisecond</param>
+            <param name="period">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleAtFixedRate(System.Action,System.TimeSpan,System.TimeSpan)">
+            <summary>
+            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given period; that is executions will commence after initialDelay then initialDelay+period, then initialDelay + 2 * period, and so on.
+            </summary>
+            <param name="command"></param>
+            <param name="initialDelay"></param>
+            <param name="period"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleWithFixedDelay(System.Action,System.Int64,System.Int64)">
+            <summary>
+            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given delay between the termination of one execution and the commencement of the next.
+            </summary>
+            <param name="command"></param>
+            <param name="initialDelay">millisecond</param>
+            <param name="delay">millisecond</param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleWithFixedDelay(System.Action,System.TimeSpan,System.TimeSpan)">
+            <summary>
+            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given delay between the termination of one execution and the commencement of the next.
+            </summary>
+            <param name="command"></param>
+            <param name="initialDelay"></param>
+            <param name="delay"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.Executors.MainThreadExecutor.Stop(System.Collections.IEnumerator)">
+            <summary>
+            Stop Coroutine
+            </summary>
+            <param name="routine"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.Executors.MainThreadExecutor.Stop(UnityEngine.Coroutine)">
+            <summary>
+            Stop Coroutine
+            </summary>
+            <param name="routine"></param>
         </member>
         <member name="T:Loxodon.Framework.Prefs.AbstractFactory">
             <summary>
@@ -1492,98 +1601,6 @@
             <param name="name">The name of the preferences to retrieve.eg:username or username@zone</param>
             <returns></returns>
         </member>
-        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Start">
-            <summary>
-            Start the service.
-            </summary>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Stop">
-            <summary>
-            Stop the service.
-            </summary>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule``1(System.Func{``0},System.Int64)">
-            <summary>
-            Creates and executes a task that becomes enabled after the given delay.
-            </summary>
-            <typeparam name="TResult"></typeparam>
-            <param name="command"></param>
-            <param name="delay">millisecond</param>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule``1(System.Func{``0},System.TimeSpan)">
-            <summary>
-            Creates and executes a task that becomes enabled after the given delay.
-            </summary>
-            <typeparam name="TResult"></typeparam>
-            <param name="command"></param>
-            <param name="delay"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule(System.Action,System.Int64)">
-            <summary>
-            Creates and executes a one-shot action that becomes enabled after the given delay.
-            </summary>
-            <param name="command"></param>
-            <param name="delay">millisecond</param>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.Schedule(System.Action,System.TimeSpan)">
-            <summary>
-            Creates and executes a one-shot action that becomes enabled after the given delay.
-            </summary>
-            <param name="command"></param>
-            <param name="delay"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleAtFixedRate(System.Action,System.Int64,System.Int64)">
-            <summary>
-            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given period; that is executions will commence after initialDelay then initialDelay+period, then initialDelay + 2 * period, and so on.
-            </summary>
-            <param name="command"></param>
-            <param name="initialDelay">millisecond</param>
-            <param name="period">millisecond</param>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleAtFixedRate(System.Action,System.TimeSpan,System.TimeSpan)">
-            <summary>
-            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given period; that is executions will commence after initialDelay then initialDelay+period, then initialDelay + 2 * period, and so on.
-            </summary>
-            <param name="command"></param>
-            <param name="initialDelay"></param>
-            <param name="period"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleWithFixedDelay(System.Action,System.Int64,System.Int64)">
-            <summary>
-            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given delay between the termination of one execution and the commencement of the next.
-            </summary>
-            <param name="command"></param>
-            <param name="initialDelay">millisecond</param>
-            <param name="delay">millisecond</param>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.IScheduledExecutor.ScheduleWithFixedDelay(System.Action,System.TimeSpan,System.TimeSpan)">
-            <summary>
-            Creates and executes a periodic action that becomes enabled first after the given initial delay, and subsequently with the given delay between the termination of one execution and the commencement of the next.
-            </summary>
-            <param name="command"></param>
-            <param name="initialDelay"></param>
-            <param name="delay"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.Executors.MainThreadExecutor.Stop(System.Collections.IEnumerator)">
-            <summary>
-            Stop Coroutine
-            </summary>
-            <param name="routine"></param>
-        </member>
-        <member name="M:Loxodon.Framework.Execution.Executors.MainThreadExecutor.Stop(UnityEngine.Coroutine)">
-            <summary>
-            Stop Coroutine
-            </summary>
-            <param name="routine"></param>
-        </member>
         <member name="P:Loxodon.Framework.Messaging.MessageBase.Sender">
             <summary>
             Gets or sets the message's sender.
@@ -1631,6 +1648,15 @@
             Raises the PropertyChanging event.
             </summary>
             <param name="propertyName">Property name.</param>
+        </member>
+        <member name="M:Loxodon.Framework.Observables.ObservableObject.Set``1(``0@,``0,System.Linq.Expressions.Expression{System.Func{``0}})">
+            <summary>
+            Set the specified propertyExpression, field and newValue.
+            </summary>
+            <param name="propertyExpression">Property expression.</param>
+            <param name="field">Field.</param>
+            <param name="newValue">New value.</param>
+            <typeparam name="T">The 1st type parameter.</typeparam>
         </member>
         <member name="M:Loxodon.Framework.Observables.ObservableObject.Set``1(``0@,``0,System.String)">
             <summary>
@@ -1963,14 +1989,24 @@
             在隐藏动画结束后调用
             </summary>
         </member>
+        <member name="M:Loxodon.Framework.ViewModels.ViewModelBase.Set``1(``0@,``0,System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)">
+            <summary>
+            Set the specified propertyName, field, newValue and broadcast.
+            </summary>
+            <param name="field">Field.</param>
+            <param name="newValue">New value.</param>
+            <param name="propertyExpression">Expression of property name.</param>
+            <param name="broadcast">If set to <c>true</c> broadcast.</param>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
         <member name="M:Loxodon.Framework.ViewModels.ViewModelBase.Set``1(``0@,``0,System.String,System.Boolean)">
             <summary>
              Set the specified propertyName, field, newValue and broadcast.
             </summary>
             <typeparam name="T"></typeparam>
-            <param name="propertyName"></param>
             <param name="field"></param>
             <param name="newValue"></param>
+            <param name="propertyName"></param>
             <param name="broadcast"></param>
             <returns></returns>
         </member>

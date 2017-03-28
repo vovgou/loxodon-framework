@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Loxodon.Framework.Observables;
 
 namespace Loxodon.Framework.Tutorials
 {
-	public class Item:ObservableObject
+    public class Item:ObservableObject
 	{
 		private string title;
 		private string iconPath;
