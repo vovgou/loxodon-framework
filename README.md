@@ -22,6 +22,7 @@ IL2CPP is supported, however there are some gotchas.
 
 ## Downloads  
 - [Loxodon Framework Pro](https://www.assetstore.unity3d.com/#!/content/79304)
+- [Loxodon Framework Per](https://www.assetstore.unity3d.com/#!/content/86625)
 - [Loxodon Framework Free](https://www.assetstore.unity3d.com/#!/content/77446)
 
 ## Key Features:
@@ -47,7 +48,7 @@ IL2CPP is supported, however there are some gotchas.
 ## Notices  
 - LoxodonFramework supports .Net2.0 and .Net2.0 Subset  
 - LoxodonFramework supports Mono2x and IL2CPP  
-- AOT Compilation Options: "nrgctx-trampolines=8192;nimt-trampolines=8192;ntrampolines=8192;" for IOS  
+- AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampolines=8192" for IOS  
 
 ## Tutorials and Examples
 
