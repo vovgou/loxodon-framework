@@ -1,5 +1,5 @@
 ﻿Loxodon Framework Free
-Version: 1.0.2
+Version: 1.0.3
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,8 @@ Please email yangpc.china@gmail.com for any help or issues.
 
 UPDATE NOTES
 ----------------------------------------
+version 1.0.3
+	 Fixed an exception that occurred when the method StrongCache.Get is invoked.
 
 version 1.0.2
 	IProgressResult: Added callback about the Progress value.
