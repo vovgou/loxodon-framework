@@ -1,5 +1,7 @@
 # Loxodon Framework
 
+[![release](https://img.shields.io/badge/release-v1.0.4-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
+
 **MVVM Framework for Unity3D**
 
 *Developed by Clark*
@@ -45,7 +47,7 @@ IL2CPP is supported, however there are some gotchas.
     - Command binding;
     - ObservableProperty,ObservableDictionary and ObservableList binding;
     
-## Notices  
+## Notes  
 - LoxodonFramework supports .Net2.0 and .Net2.0 Subset  
 - LoxodonFramework supports Mono2x and IL2CPP  
 - AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampolines=8192" for IOS  
