@@ -4,12 +4,15 @@
         <name>Loxodon.Framework.Binding</name>
     </assembly>
     <members>
+        <member name="T:Loxodon.Framework.Binding.Proxy.IScriptInvoker">
+            <summary>
+            Supports Lua Function.
+            </summary>
+        </member>
         <member name="M:Loxodon.Framework.Binding.Paths.IPathParser.Parse(System.Linq.Expressions.LambdaExpression)">
             <summary>
             Parser object instance path.eg:vm => vm.User.Username
             </summary>
-            <typeparam name="T"></typeparam>
-            <typeparam name="TResult"></typeparam>
             <param name="expression"></param>
             <returns></returns>
         </member>
@@ -31,7 +34,6 @@
             <summary>
             Parser static type path.eg:System.Int32.MaxValue
             </summary>
-            <typeparam name="TResult"></typeparam>
             <param name="expression"></param>
             <returns></returns>
         </member>
@@ -39,8 +41,6 @@
             <summary>
             Parser member name.eg:vm => vm.User
             </summary>
-            <typeparam name="T"></typeparam>
-            <typeparam name="TResult"></typeparam>
             <param name="expression"></param>
             <returns></returns>
         </member>

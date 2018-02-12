@@ -52,7 +52,7 @@ namespace Loxodon.Framework.Examples
             bindingSet.Bind(this.progressBarText).For(v => v.text).ToExpression(vm => string.Format("{0}%", Mathf.FloorToInt(vm.ProgressBar.Progress * 100f))).OneWay();/* expression binding,support only OneWay mode. */
             bindingSet.Bind(this.tipText).For(v => v.text).To(vm => vm.ProgressBar.Tip).OneWay();
 
-            //bindingSet.Bind (this.button).For (v => v.onClick).To ("OnClick").OneWay (); //Method binding,only bound to the onClick event.
+            //bindingSet.Bind (this.button).For (v => v.onClick).To (vm=>vm.OnClick()).OneWay (); //Method binding,only bound to the onClick event.
             bindingSet.Bind(this.button).For(v => v.onClick).To(vm => vm.Click).OneWay();//Command binding,bound to the onClick event and interactable property.
             bindingSet.Build();
 

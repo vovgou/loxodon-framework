@@ -697,6 +697,29 @@
             </summary>
             <param name="parameter">Parameter.</param>
         </member>
+        <member name="T:Loxodon.Framework.Execution.InterceptableEnumerator">
+            <summary>
+            Interceptable enumerator
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.InterceptableEnumerator.RegisterConditionBlock(System.Func{System.Boolean})">
+            <summary>
+            Register a condition code block.
+            </summary>
+            <param name="hasNext"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.InterceptableEnumerator.RegisterCatchBlock(System.Action{System.Exception})">
+            <summary>
+            Register a code block, when an exception occurs it will be executed.
+            </summary>
+            <param name="onException"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Execution.InterceptableEnumerator.RegisterFinallyBlock(System.Action)">
+            <summary>
+            Register a code block, when the end of the operation is executed.
+            </summary>
+            <param name="onFinally"></param>
+        </member>
         <member name="T:Loxodon.Framework.Execution.CountDownEvent">
             <summary>
             
@@ -1667,6 +1690,11 @@
             <param name="newValue"></param>
             <param name="propertyName"></param>
             <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Utilities.WeakValueDictionary`2.Cleanup">
+            <summary>
+            Removes the left-over weak references for entries in the dictionary whose value has already been reclaimed by the garbage collector. 
+            </summary>
         </member>
         <member name="T:Loxodon.Framework.Views.IViewGroup">
             <summary>
