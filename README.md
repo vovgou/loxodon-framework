@@ -1,6 +1,6 @@
 # Loxodon Framework
 
-[![release](https://img.shields.io/badge/release-v1.0.4-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
+[![release](https://img.shields.io/badge/release-v1.1.5-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
 
 **MVVM Framework for Unity3D**
 
@@ -24,7 +24,6 @@ IL2CPP is supported, however there are some gotchas.
 
 ## Downloads  
 - [Loxodon Framework Pro](https://www.assetstore.unity3d.com/#!/content/79304)
-- [Loxodon Framework Per](https://www.assetstore.unity3d.com/#!/content/86625)
 - [Loxodon Framework Free](https://www.assetstore.unity3d.com/#!/content/77446)
 
 ## Key Features:
