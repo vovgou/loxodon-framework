@@ -18,7 +18,7 @@ namespace Loxodon.Framework.Examples
 {
 	public class LoginViewModel : ViewModelBase
 	{
-		private static readonly ILog log = LogManager.GetLogger (System.Reflection.MethodBase.GetCurrentMethod ().DeclaringType);
+		private static readonly ILog log = LogManager.GetLogger (typeof(ViewModelBase));
 
 		private const string LAST_USERNAME_KEY = "LAST_USERNAME";
 

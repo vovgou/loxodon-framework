@@ -1,0 +1,350 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Loxodon.Framework.View</name>
+    </assembly>
+    <members>
+        <member name="M:Loxodon.Framework.ViewModels.ViewModelBase.Set``1(``0@,``0,System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)">
+            <summary>
+            Set the specified propertyName, field, newValue and broadcast.
+            </summary>
+            <param name="field">Field.</param>
+            <param name="newValue">New value.</param>
+            <param name="propertyExpression">Expression of property name.</param>
+            <param name="broadcast">If set to <c>true</c> broadcast.</param>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:Loxodon.Framework.ViewModels.ViewModelBase.Set``1(``0@,``0,System.String,System.Boolean)">
+            <summary>
+             Set the specified propertyName, field, newValue and broadcast.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="field"></param>
+            <param name="newValue"></param>
+            <param name="propertyName"></param>
+            <param name="broadcast"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IDialog.Show">
+            <summary>
+            Show the dialog box.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IDialog.Cancel">
+            <summary>
+            Cancel the dialog box.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IDialog.WaitForClosed">
+            <summary>
+            Suspend the coroutine,until the dialog box closed.
+            eg:
+            yiled return dialog.WaitForClosed();
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Views.ITransition">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.ITransition.IsDone">
+            <summary>
+            Returns  "true" if this transition finished.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.ITransition.WaitForDone">
+            <summary>
+            Wait for the result,suspends the coroutine execution.
+            eg: yield return transition.WaitForDone();
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.ITransition.DisableAnimation(System.Boolean)">
+            <summary>
+            Disable animation
+            </summary>
+            <param name="disabled"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.ITransition.OnStart(System.Action)">
+            <summary>
+            
+            </summary>
+            <param name="callback"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.ITransition.OnStateChanged(System.Action{Loxodon.Framework.Views.IWindow,Loxodon.Framework.Views.WindowState})">
+            <summary>
+            
+            </summary>
+            <param name="callback"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.ITransition.OnFinish(System.Action)">
+            <summary>
+            
+            </summary>
+            <param name="callback"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Views.IUIView">
+            <summary>
+            UI view
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Views.IView">
+            <summary>
+            View, it's anything that display layer.Such as scene , character , UI, etc
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IView.ExtraAttributes">
+            <summary>
+            External extended attributes
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Views.IViewGroup">
+            <summary>
+            View group
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Views.WindowType.FULL">
+            <summary>
+            Full screen window.
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Views.WindowType.POPUP">
+            <summary>
+            The pop-up window
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Views.WindowType.DIALOG">
+            <summary>
+            Dialog window
+            </summary>
+        </member>
+        <member name="F:Loxodon.Framework.Views.WindowType.PROGRESS">
+            <summary>
+            The progress bar dialog window
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Views.IWindow">
+            <summary>
+            Window
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Views.IWindow.VisibilityChanged">
+            <summary>
+            Triggered when the Visibility's value to be changed.
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Views.IWindow.ActivatedChanged">
+            <summary>
+            Triggered when the Activated's value to be changed.
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Views.IWindow.OnDismissed">
+            <summary>
+            Triggered when the window is dismissed.
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Views.IWindow.StateChanged">
+            <summary>
+            Triggered when the WindowState's value to be changed.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.Name">
+            <summary>
+            The name of the window.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.Created">
+            <summary>
+            Returns  "true" if this window created.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.Dismissed">
+            <summary>
+            Returns  "true" if this window dismissed.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.Visibility">
+            <summary>
+            Returns  "true" if this window visibility.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.Activated">
+            <summary>
+            Returns  "true" if this window activated.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindow.WindowType">
+            <summary>
+            window type.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindow.Create(Loxodon.Framework.Views.IBundle)">
+            <summary>
+            Create window
+            </summary>
+            <param name="bundle"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindow.Show(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindow.Hide(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindow.Dismiss(System.Boolean)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Visibles">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Get(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Add(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Remove(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.RemoveAt(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Contains(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.IndexOf(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Find(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="visible"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Find``1">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Find``1(System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.FindAll``1">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Clear">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Show(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Hide(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <param name="dismiss"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.IWindowManager.Dismiss(Loxodon.Framework.Views.IWindow)">
+            <summary>
+            
+            </summary>
+            <param name="window"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindowView.ActivationAnimation">
+            <summary>
+            Activation animation
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Views.IWindowView.PassivationAnimation">
+            <summary>
+            Passivation animation
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.Window.Activate(System.Boolean)">
+            <summary>
+            Activate
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.Window.Passivate(System.Boolean)">
+            <summary>
+            Passivate
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Views.Window.OnShow">
+            <summary>
+            在显示动画开始前调用
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.Window.OnHide">
+            <summary>
+            在隐藏动画结束后调用
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Views.WindowContainer.Passivate(System.Boolean)">
+            <summary>
+            Passivate
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

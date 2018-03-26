@@ -17,7 +17,7 @@ namespace Loxodon.Framework.Examples
 {
 	public class LoginWindow  : Window
 	{
-		private static readonly ILog log = LogManager.GetLogger (System.Reflection.MethodBase.GetCurrentMethod ().DeclaringType);
+		private static readonly ILog log = LogManager.GetLogger (typeof(LoginWindow));
 
 		public InputField username;
 		public InputField password;

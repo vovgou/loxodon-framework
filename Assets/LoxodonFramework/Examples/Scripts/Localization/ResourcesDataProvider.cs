@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 
 using Loxodon.Framework.Localizations;
+using Loxodon.Log;
 
 namespace Loxodon.Framework.Examples
 {
@@ -26,7 +27,9 @@ namespace Loxodon.Framework.Examples
 	/// </summary>
 	public class ResourcesDataProvider : IDataProvider
 	{
-		private string root;
+        private static readonly ILog log = LogManager.GetLogger(typeof(ResourcesDataProvider));
+
+        private string root;
 		private IDocumentParser parser;
 
 		public ResourcesDataProvider (string root, IDocumentParser parser)
@@ -58,39 +61,53 @@ namespace Loxodon.Framework.Examples
 
 		public void Load (CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
 		{
-			Dictionary<string, object> dict = new Dictionary<string, object> ();
-			TextAsset[] defaultTexts = Resources.LoadAll<TextAsset> (GetDefaultPath ());
+			Dictionary<string, object> dict = new Dictionary<string, object> ();			
 
-			TextAsset[] texts = Resources.LoadAll<TextAsset> (GetPath (cultureInfo.Name));//eg:zh-CN  en-US
-			if (texts == null || texts.Length == 0)
-				texts = Resources.LoadAll<TextAsset> (GetPath (cultureInfo.TwoLetterISOLanguageName));//eg:zh  en                      
+            try
+            {
+                TextAsset[] defaultTexts = Resources.LoadAll<TextAsset>(GetDefaultPath()); //eg:default
+                TextAsset[] twoLetterISOTexts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.TwoLetterISOLanguageName));//eg:zh  en
+                TextAsset[] texts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.Name));//eg:zh-CN  en-US
 
-			if ((defaultTexts == null || defaultTexts.Length <= 0) && (texts == null || texts.Length <= 0)) {
-				if (onCompleted != null)
-					onCompleted (dict);
-				return;
-			}
+                FillData(dict, defaultTexts);
+                FillData(dict, twoLetterISOTexts);
+                FillData(dict, texts);
+            }
+            finally
+            {
+                if (onCompleted != null)
+                    onCompleted(dict);
+            }
+        }
 
-			foreach (TextAsset text in defaultTexts) {
-				using (MemoryStream stream = new MemoryStream (text.bytes)) {
-					var data = parser.Parse (stream);
-					foreach (KeyValuePair<string, object> kv in data) {
-						dict [kv.Key] = kv.Value;
-					}
-				}
-			}
+        private void FillData(Dictionary<string, object> dict, TextAsset[] texts)
+        {
+            try
+            {
+                if (texts == null || texts.Length <= 0)
+                    return;
 
-			foreach (TextAsset text in texts) {
-				using (MemoryStream stream = new MemoryStream (text.bytes)) {
-					var data = parser.Parse (stream);
-					foreach (KeyValuePair<string, object> kv in data) {
-						dict [kv.Key] = kv.Value;
-					}
-				}
-			}
-
-			if (onCompleted != null)
-				onCompleted (dict);
-		}
-	}
+                foreach (TextAsset text in texts)
+                {
+                    try
+                    {
+                        using (MemoryStream stream = new MemoryStream(text.bytes))
+                        {
+                            var data = parser.Parse(stream);
+                            foreach (KeyValuePair<string, object> kv in data)
+                            {
+                                dict[kv.Key] = kv.Value;
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        if (log.IsWarnEnabled)
+                            log.WarnFormat("{0}", e);
+                    }
+                }
+            }
+            catch (Exception) { }
+        }
+    }
 }

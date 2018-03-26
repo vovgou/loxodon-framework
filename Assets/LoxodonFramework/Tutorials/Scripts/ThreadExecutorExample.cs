@@ -2,6 +2,9 @@
 using System.Collections;
 using System.Text;
 using System.Threading;
+#if NETFX_CORE
+using System.Threading.Tasks;
+#endif
 
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Execution;
@@ -45,8 +48,12 @@ namespace Loxodon.Framework.Tutorials
 		void Task2 (IPromise promise)
 		{
 			Debug.Log ("The task2 start");
-			Thread.Sleep (100);
-			promise.SetResult (); /* set a result of the task */
+#if NETFX_CORE
+            Task.Delay(100).Wait();
+#else
+            Thread.Sleep (100);
+#endif
+            promise.SetResult (); /* set a result of the task */
 			Debug.Log ("The task2 end");
 		}
 
@@ -62,9 +69,13 @@ namespace Loxodon.Framework.Tutorials
 				}
 
 				buf.Append (i).Append (" ");
-				Thread.Sleep (100);
-			}
-			promise.SetResult (buf.ToString ()); /* set a result of the task */
+#if NETFX_CORE
+                Task.Delay(100).Wait();
+#else
+                Thread.Sleep(100);
+#endif
+            }
+            promise.SetResult (buf.ToString ()); /* set a result of the task */
 			Debug.Log ("The task3 end");
 		}
 
@@ -83,9 +94,13 @@ namespace Loxodon.Framework.Tutorials
 				buf.Append (i).Append (" ");
 
 				promise.UpdateProgress (i / (float)n);
-				Thread.Sleep (100);
-			}
-			promise.SetResult (buf.ToString ()); /* set a result of the task */
+#if NETFX_CORE
+                Task.Delay(100).Wait();
+#else
+                Thread.Sleep(100);
+#endif
+            }
+            promise.SetResult (buf.ToString ()); /* set a result of the task */
 			Debug.Log ("The task4 end");
 		}
 	}

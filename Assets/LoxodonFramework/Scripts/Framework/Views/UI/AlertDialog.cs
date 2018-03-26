@@ -9,7 +9,7 @@ namespace Loxodon.Framework.Views
 {
     public class AlertDialog : IDialog
     {
-        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog log = LogManager.GetLogger(typeof(AlertDialog));
 
         public const int BUTTON_POSITIVE = -1;
         public const int BUTTON_NEGATIVE = -2;

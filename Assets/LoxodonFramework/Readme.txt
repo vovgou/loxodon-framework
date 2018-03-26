@@ -1,5 +1,5 @@
 ﻿Loxodon Framework Free
-Version: 1.1.5
+Version: 1.5.0
 © 2016, Clark Yang
 =======================================
 
@@ -18,6 +18,10 @@ Please email yangpc.china@gmail.com for any help or issues.
 
 UPDATE NOTES
 ----------------------------------------
+version 1.5.0
+	Refactor prefs module for compatibility with UWP platform.
+	Fixed a few bugs.
+
 version 1.1.5
 	Updated PathParser and BindingBuilder to support a new feature,eg:bindingSet.Bind(this.button).For(v => v.onClick).To(vm=>vm.OnClick()).
 	Loxodon.Framework.Localizations.ITypeConver method 'GetByte' renamed to 'GetType'.

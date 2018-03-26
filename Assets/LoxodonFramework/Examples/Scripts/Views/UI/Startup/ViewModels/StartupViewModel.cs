@@ -9,12 +9,15 @@ using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Commands;
 using Loxodon.Framework.ViewModels;
 using Loxodon.Framework.Localizations;
+#if NETFX_CORE
+using System.Threading.Tasks;
+#endif
 
 namespace Loxodon.Framework.Examples
 {
 	public class StartupViewModel : ViewModelBase
 	{
-		private static readonly ILog log = LogManager.GetLogger (System.Reflection.MethodBase.GetCurrentMethod ().DeclaringType);
+		private static readonly ILog log = LogManager.GetLogger (typeof(StartupViewModel));
 
 		private ProgressBar progressBar = new ProgressBar ();
 		private ICommand command;
@@ -53,9 +56,13 @@ namespace Loxodon.Framework.Examples
 			while (progress < 1f) {			
 				progress += 0.01f;
 				promise.UpdateProgress (progress);
-				//Thread.Sleep (50);
-				Thread.Sleep (30);
-			}
+#if NETFX_CORE
+                Task.Delay(30).Wait();       
+#else
+                //Thread.Sleep (50);
+                Thread.Sleep (30);
+#endif
+            }
 			promise.SetResult ();
 		}
 

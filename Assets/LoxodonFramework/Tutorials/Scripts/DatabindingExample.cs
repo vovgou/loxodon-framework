@@ -195,6 +195,7 @@ namespace Loxodon.Framework.Tutorials
 
             BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();
             staticBindingSet.Bind(this.title).For(v => v.text).To(() => Res.databinding_tutorials_title).OneTime();
+            //staticBindingSet.Bind(this.title).For(v => v.text).To("Res.databinding_tutorials_title").OneTime();
             staticBindingSet.Build();
         }
     }

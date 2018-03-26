@@ -38,6 +38,175 @@
             root/en-AU/
             </summary>
         </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetText(System.String)">
+            <summary>
+            Gets a message based on a message key or if no message is found the provided key is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetText(System.String,System.Object[])">
+            <summary>
+            Gets a message based on a key using the supplied args, as defined in "string.Format", or the provided key if no message is found.
+            </summary>
+            <param name="key"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetText(System.String,System.String)">
+            <summary>
+            Gets a message based on a key, or, if the message is not found, a supplied default value is returned.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetText(System.String,System.String,System.Object[])">
+            <summary>
+            Gets a message based on a key using the supplied args, as defined in "string.Format", or, if the message is not found, a supplied  default value is returned.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetBoolean(System.String)">
+            <summary>
+            Gets a boolean value based on a key, or, if the value is not found, the value 'false' is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetBoolean(System.String,System.Boolean)">
+            <summary>
+            Gets a boolean value based on a key, or, if the value is not found, a supplied default value is returned.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetInt(System.String)">
+            <summary>
+            Gets a int value based on a key, or, if the value is not found, the value '0' is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetInt(System.String,System.Int32)">
+            <summary>
+            Gets a int value based on a key, or, if the value is not found, a supplied default value is returned.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetLong(System.String)">
+            <summary>
+            Gets a long value based on a key, or, if the value is not found, the value '0' is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetLong(System.String,System.Int64)">
+            <summary>
+            Gets a long value based on a key, or, if the value is not found, a supplied default value is returned.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetDouble(System.String)">
+            <summary>
+            Gets a double value based on a key, or, if the value is not found, the value '0' is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetDouble(System.String,System.Double)">
+            <summary>
+            Gets a double value based on a key, or, if the value is not found, a supplied default value is returned.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetFloat(System.String)">
+            <summary>
+            Gets a float value based on a key, or, if the value is not found, the value '0' is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetFloat(System.String,System.Single)">
+            <summary>
+            Gets a float value based on a key, or, if the value is not found, a supplied default value is returned.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetColor(System.String)">
+            <summary>
+            Gets a color value based on a key, or, if the value is not found, the value '#000000' is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetColor(System.String,UnityEngine.Color)">
+            <summary>
+            Gets a color value based on a key, or, if the value is not found, a supplied default value is returned.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetVector3(System.String)">
+            <summary>
+            Gets a vector3 value based on a key, or, if the value is not found, the value 'Vector3.zero' is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetVector3(System.String,UnityEngine.Vector3)">
+            <summary>
+            Gets a vector3 value based on a key, or, if the value is not found, a supplied default value is returned.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetDateTime(System.String)">
+            <summary>
+            Gets a datetime value based on a key, or, if the value is not found, the value 'DateTime(0)' is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.GetDateTime(System.String,System.DateTime)">
+            <summary>
+            Gets a datetime value based on a key, or, if the value is not found, a supplied default value is returned.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.Get``1(System.String)">
+            <summary>
+            Gets a value based on a key, or, if the value is not found, the value 'default(T)' is returned.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Loxodon.Framework.Localizations.Localization.Get``1(System.String,``0)">
+            <summary>
+            Gets a value based on a key, or, if the value is not found, a supplied default value is returned.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
         <member name="T:Loxodon.Framework.Localizations.XmlDocumentParser">
             <summary>
             XML document parser

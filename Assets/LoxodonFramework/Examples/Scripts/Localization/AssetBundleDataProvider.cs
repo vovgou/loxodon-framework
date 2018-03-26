@@ -6,6 +6,7 @@ using System.Globalization;
 using UnityEngine;
 using Loxodon.Framework.Execution;
 using Loxodon.Framework.Localizations;
+using Loxodon.Log;
 
 namespace Loxodon.Framework.Examples
 {
@@ -26,7 +27,9 @@ namespace Loxodon.Framework.Examples
     /// </summary>
     public class AssetBundleDataProvider : IDataProvider
 	{
-		private string assetBundleUrl;
+        private static readonly ILog log = LogManager.GetLogger(typeof(AssetBundleDataProvider));
+
+        private string assetBundleUrl;
 		private IDocumentParser parser;
 		private ICoroutineExecutor executor;
 
@@ -46,57 +49,76 @@ namespace Loxodon.Framework.Examples
 		public void Load (CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
 		{			
 			executor.RunOnCoroutine (DoLoad (cultureInfo, onCompleted));
-		}
+		}	
 
-		IEnumerator DoLoad (CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
-		{
-			Dictionary<string, object> dict = new Dictionary<string, object> ();
-			using (WWW www = new WWW (this.assetBundleUrl)) {
-				
-				while (!www.isDone)
-					yield return null;
+        IEnumerator DoLoad(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
+        {
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+            using (WWW www = new WWW(this.assetBundleUrl))
+            {
 
-				AssetBundle bundle = www.assetBundle;
+                while (!www.isDone)
+                    yield return null;
 
-				List<string> assetNames = new List<string> (bundle.GetAllAssetNames ());
+                AssetBundle bundle = www.assetBundle;
+                try
+                {
 
-				List<string> defaultPaths = assetNames.FindAll (p => p.Contains ("/default/"));
-				List<string> paths = assetNames.FindAll (p => p.Contains (string.Format ("/{0}/", cultureInfo.Name)));
-				if (paths == null || paths.Count <= 0)
-					paths = assetNames.FindAll (p => p.Contains (string.Format ("/{0}/", cultureInfo.TwoLetterISOLanguageName)));
+                    List<string> assetNames = new List<string>(bundle.GetAllAssetNames());
 
-				if ((defaultPaths == null || defaultPaths.Count <= 0) && (paths == null || paths.Count <= 0)) {
-					if (onCompleted != null)
-						onCompleted (dict);
-					yield break;
-				}
+                    List<string> defaultPaths = assetNames.FindAll(p => p.Contains("/default/"));
+                    List<string> twoLetterISOpaths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.TwoLetterISOLanguageName)));
+                    List<string> paths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.Name)));
 
-				foreach (string path in defaultPaths) {
-					TextAsset text = bundle.LoadAsset<TextAsset> (path);
-					using (MemoryStream stream = new MemoryStream (text.bytes)) {
-						var data = parser.Parse (stream);
-						foreach (KeyValuePair<string, object> kv in data) {
-							dict [kv.Key] = kv.Value;
-						}
-					}
-				}
+                    FillData(dict, bundle, defaultPaths);
+                    FillData(dict, bundle, twoLetterISOpaths);
+                    FillData(dict, bundle, paths);
+                }
+                finally
+                {
+                    try
+                    {
+                        if (bundle != null)
+                            bundle.Unload(true);
+                    }
+                    catch (Exception) { }
 
-				foreach (string path in paths) {
-					TextAsset text = bundle.LoadAsset<TextAsset> (path);
-					using (MemoryStream stream = new MemoryStream (text.bytes)) {
-						var data = parser.Parse (stream);
-						foreach (KeyValuePair<string, object> kv in data) {
-							dict [kv.Key] = kv.Value;
-						}
-					}
-				}
+                    if (onCompleted != null)
+                        onCompleted(dict);
+                }
+            }
+        }
 
-				bundle.Unload (true);
+        private void FillData(Dictionary<string, object> dict, AssetBundle bundle, List<string> paths)
+        {
+            try
+            {
+                if (paths == null || paths.Count <= 0)
+                    return;
 
-				if (onCompleted != null)
-					onCompleted (dict);
-			}
-		}
-	}
+                foreach (string path in paths)
+                {
+                    try
+                    {
+                        TextAsset text = bundle.LoadAsset<TextAsset>(path);
+                        using (MemoryStream stream = new MemoryStream(text.bytes))
+                        {
+                            var data = parser.Parse(stream);
+                            foreach (KeyValuePair<string, object> kv in data)
+                            {
+                                dict[kv.Key] = kv.Value;
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        if (log.IsWarnEnabled)
+                            log.WarnFormat("{0}", e);
+                    }
+                }
+            }
+            catch (Exception) { }
+        }
+    }
 
 }
