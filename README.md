@@ -1,6 +1,6 @@
 # Loxodon Framework
 
-[![release](https://img.shields.io/badge/release-v1.5.0-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
+[![release](https://img.shields.io/badge/release-v1.6.5-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
 
 **MVVM Framework for Unity3D**
 
