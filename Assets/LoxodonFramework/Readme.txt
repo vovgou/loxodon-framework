@@ -1,5 +1,5 @@
 ﻿Loxodon Framework Free
-Version: 1.5.0
+Version: 1.6.5
 © 2016, Clark Yang
 =======================================
 
@@ -18,6 +18,20 @@ Please email yangpc.china@gmail.com for any help or issues.
 
 UPDATE NOTES
 ----------------------------------------
+version 1.6.5
+	Added interactive requests and modified examples of interactive requests.
+	Added data binding for interactive requests.
+	Added the Variable and examples of Variable.
+	Improved data binding.
+	Fixed a bug about the WeakAction.
+	Deleted the class named ObjectSourceProxyFactory.
+
+version 1.5.5
+	AsyncTask,ProgressTask:Added a new feature that is capturing coroutine's exceptions and supporting cancellation of coroutine task.
+
+version 1.5.2
+	Fixed a bug that the Toggle bind to the bool value.
+
 version 1.5.0
 	Refactor prefs module for compatibility with UWP platform.
 	Fixed a few bugs.

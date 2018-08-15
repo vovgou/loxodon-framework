@@ -1,96 +1,63 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
+﻿using UnityEngine.UI;
 
 using Loxodon.Log;
-using Loxodon.Framework.Binding.Contexts;
 using Loxodon.Framework.Localizations;
 using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Views;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Binding.Builder;
-using Loxodon.Framework.Asynchronous;
-using Loxodon.Framework.Commands;
+using Loxodon.Framework.Interactivity;
 
 namespace Loxodon.Framework.Examples
 {
-	public class LoginWindow  : Window
-	{
-		private static readonly ILog log = LogManager.GetLogger (typeof(LoginWindow));
+    public class LoginWindow : Window
+    {
+        private static readonly ILog log = LogManager.GetLogger(typeof(LoginWindow));
 
-		public InputField username;
-		public InputField password;
-		public Text usernameErrorPrompt;
-		public Text passwordErrorPrompt;
-		public Button confirmButton;
-		public Button cancelButton;
+        public InputField username;
+        public InputField password;
+        public Text usernameErrorPrompt;
+        public Text passwordErrorPrompt;
+        public Button confirmButton;
+        public Button cancelButton;
 
-		private LoginViewModel viewModel;
-		private SimpleCommand loginCommand;
-		private Localization localization;
+        private LoginViewModel viewModel;
+        private Localization localization;
 
-		public event Action<bool,Account> OnLoginFinished;
+        protected override void OnCreate(IBundle bundle)
+        {
+            ApplicationContext context = Context.GetApplicationContext();
+            this.localization = context.GetService<Localization>();
+            var accountService = context.GetService<IAccountService>();
+            var globalPreferences = context.GetGlobalPreferences();
 
-		protected override void OnCreate (IBundle bundle)
-		{
-			ApplicationContext context = Context.GetApplicationContext ();
-			this.localization = context.GetService<Localization> ();
-			var accountService = context.GetService<IAccountService> ();
-			var globalPreferences = context.GetGlobalPreferences ();
-			this.viewModel = new LoginViewModel (accountService, localization, globalPreferences);
-			this.loginCommand = new SimpleCommand (Login);
-			this.viewModel.LoginCommand = this.loginCommand;
+            this.viewModel = (LoginViewModel)this.GetDataContext();
 
-			BindingSet<LoginWindow,LoginViewModel> bindingSet = this.CreateBindingSet (viewModel);
-			bindingSet.Bind (this.username).For (v => v.text, v => v.onEndEdit).To (vm => vm.Username).TwoWay ();
-			bindingSet.Bind (this.usernameErrorPrompt).For (v => v.text).To (vm => vm.Errors ["username"]).OneWay ();
-			bindingSet.Bind (this.password).For (v => v.text, v => v.onEndEdit).To (vm => vm.Password).TwoWay ();
-			bindingSet.Bind (this.passwordErrorPrompt).For (v => v.text).To (vm => vm.Errors ["password"]).OneWay ();
-			bindingSet.Bind (this.confirmButton).For (v => v.onClick).To (vm => vm.LoginCommand);
-			bindingSet.Build ();
+            BindingSet<LoginWindow, LoginViewModel> bindingSet = this.CreateBindingSet<LoginWindow, LoginViewModel>();
+            bindingSet.Bind().For(v => v.OnInteractionFinished(null, null)).To(vm => vm.InteractionFinished);
+            bindingSet.Bind().For(v => v.OnToastShow(null, null)).To(vm => vm.ToastRequest);
 
-			this.cancelButton.onClick.AddListener (() => {			
-				this.Dismiss ();
-				this.RaiseOnLoginFinish (false, null);
-			});
-		}
+            bindingSet.Bind(this.username).For(v => v.text, v => v.onEndEdit).To(vm => vm.Username).TwoWay();
+            bindingSet.Bind(this.usernameErrorPrompt).For(v => v.text).To(vm => vm.Errors["username"]).OneWay();
+            bindingSet.Bind(this.password).For(v => v.text, v => v.onEndEdit).To(vm => vm.Password).TwoWay();
+            bindingSet.Bind(this.passwordErrorPrompt).For(v => v.text).To(vm => vm.Errors["password"]).OneWay();
+            bindingSet.Bind(this.confirmButton).For(v => v.onClick).To(vm => vm.LoginCommand);
+            bindingSet.Bind(this.cancelButton).For(v => v.onClick).To(vm => vm.CancelCommand);
+            bindingSet.Build();
+        }
 
-		protected virtual void Login ()
-		{
-			Loading loading = null;
-			IAsyncTask<Account> task = this.viewModel.Login ();
-			task.OnPreExecute (() => {
-				loading = Loading.Show ();
-				this.loginCommand.Enabled = false;/*by databinding, auto set button.interactable = false. */
-			}).OnPostExecute ((account) => {
-				if (account != null) {
-					/* login success */
-					this.Dismiss ();
-					this.RaiseOnLoginFinish (true, account);
-				} else {
-					/* Login failure */
-					var tipContent = this.localization.GetText ("login.failure.tip", "Login failure.");
-					Toast.Show (this, tipContent, 2f);
-				}
-			}).OnError (e => {
-			
-				if (log.IsErrorEnabled)
-					log.Error ("OnError:" + e.StackTrace);
-			
-				var tipContent = this.localization.GetText ("login.exception.tip", "Login exception.");
-				Toast.Show (this, tipContent, 2f);
-			}).OnFinish (() => {
-				loading.Dispose ();
-				this.loginCommand.Enabled = true;/*by databinding, auto set button.interactable = true. */
-			}).Start ();
-		}
+        public virtual void OnInteractionFinished(object sender, InteractionEventArgs args)
+        {
+            this.Dismiss();
+        }
 
-		protected void RaiseOnLoginFinish (bool result, Account account)
-		{
-			if (this.OnLoginFinished != null) {
-				this.OnLoginFinished (result, account);
-			}
-		}
-	}
+        public virtual void OnToastShow(object sender, InteractionEventArgs args)
+        {
+            Notification notification = args.Context as Notification;
+            if (notification == null)
+                return;
+
+            Toast.Show(this, notification.Message, 2f);
+        }
+    }
 }

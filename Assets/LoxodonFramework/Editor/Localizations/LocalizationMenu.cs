@@ -1,17 +1,14 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System;
-using System.Text;
 using System.IO;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Globalization;
 
 using Loxodon.Framework.Localizations;
 
 namespace Loxodon.Framework.Editors
-{	
-	public static class LocalizationMenu
+{
+    public static class LocalizationMenu
 	{
 		private const string MENU_NAME = "Assets/Loxodon/Localization Make";
 		private const string CLASS_NAME_KEY = "_LOXODON_LOCALIZATION_CLASS_NAME_KEY";

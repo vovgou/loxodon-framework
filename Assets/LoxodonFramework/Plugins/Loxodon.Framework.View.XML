@@ -4,6 +4,82 @@
         <name>Loxodon.Framework.View</name>
     </assembly>
     <members>
+        <member name="T:Loxodon.Framework.Interactivity.IInteractionRequest">
+            <summary>
+            Represents a request from user interaction.
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Interactivity.IInteractionRequest.Raised">
+            <summary>
+            Fired when the interaction is needed.
+            </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Interactivity.InteractionRequest">
+            <summary>
+            Implementation of the <see cref="T:Loxodon.Framework.Interactivity.IInteractionRequest"/> interface.
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Interactivity.InteractionRequest.Raised">
+            <summary>
+            Fired when interaction is needed.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Interactivity.InteractionRequest.Raise">
+            <summary>
+            Fires the Raised event.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Interactivity.InteractionRequest.Raise(System.Action)">
+            <summary>
+            Fires the Raised event.
+            </summary>
+            <param name="callback">The callback to execute when the interaction is completed.</param>
+        </member>
+        <member name="T:Loxodon.Framework.Interactivity.InteractionRequest`1">
+            <summary>
+            Implementation of the <see cref="T:Loxodon.Framework.Interactivity.IInteractionRequest"/> interface.
+            </summary>
+        </member>
+        <member name="E:Loxodon.Framework.Interactivity.InteractionRequest`1.Raised">
+            <summary>
+            Fired when interaction is needed.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Interactivity.InteractionRequest`1.Raise(`0)">
+            <summary>
+            Fires the Raised event.
+            </summary>
+            <param name="context">The context for the interaction request.</param>
+        </member>
+        <member name="M:Loxodon.Framework.Interactivity.InteractionRequest`1.Raise(`0,System.Action{`0})">
+            <summary>
+            Fires the Raised event.
+            </summary>
+            <param name="context">The context for the interaction request.</param>
+            <param name="callback">The callback to execute when the interaction is completed.</param>
+        </member>
+        <member name="T:Loxodon.Framework.Interactivity.InteractionEventArgs">
+            <summary>
+            Event args for the <see cref="E:Loxodon.Framework.Interactivity.IInteractionRequest.Raised"/> event.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Interactivity.InteractionEventArgs.#ctor(System.Object,System.Action)">
+            <summary>
+            Constructs a new instance of <see cref="T:Loxodon.Framework.Interactivity.InteractionEventArgs"/>
+            </summary>
+            <param name="context"></param>
+            <param name="callback"></param>
+        </member>
+        <member name="P:Loxodon.Framework.Interactivity.InteractionEventArgs.Context">
+            <summary>
+            Gets the context for a requested interaction.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Interactivity.InteractionEventArgs.Callback">
+            <summary>
+            Gets the callback to execute when an interaction is completed.
+            </summary>
+        </member>
         <member name="M:Loxodon.Framework.ViewModels.ViewModelBase.Set``1(``0@,``0,System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)">
             <summary>
             Set the specified propertyName, field, newValue and broadcast.
@@ -332,12 +408,12 @@
         </member>
         <member name="M:Loxodon.Framework.Views.Window.OnShow">
             <summary>
-            在显示动画开始前调用
+            Called before the start of the display animation.
             </summary>
         </member>
         <member name="M:Loxodon.Framework.Views.Window.OnHide">
             <summary>
-            在隐藏动画结束后调用
+            Called at the end of the hidden animation.
             </summary>
         </member>
         <member name="M:Loxodon.Framework.Views.WindowContainer.Passivate(System.Boolean)">

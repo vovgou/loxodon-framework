@@ -1,17 +1,11 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System;
+﻿using System;
 using System.Text;
-using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Globalization;
-
-using Loxodon.Framework.Localizations;
 
 namespace Loxodon.Framework.Editors
 {
-	public class CodeGenerator
+    public class CodeGenerator
 	{
 		public string Generate (string className, Dictionary<string,object> dict)
 		{

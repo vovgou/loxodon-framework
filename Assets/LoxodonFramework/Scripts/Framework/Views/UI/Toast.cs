@@ -2,6 +2,7 @@
 using UnityEngine;
 
 using Loxodon.Framework.Contexts;
+using System;
 
 namespace Loxodon.Framework.Views
 {
@@ -18,15 +19,20 @@ namespace Loxodon.Framework.Views
 
         public static Toast Show(IUIViewGroup viewGroup, string text, float duration = 3f)
         {
-            return Show(viewGroup, text, duration, null);
+            return Show(ViewName, viewGroup, text, duration, null, null);
         }
 
         public static Toast Show(IUIViewGroup viewGroup, string text, float duration, UILayout layout)
         {
-            return Show(ViewName, viewGroup, text, duration, layout);
+            return Show(ViewName, viewGroup, text, duration, layout, null);
         }
 
-        public static Toast Show(string viewName, IUIViewGroup viewGroup, string text, float duration, UILayout layout)
+        public static Toast Show(IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback)
+        {
+            return Show(ViewName, viewGroup, text, duration, layout, callback);
+        }
+
+        public static Toast Show(string viewName, IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback)
         {
             if (string.IsNullOrEmpty(viewName))
                 viewName = ViewName;
@@ -45,17 +51,23 @@ namespace Loxodon.Framework.Views
         private string text;
         private ToastView view;
         private UILayout layout;
+        private Action callback;
 
-        protected Toast(IUIViewGroup viewGroup, string text, float duration) : this(viewGroup, text, duration, null)
+        protected Toast(IUIViewGroup viewGroup, string text, float duration) : this(viewGroup, text, duration, null, null)
         {
         }
 
-        protected Toast(IUIViewGroup viewGroup, string text, float duration, UILayout layout)
+        protected Toast(IUIViewGroup viewGroup, string text, float duration, UILayout layout) : this(viewGroup, text, duration, layout, null)
+        {
+        }
+
+        protected Toast(IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback)
         {
             this.viewGroup = viewGroup;
             this.text = text;
             this.duration = duration;
             this.layout = layout;
+            this.callback = callback;
         }
 
         public float Duration
@@ -94,6 +106,7 @@ namespace Loxodon.Framework.Views
                     this.view.Visibility = false;
                     this.viewGroup.RemoveView(this.view);
                     GameObject.Destroy(this.view.Owner);
+                    this.DoCallback();
                 }).Play();
             }
             else
@@ -101,6 +114,7 @@ namespace Loxodon.Framework.Views
                 this.view.Visibility = false;
                 this.viewGroup.RemoveView(this.view);
                 GameObject.Destroy(this.view.Owner);
+                this.DoCallback();
             }
         }
 
@@ -124,5 +138,17 @@ namespace Loxodon.Framework.Views
             yield return new WaitForSeconds(duration);
             this.Cancel();
         }
-    }    
+
+        protected void DoCallback()
+        {
+            try
+            {
+                if (this.callback != null)
+                    this.callback();
+            }
+            catch (Exception)
+            {
+            }
+        }
+    }
 }

@@ -56,22 +56,16 @@
              <param name="task"></param>
              <param name="runOnMainThread"></param>
         </member>
-        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask.#ctor(System.Action{Loxodon.Framework.Asynchronous.IPromise},System.Boolean)">
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask.#ctor(System.Action{Loxodon.Framework.Asynchronous.IPromise},System.Boolean,System.Boolean)">
             <summary>
             
             </summary>
             <param name="task"></param>
             <param name="runOnMainThread"></param>
         </member>
-        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask.#ctor(System.Collections.IEnumerator)">
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask.#ctor(System.Collections.IEnumerator,System.Boolean)">
             <summary>
             run on main thread
-            </summary>
-            <param name="task"></param>
-        </member>
-        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask.#ctor(System.Func{Loxodon.Framework.Asynchronous.IPromise,System.Collections.IEnumerator},System.Boolean)">
-            <summary>
-            run on main thread.
             </summary>
             <param name="task"></param>
         </member>
@@ -82,7 +76,7 @@
             <param name="task"></param>
             <param name="runOnMainThread"></param>
         </member>
-        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask`1.#ctor(System.Action{Loxodon.Framework.Asynchronous.IPromise{`0}},System.Boolean)">
+        <member name="M:Loxodon.Framework.Asynchronous.AsyncTask`1.#ctor(System.Action{Loxodon.Framework.Asynchronous.IPromise{`0}},System.Boolean,System.Boolean)">
             <summary>
             
             </summary>
@@ -571,12 +565,29 @@
             </summary>
             <param name="task"></param>
             <param name="runOnMainThread"></param>
+            <param name="cancelable"></param>
         </member>
         <member name="M:Loxodon.Framework.Asynchronous.ProgressTask`1.#ctor(System.Func{Loxodon.Framework.Asynchronous.IProgressPromise{`0},System.Collections.IEnumerator},System.Boolean)">
             <summary>
             run on main thread.
             </summary>
             <param name="task"></param>
+            <param name="cancelable"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ProgressTask`2.#ctor(System.Action{Loxodon.Framework.Asynchronous.IProgressPromise{`0,`1}},System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="task"></param>
+            <param name="runOnMainThread"></param>
+            <param name="cancelable"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Asynchronous.ProgressTask`2.#ctor(System.Func{Loxodon.Framework.Asynchronous.IProgressPromise{`0,`1},System.Collections.IEnumerator},System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="task"></param>
+            <param name="cancelable"></param>
         </member>
         <member name="M:Loxodon.Framework.Asynchronous.ISynchronizable.WaitForDone">
             <summary>
@@ -667,6 +678,99 @@
             <exception cref="T:System.TimeoutException"></exception>
             <exception cref="T:System.Exception"></exception>
             <returns></returns>
+        </member>
+        <member name="T:Loxodon.Framework.Commands.CompositeCommand">
+            <summary>
+            The CompositeCommand composes one or more ICommands.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Commands.CompositeCommand.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Loxodon.Framework.Commands.CompositeCommand"/>.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Commands.CompositeCommand.#ctor(System.Boolean)">
+            <summary>
+            Initializes a new instance of <see cref="T:Loxodon.Framework.Commands.CompositeCommand"/>.
+            </summary>
+            <param name="monitorCommandActivity">Indicates when the command activity is going to be monitored.</param>
+        </member>
+        <member name="M:Loxodon.Framework.Commands.CompositeCommand.RegisterCommand(Loxodon.Framework.Commands.ICommand)">
+            <summary>
+            Adds a command to the collection and signs up for the <see cref="E:Loxodon.Framework.Commands.ICommand.CanExecuteChanged"/> event of it.
+            </summary>
+             <remarks>
+            If this command is set to monitor command activity, and <paramref name="command"/> 
+            implements the <see cref="T:Loxodon.Framework.Commands.IActiveAware"/> interface, this method will subscribe to its
+            <see cref="E:Loxodon.Framework.Commands.IActiveAware.IsActiveChanged"/> event.
+            </remarks>
+            <param name="command">The command to register.</param>
+        </member>
+        <member name="M:Loxodon.Framework.Commands.CompositeCommand.UnregisterCommand(Loxodon.Framework.Commands.ICommand)">
+            <summary>
+            Removes a command from the collection and removes itself from the <see cref="E:Loxodon.Framework.Commands.ICommand.CanExecuteChanged"/> event of it.
+            </summary>
+            <param name="command">The command to unregister.</param>
+        </member>
+        <member name="M:Loxodon.Framework.Commands.CompositeCommand.CanExecute(System.Object)">
+            <summary>
+            Forwards <see cref="M:Loxodon.Framework.Commands.ICommand.CanExecute(System.Object)"/> to the registered commands and returns
+            <see langword="true" /> if all of the commands return <see langword="true" />.
+            </summary>
+            <param name="parameter">Data used by the command.
+            If the command does not require data to be passed, this object can be set to <see langword="null" />.
+            </param>
+            <returns><see langword="true" /> if all of the commands return <see langword="true" />; otherwise, <see langword="false" />.</returns>
+        </member>
+        <member name="E:Loxodon.Framework.Commands.CompositeCommand.CanExecuteChanged">
+            <summary>
+            Occurs when any of the registered commands raise <see cref="E:Loxodon.Framework.Commands.ICommand.CanExecuteChanged"/>.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Commands.CompositeCommand.Execute(System.Object)">
+            <summary>
+            Forwards <see cref="M:Loxodon.Framework.Commands.ICommand.Execute(System.Object)"/> to the registered commands.
+            </summary>
+            <param name="parameter">Data used by the command.
+            If the command does not require data to be passed, this object can be set to <see langword="null" />.
+            </param>
+        </member>
+        <member name="M:Loxodon.Framework.Commands.CompositeCommand.ShouldExecute(Loxodon.Framework.Commands.ICommand)">
+            <summary>
+            Evaluates if a command should execute.
+            </summary>
+            <param name="command">The command to evaluate.</param>
+            <returns>A <see cref="T:System.Boolean"/> value indicating whether the command should be used 
+            when evaluating <see cref="M:Loxodon.Framework.Commands.CompositeCommand.CanExecute(System.Object)"/> and <see cref="M:Loxodon.Framework.Commands.CompositeCommand.Execute(System.Object)"/>.</returns>
+            <remarks>
+            If this command is set to monitor command activity, and <paramref name="command"/>
+            implements the <see cref="T:Loxodon.Framework.Commands.IActiveAware"/> interface, 
+            this method will return <see langword="false" /> if the command's <see cref="P:Loxodon.Framework.Commands.IActiveAware.IsActive"/> 
+            property is <see langword="false" />; otherwise it always returns <see langword="true" />.</remarks>
+        </member>
+        <member name="P:Loxodon.Framework.Commands.CompositeCommand.RegisteredCommands">
+            <summary>
+            Gets the list of all the registered commands.
+            </summary>
+            <value>A list of registered commands.</value>
+            <remarks>This returns a copy of the commands subscribed to the CompositeCommand.</remarks>
+        </member>
+        <member name="T:Loxodon.Framework.Commands.IActiveAware">
+            <summary>
+            Interface that defines if the object instance is active
+            and notifies when the activity changes.
+            </summary>
+        </member>
+        <member name="P:Loxodon.Framework.Commands.IActiveAware.IsActive">
+            <summary>
+            Gets or sets a value indicating whether the object is active.
+            </summary>
+            <value><see langword="true" /> if the object is active; otherwise <see langword="false" />.</value>
+        </member>
+        <member name="E:Loxodon.Framework.Commands.IActiveAware.IsActiveChanged">
+            <summary>
+            Notifies that the value for <see cref="P:Loxodon.Framework.Commands.IActiveAware.IsActive"/> property has changed.
+            </summary>
         </member>
         <member name="T:Loxodon.Framework.Commands.ICommand">
             <summary>
@@ -818,45 +922,182 @@
         </member>
         <member name="T:Loxodon.Framework.Messaging.IMessenger">
             <summary>
-            
+            The Messenger is a class allowing objects to exchange messages.
             </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.IMessenger.Subscribe(System.Type,System.Action{System.Object})">
+            <summary>
+            Subscribe a message.
+            </summary>
+            <param name="type">The type of message that the recipient subscribes for.</param>
+            <param name="action">The action that will be executed when a message of type T is sent.</param>
+            <returns>Disposable object that can be used to unsubscribe the message from the messenger.
+            if the disposable object is disposed,the message is automatically unsubscribed.</returns>
         </member>
         <member name="M:Loxodon.Framework.Messaging.IMessenger.Subscribe``1(System.Action{``0})">
             <summary>
-            Subscribe message
+            Subscribe a message.
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="action"></param>
-            <returns></returns>
+            <typeparam name="T">The type of message that the recipient subscribes for.</typeparam>
+            <param name="action">The action that will be executed when a message of type T is sent.</param>
+            <returns>Disposable object that can be used to unsubscribe the message from the messenger.
+            if the disposable object is disposed,the message is automatically unsubscribed.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.IMessenger.Subscribe(System.String,System.Type,System.Action{System.Object})">
+            <summary>
+            Subscribe a message.
+            </summary>
+            <param name="channel">A name for a messaging channel.If a recipient subscribes
+            using a channel, and a sender sends a message using the same channel, then this
+            message will be delivered to the recipient. Other recipients who did not
+            use a channel when subscribing (or who used a different channel) will not
+            get the message. </param>
+            <param name="type">The type of message that the recipient subscribes for.</param>
+            <param name="action">The action that will be executed when a message of type T is sent.</param>
+            <returns>Disposable object that can be used to unsubscribe the message from the messenger.
+            if the disposable object is disposed,the message is automatically unsubscribed.</returns>
         </member>
         <member name="M:Loxodon.Framework.Messaging.IMessenger.Subscribe``1(System.String,System.Action{``0})">
             <summary>
-            Subscribe message
+            Subscribe a message.
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="name"></param>
-            <param name="action"></param>
-            <returns></returns>
+            <typeparam name="T">The type of message that the recipient subscribes for.</typeparam>
+            <param name="channel">A name for a messaging channel.If a recipient subscribes
+            using a channel, and a sender sends a message using the same channel, then this
+            message will be delivered to the recipient. Other recipients who did not
+            use a channel when subscribing (or who used a different channel) will not
+            get the message. </param>
+            <param name="action">The action that will be executed when a message of type T is sent.</param>
+            <returns>Disposable object that can be used to unsubscribe the message from the messenger.
+            if the disposable object is disposed,the message is automatically unsubscribed.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.IMessenger.Publish(System.Object)">
+            <summary>
+            Publish a message to subscribed recipients. 
+            </summary>
+            <param name="message"></param>
         </member>
         <member name="M:Loxodon.Framework.Messaging.IMessenger.Publish``1(``0)">
             <summary>
-            Publish message
+            Publish a message to subscribed recipients. 
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="message"></param>
+            <typeparam name="T">The type of message that will be sent.</typeparam>
+            <param name="message">The message to send to subscribed recipients.</param>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.IMessenger.Publish(System.String,System.Object)">
+            <summary>
+            Publish a message to subscribed recipients. 
+            </summary>
+            <param name="channel">A name for a messaging channel.If a recipient subscribes
+            using a channel, and a sender sends a message using the same channel, then this
+            message will be delivered to the recipient. Other recipients who did not
+            use a channel when subscribing (or who used a different channel) will not
+            get the message. </param>
+            <param name="message">The message to send to subscribed recipients.</param>
         </member>
         <member name="M:Loxodon.Framework.Messaging.IMessenger.Publish``1(System.String,``0)">
             <summary>
-            Publish message
+            Publish a message to subscribed recipients. 
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="name"></param>
-            <param name="message"></param>
+            <typeparam name="T">The type of message that will be sent.</typeparam>
+            <param name="channel">A name for a messaging channel.If a recipient subscribes
+            using a channel, and a sender sends a message using the same channel, then this
+            message will be delivered to the recipient. Other recipients who did not
+            use a channel when subscribing (or who used a different channel) will not
+            get the message. </param>
+            <param name="message">The message to send to subscribed recipients.</param>
         </member>
         <member name="P:Loxodon.Framework.Messaging.MessageBase.Sender">
             <summary>
             Gets or sets the message's sender.
             </summary>
+        </member>
+        <member name="T:Loxodon.Framework.Messaging.Messenger">
+            <summary>
+            The Messenger is a class allowing objects to exchange messages.
+            </summary>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.Messenger.Subscribe(System.Type,System.Action{System.Object})">
+            <summary>
+            Subscribe a message.
+            </summary>
+            <param name="type">The type of message that the recipient subscribes for.</param>
+            <param name="action">The action that will be executed when a message of type T is sent.</param>
+            <returns>Disposable object that can be used to unsubscribe the message from the messenger.
+            if the disposable object is disposed,the message is automatically unsubscribed.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.Messenger.Subscribe``1(System.Action{``0})">
+            <summary>
+            Subscribe a message.
+            </summary>
+            <typeparam name="T">The type of message that the recipient subscribes for.</typeparam>
+            <param name="action">The action that will be executed when a message of type T is sent.</param>
+            <returns>Disposable object that can be used to unsubscribe the message from the messenger.
+            if the disposable object is disposed,the message is automatically unsubscribed.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.Messenger.Subscribe(System.String,System.Type,System.Action{System.Object})">
+            <summary>
+            Subscribe a message.
+            </summary>
+            <param name="channel">A name for a messaging channel.If a recipient subscribes
+            using a channel, and a sender sends a message using the same channel, then this
+            message will be delivered to the recipient. Other recipients who did not
+            use a channel when subscribing (or who used a different channel) will not
+            get the message. </param>
+            <param name="type">The type of message that the recipient subscribes for.</param>
+            <param name="action">The action that will be executed when a message of type T is sent.</param>
+            <returns>Disposable object that can be used to unsubscribe the message from the messenger.
+            if the disposable object is disposed,the message is automatically unsubscribed.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.Messenger.Subscribe``1(System.String,System.Action{``0})">
+            <summary>
+            Subscribe a message.
+            </summary>
+            <typeparam name="T">The type of message that the recipient subscribes for.</typeparam>
+            <param name="channel">A name for a messaging channel.If a recipient subscribes
+            using a channel, and a sender sends a message using the same channel, then this
+            message will be delivered to the recipient. Other recipients who did not
+            use a channel when subscribing (or who used a different channel) will not
+            get the message. </param>
+            <param name="action">The action that will be executed when a message of type T is sent.</param>
+            <returns>Disposable object that can be used to unsubscribe the message from the messenger.
+            if the disposable object is disposed,the message is automatically unsubscribed.</returns>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.Messenger.Publish(System.Object)">
+            <summary>
+            Publish a message to subscribed recipients. 
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.Messenger.Publish``1(``0)">
+            <summary>
+            Publish a message to subscribed recipients. 
+            </summary>
+            <typeparam name="T">The type of message that will be sent.</typeparam>
+            <param name="message">The message to send to subscribed recipients.</param>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.Messenger.Publish(System.String,System.Object)">
+            <summary>
+            Publish a message to subscribed recipients. 
+            </summary>
+            <param name="channel">A name for a messaging channel.If a recipient subscribes
+            using a channel, and a sender sends a message using the same channel, then this
+            message will be delivered to the recipient. Other recipients who did not
+            use a channel when subscribing (or who used a different channel) will not
+            get the message. </param>
+            <param name="message">The message to send to subscribed recipients.</param>
+        </member>
+        <member name="M:Loxodon.Framework.Messaging.Messenger.Publish``1(System.String,``0)">
+            <summary>
+            Publish a message to subscribed recipients. 
+            </summary>
+            <typeparam name="T">The type of message that will be sent.</typeparam>
+            <param name="channel">A name for a messaging channel.If a recipient subscribes
+            using a channel, and a sender sends a message using the same channel, then this
+            message will be delivered to the recipient. Other recipients who did not
+            use a channel when subscribing (or who used a different channel) will not
+            get the message. </param>
+            <param name="message">The message to send to subscribed recipients.</param>
         </member>
         <member name="T:Loxodon.Framework.Prefs.AbstractFactory">
             <summary>
@@ -1177,9 +1418,9 @@
             <summary>
             Retrieve a T value from the preferences. 
             The method returns defaultValue if the key is not found.
-            Supported Types:ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types
+            Supported Types:ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32,Version and  Serializable types
             </summary>
-            <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
+            <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32,Version and  Serializable types</typeparam>
             <param name="key">The name of the preference to retrieve</param>
             <param name="defaultValue">Value to return if this preference does not exist</param>
             <exception cref="T:System.Exception"></exception>

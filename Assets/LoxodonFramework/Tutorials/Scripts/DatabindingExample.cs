@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using System;
 using System.Globalization;
@@ -14,7 +13,6 @@ using Loxodon.Framework.Localizations;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Binding.Contexts;
 using Loxodon.Framework.Binding.Builder;
-using Loxodon.Framework.Binding.Reflection;
 
 namespace Loxodon.Framework.Tutorials
 {
@@ -66,7 +64,7 @@ namespace Loxodon.Framework.Tutorials
     public class AccountViewModel : ViewModelBase
     {
         private Account account;
-
+        private bool remember;
         private string username;
         private string email;
         private ObservableDictionary<string, string> errors = new ObservableDictionary<string, string>();
@@ -87,6 +85,12 @@ namespace Loxodon.Framework.Tutorials
         {
             get { return this.email; }
             set { this.Set<string>(ref this.email, value, "Email"); }
+        }
+
+        public bool Remember
+        {
+            get { return this.remember; }
+            set { this.Set<bool>(ref this.remember, value, "Remember"); }
         }
 
         public ObservableDictionary<string, string> Errors
@@ -133,11 +137,13 @@ namespace Loxodon.Framework.Tutorials
         public Text email;
         public Text birthday;
         public Text address;
+        public Text remember;
 
         public Text errorMessage;
 
         public InputField usernameEdit;
         public InputField emailEdit;
+        public Toggle rememberEdit;
         public Button submit;
 
         void Awake()
@@ -159,7 +165,7 @@ namespace Loxodon.Framework.Tutorials
                 ID = 1,
                 Username = "test",
                 Password = "test",
-                Email = "clark_ya@163.com",
+                Email = "yangpc.china@gmail.com",
                 Birthday = new DateTime(2000, 3, 3)
             };
             account.Address.Value = "beijing";
@@ -179,6 +185,7 @@ namespace Loxodon.Framework.Tutorials
             bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).OneWay();
             bindingSet.Bind(this.password).For(v => v.text).To(vm => vm.Account.Password).OneWay();
             bindingSet.Bind(this.email).For(v => v.text).To(vm => vm.Account.Email).OneWay();
+            bindingSet.Bind(this.remember).For(v => v.text).To(vm => vm.Remember).OneWay();
             bindingSet.Bind(this.birthday).For(v => v.text).ToExpression(vm => string.Format("{0} ({1})",
              vm.Account.Birthday.ToString("yyyy-MM-dd"), (DateTime.Now.Year - vm.Account.Birthday.Year))).OneWay();
 
@@ -190,6 +197,7 @@ namespace Loxodon.Framework.Tutorials
             bindingSet.Bind(this.usernameEdit).For(v => v.onValueChanged).To(vm => vm.OnUsernameValueChanged(""));
             bindingSet.Bind(this.emailEdit).For(v => v.text, v => v.onEndEdit).To(vm => vm.Email).TwoWay();
             bindingSet.Bind(this.emailEdit).For(v => v.onValueChanged).To(vm => vm.OnEmailValueChanged(""));
+            bindingSet.Bind(this.rememberEdit).For(v => v.isOn, v => v.onValueChanged).To(vm => vm.Remember).TwoWay();
             bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit());
             bindingSet.Build();
 
