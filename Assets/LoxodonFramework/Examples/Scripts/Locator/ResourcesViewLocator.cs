@@ -67,7 +67,7 @@ namespace Loxodon.Framework.Examples
             }
             else {
                 ResourceRequest request = Resources.LoadAsync<GameObject>(name);
-                if (!request.isDone)
+                while (!request.isDone)
                 {
                     promise.UpdateProgress(request.progress);
                     yield return null;

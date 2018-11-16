@@ -1,5 +1,5 @@
 ﻿Loxodon Framework Free
-Version: 1.6.5
+Version: 1.6.9
 © 2016, Clark Yang
 =======================================
 
@@ -18,6 +18,16 @@ Please email yangpc.china@gmail.com for any help or issues.
 
 UPDATE NOTES
 ----------------------------------------
+version 1.6.9
+	Fixed formatting errors for several prefabs.
+
+version 1.6.8
+	Added an example of data bindings of ListView and Sprite.
+
+version 1.6.7
+	Fixed the error that the editor is stuck because of the background thread is not finished.
+	Fixed a bug in the asynchronous loading function of the "ResourcesViewLocator" class.
+
 version 1.6.5
 	Added interactive requests and modified examples of interactive requests.
 	Added data binding for interactive requests.
