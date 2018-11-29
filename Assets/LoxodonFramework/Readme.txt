@@ -1,5 +1,5 @@
 ﻿Loxodon Framework Free
-Version: 1.6.9
+Version: 1.6.13
 © 2016, Clark Yang
 =======================================
 
@@ -18,6 +18,11 @@ Please email yangpc.china@gmail.com for any help or issues.
 
 UPDATE NOTES
 ----------------------------------------
+version 1.6.13
+	Added an example of the asynchronous loading of sprites.
+	Added an example of localized resource binding to UI controls.
+	Improved Executors and localization scripts.
+
 version 1.6.9
 	Fixed formatting errors for several prefabs.
 
