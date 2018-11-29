@@ -57,7 +57,8 @@ IL2CPP is supported, however there are some gotchas.
 - [Examples](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
 
 ## Contact Us
+QQ Group: 622321589
 Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
 Website: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)
-QQ Group: [622321589](622321589)
+
 
