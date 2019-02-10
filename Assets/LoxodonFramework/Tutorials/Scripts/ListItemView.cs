@@ -13,7 +13,7 @@ namespace Loxodon.Framework.Tutorials
         public Image image;
         public GameObject border;
 
-        void Start()
+        protected override void Start()
         {
             BindingSet<ListItemView, ListItemViewModel> bindingSet = this.CreateBindingSet<ListItemView, ListItemViewModel>();
             bindingSet.Bind(this.title).For(v => v.text).To(vm => vm.Title).OneWay();

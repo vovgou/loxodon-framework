@@ -13,7 +13,7 @@ namespace Loxodon.Framework.Examples
 	public class Launcher : MonoBehaviour
     {
 
-        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        //private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 		private ApplicationContext context;
 		void Awake()

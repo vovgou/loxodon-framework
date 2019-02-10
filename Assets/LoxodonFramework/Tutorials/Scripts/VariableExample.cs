@@ -63,7 +63,7 @@ namespace Loxodon.Framework.Tutorials
     {
         public VariableArray variables;
 
-        void Awake()
+        protected override void Awake()
         {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
@@ -73,7 +73,7 @@ namespace Loxodon.Framework.Tutorials
             Localization.Current = Localization.Create(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()), cultureInfo);
         }
 
-        void Start()
+        protected override void Start()
         {
             VariableViewModel viewModel = new VariableViewModel()
             {

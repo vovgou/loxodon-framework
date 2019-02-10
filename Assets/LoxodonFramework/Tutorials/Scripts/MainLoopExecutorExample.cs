@@ -21,7 +21,7 @@ namespace Loxodon.Framework.Tutorials
 			
 				this.executor.RunOnMainThread (Task1, true);
 
-				string name = this.executor.RunOnMainThread<string> (Task2);
+				this.executor.RunOnMainThread<string> (Task2);
 
 				Debug.LogFormat ("run on the backgound thread. ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
 			});

@@ -59,7 +59,7 @@ namespace Loxodon.Framework.Tutorials
                     this.ReplaceItem(eventArgs.OldStartingIndex, eventArgs.OldItems[0], eventArgs.NewItems[0]);
                     break;
                 case NotifyCollectionChangedAction.Reset:
-                    this.Reset();
+                    this.ResetItem();
                     break;
                 case NotifyCollectionChangedAction.Move:
                     this.MoveItem(eventArgs.OldStartingIndex, eventArgs.NewStartingIndex, eventArgs.NewItems[0]);
@@ -133,7 +133,7 @@ namespace Loxodon.Framework.Tutorials
             itemView.transform.SetSiblingIndex(index);
         }
 
-        protected virtual void Reset()
+        protected virtual void ResetItem()
         {
             for (int i = this.content.childCount - 1; i >= 0; i--)
             {

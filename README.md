@@ -1,6 +1,6 @@
 # Loxodon Framework
 
-[![release](https://img.shields.io/badge/release-v1.6.13-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
+[![release](https://img.shields.io/badge/release-v1.7.0-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
 
 **MVVM Framework for Unity3D**
 
@@ -13,18 +13,16 @@ Databinding and localization are supported.It has a very flexible extensibility.
 
 For tutorials,examples and support,please see the project.You can also discuss the project in the Unity Forums.
 
-The Free version is compatible with MacOSX,Windows,Linux and Android.The Pro version is compatible with MacOSX,Windows,Linux,IOS and Android etc.Check out the Pro version if you want more platforms and full source code.
+The plugin is compatible with MacOSX,Windows,Linux,UWP,IOS and Android,and provides all the source code of the project.
 
 **Tested in Unity 3D on the following platforms:**  
 PC/Mac/Linux  
 IOS  
 Android  
-
-IL2CPP is supported, however there are some gotchas.  
+UWP(window10)
 
 ## Downloads  
-- [Loxodon Framework Pro](https://www.assetstore.unity3d.com/#!/content/79304)
-- [Loxodon Framework Free](https://www.assetstore.unity3d.com/#!/content/77446)
+- [Loxodon Framework](https://www.assetstore.unity3d.com/#!/content/77446)
 
 ## Key Features:
 - Mvvm Framework;

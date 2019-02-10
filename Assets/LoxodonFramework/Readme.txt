@@ -1,5 +1,5 @@
-﻿Loxodon Framework Free
-Version: 1.6.13
+﻿Loxodon Framework
+Version: 1.7.0
 © 2016, Clark Yang
 =======================================
 
@@ -7,17 +7,22 @@ Thank you for purchasing the LoxodonFramework!
 I hope you enjoy using the product and that it makes your game development faster and easier.
 If you have a moment,please leave me a review on the Asset Store.
 
-The Free version is compatible with MacOSX,Windows,Linux and Android.
-Check out the Pro version if you want more platforms and full source code.
-
-https://www.assetstore.unity3d.com/#!/content/79304
-
-If you think of this framework is good, please don't forget to give me the Asset for a rating, write a review, submit your suggestions and feedback, your encouragement is my power, thank you.
+The plugin is compatible with MacOSX,Windows,Linux,UWP,IOS and Android etc.
 
 Please email yangpc.china@gmail.com for any help or issues.
 
+Notices:
+AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampolines=8192" for IOS.
+
 UPDATE NOTES
 ----------------------------------------
+version 1.7.0
+	Provided all source code for the project.
+	Merged Loxodon.Framework.Free and Loxodon.Framework.Pro.
+
+version 1.6.14
+	Fixed warning that many variables are not used.
+
 version 1.6.13
 	Added an example of the asynchronous loading of sprites.
 	Added an example of localized resource binding to UI controls.
@@ -48,6 +53,7 @@ version 1.5.2
 	Fixed a bug that the Toggle bind to the bool value.
 
 version 1.5.0
+	Added support for UWP(Windows10).
 	Refactor prefs module for compatibility with UWP platform.
 	Fixed a few bugs.
 
@@ -80,4 +86,5 @@ version 1.0.2
 version 1.0.1
 	Removed unused assets for the examples.
 	Fixed a bug,an exception occurred when InputField.text bind to the "Null" in Unity5.3.0 version.
+
 

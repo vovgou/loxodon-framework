@@ -1,18 +1,15 @@
-﻿using UnityEngine.UI;
-
-using Loxodon.Log;
-using Loxodon.Framework.Localizations;
-using Loxodon.Framework.Contexts;
-using Loxodon.Framework.Views;
-using Loxodon.Framework.Binding;
+﻿using Loxodon.Framework.Binding;
 using Loxodon.Framework.Binding.Builder;
 using Loxodon.Framework.Interactivity;
+using Loxodon.Framework.Views;
+using Loxodon.Log;
+using UnityEngine.UI;
 
 namespace Loxodon.Framework.Examples
 {
     public class LoginWindow : Window
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(LoginWindow));
+        //private static readonly ILog log = LogManager.GetLogger(typeof(LoginWindow));
 
         public InputField username;
         public InputField password;
@@ -21,18 +18,9 @@ namespace Loxodon.Framework.Examples
         public Button confirmButton;
         public Button cancelButton;
 
-        private LoginViewModel viewModel;
-        private Localization localization;
 
         protected override void OnCreate(IBundle bundle)
         {
-            ApplicationContext context = Context.GetApplicationContext();
-            this.localization = context.GetService<Localization>();
-            var accountService = context.GetService<IAccountService>();
-            var globalPreferences = context.GetGlobalPreferences();
-
-            this.viewModel = (LoginViewModel)this.GetDataContext();
-
             BindingSet<LoginWindow, LoginViewModel> bindingSet = this.CreateBindingSet<LoginWindow, LoginViewModel>();
             bindingSet.Bind().For(v => v.OnInteractionFinished(null, null)).To(vm => vm.InteractionFinished);
             bindingSet.Bind().For(v => v.OnToastShow(null, null)).To(vm => vm.ToastRequest);

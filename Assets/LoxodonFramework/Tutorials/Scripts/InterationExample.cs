@@ -96,7 +96,7 @@ namespace Loxodon.Framework.Tutorials
 
         private List<Loading> list = new List<Loading>();
 
-        void Awake()
+        protected override void Awake()
         {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
@@ -110,7 +110,7 @@ namespace Loxodon.Framework.Tutorials
             Localization.Current = Localization.Create(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()), cultureInfo);
         }
 
-        void Start()
+        protected override void Start()
         {
             InterationViewModel viewModel = new InterationViewModel();
             this.SetDataContext(viewModel);

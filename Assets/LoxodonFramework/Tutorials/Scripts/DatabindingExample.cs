@@ -146,7 +146,7 @@ namespace Loxodon.Framework.Tutorials
         public Toggle rememberEdit;
         public Button submit;
 
-        void Awake()
+        protected override void Awake()
         {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
@@ -158,7 +158,7 @@ namespace Loxodon.Framework.Tutorials
 
         }
 
-        void Start()
+        protected override void Start()
         {
             Account account = new Account()
             {
