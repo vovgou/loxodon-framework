@@ -63,9 +63,9 @@ UWP(window10)
   ![](docs/images/Localization.png) 
 - Databinding 
   ![](docs/images/Databinding.png) 
-- Variable 
+- Variable Example 
   ![](docs/images/Variable.png) 
-- ListView 
+- ListView Binding 
   ![](docs/images/ListView.png) 
 
 ## Contact Us
