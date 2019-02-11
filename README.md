@@ -1,3 +1,5 @@
+![](docs/images/icon.png)
+
 # Loxodon Framework
 
 [![release](https://img.shields.io/badge/release-v1.7.0-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
@@ -53,6 +55,18 @@ UWP(window10)
 
 - [Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 - [Examples](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
+
+## Introduction
+- Window View
+  ![](docs/images/Window.png)
+- Localization
+  ![](docs/images/Localization.png)
+- Databinding
+  ![](docs/images/Databinding.png)
+- Variable
+  ![](docs/images/Variable.png)
+- ListView
+  ![](docs/images/ListView.png)
 
 ## Contact Us
 Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
