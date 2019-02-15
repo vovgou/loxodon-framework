@@ -1,0 +1,626 @@
+﻿using System;
+using System.Reflection;
+using System.Collections.Generic;
+using UnityEngine.Events;
+
+using Loxodon.Log;
+using Loxodon.Framework.Commands;
+using Loxodon.Framework.Binding.Reflection;
+using Loxodon.Framework.Execution;
+
+namespace Loxodon.Framework.Binding.Proxy.Targets
+{
+    public abstract class AbstractUnityEventProxy<T> : AbstractTargetProxy where T : UnityEventBase
+    {
+        //private static readonly ILog log = LogManager.GetLogger(typeof(AbstractUnityEventProxy<T>));
+
+        private bool disposed = false;
+        protected ICommand command;/* Command Binding */
+        protected IProxyInvoker invoker;/* Method Binding */
+        protected Delegate handler;/* Delegate Binding */
+        protected IScriptInvoker scriptInvoker;/* Script Function Binding  */
+
+        protected IProxyPropertyInfo interactable;
+
+        protected T unityEvent;
+
+        public AbstractUnityEventProxy(object target, T unityEvent) : base(target)
+        {
+            if (unityEvent == null)
+                throw new ArgumentNullException("unityEvent");
+
+            this.unityEvent = unityEvent;
+            this.BindEvent();
+        }
+
+        public override BindingMode DefaultMode { get { return BindingMode.OneWay; } }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                UnbindCommand(this.command);
+                this.UnbindEvent();
+                disposed = true;
+                base.Dispose(disposing);
+            }
+        }
+
+        protected abstract void BindEvent();
+
+        protected abstract void UnbindEvent();
+
+        protected abstract bool IsValid(Delegate handler);
+
+        protected abstract bool IsValid(IProxyInvoker invoker);
+
+        protected override void SetValueImpl(object target, object value)
+        {
+            if (this.command != null)
+            {
+                UnbindCommand(this.command);
+                this.command = null;
+            }
+
+            if (this.invoker != null)
+            {
+                this.invoker = null;
+            }
+
+            if (this.handler != null)
+            {
+                this.handler = null;
+            }
+
+            if (this.scriptInvoker != null)
+            {
+                this.scriptInvoker = null;
+            }
+
+            if (value == null)
+                return;
+
+            //Bind Command
+            ICommand command = value as ICommand;
+            if (command != null)
+            {
+                if (this.interactable == null)
+                {
+                    var interactablePropertyInfo = target.GetType().GetProperty("interactable");
+                    if (interactablePropertyInfo != null)
+                        this.interactable = interactablePropertyInfo.AsProxy();
+                }
+
+                this.command = command;
+                BindCommand(this.command);
+                UpdateTargetInteractable();
+                return;
+            }
+
+            //Bind Method
+            IProxyInvoker invoker = value as IProxyInvoker;
+            if (invoker != null)
+            {
+                if (this.IsValid(invoker))
+                {
+                    this.invoker = invoker;
+                    return;
+                }
+
+                throw new ArgumentException("Bind method failed.the parameter types do not match.");
+            }
+
+            //Bind Delegate
+            Delegate handler = value as Delegate;
+            if (handler != null)
+            {
+                if (this.IsValid(handler))
+                {
+                    this.handler = handler;
+                    return;
+                }
+
+                throw new ArgumentException("Bind method failed.the parameter types do not match.");
+            }
+
+            //Bind Script Function
+            IScriptInvoker scriptInvoker = value as IScriptInvoker;
+            if (scriptInvoker != null)
+            {
+                this.scriptInvoker = scriptInvoker;
+            }
+        }
+
+        protected virtual void OnCanExecuteChanged(object sender, EventArgs e)
+        {
+            Executors.RunOnMainThread(UpdateTargetInteractable);
+        }
+
+        protected virtual void UpdateTargetInteractable()
+        {
+            var target = this.Target;
+            if (this.interactable != null && target != null)
+            {
+                bool value = this.command == null ? false : this.command.CanExecute(null);
+                this.interactable.SetValue(target, value);
+            }
+        }
+
+        protected virtual void BindCommand(ICommand command)
+        {
+            if (command == null)
+                return;
+
+            command.CanExecuteChanged += OnCanExecuteChanged;
+        }
+
+        protected virtual void UnbindCommand(ICommand command)
+        {
+            if (command == null)
+                return;
+
+            command.CanExecuteChanged -= OnCanExecuteChanged;
+        }
+    }
+
+    public class UnityEventProxy : AbstractUnityEventProxy<UnityEvent>
+    {
+        private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxy));
+
+        public UnityEventProxy(object target, UnityEvent unityEvent) : base(target, unityEvent)
+        {
+        }
+
+        public override Type Type { get { return typeof(UnityEvent); } }
+
+        protected override void BindEvent()
+        {
+            this.unityEvent.AddListener(OnEvent);
+        }
+
+        protected override void UnbindEvent()
+        {
+            this.unityEvent.RemoveListener(OnEvent);
+        }
+
+        protected override bool IsValid(Delegate handler)
+        {
+            if (handler is UnityAction)
+                return true;
+#if NETFX_CORE
+            MethodInfo info = handler.GetMethodInfo();
+#else
+            MethodInfo info = handler.Method;
+#endif
+            if (!info.ReturnType.Equals(typeof(void)))
+                return false;
+
+            List<Type> parameterTypes = info.GetParameterTypes();
+            if (parameterTypes.Count != 0)
+                return false;
+            return true;
+        }
+
+        protected override bool IsValid(IProxyInvoker invoker)
+        {
+            MethodInfo info = invoker.ProxyMethodInfo.MethodInfo;
+            if (!info.ReturnType.Equals(typeof(void)))
+                return false;
+
+            List<Type> parameterTypes = info.GetParameterTypes();
+            if (parameterTypes.Count != 0)
+                return false;
+            return true;
+        }
+
+        protected virtual void OnEvent()
+        {
+            try
+            {
+                if (this.command != null)
+                {
+                    this.command.Execute(null);
+                    return;
+                }
+
+                if (this.invoker != null)
+                {
+                    this.invoker.Invoke();
+                    return;
+                }
+
+
+                if (this.handler != null)
+                {
+                    if (this.handler is UnityAction)
+                        (this.handler as UnityAction)();
+                    else {
+                        this.handler.DynamicInvoke();
+                    }
+                    return;
+                }
+
+                if (this.scriptInvoker != null)
+                {
+                    this.scriptInvoker.Invoke();
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("{0}", e);
+            }
+        }
+    }
+
+    public class UnityEventProxy<T> : AbstractUnityEventProxy<UnityEvent<T>>
+    {
+        private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxy<T>));
+
+        public UnityEventProxy(object target, UnityEvent<T> unityEvent) : base(target, unityEvent)
+        {
+        }
+
+        public override Type Type { get { return typeof(UnityEvent<T>); } }
+
+        protected override void BindEvent()
+        {
+            this.unityEvent.AddListener(OnEvent);
+        }
+
+        protected override void UnbindEvent()
+        {
+            this.unityEvent.RemoveListener(OnEvent);
+        }
+
+        protected override bool IsValid(Delegate handler)
+        {
+            if (handler is UnityAction<T>)
+                return true;
+#if NETFX_CORE
+            MethodInfo info = handler.GetMethodInfo();
+#else
+            MethodInfo info = handler.Method;
+#endif
+            if (!info.ReturnType.Equals(typeof(void)))
+                return false;
+
+            List<Type> parameterTypes = info.GetParameterTypes();
+            if (parameterTypes.Count != 1)
+                return false;
+
+            return parameterTypes[0].IsAssignableFrom(typeof(T));
+        }
+
+        protected override bool IsValid(IProxyInvoker invoker)
+        {
+            MethodInfo info = invoker.ProxyMethodInfo.MethodInfo;
+            if (!info.ReturnType.Equals(typeof(void)))
+                return false;
+
+            List<Type> parameterTypes = info.GetParameterTypes();
+            if (parameterTypes.Count != 1)
+                return false;
+
+            return parameterTypes[0].IsAssignableFrom(typeof(T));
+        }
+
+        protected virtual void OnEvent(T parameter)
+        {
+            try
+            {
+                if (this.command != null)
+                {
+                    this.command.Execute(parameter);
+                    return;
+                }
+
+                if (this.invoker != null)
+                {
+                    this.invoker.Invoke(parameter);
+                    return;
+                }
+
+                if (this.handler != null)
+                {
+                    if (this.handler is UnityAction<T>)
+                        (this.handler as UnityAction<T>)(parameter);
+                    else {
+                        this.handler.DynamicInvoke(parameter);
+                    }
+                    return;
+                }
+
+                if (this.scriptInvoker != null)
+                {
+                    this.scriptInvoker.Invoke(parameter);
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("{0}", e);
+            }
+        }
+    }
+
+    public class UnityEventProxy<T0, T1> : AbstractUnityEventProxy<UnityEvent<T0, T1>>
+    {
+        private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxy<T0, T1>));
+
+        public UnityEventProxy(object target, UnityEvent<T0, T1> unityEvent) : base(target, unityEvent)
+        {
+        }
+
+        public override Type Type { get { return typeof(UnityEvent<T0, T1>); } }
+
+        protected override void BindEvent()
+        {
+            this.unityEvent.AddListener(OnEvent);
+        }
+
+        protected override void UnbindEvent()
+        {
+            this.unityEvent.RemoveListener(OnEvent);
+        }
+
+        protected override bool IsValid(Delegate handler)
+        {
+            if (handler is UnityAction<T0, T1>)
+                return true;
+#if NETFX_CORE
+            MethodInfo info = handler.GetMethodInfo();
+#else
+            MethodInfo info = handler.Method;
+#endif
+            if (!info.ReturnType.Equals(typeof(void)))
+                return false;
+
+            List<Type> parameterTypes = info.GetParameterTypes();
+            if (parameterTypes.Count != 2)
+                return false;
+
+            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1));
+        }
+
+        protected override bool IsValid(IProxyInvoker invoker)
+        {
+            MethodInfo info = invoker.ProxyMethodInfo.MethodInfo;
+            if (!info.ReturnType.Equals(typeof(void)))
+                return false;
+
+            List<Type> parameterTypes = info.GetParameterTypes();
+            if (parameterTypes.Count != 2)
+                return false;
+
+            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1));
+        }
+
+        protected virtual void OnEvent(T0 t0, T1 t1)
+        {
+            try
+            {
+                if (this.command != null)
+                {
+                    this.command.Execute(new object[] { t0, t1 });
+                    return;
+                }
+
+                if (this.invoker != null)
+                {
+                    this.invoker.Invoke(t0, t1);
+                    return;
+                }
+
+                if (this.handler != null)
+                {
+                    if (this.handler is UnityAction<T0, T1>)
+                        (this.handler as UnityAction<T0, T1>)(t0, t1);
+                    else {
+                        this.handler.DynamicInvoke(t0, t1);
+                    }
+                    return;
+                }
+
+                if (this.scriptInvoker != null)
+                {
+                    this.scriptInvoker.Invoke(t0, t1);
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("{0}", e);
+            }
+        }
+    }
+
+    public class UnityEventProxy<T0, T1, T2> : AbstractUnityEventProxy<UnityEvent<T0, T1, T2>>
+    {
+        private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxy<T0, T1, T2>));
+
+        public UnityEventProxy(object target, UnityEvent<T0, T1, T2> unityEvent) : base(target, unityEvent)
+        {
+        }
+
+        public override Type Type { get { return typeof(UnityEvent<T0, T1, T2>); } }
+
+        protected override void BindEvent()
+        {
+            this.unityEvent.AddListener(OnEvent);
+        }
+
+        protected override void UnbindEvent()
+        {
+            this.unityEvent.RemoveListener(OnEvent);
+        }
+
+        protected override bool IsValid(Delegate handler)
+        {
+            if (handler is UnityAction<T0, T1, T2>)
+                return true;
+#if NETFX_CORE
+            MethodInfo info = handler.GetMethodInfo();
+#else
+            MethodInfo info = handler.Method;
+#endif
+            if (!info.ReturnType.Equals(typeof(void)))
+                return false;
+
+            List<Type> parameterTypes = info.GetParameterTypes();
+            if (parameterTypes.Count != 3)
+                return false;
+
+            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1)) && parameterTypes[2].IsAssignableFrom(typeof(T2));
+
+        }
+
+        protected override bool IsValid(IProxyInvoker invoker)
+        {
+            MethodInfo info = invoker.ProxyMethodInfo.MethodInfo;
+            if (!info.ReturnType.Equals(typeof(void)))
+                return false;
+
+            List<Type> parameterTypes = info.GetParameterTypes();
+            if (parameterTypes.Count != 3)
+                return false;
+
+            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1)) && parameterTypes[2].IsAssignableFrom(typeof(T2));
+        }
+
+        protected virtual void OnEvent(T0 t0, T1 t1, T2 t2)
+        {
+            try
+            {
+                if (this.command != null)
+                {
+                    this.command.Execute(new object[] { t0, t1, t2 });
+                    return;
+                }
+
+                if (this.invoker != null)
+                {
+                    this.invoker.Invoke(t0, t1, t2);
+                    return;
+                }
+
+                if (this.handler != null)
+                {
+                    if (this.handler is UnityAction<T0, T1, T2>)
+                        (this.handler as UnityAction<T0, T1, T2>)(t0, t1, t2);
+                    else {
+                        this.handler.DynamicInvoke(t0, t1, t2);
+                    }
+                    return;
+                }
+
+                if (this.scriptInvoker != null)
+                {
+                    this.scriptInvoker.Invoke(t0, t1, t2);
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("{0}", e);
+            }
+        }
+    }
+
+    public class UnityEventProxy<T0, T1, T2, T3> : AbstractUnityEventProxy<UnityEvent<T0, T1, T2, T3>>
+    {
+        private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxy<T0, T1, T2, T3>));
+
+        public UnityEventProxy(object target, UnityEvent<T0, T1, T2, T3> unityEvent) : base(target, unityEvent)
+        {
+        }
+
+        public override Type Type { get { return typeof(UnityEvent<T0, T1, T2, T3>); } }
+
+        protected override void BindEvent()
+        {
+            this.unityEvent.AddListener(OnEvent);
+        }
+
+        protected override void UnbindEvent()
+        {
+            this.unityEvent.RemoveListener(OnEvent);
+        }
+
+        protected override bool IsValid(Delegate handler)
+        {
+            if (handler is UnityAction<T0, T1, T2, T3>)
+                return true;
+#if NETFX_CORE
+            MethodInfo info = handler.GetMethodInfo();
+#else
+            MethodInfo info = handler.Method;
+#endif
+            if (!info.ReturnType.Equals(typeof(void)))
+                return false;
+
+            List<Type> parameterTypes = info.GetParameterTypes();
+            if (parameterTypes.Count != 4)
+                return false;
+
+            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1)) && parameterTypes[2].IsAssignableFrom(typeof(T2)) && parameterTypes[3].IsAssignableFrom(typeof(T3));
+
+        }
+
+        protected override bool IsValid(IProxyInvoker invoker)
+        {
+            MethodInfo info = invoker.ProxyMethodInfo.MethodInfo;
+            if (!info.ReturnType.Equals(typeof(void)))
+                return false;
+
+            List<Type> parameterTypes = info.GetParameterTypes();
+            if (parameterTypes.Count != 4)
+                return false;
+
+            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1)) && parameterTypes[2].IsAssignableFrom(typeof(T2)) && parameterTypes[3].IsAssignableFrom(typeof(T3));
+        }
+
+        protected virtual void OnEvent(T0 t0, T1 t1, T2 t2, T3 t3)
+        {
+            try
+            {
+                if (this.command != null)
+                {
+                    this.command.Execute(new object[] { t0, t1, t2, t3 });
+                    return;
+                }
+
+                if (this.invoker != null)
+                {
+                    this.invoker.Invoke(t0, t1, t2, t3);
+                    return;
+                }
+
+                if (this.handler != null)
+                {
+                    if (this.handler is UnityAction<T0, T1, T2, T3>)
+                        (this.handler as UnityAction<T0, T1, T2, T3>)(t0, t1, t2, t3);
+                    else {
+                        this.handler.DynamicInvoke(t0, t1, t2, t3);
+                    }
+                    return;
+                }
+
+                if (this.scriptInvoker != null)
+                {
+                    this.scriptInvoker.Invoke(t0, t1, t2, t3);
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("{0}", e);
+            }
+        }
+    }
+}

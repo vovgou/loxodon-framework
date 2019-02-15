@@ -4,6 +4,8 @@
 
 [![release](https://img.shields.io/badge/release-v1.7.0-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
 
+[(中文版)](README_CN.md)
+
 **MVVM Framework for Unity3D**
 
 *Developed by Clark*
