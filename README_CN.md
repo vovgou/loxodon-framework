@@ -58,11 +58,11 @@ UWP(window10)
 - [示例](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
 
 ## 介绍
-- 窗口视图 
+- 窗口视图示例 
   ![](docs/images/Window.png) 
-- Localization 
+- 本地化示例 
   ![](docs/images/Localization.png) 
-- 数据绑定 
+- 数据绑定示例 
   ![](docs/images/Databinding.png) 
 - 变量示例 
   ![](docs/images/Variable.png) 
