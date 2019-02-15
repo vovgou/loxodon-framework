@@ -64,7 +64,7 @@ UWP(window10)
   ![](docs/images/Localization.png) 
 - 数据绑定示例 
   ![](docs/images/Databinding.png) 
-- 变量示例 
+- 变量 示例 
   ![](docs/images/Variable.png) 
 - 列表视图绑定 
   ![](docs/images/ListView.png) 
