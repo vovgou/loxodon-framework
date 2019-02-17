@@ -29,7 +29,7 @@ UWP(window10)
 - [Loxodon Framework](https://www.assetstore.unity3d.com/#!/content/77446)
 
 ## Key Features:
-- Mvvm Framework;
+- MVVM Framework;
 - Multiple platforms;
 - Higher Extensibility;
 - Asynchronous result and asynchronous task are supported;
@@ -47,6 +47,7 @@ UWP(window10)
     - Method binding;
     - Command binding;
     - ObservableProperty,ObservableDictionary and ObservableList binding;
+    - Expression binding;
     
 ## Notes  
 - LoxodonFramework supports .Net2.0 and .Net2.0 Subset  
