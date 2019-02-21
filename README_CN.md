@@ -48,9 +48,9 @@ UWP(window10)
     - 支持类型转换器，可以将图片名称转换为图集中的Sprite
     
 ## 注意：  
-- LoxodonFramework supports .Net2.0 and .Net2.0 Subset  
-- LoxodonFramework supports .Net4.x and .Net Standard2.0  
-- LoxodonFramework supports Mono2x and IL2CPP  
+- LoxodonFramework 支持 .Net2.0 和 .Net2.0 Subset  
+- LoxodonFramework 支持 .Net4.x 和 .Net Standard2.0  
+- LoxodonFramework 支持 Mono2x 和 IL2CPP  
 - IOS平台需要配置 AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampolines=8192"   
 
 ## 教程和示例
