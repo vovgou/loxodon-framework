@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
+using UnityEngine.Networking;
 
 using Loxodon.Framework.Execution;
 using Loxodon.Log;
@@ -54,13 +55,33 @@ namespace Loxodon.Framework.Localizations
         protected virtual IEnumerator DoLoad(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
+
+#if UNITY_2018_1_OR_NEWER
+            using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl))
+            {
+                www.SendWebRequest();
+                while (!www.isDone)
+                    yield return null;
+
+                DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
+                AssetBundle bundle = handler.assetBundle;
+#elif UNITY_2017_1_OR_NEWER
+            using (UnityWebRequest www = UnityWebRequest.GetAssetBundle(this.assetBundleUrl))
+            {
+                www.Send();
+                while (!www.isDone)
+                    yield return null;
+
+                DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
+                AssetBundle bundle = handler.assetBundle;
+#else
             using (WWW www = new WWW(this.assetBundleUrl))
             {
-
                 while (!www.isDone)
                     yield return null;
 
                 AssetBundle bundle = www.assetBundle;
+#endif
                 try
                 {
 

@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
+using UnityEngine.Networking;
+
 using Loxodon.Framework.Execution;
 using Loxodon.Framework.Localizations;
 using Loxodon.Log;
@@ -26,41 +28,61 @@ namespace Loxodon.Framework.Examples
     /// root/en-AU/
     /// </summary>
     public class AssetBundleDataProvider : IDataProvider
-	{
+    {
         private static readonly ILog log = LogManager.GetLogger(typeof(AssetBundleDataProvider));
 
         private string assetBundleUrl;
-		private IDocumentParser parser;
-		private ICoroutineExecutor executor;
+        private IDocumentParser parser;
+        private ICoroutineExecutor executor;
 
-		public AssetBundleDataProvider (string assetBundleUrl, IDocumentParser parser)
-		{
-			if (string.IsNullOrEmpty (assetBundleUrl))
-				throw new ArgumentNullException ("assetBundleUrl");
+        public AssetBundleDataProvider(string assetBundleUrl, IDocumentParser parser)
+        {
+            if (string.IsNullOrEmpty(assetBundleUrl))
+                throw new ArgumentNullException("assetBundleUrl");
 
-			if (parser == null)
-				throw new ArgumentNullException ("parser");
+            if (parser == null)
+                throw new ArgumentNullException("parser");
 
-			this.assetBundleUrl = assetBundleUrl;
-			this.parser = parser;
-			this.executor = new CoroutineExecutor ();
-		}
+            this.assetBundleUrl = assetBundleUrl;
+            this.parser = parser;
+            this.executor = new CoroutineExecutor();
+        }
 
-		public void Load (CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
-		{			
-			executor.RunOnCoroutine (DoLoad (cultureInfo, onCompleted));
-		}	
+        public void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
+        {
+            executor.RunOnCoroutine(DoLoad(cultureInfo, onCompleted));
+        }
 
         IEnumerator DoLoad(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
+
+#if UNITY_2018_1_OR_NEWER
+            using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl))
+            {
+                www.SendWebRequest();
+                while (!www.isDone)
+                    yield return null;
+
+                DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
+                AssetBundle bundle = handler.assetBundle;
+#elif UNITY_2017_1_OR_NEWER
+            using (UnityWebRequest www = UnityWebRequest.GetAssetBundle(this.assetBundleUrl))
+            {
+                www.Send();
+                while (!www.isDone)
+                    yield return null;
+
+                DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
+                AssetBundle bundle = handler.assetBundle;
+#else
             using (WWW www = new WWW(this.assetBundleUrl))
             {
-
                 while (!www.isDone)
                     yield return null;
 
                 AssetBundle bundle = www.assetBundle;
+#endif
                 try
                 {
 

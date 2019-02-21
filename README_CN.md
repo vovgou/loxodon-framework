@@ -49,6 +49,7 @@ UWP(window10)
     
 ## 注意：  
 - LoxodonFramework supports .Net2.0 and .Net2.0 Subset  
+- LoxodonFramework supports .Net4.x and .Net Standard2.0  
 - LoxodonFramework supports Mono2x and IL2CPP  
 - IOS平台需要配置 AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampolines=8192"   
 
