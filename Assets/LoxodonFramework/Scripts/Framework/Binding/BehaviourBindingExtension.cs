@@ -4,6 +4,7 @@ using Loxodon.Framework.Binding.Binders;
 using Loxodon.Framework.Binding.Contexts;
 using Loxodon.Framework.Binding.Builder;
 using Loxodon.Framework.Contexts;
+using System;
 
 namespace Loxodon.Framework.Binding
 {
@@ -12,7 +13,16 @@ namespace Loxodon.Framework.Binding
         private static IBinder binder;
         public static IBinder Binder
         {
-            get { return binder ?? (binder = Context.GetApplicationContext().GetService<IBinder>()); }
+            get
+            {
+                if (binder == null)
+                    binder = Context.GetApplicationContext().GetService<IBinder>();
+
+                if (binder == null)
+                    throw new Exception("Data binding service is not initialized,please create a BindingServiceBundle service before using it.");
+
+                return binder;
+            }
         }
 
         public static IBindingContext BindingContext(this Behaviour behaviour)
