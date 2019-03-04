@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Loxodon.Framework.Observables;
+using System.Collections.Specialized;
 
 namespace Loxodon.Framework.Tutorials
 {

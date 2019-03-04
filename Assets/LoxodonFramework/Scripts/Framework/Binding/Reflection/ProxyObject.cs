@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using Loxodon.Framework.Observables;
 
 namespace Loxodon.Framework.Binding.Reflection

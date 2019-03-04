@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Text;
+#if NETFX_CORE
+using System.Threading.Tasks;
+#else
 using System.Threading;
+#endif
 
 using Loxodon.Framework.Asynchronous;
 
@@ -64,8 +68,11 @@ namespace Loxodon.Framework.Tutorials
                     progress = i / (float)n;
                     buf.Append(" ").Append(i);
                     promise.UpdateProgress(progress);/* update the progress of task. */
-
+#if NETFX_CORE
+                     Task.Delay(200).Wait();
+#else
                     Thread.Sleep(200);
+#endif
                 }
                 promise.UpdateProgress(1f);
                 promise.SetResult(buf.ToString()); /* update the result. */

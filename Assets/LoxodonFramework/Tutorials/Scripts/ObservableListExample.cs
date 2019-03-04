@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Specialized;
+using UnityEngine;
 using Loxodon.Framework.Observables;
 
 namespace Loxodon.Framework.Tutorials

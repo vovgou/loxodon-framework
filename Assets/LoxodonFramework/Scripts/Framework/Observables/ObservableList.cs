@@ -3,6 +3,7 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Collections.Specialized;
 
 #if NETFX_CORE
 using System.Reflection;

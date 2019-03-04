@@ -4,6 +4,7 @@ using System.ComponentModel;
 
 using Loxodon.Log;
 using Loxodon.Framework.Observables;
+using System.Collections.Specialized;
 using Loxodon.Framework.Binding.Paths;
 
 namespace Loxodon.Framework.Binding.Proxy.Sources.Object

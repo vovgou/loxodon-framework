@@ -3,6 +3,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace Loxodon.Framework.Observables
 {

@@ -1,10 +1,11 @@
-﻿using System;
+﻿#if NET_2_0 || NET_2_0_SUBSET || (UNITY_EDITOR && UNITY_METRO)
+using System;
 using System.Collections;
 #if NETFX_CORE
 using System.Collections.Generic;
 #endif
 
-namespace Loxodon.Framework.Observables
+namespace System.Collections.Specialized
 {
 
     public enum NotifyCollectionChangedAction
@@ -239,5 +240,4 @@ namespace Loxodon.Framework.Observables
 
     }
 }
-
-
+#endif

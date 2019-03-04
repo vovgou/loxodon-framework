@@ -2,6 +2,7 @@
 using Loxodon.Framework.Observables;
 using Loxodon.Framework.Views;
 using System;
+using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;

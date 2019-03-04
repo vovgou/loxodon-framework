@@ -1,4 +1,5 @@
-﻿namespace Loxodon.Framework.Observables
+﻿#if NET_2_0 || NET_2_0_SUBSET || (UNITY_EDITOR && UNITY_METRO) 
+namespace System.Collections.Specialized
 {
     public delegate void NotifyCollectionChangedEventHandler(object sender, NotifyCollectionChangedEventArgs e);
 
@@ -7,3 +8,5 @@
         event NotifyCollectionChangedEventHandler CollectionChanged;
     }
 }
+#endif
+

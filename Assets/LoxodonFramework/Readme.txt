@@ -1,5 +1,5 @@
 ﻿Loxodon Framework
-Version: 1.7.0
+Version: 1.7.1
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,10 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.7.1
+	Changed the namespaces of INotifyCollectionChanged and NotifyCollectionChangedEventArgs to be compatible with .net 4.6 and .net standard2.0.
+	Fixed a bug in the UWP(window10).
+
 version 1.7.0
 	Provided all source code for the project.
 	Merged Loxodon.Framework.Free and Loxodon.Framework.Pro.
