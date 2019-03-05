@@ -139,7 +139,7 @@ namespace Loxodon.Framework.Editors
                 return;
             variables.serializedObject.Update();
             variables.InsertArrayElementAtIndex(index);
-            SerializedProperty variableProperty = variables.GetArrayElementAtIndex(index);
+            SerializedProperty variableProperty = variables.GetArrayElementAtIndex(index+1);
 
             variableProperty.FindPropertyRelative("name").stringValue = "";
             variableProperty.FindPropertyRelative("objectValue").objectReferenceValue = null;
