@@ -6,7 +6,7 @@
 
 [(中文版)](README_CN.md)
 
-**MVVM Framework for Unity3D**
+**MVVM Framework for Unity3D(C# & XLua)**
 
 *Developed by Clark*
 
@@ -26,12 +26,14 @@ Android
 UWP(window10)
 
 ## Downloads  
-- [Loxodon Framework](https://www.assetstore.unity3d.com/#!/content/77446)
+- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [Releases](https://github.com/cocowolf/loxodon-framework/releases)
 
 ## Key Features:
 - MVVM Framework;
 - Multiple platforms;
 - Higher Extensibility;
+- XLua support(You can make your game in lua.);
 - Asynchronous result and asynchronous task are supported;
 - Scheduled Executor and Multi-threading;<br>
 - Messaging system support;
@@ -59,6 +61,12 @@ UWP(window10)
 
 - [Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 - [Examples](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
+
+## Quick start of Loxodon.Framework.XLua
+- You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.([XLua Download](https://github.com/Tencent/xLua/releases))
+- Configure a macro definition called "XLUA" in PlayerSetting/Scripting Defin Symbols.It is recommended to configure all platforms.
+- Find Loxodon.Framework.XLua.unitypackage in the LoxodonFramework/Docs/XLua directory and import it into the project.
+- Please see the example in the LoxodonFramework/Lua/Examples directory to enjoy your lua tour.
 
 ## Introduction
 - Window View 
