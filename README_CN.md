@@ -2,7 +2,7 @@
 
 # Loxodon Framework
 
-[![release](https://img.shields.io/badge/release-v1.7.0-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
+[![release](https://img.shields.io/badge/release-v1.7.5-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
 
 [(English)](README.md)
 
