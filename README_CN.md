@@ -24,8 +24,9 @@ IOS
 Android  
 UWP(window10)
 
-## AssetStore下载  
-- [Loxodon Framework](https://www.assetstore.unity3d.com/#!/content/77446)
+## 下载  
+- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [Releases](https://github.com/cocowolf/loxodon-framework/releases)
 
 ## 关键功能：
 - MVVM框架;
