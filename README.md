@@ -63,7 +63,7 @@ UWP(window10)
 - [Examples](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
 
 ## Quick start of Loxodon.Framework.XLua
-- You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.
+- You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.([XLua Download](https://github.com/Tencent/xLua/releases))
 - Configure a macro definition called "XLUA" in PlayerSetting/Scripting Defin Symbols.It is recommended to configure all platforms.
 - Find Loxodon.Framework.XLua.unitypackage in the LoxodonFramework/Docs/XLua directory and import it into the project.
 - Please see the example in the LoxodonFramework/Lua/Examples directory to enjoy your lua tour.
