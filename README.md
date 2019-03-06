@@ -6,7 +6,7 @@
 
 [(中文版)](README_CN.md)
 
-**MVVM Framework for Unity3D**
+**MVVM Framework for Unity3D(C# & XLua)**
 
 *Developed by Clark*
 
@@ -26,7 +26,8 @@ Android
 UWP(window10)
 
 ## Downloads  
-- [Loxodon Framework](https://www.assetstore.unity3d.com/#!/content/77446)
+- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [Release](https://github.com/cocowolf/loxodon-framework/releases)
 
 ## Key Features:
 - MVVM Framework;
