@@ -1,4 +1,16 @@
-﻿Loxodon.Framework.XLua 导入教程
+﻿Quick start of Loxodon.Framework.XLua
+
+1.You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.(XLua Download:https://github.com/Tencent/xLua/releases)
+
+2.Configure a macro definition called "XLUA" in PlayerSetting/Scripting Defin Symbols.It is recommended to configure all platforms.
+
+3.Find Loxodon.Framework.XLua.unitypackage in the LoxodonFramework/Docs/XLua directory and import it into the project.
+
+4.Please see the example in the LoxodonFramework/Lua/Examples directory to enjoy your lua tour.
+
+
+--------------------------------------
+Loxodon.Framework.XLua 导入教程
 
 1、从Xlua的Github仓库下载最新版的XLua，可以使用源码版本Source code.zip或者xlua_v2.x.xx.zip版本（建议使用xlua_v2.x.xx.zip版本，避免命XLua目录下测试类导致的类名冲突）。将下载好的xlua解压缩，拷贝到项目中。
 
