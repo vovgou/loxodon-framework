@@ -86,6 +86,7 @@ UWP(window10)
 网站: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)  
 QQ群: 622321589 [![](https://pub.idqqimg.com/wpa/images/group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)
 
-
+## 其他插件
+如果有需要AssetBundle加载和管理，资源冗余分析插件的，可以看看我的[Loxodon.Framework.Bundle](https://assetstore.unity.com/packages/slug/87419)
 
 
