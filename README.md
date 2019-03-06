@@ -27,12 +27,13 @@ UWP(window10)
 
 ## Downloads  
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
-- [Release](https://github.com/cocowolf/loxodon-framework/releases)
+- [Releases](https://github.com/cocowolf/loxodon-framework/releases)
 
 ## Key Features:
 - MVVM Framework;
 - Multiple platforms;
 - Higher Extensibility;
+- XLua support(You can make your game in lua.);
 - Asynchronous result and asynchronous task are supported;
 - Scheduled Executor and Multi-threading;<br>
 - Messaging system support;
