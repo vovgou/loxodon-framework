@@ -6,17 +6,17 @@
 
 [(English)](README.md)
 
-**MVVM Framework for Unity3D**
+**MVVM Framework for Unity3D （C# & XLua）**
 
 *开发者 Clark*
 
-要求Unity 5.6.0或者更高版本.
+要求Unity 5.6.0或者更高版本
 
-LoxodonFramework 是一个轻量级的MVVM(Model-View-ViewModel)框架，它是专门为Unity3D 游戏开发设计的。参考了WPF和Android的MVVM设计，它提供了视图和视图模型的数据绑定、本地化、一个简单的对象容器、配置文件组件、线程工具组件、应用上下文和玩家上下文，异步线程和协程的任务组件等基本组件，同时还提供了一个UI视图的框架。所有代码都基于面向对象面向接口的思路设计，几乎所有功能都可以自定义。而且在数据绑定部分进行了性能优化，在支持JIT的平台上使用的是委托的方式绑定，在不支持JIT的平台，默认使用的是反射，但是可以通过注入委托函数的方式来优化！
+LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是专门为Unity3D游戏开发设计的，参考了WPF和Android的MVVM设计，它提供了视图和视图模型的数据绑定、本地化、一个简单的对象容器、配置文件组件、线程工具组件、应用上下文和玩家上下文，异步线程和协程的任务组件等基本组件，同时还提供了一个UI视图的框架。所有代码都基于面向对象面向接口的思路设计，几乎所有功能都可以自定义。而且在数据绑定部分进行了性能优化，在支持JIT的平台上使用的是委托的方式绑定，在不支持JIT的平台，默认使用的是反射，但是可以通过注入委托函数的方式来优化！
 
-很快将开源这个框架针对XLua的支持插件，目前关于XLua支持的插件核心功能已经完成，在我的QQ群文件共享中可以下载到体验版本
+本框架使用C#语言开发，同时也支持使用XLua来开发，XLua插件是一个可选项，如果项目需要热更新，那么只要安装了XLua插件，则可以完全使用Lua来开发游戏。
 
-这个插件兼容 MacOSX,Windows,Linux,UWP,IOS and Android,并且完全开源。
+这个插件兼容 MacOSX,Windows,Linux,UWP,IOS and Android等等，并且完全开源。
 
 **已测试的平台：**  
 PC/Mac/Linux  
