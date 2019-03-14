@@ -2,7 +2,8 @@
 
 # Loxodon Framework
 
-[![release](https://img.shields.io/badge/release-v1.7.5-blue.svg)](https://www.assetstore.unity3d.com/#!/content/77446)
+[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/cocowolf/loxodon-framework/blob/master/LICENSE)
+[![release](https://img.shields.io/badge/release-v1.7.5-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
 
 [(中文版)](README_CN.md)
 
