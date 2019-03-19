@@ -4,7 +4,7 @@ using Loxodon.Framework.Asynchronous;
 
 namespace Loxodon.Framework.Execution
 {
-    public interface IScheduledExecutor
+    public interface IScheduledExecutor:IDisposable
     {
         /// <summary>
         /// Start the service.

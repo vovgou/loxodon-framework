@@ -67,6 +67,9 @@ namespace Loxodon.Framework.Editors
 		static string GetRelativeDirectory (string location)
 		{
 			int start = location.LastIndexOf ("Assets");
+            if (start < 0)
+                return "Assets";
+
 			int end = location.LastIndexOf ("/") + 1;
 			return location.Substring (start, (end - start));
 		}

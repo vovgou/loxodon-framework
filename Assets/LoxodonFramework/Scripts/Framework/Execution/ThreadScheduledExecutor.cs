@@ -178,6 +178,11 @@ namespace Loxodon.Framework.Execution
             return new FixedDelayDelayTask(this, command, initialDelay, delay);
         }
 
+        public virtual void Dispose()
+        {
+            this.Stop();
+        }
+
         interface IDelayTask : Asynchronous.IAsyncResult
         {
             TimeSpan Delay { get; }
