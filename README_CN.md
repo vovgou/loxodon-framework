@@ -63,6 +63,11 @@ UWP(window10)
 - [教程](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 - [示例](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
 
+## 中文手册
+
+- [手册html](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
+- [手册pdf](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
+
 ## Loxodon.Framework.XLua插件导入教程 
 
 - 从Xlua的Github仓库下载最新版的XLua，可以使用源码版本Source code.zip或者xlua_v2.x.xx.zip版本（建议使用xlua_v2.x.xx.zip版本，避免命XLua目录下测试类导致的类名冲突）。将下载好的xlua解压缩，拷贝到项目中。[下载XLua](https://github.com/Tencent/xLua/releases)
