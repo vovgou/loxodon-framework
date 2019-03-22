@@ -3,7 +3,7 @@
 # Loxodon Framework
 
 [![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/cocowolf/loxodon-framework/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v1.7.5-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
+[![release](https://img.shields.io/badge/release-v1.7.6-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
 
 [(English)](README.md)
 
@@ -63,10 +63,10 @@ UWP(window10)
 - [教程](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 - [示例](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
 
-## 中文手册
+## 中文文档
 
-- [手册html](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
-- [手册pdf](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
+- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
+- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
 
 ## Loxodon.Framework.XLua插件导入教程 
 
