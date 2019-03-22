@@ -1,5 +1,5 @@
 ﻿Loxodon Framework
-Version: 1.7.5
+Version: 1.7.6
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,9 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.7.6
+	Added Chinese document.
+
 version 1.7.5
 	Added support for XLua.
 
