@@ -1893,6 +1893,480 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
 请查看示例 [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
+#### 集合与列表视图的绑定 ####
+在Unity3D游戏开发中，我们经常要使用到UGUI的ScrollRect控件，比如我们要展示一个装备列表，或者一个背包中的所有物品。那么我们可以使用数据绑定功能来自动更新列表中的内容吗，比如添加、删除、修改一个装备集合中的数据，装备列表视图会自动更新界面内容吗？ 答案是肯定的，使用ObservableList或者ObservableDictionary集合来存储装备信息，通过数据绑定集合到一个视图脚本上，就可以自动的更新装备列表的内容，只是这里的视图脚本需要我们自己实现，因为每个项目列表视图并不是标准化的，我无法提供一个通用的脚本来提供集合的绑定。
+
+下面的示例中我创建了一个ListView的视图脚本，使用它来动态更新一个装备列表的视图。
+
+![](images/Tutorials_ListView.png)
+
+
+首先我们创建一个ListView控件，通过这个控件来监听装备集合ObservableDictionary的改变，当集合中内容变化时，自动更新UGUI视图，向装备列表中添加、删除装备。
+
+	public class ListView : UIView
+    {
+        public class ItemClickedEvent : UnityEvent<int>
+        {
+            public ItemClickedEvent()
+            {
+            }
+        }
+
+        private ObservableList<ListItemViewModel> items;
+
+        public Transform content;
+
+        public GameObject itemTemplate;
+
+        public ItemClickedEvent OnSelectChanged = new ItemClickedEvent();
+
+		//装备集合，通过数据绑定赋值
+        public ObservableList<ListItemViewModel> Items
+        {
+            get { return this.items; }
+            set
+            {
+                if (this.items == value)
+                    return;
+
+                if (this.items != null)
+                    this.items.CollectionChanged -= OnCollectionChanged;
+
+                this.items = value;
+
+                this.OnItemsChanged();
+
+                if (this.items != null)
+                    this.items.CollectionChanged += OnCollectionChanged;
+            }
+        }
+
+        /// <summary>
+        /// 监听装备集合的改变，自动更新装备列表界面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="eventArgs"></param>
+        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
+        {
+            switch (eventArgs.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    this.AddItem(eventArgs.NewStartingIndex, eventArgs.NewItems[0]);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    this.RemoveItem(eventArgs.OldStartingIndex, eventArgs.OldItems[0]);
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    this.ReplaceItem(eventArgs.OldStartingIndex, eventArgs.OldItems[0], eventArgs.NewItems[0]);
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    this.ResetItem();
+                    break;
+                case NotifyCollectionChangedAction.Move:
+                    this.MoveItem(eventArgs.OldStartingIndex, eventArgs.NewStartingIndex, eventArgs.NewItems[0]);
+                    break;
+            }
+        }
+
+        protected virtual void OnItemsChanged()
+        {
+            for (int i = 0; i < this.items.Count; i++)
+            {
+                this.AddItem(i, items[i]);
+            }
+        }
+
+        protected virtual void OnSelectChange(GameObject itemViewGo)
+        {
+            if (this.OnSelectChanged == null || itemViewGo == null)
+                return;
+
+            for (int i = 0; i < this.content.childCount; i++)
+            {
+                var child = this.content.GetChild(i);
+                if (itemViewGo.transform == child)
+                {
+                    this.OnSelectChanged.Invoke(i);
+                    break;
+                }
+            }
+        }
+
+        protected virtual void AddItem(int index, object item)
+        {
+            var itemViewGo = Instantiate(this.itemTemplate);
+            itemViewGo.transform.SetParent(this.content, false);
+            itemViewGo.transform.SetSiblingIndex(index);
+
+            Button button = itemViewGo.GetComponent<Button>();
+            button.onClick.AddListener(() => OnSelectChange(itemViewGo));
+            itemViewGo.SetActive(true);
+
+            UIView itemView = itemViewGo.GetComponent<UIView>();
+            itemView.SetDataContext(item);
+        }
+
+        protected virtual void RemoveItem(int index, object item)
+        {
+            Transform transform = this.content.GetChild(index);
+            UIView itemView = transform.GetComponent<UIView>();
+            if (itemView.GetDataContext() == item)
+            {
+                itemView.gameObject.SetActive(false);
+                Destroy(itemView.gameObject);
+            }
+        }
+
+        protected virtual void ReplaceItem(int index, object oldItem, object item)
+        {
+            Transform transform = this.content.GetChild(index);
+            UIView itemView = transform.GetComponent<UIView>();
+            if (itemView.GetDataContext() == oldItem)
+            {
+                itemView.SetDataContext(item);
+            }
+        }
+
+        protected virtual void MoveItem(int oldIndex, int index, object item)
+        {
+            Transform transform = this.content.GetChild(oldIndex);
+            UIView itemView = transform.GetComponent<UIView>();
+            itemView.transform.SetSiblingIndex(index);
+        }
+
+        protected virtual void ResetItem()
+        {
+            for (int i = this.content.childCount - 1; i >= 0; i--)
+            {
+                Transform transform = this.content.GetChild(i);
+                Destroy(transform.gameObject);
+            }
+        }
+    }
+
+然后创建一个装备列表的Item视图ListItemView，它负责将Item视图上的UGUI控件和装备的视图模型绑定，当装备的视图模型改变时，自动更新Item视图的内容。
+
+	public class ListItemView : UIView
+    {
+        public Text title;
+        public Text price;
+        public Image image;
+        public GameObject border;
+
+        protected override void Start()
+        {
+			//绑定Item上的视图元素
+            BindingSet<ListItemView, ListItemViewModel> bindingSet = this.CreateBindingSet<ListItemView, ListItemViewModel>();
+            bindingSet.Bind(this.title).For(v => v.text).To(vm => vm.Title).OneWay();
+            bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();
+            bindingSet.Bind(this.price).For(v => v.text).ToExpression(vm => string.Format("${0:0.00}", vm.Price)).OneWay();
+            bindingSet.Bind(this.border).For(v => v.activeSelf).To(vm => vm.IsSelected).OneWay();
+            bindingSet.Build();
+        }
+    }
+
+
+最后是ListView控件和ListItemView的视图模型代码如下。
+
+	public class ListViewViewModel : ViewModelBase
+    {
+        private readonly ObservableList<ListItemViewModel> items = new ObservableList<ListItemViewModel>();
+
+        public ObservableList<ListItemViewModel> Items
+        {
+            get { return this.items; }
+        }
+
+        public ListItemViewModel SelectedItem
+        {
+            get
+            {
+                foreach (var item in items)
+                {
+                    if (item.IsSelected)
+                        return item;
+                }
+                return null;
+            }
+        }
+
+        public void AddItem()
+        {
+            int i = this.items.Count;
+            int iconIndex = Random.Range(1, 30);
+            this.items.Add(new ListItemViewModel() { 
+				Title = "Equip " + i, 
+				Icon = string.Format("EquipImages_{0}", iconIndex), 
+				Price = Random.Range(10f, 100f) 
+			});
+        }
+
+        public void RemoveItem()
+        {
+            if (this.items.Count <= 0)
+                return;
+
+            int index = Random.Range(0, this.items.Count - 1);
+            this.items.RemoveAt(index);
+        }
+
+        public void ClearItem()
+        {
+            if (this.items.Count <= 0)
+                return;
+
+            this.items.Clear();
+        }
+
+        public void ChangeItemIcon()
+        {
+            if (this.items.Count <= 0)
+                return;
+
+            foreach (var item in this.items)
+            {
+                int iconIndex = Random.Range(1, 30);
+                item.Icon = string.Format("EquipImages_{0}", iconIndex);
+            }
+        }
+
+        public void Select(int index)
+        {
+            if (index <= -1 || index > this.items.Count - 1)
+                return;
+
+            for (int i = 0; i < this.items.Count; i++)
+            {
+                if (i == index)
+                {
+                    items[i].IsSelected = !items[i].IsSelected;
+                    if (items[i].IsSelected)
+                        Debug.LogFormat("Select, Current Index:{0}", index);
+                    else
+                        Debug.LogFormat("Cancel");
+                }
+                else
+                {
+                    items[i].IsSelected = false;
+                }
+            }
+        }
+    }
+
+    public class ListItemViewModel : ViewModelBase
+    {
+        private string title;
+        private string icon;
+        private float price;
+        private bool selected;
+
+        public string Title
+        {
+            get { return this.title; }
+            set { this.Set<string>(ref title, value, "Title"); }
+        }
+        public string Icon
+        {
+            get { return this.icon; }
+            set { this.Set<string>(ref icon, value, "Icon"); }
+        }
+
+        public float Price
+        {
+            get { return this.price; }
+            set { this.Set<float>(ref price, value, "Price"); }
+        }
+
+        public bool IsSelected
+        {
+            get { return this.selected; }
+            set { this.Set<bool>(ref selected, value, "IsSelected"); }
+        }
+    }
+
+    public class ListViewDatabindingExample : MonoBehaviour
+    {
+        private int itemCount;
+        private ListViewViewModel viewModel;
+
+        public Button addButton;
+
+        public Button removeButton;
+
+        public Button clearButton;
+
+        public Button changeIconButton;
+
+        public ListView listView;
+
+        void Awake()
+        {
+            ApplicationContext context = Context.GetApplicationContext();
+            BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
+            bindingService.Start();
+
+            Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
+            foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures"))
+            {
+                if (sprite != null)
+                    sprites.Add(sprite.name, sprite);
+            }
+            IConverterRegistry converterRegistry = context.GetContainer().Resolve<IConverterRegistry>();
+            converterRegistry.Register("spriteConverter", new SpriteConverter(sprites));
+        }
+
+        void Start()
+        {
+            viewModel = new ListViewViewModel();
+            for (int i = 0; i < 3; i++)
+            {
+                viewModel.AddItem();
+            }
+
+            IBindingContext bindingContext = this.BindingContext();
+            bindingContext.DataContext = viewModel;
+
+            BindingSet<ListViewDatabindingExample, ListViewViewModel> bindingSet;
+			bindingSet = this.CreateBindingSet<ListViewDatabindingExample, ListViewViewModel>();
+            bindingSet.Bind(this.listView).For(v => v.Items).To(vm => vm.Items).OneWay();
+            bindingSet.Bind(this.listView).For(v => v.OnSelectChanged).To(vm => vm.Select(0)).OneWay();
+
+            bindingSet.Bind(this.addButton).For(v => v.onClick).To(vm => vm.AddItem());
+            bindingSet.Bind(this.removeButton).For(v => v.onClick).To(vm => vm.RemoveItem());
+            bindingSet.Bind(this.clearButton).For(v => v.onClick).To(vm => vm.ClearItem());
+            bindingSet.Bind(this.changeIconButton).For(v => v.onClick).To(vm => vm.ChangeItemIcon());
+
+            bindingSet.Build();
+        }
+    }
+
+请查看示例 [ListView And Sprite Databinding Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+
+#### 数据绑定与异步加载精灵 ####
+在前文的示例中，我有使用到精灵的绑定，只是它是提前加载到内存中的。在这里我将讲讲如何通过数据绑定来异步加载一个精灵。与上一节中集合绑定类似，通过一个视图脚本就可以轻松实现精灵的异步加载。下面我们来看示例。
+
+点击图中的"Change Icon"按钮改变图标，图标的加载为异步加载的方式，有一个加载动画。
+
+![](images/Tutorials_SpriteUI.png)
+
+首先，我们实现一个精灵异步加载器，将它挂在需要异步加载精灵图片的Image控件上。
+
+![](images/Tutorials_Sprite.png)
+
+
+	[RequireComponent(typeof(Image))]
+    public class AsyncSpriteLoader : MonoBehaviour
+    {
+        private Image target;
+        private string spriteName;
+        public Sprite defaultSprite;
+        public Material defaultMaterial;
+        public string spritePath;
+
+        public string SpriteName
+        {
+            get { return this.spriteName; }
+            set
+            {
+                if (this.spriteName == value)
+                    return;
+
+                this.spriteName = value;
+                if (this.target != null)
+                    this.OnSpriteChanged();
+            }
+        }
+
+        protected virtual void OnEnable()
+        {
+            this.target = this.GetComponent<Image>();
+        }
+
+        protected virtual void OnSpriteChanged()
+        {
+            if (string.IsNullOrEmpty(this.spriteName))
+            {
+                this.target.sprite = null;
+                this.target.material = null;
+                return;
+            }
+
+            this.target.sprite = defaultSprite;
+            this.target.material = defaultMaterial;
+
+            StartCoroutine(LoadSprite());
+        }
+
+        /// <summary>
+        /// 异步加载精灵，为了效果明显，在加载器等待了一秒钟
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator LoadSprite()
+        {
+            yield return new WaitForSeconds(1f); 
+
+            Sprite[] sprites = Resources.LoadAll<Sprite>(this.spritePath);
+            foreach(var sprite in sprites)
+            {
+                if(sprite.name.Equals(this.spriteName))
+                {
+                    this.target.sprite = sprite;
+                    this.target.material = null;
+                }
+            }
+        }
+    }
+
+然后创建示例界面的视图和视图模型代码如下
+
+	public class SpriteViewModel : ViewModelBase
+    {
+        private string spriteName = "EquipImages_1";
+
+        public string SpriteName
+        {
+            get { return this.spriteName; }
+            set { this.Set<string>(ref spriteName, value, "SpriteName"); }
+        }
+
+        public void ChangeSpriteName()
+        {
+            this.SpriteName = string.Format("EquipImages_{0}", Random.Range(1, 30));
+        }
+    }
+
+    public class DatabindingForAsyncLoadingSpriteExample : MonoBehaviour
+    {
+        public Button changeSpriteButton;
+
+        public AsyncSpriteLoader spriteLoader;
+
+        void Awake()
+        {
+            ApplicationContext context = Context.GetApplicationContext();
+            BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
+            bindingService.Start();
+        }
+
+        void Start()
+        {
+            var viewModel = new SpriteViewModel();
+
+            IBindingContext bindingContext = this.BindingContext();
+            bindingContext.DataContext = viewModel;
+
+            BindingSet<DatabindingForAsyncLoadingSpriteExample, SpriteViewModel> bindingSet;
+			bindingSet = this.CreateBindingSet<DatabindingForAsyncLoadingSpriteExample, SpriteViewModel>();
+            bindingSet.Bind(this.spriteLoader).For(v => v.SpriteName).To(vm => vm.SpriteName).OneWay();
+
+            bindingSet.Bind(this.changeSpriteButton).For(v => v.onClick).To(vm => vm.ChangeSpriteName());
+
+            bindingSet.Build();
+        }
+    }
+
+请查看示例 [Databinding for Asynchronous Loading Sprites Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+
 ## Lua ##
 
 ### 模块与继承 ###
