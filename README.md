@@ -3,7 +3,7 @@
 # Loxodon Framework
 
 [![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/cocowolf/loxodon-framework/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v1.7.5-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
+[![release](https://img.shields.io/badge/release-v1.7.6-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
 
 [(中文版)](README_CN.md)
 
@@ -62,6 +62,11 @@ UWP(window10)
 
 - [Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 - [Examples](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
+
+## Chinese manual
+
+- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
+- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
 
 ## Quick start of Loxodon.Framework.XLua
 - You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.([XLua Download](https://github.com/Tencent/xLua/releases))
