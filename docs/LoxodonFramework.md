@@ -2055,7 +2055,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
         protected override void Start()
         {
-			//绑定Item上的视图元素
+            //绑定Item上的视图元素
             BindingSet<ListItemView, ListItemViewModel> bindingSet = this.CreateBindingSet<ListItemView, ListItemViewModel>();
             bindingSet.Bind(this.title).For(v => v.text).To(vm => vm.Title).OneWay();
             bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();
