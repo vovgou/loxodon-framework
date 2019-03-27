@@ -236,23 +236,23 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
         protected override void Awake()
         {
-			//获得应用上下文
+            //获得应用上下文
             ApplicationContext context = Context.GetApplicationContext();
 
-			//启动数据绑定服务
+            //启动数据绑定服务
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
 
-			//初始化本地化服务
+            //初始化本地化服务
             CultureInfo cultureInfo = Locale.GetCultureInfo();
-			var provider = new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser())
+            var provider = new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser())
             Localization.Current = Localization.Create(provider, cultureInfo);
 
         }
 
         protected override void Start()
         {
-			//创建账号子视图
+            //创建账号子视图
             AccountViewModel account = new AccountViewModel()
             {
                 ID = 1,
@@ -263,24 +263,24 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
             };
             account.Address.Value = "beijing";
 
-			//创建数据绑定视图
+            //创建数据绑定视图
             DatabindingViewModel databindingViewModel = new DatabindingViewModel()
             {
                 Account = account
             };
 
-			//获得数据绑定上下文
+            //获得数据绑定上下文
             IBindingContext bindingContext = this.BindingContext();
 
-			//将视图模型赋值到DataContext
+            //将视图模型赋值到DataContext
             bindingContext.DataContext = databindingViewModel;
 
             //绑定UI控件到视图模型
             BindingSet<DatabindingExample, DatabindingViewModel> bindingSet;
-			bindingSet = this.CreateBindingSet<DatabindingExample, DatabindingViewModel>();
+            bindingSet = this.CreateBindingSet<DatabindingExample, DatabindingViewModel>();
             
-			//绑定左侧视图到账号子视图模型
-			bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).OneWay();
+            //绑定左侧视图到账号子视图模型
+            bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).OneWay();
             bindingSet.Bind(this.password).For(v => v.text).To(vm => vm.Account.Password).OneWay();
             bindingSet.Bind(this.email).For(v => v.text).To(vm => vm.Account.Email).OneWay();
             bindingSet.Bind(this.remember).For(v => v.text).To(vm => vm.Remember).OneWay();
@@ -288,7 +288,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
              vm.Account.Birthday.ToString("yyyy-MM-dd"), (DateTime.Now.Year - vm.Account.Birthday.Year))).OneWay();
             bindingSet.Bind(this.address).For(v => v.text).To(vm => vm.Account.Address).OneWay();
 
-			//绑定右侧表单到视图模型
+            //绑定右侧表单到视图模型
             bindingSet.Bind(this.errorMessage).For(v => v.text).To(vm => vm.Errors["errorMessage"]).OneWay();
             bindingSet.Bind(this.usernameEdit).For(v => v.text, v => v.onEndEdit).To(vm => vm.Username).TwoWay();
             bindingSet.Bind(this.usernameEdit).For(v => v.onValueChanged).To(vm => vm.OnUsernameValueChanged(""));
@@ -298,7 +298,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
             bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit());
             bindingSet.Build();
 
-			//绑定标题,标题通过本地化文件配置
+            //绑定标题,标题通过本地化文件配置
             BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();
             staticBindingSet.Bind(this.title).For(v => v.text).To(() => Res.databinding_tutorials_title).OneTime();
             staticBindingSet.Build();
@@ -481,39 +481,39 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
 	玩家上下文中默认继承了全局上下文的所有服务和属性，所以通过玩家上下文可以获取到所有在全局上下文中的服务和数据，当玩家上下文注册了与全局上下文中Key值相同的服务或者是属性时，它会在玩家上下文中存储，不会覆盖全局上下文中存储的数据，当通过Key访问时，优先返回玩家上下文中的数据，只有在玩家上下文中找不到时才会去全局上下文中查找。
 
-		//为玩家clark创建一个玩家上下文
+        //为玩家clark创建一个玩家上下文
         PlayerContext playerContext = new PlayerContext("clark");
 
-		//获得玩家上下文中的服务容器
+        //获得玩家上下文中的服务容器
         IServiceContainer container = playerContext.GetContainer();
 
-		//将角色信息存入玩家上下文
+        //将角色信息存入玩家上下文
         playerContext.Set("roleInfo", roleInfo);
 
-		//初始化背包服务，注册到玩家上下文的服务容器中
+        //初始化背包服务，注册到玩家上下文的服务容器中
         container.Register<IKnapsackService>(new KnapsackService());
 
-		//从通过玩家上下文获得在全局上下文注册的IViewLocator服务
-		IUIViewLocator locator = playerContext.GetService<IUIViewLocator>();
+        //从通过玩家上下文获得在全局上下文注册的IViewLocator服务
+        IUIViewLocator locator = playerContext.GetService<IUIViewLocator>();
 
-		//从通过玩家上下文获得在全局上下文注册的本地化服务
-		Localization localization = playerContext.GetService<Localization>();
+        //从通过玩家上下文获得在全局上下文注册的本地化服务
+        Localization localization = playerContext.GetService<Localization>();
 
-		//当用户clark退出登录时，注销玩家上下文，自动注销所有注册在当前玩家上下文中的服务。
-		playerContext.Dispose();
+        //当用户clark退出登录时，注销玩家上下文，自动注销所有注册在当前玩家上下文中的服务。
+        playerContext.Dispose();
 
 
 - **其它上下文（Context）**
 	一般来说，在很多游戏开发中，我们只需要全局上下文和玩家上下文就足以满足要求，但是在某些情况下，我们还需要一个上下文来存储环境数据，比如在MMO游戏中，进入某个特定玩法的副本，那么我就需要为这个副本创建一个专属的上下文，当副本中的战斗结束，退出副本时，则销毁这个副本上下文来释放资源。
 
-		//创建一个上下文，参数container值为null，在Context内部会自动创建
-		//参数contextBase值为playerContext，自动继承了playerContext中的服务和属性
-		Context context = new Context(null,playerContext);
+        //创建一个上下文，参数container值为null，在Context内部会自动创建
+        //参数contextBase值为playerContext，自动继承了playerContext中的服务和属性
+        Context context = new Context(null,playerContext);
 		
-		//获得上下文中的服务容器
+        //获得上下文中的服务容器
         IServiceContainer container = context.GetContainer();
 
-		//注册一个战斗服务到容器中
+        //注册一个战斗服务到容器中
         container.Register<IBattleService>(new BattleService());
 
 ### 服务容器 ###
@@ -597,7 +597,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
     /// <summary>
     /// 自定义一个类型编码器
     /// </summary>
-	public class ColorTypeEncoder : ITypeEncoder
+    public class ColorTypeEncoder : ITypeEncoder
     {
         private int priority = 900; //当一个类型被多个类型编码器支持时，优先级最高的有效(优先级在-999到999之间)
 
@@ -614,7 +614,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
             return false;
         }
 
-		//将string类型转回对象类型
+        //将string类型转回对象类型
         public object Decode(Type type, string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -627,7 +627,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 			return null;
         }
 
-		//将对象转换为string来保存，因为PlayerPrefs只支持string类型的数据
+        //将对象转换为string来保存，因为PlayerPrefs只支持string类型的数据
         public string Encode(object value)
         {			
             return ColorUtility.ToHtmlStringRGBA((Color)value);
@@ -635,19 +635,19 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
     }
 
 
-	//默认使用AES128_CBC_PKCS7加密，当然你也可以自己实现IEncryptor接口，定义自己的加密算法。
-	byte[] iv = Encoding.ASCII.GetBytes("5CyM5tcL3yDFiWlN");
+    //默认使用AES128_CBC_PKCS7加密，当然你也可以自己实现IEncryptor接口，定义自己的加密算法。
+    byte[] iv = Encoding.ASCII.GetBytes("5CyM5tcL3yDFiWlN");
     byte[] key = Encoding.ASCII.GetBytes("W8fnmqMynlTJXPM1");
 
     IEncryptor encryptor = new DefaultEncryptor(key, iv);
 
-	//序列化和反序列化类
+    //序列化和反序列化类
     ISerializer serializer = new DefaultSerializer();
 
-	//添加自定义的类型编码器
+    //添加自定义的类型编码器
     serializer.AddTypeEncoder(new ColorTypeEncoder());
 
-	//注册Preferences工厂
+    //注册Preferences工厂
     BinaryFilePreferencesFactory factory = new BinaryFilePreferencesFactory(serializer, encryptor);
     Preferences.Register(factory);
 
@@ -745,25 +745,25 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 	默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
 
-	    string
-	    boolean
-	    sbyte
-	    byte
-	    short
-	    ushort
-	    int
-	    uint
-	    long
-	    ulong
-	    char
-	    float
-	    double
-	    decimal
-	    datetime
-		vector2
-		vector3
-		vector4
-		color
+            string
+            boolean
+            sbyte
+            byte
+            short
+            ushort
+            int
+            uint
+            long
+            ulong
+            char
+            float
+            double
+            decimal
+            datetime
+            vector2
+            vector3
+            vector4
+            color
 
 - **生成C#脚本**
 	
