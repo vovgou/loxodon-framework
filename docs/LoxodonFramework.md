@@ -2,7 +2,7 @@
 
 # Loxodon Framework
 
-![release](images/release_1.7.5.png)
+![release](images/release_version.png)
 
 **MVVM Framework for Unity3D （C# & XLua）**
 
@@ -2401,15 +2401,34 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 		self.age = 5
 	end
 
-要在lua继承一个C#类，那么这个类必须要能通过new关键字来实例化。比如MonoBehaviour脚本类，无法通过new关键字来实例化，是无法在lua中继承的。在class函数中，第一个参数是类名，第二个参数必须是C#类的实例化函数，看如下代码。
+Lua除了可以继承模块，也可以继承C#的类，当然也包括静态类。要在lua继承一个非静态的C#类，那么这个类必须要能通过new关键字来实例化，或者提供了别的实例化函数。比如MonoBehaviour脚本类，无法通过new关键字来实例化，是无法在lua中继承的。在class函数中，第一个参数是类名，第二个参数必须是C#类或者是C#类的实例化函数。我们可以在Lua脚本中重写父类的函数，也可以在Lua中调用父类的函数，看如下代码。
 
-	-- 定义一个继承C#类ResourcesViewLocator的模块，推荐模块的变量名默认都使用M
-	local M = class("LuaResourcesViewLocator",function(...)
-		return CS.Loxodon.Framework.Examples.ResourcesViewLocator(...)
-	end)
+**注意：调用父类函数必须使用模块名调用，不要使用self调用**
 
-	function M:LoadView(name)
+    M.base(self).Get(self,name,cascade) --正确
+    
+    self:base().Get(self,name,cascade) --错误
+    
+    M.base(self):Get(name,cascade) --错误
+
+Lua继承C#类Loxodon.Framework.Contexts.Context，新增GetName()函数，重写Context.Get(string name,bool cascade)函数。
+
+	-- 定义一个继承C#类Context的模块，推荐模块的变量名默认都使用M
+	local M = class("LuaContext",CS.Loxodon.Framework.Contexts.Context)
+
+	-- 新增一个函数
+	function M:GetName()
 	
+		--代码省略
+		
+	end
+
+	-- 重写父类的函数，调用父类的函数
+	function M:Get(name,cascade)	
+		-- 调用父类的函数
+		local ret = M.base(self).Get(self,name,cascade)
+		if ret then return ret end
+
 		--代码省略
 		
 	end
@@ -2477,12 +2496,18 @@ C#代码，LuaLauncher脚本中初始化lua执行环境的部分。
 		
 		-- 通过视图定位器，加载一个启动窗口视图
 		local window = locator:LoadWindow(winContainer, "LuaUI/Startup/Startup")
-		window:Create() --创建窗口
-		local transition = window:Show() --显示窗口，返回一个transition对象，窗口显示一般会有窗口动画，所以是一个持续过程的操作
-		transition:OnStateChanged(function(w,state) print("Window:"..w.Name.." State:"..state:ToString()) end) --监听显示窗口过程的窗口状态
-		transition:OnFinish(function() print("OnFinished")  end) --监听窗口显示完成事件
-	
-		print("lua start...")
+
+		--创建窗口
+		window:Create() 
+
+		--显示窗口，返回一个transition对象，窗口显示一般会有窗口动画，所以是一个持续过程的操作
+		local transition = window:Show() 
+
+		--监听显示窗口过程的窗口状态
+		transition:OnStateChanged(function(w,state) print("Window:"..w.Name.." State:"..state:ToString()) end) 
+		
+		--监听窗口显示完成事件		
+		transition:OnFinish(function() print("OnFinished")  end) 
 	end
 	
 	return M
@@ -2547,9 +2572,17 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
 
 使用XLua的函数util.cs_generator将doLoad包装成IEnumerator放入Executors.RunOnCoroutineNoReturn中执行。
 
+	local Executors = require("framework.Executors")
+
 	local result = ProgressResult(true)
 	Executors.RunOnCoroutineNoReturn(util.cs_generator(function() self:doLoad(result) end))
 
+使用我在Lua中扩展封装的函数 RunLuaOnCoroutine
+
+	local Executors = require("framework.Executors")
+
+	local result = ProgressResult(true)
+	Executors.RunLuaOnCoroutine(function() self:doLoad(result) end)
 
 ## 联系方式 ##
 邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   

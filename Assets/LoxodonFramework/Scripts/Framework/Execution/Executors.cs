@@ -54,7 +54,7 @@ namespace Loxodon.Framework.Execution
             Create();
         }
 
-        [RuntimeInitializeOnLoadMethod]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void OnRuntimeCreate()
         {
             Create();

@@ -1,5 +1,5 @@
 ﻿Loxodon Framework
-Version: 1.7.6
+Version: 1.7.8
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,9 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.7.8
+	Supports Lua to override method of the parent class of C#,and added the ability to access methods and properties of the parent class of C#.
+
 version 1.7.6
 	Added Chinese document.
 
