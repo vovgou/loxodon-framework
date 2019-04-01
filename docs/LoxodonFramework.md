@@ -620,11 +620,11 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
             if (string.IsNullOrEmpty(value))
                 return null;
 
-			Color color;
-			if(ColorUtility.TryParseHtmlString(value,out color))
+            Color color;
+            if(ColorUtility.TryParseHtmlString(value,out color))
             	return color;
-
-			return null;
+		
+            return null;
         }
 
         //将对象转换为string来保存，因为PlayerPrefs只支持string类型的数据
