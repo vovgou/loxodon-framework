@@ -745,25 +745,25 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 	默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
 
-            string
-            boolean
-            sbyte
-            byte
-            short
-            ushort
-            int
-            uint
-            long
-            ulong
-            char
-            float
-            double
-            decimal
-            datetime
-            vector2
-            vector3
-            vector4
-            color
+        string
+        boolean
+        sbyte
+        byte
+        short
+        ushort
+        int
+        uint
+        long
+        ulong
+        char
+        float
+        double
+        decimal
+        datetime
+        vector2
+        vector3
+        vector4
+        color
 
 - **生成C#脚本**
 	
