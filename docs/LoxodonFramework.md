@@ -89,7 +89,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
 在一个UI视图的根对象上添加视图脚本组件DatabindingExample，并且将UI控件赋值到对应的属性上,这个示例中属性都是通过C#硬编码来定义的，当然你也可以使用动态的属性表VariableArray来动态定义属性，具体可以看Lua的例子，配置好属性后如下图所示。
 
-![](images/DatabindingExample_03.png)
+![](images/DatabindingExample_03.png) 
 
 下面请看代码，我们是如果来定义视图模型和视图脚本的，又是怎么样来绑定视图到视图模型的。
 
