@@ -1,3 +1,4 @@
+﻿
 namespace Loxodon.Framework.Binding.Proxy.Sources
 {
     public abstract class TypedSourceProxyFactory<T> : ISourceProxyFactory where T : SourceDescription

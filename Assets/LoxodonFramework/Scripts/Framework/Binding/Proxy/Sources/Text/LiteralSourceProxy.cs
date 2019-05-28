@@ -2,21 +2,22 @@
 
 namespace Loxodon.Framework.Binding.Proxy.Sources.Text
 {
-    public class LiteralSourceProxy : AbstractProxy, ITextSourceProxy
+    public class LiteralSourceProxy : SourceProxyBase, ISourceProxy, IObtainable
     {
-        private readonly object source;
-        public LiteralSourceProxy(object source)
+        public LiteralSourceProxy(object source) : base(source)
         {
-            this.source = source;
         }
 
-        public Type Type { get { return this.source != null ? this.source.GetType() : typeof(object); } }
+        public override Type Type { get { return this.source != null ? this.source.GetType() : typeof(object); } }
 
-        public object Source { get { return this.source; } }
-
-        public object GetValue()
+        public virtual object GetValue()
         {
             return this.source;
+        }
+
+        public virtual TValue GetValue<TValue>()
+        {
+            return (TValue)Convert.ChangeType(this.source, typeof(TValue));
         }
     }
 }

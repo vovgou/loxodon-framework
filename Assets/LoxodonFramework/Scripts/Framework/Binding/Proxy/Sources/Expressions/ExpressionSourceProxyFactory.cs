@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Loxodon.Framework.Binding.Paths;
 using Loxodon.Framework.Binding.Proxy.Sources.Object;
 using Loxodon.Framework.Binding.Expressions;
+using Loxodon.Framework.Binding.Proxy.Sources.Expressions;
 
 namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
 {

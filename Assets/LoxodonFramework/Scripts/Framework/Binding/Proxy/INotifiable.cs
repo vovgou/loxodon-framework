@@ -1,10 +1,10 @@
 ﻿using System;
 
 namespace Loxodon.Framework.Binding.Proxy
-{   
+{
 
-    public interface INotifiable<T> where T : EventArgs
+    public interface INotifiable
     {
-        event EventHandler<T> ValueChanged;
+        event EventHandler ValueChanged;
     }
 }

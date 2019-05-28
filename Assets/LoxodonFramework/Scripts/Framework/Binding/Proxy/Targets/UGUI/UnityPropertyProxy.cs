@@ -1,17 +1,14 @@
-﻿using System;
-using System.Reflection;
+﻿using Loxodon.Framework.Binding.Reflection;
 using UnityEngine.Events;
-
-using Loxodon.Log;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
     public class UnityPropertyProxy<TValue> : PropertyTargetProxy
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(UnityPropertyProxy<TValue>));
+        //private static readonly ILog log = LogManager.GetLogger(typeof(UnityPropertyProxy<TValue>));
 
         private UnityEvent<TValue> unityEvent;
-        public UnityPropertyProxy(object target, PropertyInfo propertyInfo, UnityEvent<TValue> unityEvent) : base(target, propertyInfo)
+        public UnityPropertyProxy(object target, IProxyPropertyInfo propertyInfo, UnityEvent<TValue> unityEvent) : base(target, propertyInfo)
         {
             this.unityEvent = unityEvent;
         }
@@ -23,15 +20,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if (this.unityEvent == null || target == null)
                 return;
 
-            try
-            {
-                unityEvent.AddListener(OnValueChanged);
-            }
-            catch (Exception e)
-            {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("{0} ,registration failed！Exception:{1}", typeof(UnityEvent<TValue>).Name, e);
-            }
+            unityEvent.AddListener(OnValueChanged);
         }
 
         protected override void DoUnsubscribeForValueChange(object target)
@@ -42,15 +31,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         private void OnValueChanged(TValue value)
         {
-            try
-            {
-                this.RaiseValueChanged(value);
-            }
-            catch (Exception e)
-            {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("Property[{0}] ValueChanged Exception,{1}", this.propertyInfo.Name, e);
-            }
+            this.RaiseValueChanged();
         }
     }
 }

@@ -249,8 +249,7 @@ namespace Loxodon.Framework.Binding.Paths
                     {
                         if (field.IsStatic)
                         {
-                            path.Prepend(new MemberNode(field));                         
-                            path.Prepend(new TypeNode(field.DeclaringType));
+                            path.Prepend(new MemberNode(field));
                         }
                         else
                         {
@@ -264,7 +263,6 @@ namespace Loxodon.Framework.Binding.Paths
                         if (property.IsStatic())
                         {                           
                             path.Prepend(new MemberNode(property));
-                            path.Prepend(new TypeNode(property.DeclaringType));
                         }
                         else
                         {

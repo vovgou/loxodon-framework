@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Linq;
-using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+
+using NotifyCollectionChangedEventHandler = System.Collections.Specialized.NotifyCollectionChangedEventHandler;
+using INotifyCollectionChanged = System.Collections.Specialized.INotifyCollectionChanged;
+using NotifyCollectionChangedAction = System.Collections.Specialized.NotifyCollectionChangedAction;
+using NotifyCollectionChangedEventArgs = System.Collections.Specialized.NotifyCollectionChangedEventArgs;
+using INotifyPropertyChanged = System.ComponentModel.INotifyPropertyChanged;
+using PropertyChangedEventArgs = System.ComponentModel.PropertyChangedEventArgs;
+using PropertyChangedEventHandler = System.ComponentModel.PropertyChangedEventHandler;
 
 namespace Loxodon.Framework.Observables
 {
     [Serializable]
     public class ObservableDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary, INotifyCollectionChanged, INotifyPropertyChanged
     {
-        private const string CountString = "Count";
-        private const string IndexerName = "Item[]";
-        private const string KeysName = "Keys";
-        private const string ValuesName = "Values";
+        private static readonly PropertyChangedEventArgs CountEventArgs = new PropertyChangedEventArgs("Count");
+        private static readonly PropertyChangedEventArgs IndexerEventArgs = new PropertyChangedEventArgs("Item[]");
+        private static readonly PropertyChangedEventArgs KeysEventArgs = new PropertyChangedEventArgs("Keys");
+        private static readonly PropertyChangedEventArgs ValuesEventArgs = new PropertyChangedEventArgs("Values");
 
         private readonly object propertyChangedLock = new object();
         private readonly object collectionChangedLock = new object();
@@ -97,7 +103,11 @@ namespace Loxodon.Framework.Observables
             dictionary.TryGetValue(key, out value);
             var removed = dictionary.Remove(key);
             if (removed)
-                OnCollectionChanged(NotifyCollectionChangedAction.Remove, new KeyValuePair<TKey, TValue>(key, value));
+            {
+                OnPropertyChanged(NotifyCollectionChangedAction.Remove);
+                if (this.collectionChanged != null)
+                    OnCollectionChanged(NotifyCollectionChangedAction.Remove, new KeyValuePair<TKey, TValue>(key, value));
+            }
 
             return removed;
         }
@@ -122,7 +132,9 @@ namespace Loxodon.Framework.Observables
             if (dictionary.Count > 0)
             {
                 dictionary.Clear();
-                OnCollectionChanged();
+                OnPropertyChanged(NotifyCollectionChangedAction.Reset);
+                if (this.collectionChanged != null)
+                    OnCollectionChanged();
             }
         }
 
@@ -172,15 +184,20 @@ namespace Loxodon.Framework.Observables
                 {
                     if (items.Keys.Any((k) => this.dictionary.ContainsKey(k)))
                         throw new ArgumentException("An item with the same key has already been added.");
-                    else {
+                    else
+                    {
                         foreach (var item in items)
                             ((IDictionary<TKey, TValue>)this.dictionary).Add(item);
                     }
                 }
-                else {
+                else
+                {
                     this.dictionary = new Dictionary<TKey, TValue>(items);
                 }
-                OnCollectionChanged(NotifyCollectionChangedAction.Add, items.ToArray());
+
+                OnPropertyChanged(NotifyCollectionChangedAction.Add);
+                if (this.collectionChanged != null)
+                    OnCollectionChanged(NotifyCollectionChangedAction.Add, items.ToArray());
             }
         }
 
@@ -199,53 +216,77 @@ namespace Loxodon.Framework.Observables
                     return;
 
                 dictionary[key] = value;
-                OnCollectionChanged(NotifyCollectionChangedAction.Replace, new KeyValuePair<TKey, TValue>(key, value), new KeyValuePair<TKey, TValue>(key, item));
+                OnPropertyChanged(NotifyCollectionChangedAction.Replace);
+                if (this.collectionChanged != null)
+                    OnCollectionChanged(NotifyCollectionChangedAction.Replace, new KeyValuePair<TKey, TValue>(key, value), new KeyValuePair<TKey, TValue>(key, item));
             }
             else
             {
                 dictionary[key] = value;
-                OnCollectionChanged(NotifyCollectionChangedAction.Add, new KeyValuePair<TKey, TValue>(key, value));
+                OnPropertyChanged(NotifyCollectionChangedAction.Add);
+                if (this.collectionChanged != null)
+                    OnCollectionChanged(NotifyCollectionChangedAction.Add, new KeyValuePair<TKey, TValue>(key, value));
             }
         }
 
-        private void OnPropertyChanged()
+        private void OnPropertyChanged(NotifyCollectionChangedAction action)
         {
-            OnPropertyChanged(CountString);
-            OnPropertyChanged(IndexerName);
-            OnPropertyChanged(KeysName);
-            OnPropertyChanged(ValuesName);
+            switch (action)
+            {
+                case NotifyCollectionChangedAction.Reset:
+                case NotifyCollectionChangedAction.Add:
+                case NotifyCollectionChangedAction.Remove:
+                    {
+                        OnPropertyChanged(CountEventArgs);
+                        OnPropertyChanged(IndexerEventArgs);
+                        OnPropertyChanged(KeysEventArgs);
+                        OnPropertyChanged(ValuesEventArgs);
+                        break;
+                    }
+                case NotifyCollectionChangedAction.Replace:
+                    {
+                        OnPropertyChanged(IndexerEventArgs);
+                        OnPropertyChanged(ValuesEventArgs);
+                        break;
+                    }
+                case NotifyCollectionChangedAction.Move:
+                default:
+                    {
+                        OnPropertyChanged(CountEventArgs);
+                        OnPropertyChanged(IndexerEventArgs);
+                        OnPropertyChanged(KeysEventArgs);
+                        OnPropertyChanged(ValuesEventArgs);
+                        break;
+                    }
+            }
         }
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs eventArgs)
         {
             if (this.propertyChanged != null)
-                this.propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                this.propertyChanged(this, eventArgs);
         }
 
         private void OnCollectionChanged()
         {
-            OnPropertyChanged();
             if (this.collectionChanged != null)
                 this.collectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<TKey, TValue> changedItem)
         {
-            OnPropertyChanged();
             if (this.collectionChanged != null)
                 this.collectionChanged(this, new NotifyCollectionChangedEventArgs(action, changedItem));
         }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<TKey, TValue> newItem, KeyValuePair<TKey, TValue> oldItem)
         {
-            OnPropertyChanged();
             if (this.collectionChanged != null)
                 this.collectionChanged(this, new NotifyCollectionChangedEventArgs(action, newItem, oldItem));
         }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction action, IList newItems)
         {
-            OnPropertyChanged();
             if (this.collectionChanged != null)
                 this.collectionChanged(this, new NotifyCollectionChangedEventArgs(action, newItems));
         }

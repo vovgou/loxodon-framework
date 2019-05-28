@@ -1,10 +1,11 @@
 ﻿using Loxodon.Log;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Loxodon.Framework.Binding.Reflection
 {
-    public class StaticProxyFuncInfo<T, TResult> : AbstractProxyMethodInfo, IStaticProxyFuncInfo<T, TResult>
+    public class StaticProxyFuncInfo<T, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, TResult>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyFuncInfo<T, TResult>));
         private Func<TResult> function;
@@ -42,6 +43,8 @@ namespace Loxodon.Framework.Binding.Reflection
                 this.function = this.MakeFunc(this.methodInfo);
         }
 
+        public override Type DeclaringType { get { return typeof(T); } }
+
         private Func<TResult> MakeFunc(MethodInfo methodInfo)
         {
             try
@@ -74,7 +77,7 @@ namespace Loxodon.Framework.Binding.Reflection
         }
     }
 
-    public class StaticProxyFuncInfo<T, P1, TResult> : AbstractProxyMethodInfo, IStaticProxyFuncInfo<T, P1, TResult>
+    public class StaticProxyFuncInfo<T, P1, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, P1, TResult>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyFuncInfo<T, P1, TResult>));
         private Func<P1, TResult> function;
@@ -117,6 +120,8 @@ namespace Loxodon.Framework.Binding.Reflection
 
         }
 
+        public override Type DeclaringType { get { return typeof(T); } }
+
         private Func<P1, TResult> MakeFunc(MethodInfo methodInfo)
         {
             try
@@ -149,7 +154,7 @@ namespace Loxodon.Framework.Binding.Reflection
         }
     }
 
-    public class StaticProxyFuncInfo<T, P1, P2, TResult> : AbstractProxyMethodInfo, IStaticProxyFuncInfo<T, P1, P2, TResult>
+    public class StaticProxyFuncInfo<T, P1, P2, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, P1, P2, TResult>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyFuncInfo<T, P1, P2, TResult>));
         private Func<P1, P2, TResult> function;
@@ -193,6 +198,8 @@ namespace Loxodon.Framework.Binding.Reflection
 
         }
 
+        public override Type DeclaringType { get { return typeof(T); } }
+
         private Func<P1, P2, TResult> MakeFunc(MethodInfo methodInfo)
         {
             try
@@ -225,7 +232,7 @@ namespace Loxodon.Framework.Binding.Reflection
         }
     }
 
-    public class StaticProxyFuncInfo<T, P1, P2, P3, TResult> : AbstractProxyMethodInfo, IStaticProxyFuncInfo<T, P1, P2, P3, TResult>
+    public class StaticProxyFuncInfo<T, P1, P2, P3, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, P1, P2, P3, TResult>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyFuncInfo<T, P1, P2, P3, TResult>));
         private Func<P1, P2, P3, TResult> function;
@@ -263,6 +270,8 @@ namespace Loxodon.Framework.Binding.Reflection
                 this.function = this.MakeFunc(this.methodInfo);
         }
 
+        public override Type DeclaringType { get { return typeof(T); } }
+
         private Func<P1, P2, P3, TResult> MakeFunc(MethodInfo methodInfo)
         {
             try
@@ -295,7 +304,7 @@ namespace Loxodon.Framework.Binding.Reflection
         }
     }
 
-    public class StaticProxyActionInfo<T> : AbstractProxyMethodInfo, IStaticProxyActionInfo<T>
+    public class StaticProxyActionInfo<T> : ProxyMethodInfo, IStaticProxyActionInfo<T>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyActionInfo<T>));
         private Action action;
@@ -330,6 +339,9 @@ namespace Loxodon.Framework.Binding.Reflection
                 this.action = this.MakeAction(this.methodInfo);
 
         }
+
+        public override Type DeclaringType { get { return typeof(T); } }
+
 
         private Action MakeAction(MethodInfo methodInfo)
         {
@@ -367,7 +379,7 @@ namespace Loxodon.Framework.Binding.Reflection
         }
     }
 
-    public class StaticProxyActionInfo<T, P1> : AbstractProxyMethodInfo, IStaticProxyActionInfo<T, P1>
+    public class StaticProxyActionInfo<T, P1> : ProxyMethodInfo, IStaticProxyActionInfo<T, P1>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyActionInfo<T, P1>));
         private Action<P1> action;
@@ -407,6 +419,8 @@ namespace Loxodon.Framework.Binding.Reflection
 
         }
 
+        public override Type DeclaringType { get { return typeof(T); } }
+
         private Action<P1> MakeAction(MethodInfo methodInfo)
         {
             try
@@ -443,7 +457,7 @@ namespace Loxodon.Framework.Binding.Reflection
         }
     }
 
-    public class StaticProxyActionInfo<T, P1, P2> : AbstractProxyMethodInfo, IStaticProxyActionInfo<T, P1, P2>
+    public class StaticProxyActionInfo<T, P1, P2> : ProxyMethodInfo, IStaticProxyActionInfo<T, P1, P2>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyActionInfo<T, P1, P2>));
         private Action<P1, P2> action;
@@ -481,6 +495,8 @@ namespace Loxodon.Framework.Binding.Reflection
 
         }
 
+        public override Type DeclaringType { get { return typeof(T); } }
+
         private Action<P1, P2> MakeAction(MethodInfo methodInfo)
         {
             try
@@ -517,7 +533,7 @@ namespace Loxodon.Framework.Binding.Reflection
         }
     }
 
-    public class StaticProxyActionInfo<T, P1, P2, P3> : AbstractProxyMethodInfo, IStaticProxyActionInfo<T, P1, P2, P3>
+    public class StaticProxyActionInfo<T, P1, P2, P3> : ProxyMethodInfo, IStaticProxyActionInfo<T, P1, P2, P3>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyActionInfo<T, P1, P2, P3>));
         private Action<P1, P2, P3> action;
@@ -553,6 +569,9 @@ namespace Loxodon.Framework.Binding.Reflection
             if (this.action == null)
                 this.action = this.MakeAction(this.methodInfo);
         }
+
+        public override Type DeclaringType { get { return typeof(T); } }
+
 
         private Action<P1, P2, P3> MakeAction(MethodInfo methodInfo)
         {

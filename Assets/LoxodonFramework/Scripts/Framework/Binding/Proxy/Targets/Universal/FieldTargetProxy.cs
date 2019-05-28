@@ -1,50 +1,66 @@
-﻿using System;
-using System.Reflection;
-
-using Loxodon.Log;
-using Loxodon.Framework.Binding.Reflection;
+﻿using Loxodon.Framework.Binding.Reflection;
+using System;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
-    public class FieldTargetProxy : AbstractTargetProxy, IObtainable
+    public class FieldTargetProxy : ValueTargetProxyBase
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(FieldTargetProxy));
+        //private static readonly ILog log = LogManager.GetLogger(typeof(FieldTargetProxy));
 
-        protected readonly FieldInfo fieldInfo;
-        protected readonly IProxyFieldInfo proxyField;
+        protected readonly IProxyFieldInfo fieldInfo;
 
-        public override Type Type { get { return this.fieldInfo.FieldType; } }
+        public FieldTargetProxy(object target, IProxyFieldInfo fieldInfo) : base(target)
+        {
+            this.fieldInfo = fieldInfo;
+        }
+
+        public override Type Type { get { return this.fieldInfo.ValueType; } }
 
         public override BindingMode DefaultMode { get { return BindingMode.OneWay; } }
 
-        public FieldTargetProxy(object target, FieldInfo fieldInfo) : base(target)
-        {
-            this.fieldInfo = fieldInfo;
-            this.proxyField = fieldInfo.AsProxy();
-        }
-
-        public virtual object GetValue()
+        public override object GetValue()
         {
             var target = this.Target;
             if (target == null)
-            {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("Get value ignored in target's property \"{0}\",the weak reference to the target is null.", this.fieldInfo.Name);
+                return null;
 
-                return ReturnObject.UNSET;
+            return fieldInfo.GetValue(target);
+        }
+
+        public override TValue GetValue<TValue>()
+        {
+            var target = this.Target;
+            if (target == null)
+                return default(TValue);
+
+            if (fieldInfo is IProxyFieldInfo<TValue>)
+                return ((IProxyFieldInfo<TValue>)fieldInfo).GetValue(target);
+
+            return (TValue)fieldInfo.GetValue(target);
+        }
+
+        public override void SetValue(object value)
+        {
+            var target = this.Target;
+            if (target == null)
+                return;
+
+            this.fieldInfo.SetValue(target, value);
+        }
+
+        public override void SetValue<TValue>(TValue value)
+        {
+            var target = this.Target;
+            if (target == null)
+                return;
+
+            if (fieldInfo is IProxyFieldInfo<TValue>)
+            {
+                ((IProxyFieldInfo<TValue>)fieldInfo).SetValue(target, value);
+                return;
             }
 
-            return proxyField.GetValue(target);
-        }
-
-        protected override void SetValueImpl(object target, object value)
-        {
-            this.proxyField.SetValue(target, value);
-        }
-
-        protected override void DoSubscribeForValueChange(object target)
-        {
-            throw new NotSupportedException("This is a field proxy,don't support the \"ValueChange\" event.");
+            this.fieldInfo.SetValue(target, value);
         }
     }
 }

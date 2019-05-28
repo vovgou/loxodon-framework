@@ -1,41 +1,29 @@
 ﻿using System;
-using System.Reflection;
 
 namespace Loxodon.Framework.Binding.Reflection
 {
-    public interface IProxyPropertyInfo
+    public interface IProxyPropertyInfo : IProxyMemberInfo
     {
-        PropertyInfo PropertyInfo { get; }
+        bool IsValueType { get; }
 
-        bool IsStatic { get; }
+        Type ValueType { get; }
 
-        Type DeclaringType { get; }
+        object GetValue(object target);
 
-        Type PropertyType { get; }
-
-        string Name { get; }
-
-        bool CanRead { get; }
-
-        bool CanWrite { get; }
-
-        object GetValue(object target, object index = null);
-
-        void SetValue(object target, object newValue, object index = null);
-
+        void SetValue(object target, object value);
     }
 
-    public interface IProxyPropertyInfo<T, TValue> : IProxyPropertyInfo
+    public interface IProxyPropertyInfo<TValue> : IProxyPropertyInfo
+    {
+        new TValue GetValue(object target);
+
+        void SetValue(object target, TValue value);
+    }
+
+    public interface IProxyPropertyInfo<T, TValue> : IProxyPropertyInfo<TValue>
     {
         TValue GetValue(T target);
 
-        void SetValue(T target, TValue newValue);
-    }
-
-    public interface IProxyPropertyInfo<T, TIndex, TValue> : IProxyPropertyInfo
-    {
-        TValue GetValue(T target, TIndex index);
-
-        void SetValue(T target, TValue newValue, TIndex index);
+        void SetValue(T target, TValue value);
     }
 }

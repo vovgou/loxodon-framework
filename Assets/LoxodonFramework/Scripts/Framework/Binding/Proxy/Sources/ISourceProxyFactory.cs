@@ -1,7 +1,9 @@
-﻿namespace Loxodon.Framework.Binding.Proxy.Sources
+﻿using Loxodon.Framework.Binding.Paths;
+
+namespace Loxodon.Framework.Binding.Proxy.Sources
 {
     public interface ISourceProxyFactory
     {
-        ISourceProxy CreateProxy(object source,SourceDescription description);
+        ISourceProxy CreateProxy(object source, SourceDescription description);
     }
 }

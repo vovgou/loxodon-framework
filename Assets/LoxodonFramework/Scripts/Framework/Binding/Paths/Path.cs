@@ -33,7 +33,7 @@ namespace Loxodon.Framework.Binding.Paths
             get { return this.nodes.Count; }
         }
 
-        public bool IsStatic { get { return nodes.Exists(n => n is TypeNode); } }
+        public bool IsStatic { get { return nodes.Exists(n => n.IsStatic); } }
 
         public List<IPathNode> ToList()
         {
@@ -153,23 +153,40 @@ namespace Loxodon.Framework.Binding.Paths
 
     public interface IPathNode
     {
+        bool IsStatic { get; }
+
         void AppendTo(StringBuilder output);
     }
 
     [Serializable]
     public class MemberNode : IPathNode
     {
-        private string name;
-        private MemberInfo memberInfo;
-        public MemberNode(string name)
+        private readonly MemberInfo memberInfo;
+        private readonly string name;
+        private readonly Type type;
+        private readonly bool isStatic;
+        public MemberNode(string name) : this(null, name, false)
         {
-            this.name = name;
         }
 
-        public MemberNode(MemberInfo memberInfo) : this(memberInfo.Name)
+        public MemberNode(Type type, string name, bool isStatic)
+        {
+            this.name = name;
+            this.type = type;
+            this.isStatic = isStatic;
+        }
+
+        public MemberNode(MemberInfo memberInfo)
         {
             this.memberInfo = memberInfo;
+            this.name = memberInfo.Name;
+            this.type = memberInfo.DeclaringType;
+            this.isStatic = memberInfo.IsStatic();
         }
+
+        public bool IsStatic { get { return this.isStatic; } }
+
+        public Type Type { get { return this.type; } }
 
         public string Name { get { return this.name; } }
 
@@ -188,37 +205,39 @@ namespace Loxodon.Framework.Binding.Paths
         }
     }
 
-    [Serializable]
-    public class TypeNode : IPathNode
-    {
-        private Type type;
-        public TypeNode(string name)
-        {
-            this.Name = name;
-        }
+    //[Serializable]
+    //public class TypeNode : IPathNode
+    //{
+    //    private Type type;
+    //    public TypeNode(string name)
+    //    {
+    //        this.Name = name;
+    //    }
 
-        public TypeNode(Type type)
-        {
-            this.Name = type.FullName;
-            this.type = type;
-        }
+    //    public TypeNode(Type type)
+    //    {
+    //        this.Name = type.FullName;
+    //        this.type = type;
+    //    }
 
-        public Type Type { get { return type; } }
+    //    public Type Type { get { return type; } }
 
-        public string Name { get; private set; }
+    //    public string Name { get; private set; }
 
-        public void AppendTo(StringBuilder output)
-        {
-            if (output.Length > 0)
-                output.Append(".");
-            output.Append(this.Name);
-        }
+    //    public bool IsStatic { get { return true; } }
 
-        public override string ToString()
-        {
-            return "TypeNode:" + (this.Name == null ? "null" : this.Name);
-        }
-    }
+    //    public void AppendTo(StringBuilder output)
+    //    {
+    //        if (output.Length > 0)
+    //            output.Append(".");
+    //        output.Append(this.Name);
+    //    }
+
+    //    public override string ToString()
+    //    {
+    //        return "TypeNode:" + (this.Name == null ? "null" : this.Name);
+    //    }
+    //}
 
     [Serializable]
     public abstract class IndexedNode : IPathNode
@@ -228,6 +247,8 @@ namespace Loxodon.Framework.Binding.Paths
         {
             this._value = value;
         }
+
+        public bool IsStatic { get { return false; } }
 
         public object Value
         {

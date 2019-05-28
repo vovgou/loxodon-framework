@@ -2,20 +2,27 @@
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Collections.Specialized;
 
 #if NETFX_CORE
 using System.Reflection;
 #endif
+
+using NotifyCollectionChangedEventHandler = System.Collections.Specialized.NotifyCollectionChangedEventHandler;
+using INotifyCollectionChanged = System.Collections.Specialized.INotifyCollectionChanged;
+using NotifyCollectionChangedAction = System.Collections.Specialized.NotifyCollectionChangedAction;
+using NotifyCollectionChangedEventArgs = System.Collections.Specialized.NotifyCollectionChangedEventArgs;
+using INotifyPropertyChanged = System.ComponentModel.INotifyPropertyChanged;
+using PropertyChangedEventArgs = System.ComponentModel.PropertyChangedEventArgs;
+using PropertyChangedEventHandler = System.ComponentModel.PropertyChangedEventHandler;
 
 namespace Loxodon.Framework.Observables
 {
     [Serializable]
     public class ObservableList<T> : IList<T>, IList, INotifyCollectionChanged, INotifyPropertyChanged
     {
-        private const string CountString = "Count";
-        private const string IndexerName = "Item[]";
+        private static readonly PropertyChangedEventArgs CountEventArgs = new PropertyChangedEventArgs("Count");
+        private static readonly PropertyChangedEventArgs IndexerEventArgs = new PropertyChangedEventArgs("Item[]");
+
         private readonly object propertyChangedLock = new object();
         private readonly object collectionChangedLock = new object();
         private PropertyChangedEventHandler propertyChanged;
@@ -180,7 +187,8 @@ namespace Loxodon.Framework.Observables
                     {
                         this.syncRoot = c.SyncRoot;
                     }
-                    else {
+                    else
+                    {
                         Interlocked.CompareExchange<Object>(ref this.syncRoot, new Object(), null);
                     }
                 }
@@ -210,7 +218,8 @@ namespace Loxodon.Framework.Observables
             {
                 items.CopyTo(tArray, index);
             }
-            else {
+            else
+            {
                 Type targetType = array.GetType().GetElementType();
                 Type sourceType = typeof(T);
                 if (!(targetType.IsAssignableFrom(sourceType) || sourceType.IsAssignableFrom(targetType)))
@@ -341,8 +350,8 @@ namespace Loxodon.Framework.Observables
         {
             CheckReentrancy();
             items.Clear();
-            OnPropertyChanged(CountString);
-            OnPropertyChanged(IndexerName);
+            OnPropertyChanged(CountEventArgs);
+            OnPropertyChanged(IndexerEventArgs);
             OnCollectionReset();
         }
 
@@ -353,8 +362,8 @@ namespace Loxodon.Framework.Observables
 
             items.RemoveAt(index);
 
-            OnPropertyChanged(CountString);
-            OnPropertyChanged(IndexerName);
+            OnPropertyChanged(CountEventArgs);
+            OnPropertyChanged(IndexerEventArgs);
             OnCollectionChanged(NotifyCollectionChangedAction.Remove, removedItem, index);
         }
 
@@ -364,8 +373,8 @@ namespace Loxodon.Framework.Observables
 
             items.Insert(index, item);
 
-            OnPropertyChanged(CountString);
-            OnPropertyChanged(IndexerName);
+            OnPropertyChanged(CountEventArgs);
+            OnPropertyChanged(IndexerEventArgs);
             OnCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
         }
 
@@ -376,7 +385,7 @@ namespace Loxodon.Framework.Observables
 
             items[index] = item;
 
-            OnPropertyChanged(IndexerName);
+            OnPropertyChanged(IndexerEventArgs);
             OnCollectionChanged(NotifyCollectionChangedAction.Replace, originalItem, item, index);
         }
 
@@ -389,7 +398,7 @@ namespace Loxodon.Framework.Observables
             items.RemoveAt(oldIndex);
             items.Insert(newIndex, removedItem);
 
-            OnPropertyChanged(IndexerName);
+            OnPropertyChanged(IndexerEventArgs);
             OnCollectionChanged(NotifyCollectionChangedAction.Move, removedItem, newIndex, oldIndex);
         }
 
@@ -433,29 +442,28 @@ namespace Loxodon.Framework.Observables
             return ((value is T) || (value == null && default(T) == null));
         }
 
-        private void OnPropertyChanged(string propertyName)
-        {
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-
         private void OnCollectionChanged(NotifyCollectionChangedAction action, object item, int index)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item, index));
+            if (this.collectionChanged != null)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item, index));
         }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction action, object item, int index, int oldIndex)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item, index, oldIndex));
+            if (this.collectionChanged != null)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item, index, oldIndex));
         }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction action, object oldItem, object newItem, int index)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, newItem, oldItem, index));
+            if (this.collectionChanged != null)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, newItem, oldItem, index));
         }
 
         private void OnCollectionReset()
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            if (this.collectionChanged != null)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         [Serializable()]

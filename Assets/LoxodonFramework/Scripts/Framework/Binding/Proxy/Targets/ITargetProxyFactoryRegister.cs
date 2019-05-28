@@ -2,6 +2,8 @@
 {
     public interface ITargetProxyFactoryRegister
     {
-        void Register(AbstractTargetProxyFactory factory, int priority = 100);
+        void Register(ITargetProxyFactory factory, int priority = 100);
+
+        void Unregister(ITargetProxyFactory factory);
     }
 }

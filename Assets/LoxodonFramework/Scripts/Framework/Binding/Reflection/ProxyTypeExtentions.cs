@@ -9,32 +9,39 @@ namespace Loxodon.Framework.Binding.Reflection
         static readonly ProxyFactory factory = ProxyFactory.Default;
         public static IProxyType AsProxy(this Type type)
         {
-            return factory.Create(type);
+            return factory.Get(type);
+        }
+
+        public static IProxyEventInfo AsProxy(this EventInfo info)
+        {
+            IProxyType proxyType = factory.Get(info.DeclaringType);
+            return proxyType.GetEvent(info.Name);
         }
 
         public static IProxyFieldInfo AsProxy(this FieldInfo info)
         {
-            IProxyType proxyType = factory.Create(info.DeclaringType);
-            return proxyType.GetField(info);
+            IProxyType proxyType = factory.Get(info.DeclaringType);
+            if (info.IsPublic)
+                return proxyType.GetField(info.Name);
+            return proxyType.GetField(info.Name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
         }
 
         public static IProxyPropertyInfo AsProxy(this PropertyInfo info)
         {
-            IProxyType proxyType = factory.Create(info.DeclaringType);
-            return proxyType.GetProperty(info);
+            IProxyType proxyType = factory.Get(info.DeclaringType);
+            if (info.GetGetMethod().IsPublic)
+                return proxyType.GetProperty(info.Name);
+            return proxyType.GetProperty(info.Name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
         }
 
         public static IProxyMethodInfo AsProxy(this MethodInfo info)
         {
-            IProxyType proxyType = factory.Create(info.DeclaringType);
-            return proxyType.GetMethod(info);
-        }
+            IProxyType proxyType = factory.Get(info.DeclaringType);
+            Type[] types = info.GetParameterTypes().ToArray();
+            if (info.IsPublic)
+                return proxyType.GetMethod(info.Name, types);
 
-        public static IProxyInvoker AsProxy(this MethodInfo info, object target)
-        {
-            IProxyType proxyType = factory.Create(info.DeclaringType);
-            IProxyMethodInfo proxyMethodInfo = proxyType.GetMethod(info);
-            return new ProxyInvoker(target, proxyMethodInfo);
+            return proxyType.GetMethod(info.Name, types, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
         }
 
         public static List<Type> GetParameterTypes(this MethodInfo info)
@@ -45,6 +52,6 @@ namespace Loxodon.Framework.Binding.Reflection
                 list.Add(p.ParameterType);
             }
             return list;
-        }       
+        }
     }
 }

@@ -10,9 +10,9 @@ using Loxodon.Framework.Execution;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
-    public abstract class AbstractUnityEventProxy<T> : AbstractTargetProxy where T : UnityEventBase
+    public abstract class UnityEventProxyBase<T> : EventTargetProxyBase where T : UnityEventBase
     {
-        //private static readonly ILog log = LogManager.GetLogger(typeof(AbstractUnityEventProxy<T>));
+        //private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxyBase<T>));
 
         private bool disposed = false;
         protected ICommand command;/* Command Binding */
@@ -24,7 +24,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected T unityEvent;
 
-        public AbstractUnityEventProxy(object target, T unityEvent) : base(target)
+        public UnityEventProxyBase(object target, T unityEvent) : base(target)
         {
             if (unityEvent == null)
                 throw new ArgumentNullException("unityEvent");
@@ -54,8 +54,12 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected abstract bool IsValid(IProxyInvoker invoker);
 
-        protected override void SetValueImpl(object target, object value)
+        public override void SetValue(object value)
         {
+            var target = this.Target;
+            if (target == null)
+                return;
+
             if (this.command != null)
             {
                 UnbindCommand(this.command);
@@ -131,6 +135,11 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
         }
 
+        public override void SetValue<TValue>(TValue value)
+        {
+            this.SetValue((object)value);
+        }
+
         protected virtual void OnCanExecuteChanged(object sender, EventArgs e)
         {
             Executors.RunOnMainThread(UpdateTargetInteractable);
@@ -139,11 +148,17 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         protected virtual void UpdateTargetInteractable()
         {
             var target = this.Target;
-            if (this.interactable != null && target != null)
+            if (this.interactable == null || target == null)
+                return;
+
+            bool value = this.command == null ? false : this.command.CanExecute(null);
+            if (this.interactable is IProxyPropertyInfo<bool>)
             {
-                bool value = this.command == null ? false : this.command.CanExecute(null);
-                this.interactable.SetValue(target, value);
+                (this.interactable as IProxyPropertyInfo<bool>).SetValue(target, value);
+                return;
             }
+
+            this.interactable.SetValue(target, value);
         }
 
         protected virtual void BindCommand(ICommand command)
@@ -163,7 +178,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         }
     }
 
-    public class UnityEventProxy : AbstractUnityEventProxy<UnityEvent>
+    public class UnityEventProxy : UnityEventProxyBase<UnityEvent>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxy));
 
@@ -203,12 +218,12 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected override bool IsValid(IProxyInvoker invoker)
         {
-            MethodInfo info = invoker.ProxyMethodInfo.MethodInfo;
+            IProxyMethodInfo info = invoker.ProxyMethodInfo;
             if (!info.ReturnType.Equals(typeof(void)))
                 return false;
 
-            List<Type> parameterTypes = info.GetParameterTypes();
-            if (parameterTypes.Count != 0)
+            var parameters = info.Parameters;
+            if (parameters != null && parameters.Length != 0)
                 return false;
             return true;
         }
@@ -234,7 +249,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 {
                     if (this.handler is UnityAction)
                         (this.handler as UnityAction)();
-                    else {
+                    else
+                    {
                         this.handler.DynamicInvoke();
                     }
                     return;
@@ -254,7 +270,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         }
     }
 
-    public class UnityEventProxy<T> : AbstractUnityEventProxy<UnityEvent<T>>
+    public class UnityEventProxy<T> : UnityEventProxyBase<UnityEvent<T>>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxy<T>));
 
@@ -295,15 +311,15 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected override bool IsValid(IProxyInvoker invoker)
         {
-            MethodInfo info = invoker.ProxyMethodInfo.MethodInfo;
+            IProxyMethodInfo info = invoker.ProxyMethodInfo;
             if (!info.ReturnType.Equals(typeof(void)))
                 return false;
 
-            List<Type> parameterTypes = info.GetParameterTypes();
-            if (parameterTypes.Count != 1)
+            var parameters = info.Parameters;
+            if (parameters == null || parameters.Length != 1)
                 return false;
 
-            return parameterTypes[0].IsAssignableFrom(typeof(T));
+            return parameters[0].ParameterType.IsAssignableFrom(typeof(T));
         }
 
         protected virtual void OnEvent(T parameter)
@@ -326,7 +342,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 {
                     if (this.handler is UnityAction<T>)
                         (this.handler as UnityAction<T>)(parameter);
-                    else {
+                    else
+                    {
                         this.handler.DynamicInvoke(parameter);
                     }
                     return;
@@ -346,7 +363,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         }
     }
 
-    public class UnityEventProxy<T0, T1> : AbstractUnityEventProxy<UnityEvent<T0, T1>>
+    public class UnityEventProxy<T0, T1> : UnityEventProxyBase<UnityEvent<T0, T1>>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxy<T0, T1>));
 
@@ -382,20 +399,22 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if (parameterTypes.Count != 2)
                 return false;
 
-            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1));
+            return parameterTypes[0].IsAssignableFrom(typeof(T0))
+                && parameterTypes[1].IsAssignableFrom(typeof(T1));
         }
 
         protected override bool IsValid(IProxyInvoker invoker)
         {
-            MethodInfo info = invoker.ProxyMethodInfo.MethodInfo;
+            IProxyMethodInfo info = invoker.ProxyMethodInfo;
             if (!info.ReturnType.Equals(typeof(void)))
                 return false;
 
-            List<Type> parameterTypes = info.GetParameterTypes();
-            if (parameterTypes.Count != 2)
+            var parameters = info.Parameters;
+            if (parameters == null || parameters.Length != 2)
                 return false;
 
-            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1));
+            return parameters[0].ParameterType.IsAssignableFrom(typeof(T0))
+                && parameters[1].ParameterType.IsAssignableFrom(typeof(T1));
         }
 
         protected virtual void OnEvent(T0 t0, T1 t1)
@@ -418,7 +437,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 {
                     if (this.handler is UnityAction<T0, T1>)
                         (this.handler as UnityAction<T0, T1>)(t0, t1);
-                    else {
+                    else
+                    {
                         this.handler.DynamicInvoke(t0, t1);
                     }
                     return;
@@ -438,7 +458,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         }
     }
 
-    public class UnityEventProxy<T0, T1, T2> : AbstractUnityEventProxy<UnityEvent<T0, T1, T2>>
+    public class UnityEventProxy<T0, T1, T2> : UnityEventProxyBase<UnityEvent<T0, T1, T2>>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxy<T0, T1, T2>));
 
@@ -474,21 +494,25 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if (parameterTypes.Count != 3)
                 return false;
 
-            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1)) && parameterTypes[2].IsAssignableFrom(typeof(T2));
+            return parameterTypes[0].IsAssignableFrom(typeof(T0))
+                && parameterTypes[1].IsAssignableFrom(typeof(T1))
+                && parameterTypes[2].IsAssignableFrom(typeof(T2));
 
         }
 
         protected override bool IsValid(IProxyInvoker invoker)
         {
-            MethodInfo info = invoker.ProxyMethodInfo.MethodInfo;
+            IProxyMethodInfo info = invoker.ProxyMethodInfo;
             if (!info.ReturnType.Equals(typeof(void)))
                 return false;
 
-            List<Type> parameterTypes = info.GetParameterTypes();
-            if (parameterTypes.Count != 3)
+            var parameters = info.Parameters;
+            if (parameters == null || parameters.Length != 3)
                 return false;
 
-            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1)) && parameterTypes[2].IsAssignableFrom(typeof(T2));
+            return parameters[0].ParameterType.IsAssignableFrom(typeof(T0))
+                && parameters[1].ParameterType.IsAssignableFrom(typeof(T1))
+                && parameters[2].ParameterType.IsAssignableFrom(typeof(T2));
         }
 
         protected virtual void OnEvent(T0 t0, T1 t1, T2 t2)
@@ -511,7 +535,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 {
                     if (this.handler is UnityAction<T0, T1, T2>)
                         (this.handler as UnityAction<T0, T1, T2>)(t0, t1, t2);
-                    else {
+                    else
+                    {
                         this.handler.DynamicInvoke(t0, t1, t2);
                     }
                     return;
@@ -531,7 +556,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         }
     }
 
-    public class UnityEventProxy<T0, T1, T2, T3> : AbstractUnityEventProxy<UnityEvent<T0, T1, T2, T3>>
+    public class UnityEventProxy<T0, T1, T2, T3> : UnityEventProxyBase<UnityEvent<T0, T1, T2, T3>>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxy<T0, T1, T2, T3>));
 
@@ -567,21 +592,27 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if (parameterTypes.Count != 4)
                 return false;
 
-            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1)) && parameterTypes[2].IsAssignableFrom(typeof(T2)) && parameterTypes[3].IsAssignableFrom(typeof(T3));
+            return parameterTypes[0].IsAssignableFrom(typeof(T0))
+                && parameterTypes[1].IsAssignableFrom(typeof(T1))
+                && parameterTypes[2].IsAssignableFrom(typeof(T2))
+                && parameterTypes[3].IsAssignableFrom(typeof(T3));
 
         }
 
         protected override bool IsValid(IProxyInvoker invoker)
         {
-            MethodInfo info = invoker.ProxyMethodInfo.MethodInfo;
+            IProxyMethodInfo info = invoker.ProxyMethodInfo;
             if (!info.ReturnType.Equals(typeof(void)))
                 return false;
 
-            List<Type> parameterTypes = info.GetParameterTypes();
-            if (parameterTypes.Count != 4)
+            var parameters = info.Parameters;
+            if (parameters == null || parameters.Length != 4)
                 return false;
 
-            return parameterTypes[0].IsAssignableFrom(typeof(T0)) && parameterTypes[1].IsAssignableFrom(typeof(T1)) && parameterTypes[2].IsAssignableFrom(typeof(T2)) && parameterTypes[3].IsAssignableFrom(typeof(T3));
+            return parameters[0].ParameterType.IsAssignableFrom(typeof(T0))
+                && parameters[1].ParameterType.IsAssignableFrom(typeof(T1))
+                && parameters[2].ParameterType.IsAssignableFrom(typeof(T2))
+                && parameters[3].ParameterType.IsAssignableFrom(typeof(T3));
         }
 
         protected virtual void OnEvent(T0 t0, T1 t1, T2 t2, T3 t3)
@@ -604,7 +635,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 {
                     if (this.handler is UnityAction<T0, T1, T2, T3>)
                         (this.handler as UnityAction<T0, T1, T2, T3>)(t0, t1, t2, t3);
-                    else {
+                    else
+                    {
                         this.handler.DynamicInvoke(t0, t1, t2, t3);
                     }
                     return;

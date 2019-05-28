@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+
 using Loxodon.Log;
 
 #if !UNITY_IOS && !ENABLE_IL2CPP && !NET_STANDARD_2_0
@@ -12,17 +13,20 @@ using System.Linq.Expressions;
 
 namespace Loxodon.Framework.Binding.Reflection
 {
+#pragma warning disable 0414
     public class ProxyFieldInfo : IProxyFieldInfo
     {
-        private readonly FieldInfo fieldInfo;
-        private bool isValueType = false;
+        private static readonly ILog log = LogManager.GetLogger(typeof(ProxyFieldInfo));
+
+        private readonly bool isValueType;
+        protected FieldInfo fieldInfo;
 
         public ProxyFieldInfo(FieldInfo fieldInfo)
         {
-            this.fieldInfo = fieldInfo;
-            if (this.fieldInfo == null)
-                throw new FieldAccessException();
+            if (fieldInfo == null)
+                throw new ArgumentNullException("fieldInfo");
 
+            this.fieldInfo = fieldInfo;
 #if NETFX_CORE
             this.isValueType = this.fieldInfo.DeclaringType.GetTypeInfo().IsValueType;
 #else
@@ -30,92 +34,70 @@ namespace Loxodon.Framework.Binding.Reflection
 #endif
         }
 
-        public FieldInfo FieldInfo { get { return this.fieldInfo; } }
+        public virtual bool IsValueType { get { return isValueType; } }
 
-        public Type DeclaringType { get { return this.fieldInfo.DeclaringType; } }
+        public virtual Type ValueType { get { return fieldInfo.FieldType; } }
 
-        public Type FieldType { get { return this.fieldInfo.FieldType; } }
+        public virtual Type DeclaringType { get { return this.fieldInfo.DeclaringType; } }
 
-        public bool IsStatic { get { return this.fieldInfo.IsStatic; } }
+        public virtual string Name { get { return this.fieldInfo.Name; } }
 
-        public string Name { get { return this.fieldInfo.Name; } }
+        public virtual bool IsStatic { get { return this.fieldInfo.IsStatic(); } }
 
-        public object GetValue(object target)
+        public virtual object GetValue(object target)
         {
             return this.fieldInfo.GetValue(target);
         }
 
-        public void SetValue(object target, object value)
+        public virtual void SetValue(object target, object value)
         {
             if (fieldInfo.IsInitOnly)
                 throw new MemberAccessException("The value is read-only.");
 
-            if (this.isValueType)
+            if (IsValueType)
                 throw new NotSupportedException("Assignments of Value type are not supported.");
 
             this.fieldInfo.SetValue(target, value);
         }
     }
 
-    public class ProxyFieldInfo<T, TValue> : IProxyFieldInfo<T, TValue>
+#pragma warning disable 0414
+    public class ProxyFieldInfo<T, TValue> : ProxyFieldInfo, IProxyFieldInfo<T, TValue>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(ProxyFieldInfo<T, TValue>));
 
-        private readonly FieldInfo fieldInfo;
         private Func<T, TValue> getter;
         private Action<T, TValue> setter;
-        private bool isValueType = false;
 
-        public ProxyFieldInfo(string fieldName) : this(typeof(T).GetField(fieldName), null, null)
+        public ProxyFieldInfo(string fieldName) : this(typeof(T).GetField(fieldName))
         {
         }
 
-        public ProxyFieldInfo(FieldInfo fieldInfo) : this(fieldInfo, null, null)
+        public ProxyFieldInfo(FieldInfo fieldInfo) : base(fieldInfo)
         {
+            if (!typeof(TValue).Equals(this.fieldInfo.FieldType) || !this.DeclaringType.IsAssignableFrom(typeof(T)))
+                throw new ArgumentException("The field types do not match!");
+
+            this.getter = this.MakeGetter(fieldInfo);
+            this.setter = this.MakeSetter(fieldInfo);
         }
 
         public ProxyFieldInfo(string fieldName, Func<T, TValue> getter, Action<T, TValue> setter) : this(typeof(T).GetField(fieldName), getter, setter)
         {
         }
 
-        public ProxyFieldInfo(FieldInfo fieldInfo, Func<T, TValue> getter, Action<T, TValue> setter)
+        public ProxyFieldInfo(FieldInfo fieldInfo, Func<T, TValue> getter, Action<T, TValue> setter) : base(fieldInfo)
         {
-            this.fieldInfo = fieldInfo;
-            if (this.fieldInfo == null)
-                throw new FieldAccessException();
-
-            if (!fieldInfo.DeclaringType.IsAssignableFrom(typeof(T)) || !fieldInfo.FieldType.Equals(typeof(TValue)))
-                throw new ArgumentException();
+            if (!typeof(TValue).Equals(this.fieldInfo.FieldType) || !this.DeclaringType.IsAssignableFrom(typeof(T)))
+                throw new ArgumentException("The field types do not match!");
 
             this.getter = getter;
             this.setter = setter;
-
-            if (this.getter == null)
-                this.getter = MakeGetter(this.fieldInfo);
-
-            if (this.setter == null)
-                this.setter = MakeSetter(this.fieldInfo);
-
-#if NETFX_CORE
-            this.isValueType = this.fieldInfo.DeclaringType.GetTypeInfo().IsValueType;
-#else
-            this.isValueType = this.fieldInfo.DeclaringType.IsValueType;
-#endif
         }
-
-        public FieldInfo FieldInfo { get { return this.fieldInfo; } }
-
-        public Type DeclaringType { get { return this.fieldInfo.DeclaringType; } }
-
-        public Type FieldType { get { return this.fieldInfo.FieldType; } }
-
-        public bool IsStatic { get { return this.fieldInfo.IsStatic; } }
-
-        public string Name { get { return this.fieldInfo.Name; } }
 
         private Action<T, TValue> MakeSetter(FieldInfo fieldInfo)
         {
-            if (isValueType)
+            if (this.IsValueType)
                 return null;
 
             if (fieldInfo.IsInitOnly)
@@ -186,10 +168,7 @@ namespace Loxodon.Framework.Binding.Reflection
             return null;
         }
 
-        public object GetValue(object target)
-        {
-            return GetValue((T)target);
-        }
+        public override Type DeclaringType { get { return typeof(T); } }
 
         public TValue GetValue(T target)
         {
@@ -199,9 +178,17 @@ namespace Loxodon.Framework.Binding.Reflection
             return (TValue)this.fieldInfo.GetValue(target);
         }
 
-        public void SetValue(object target, object value)
+        public override object GetValue(object target)
         {
-            SetValue((T)target, (TValue)value);
+            if (this.getter != null)
+                return this.getter((T)target);
+
+            return this.fieldInfo.GetValue(target);
+        }
+
+        TValue IProxyFieldInfo<TValue>.GetValue(object target)
+        {
+            return this.GetValue((T)target);
         }
 
         public void SetValue(T target, TValue value)
@@ -209,7 +196,7 @@ namespace Loxodon.Framework.Binding.Reflection
             if (fieldInfo.IsInitOnly)
                 throw new MemberAccessException("The value is read-only.");
 
-            if (this.isValueType)
+            if (IsValueType)
                 throw new NotSupportedException("Assignments of Value type are not supported.");
 
             if (this.setter != null)
@@ -219,6 +206,28 @@ namespace Loxodon.Framework.Binding.Reflection
             }
 
             this.fieldInfo.SetValue(target, value);
+        }
+
+        public override void SetValue(object target, object value)
+        {
+            if (fieldInfo.IsInitOnly)
+                throw new MemberAccessException("The value is read-only.");
+
+            if (IsValueType)
+                throw new NotSupportedException("Assignments of Value type are not supported.");
+
+            if (this.setter != null)
+            {
+                this.setter((T)target, (TValue)value);
+                return;
+            }
+
+            this.fieldInfo.SetValue(target, value);
+        }
+
+        public void SetValue(object target, TValue value)
+        {
+            this.SetValue((T)target, value);
         }
     }
 }

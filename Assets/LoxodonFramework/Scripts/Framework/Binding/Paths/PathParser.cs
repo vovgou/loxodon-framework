@@ -56,7 +56,6 @@ namespace Loxodon.Framework.Binding.Paths
                 if (memberInfo.IsStatic())
                 {
                     path.Prepend(new MemberNode(memberInfo));
-                    path.Prepend(new TypeNode(memberInfo.DeclaringType));
                     return;
                 }
                 else {
@@ -99,7 +98,6 @@ namespace Loxodon.Framework.Binding.Paths
                     if (info.IsStatic)
                     {
                         path.Prepend(new MemberNode(info));
-                        path.Prepend(new TypeNode(info.DeclaringType));
                         return;
                     }
                     else
@@ -116,7 +114,6 @@ namespace Loxodon.Framework.Binding.Paths
                     if (info.IsStatic)
                     {
                         path.Prepend(new MemberNode(info));
-                        path.Prepend(new TypeNode(info.DeclaringType));
                         return;
                     }
                     else
@@ -192,8 +189,7 @@ namespace Loxodon.Framework.Binding.Paths
             Type type = TypeFinderUtils.FindType(typeName);
 
             Path path = new Path();
-            path.Append(new TypeNode(type));
-            path.Append(new MemberNode(memberName));
+            path.Append(new MemberNode(type,memberName,true));
             return path;
         }
 

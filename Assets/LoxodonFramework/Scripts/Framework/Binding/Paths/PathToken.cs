@@ -21,6 +21,8 @@ namespace Loxodon.Framework.Binding.Paths
             get { return this.path; }
         }
 
+        public int Index { get { return this.pathIndex; } }
+
         public IPathNode Current
         {
             get { return path[pathIndex]; }

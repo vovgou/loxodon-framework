@@ -2,14 +2,10 @@
 
 namespace Loxodon.Framework.Binding.Proxy.Sources
 {
-
-    public interface ISourceProxy : IProxy, IObtainable
+    public interface ISourceProxy : IBindingProxy
     {
-
         Type Type { get; }
 
         object Source { get; }
-
     }
-
 }

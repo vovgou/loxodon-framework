@@ -3,16 +3,8 @@ using System.Reflection;
 
 namespace Loxodon.Framework.Binding.Reflection
 {
-    public interface IProxyMethodInfo
+    public interface IProxyMethodInfo : IProxyMemberInfo
     {
-        MethodInfo MethodInfo { get; }
-
-        bool IsStatic { get; }
-
-        string Name { get; }
-
-        Type DeclaringType { get; }
-
         Type ReturnType { get; }
 
         ParameterInfo[] Parameters { get; }
@@ -20,7 +12,6 @@ namespace Loxodon.Framework.Binding.Reflection
         ParameterInfo ReturnParameter { get; }
 
         object Invoke(object target, params object[] args);
-
     }
 
     public interface IProxyFuncInfo<T, TResult> : IProxyMethodInfo
@@ -102,5 +93,4 @@ namespace Loxodon.Framework.Binding.Reflection
     {
         void Invoke(P1 p1, P2 p2, P3 p3);
     }
-
 }

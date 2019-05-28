@@ -1,54 +1,62 @@
-﻿using System;
+﻿using Loxodon.Framework.Binding.Reflection;
+using Loxodon.Framework.Observables;
 using System.Reflection;
-
-using Loxodon.Log;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
-    public class UniversalTargetProxyFactory : AbstractTargetProxyFactory
+    public class UniversalTargetProxyFactory : ITargetProxyFactory
     {
-        //private static readonly ILog log = LogManager.GetLogger(typeof(UniversalTargetProxyFactory));
-
-        protected override bool TryCreateProxy(object target, BindingDescription description, out ITargetProxy proxy)
+        public ITargetProxy CreateProxy(object target, BindingDescription description)
         {
-            proxy = null;
-            Type type = target.GetType();
-            MemberInfo memberInfo = type.FindFirstMemberInfo(description.TargetName);
+            IProxyType type = target.GetType().AsProxy();
+            IProxyMemberInfo memberInfo = type.GetMember(description.TargetName);
             if (memberInfo == null)
-                memberInfo = type.FindFirstMemberInfo(description.TargetName, BindingFlags.Instance | BindingFlags.NonPublic);
+                memberInfo = type.GetMember(description.TargetName, BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (memberInfo == null)
-                return false;
+                return null;
 
-            var propertyInfo = memberInfo as PropertyInfo;
+            var propertyInfo = memberInfo as IProxyPropertyInfo;
             if (propertyInfo != null)
             {
-                proxy = new PropertyTargetProxy(target, propertyInfo);
-                return true;
+                var valueType = propertyInfo.ValueType;
+                if (typeof(IObservableProperty).IsAssignableFrom(valueType))
+                {
+                    object observableValue = propertyInfo.GetValue(target);
+                    if (observableValue == null)
+                        return null;
+
+                    return new ObservableTargetProxy(target, (IObservableProperty)observableValue);
+                }
+
+                return new PropertyTargetProxy(target, propertyInfo);
             }
 
-            var fieldInfo = memberInfo as FieldInfo;
+            var fieldInfo = memberInfo as IProxyFieldInfo;
             if (fieldInfo != null)
             {
-                proxy = new FieldTargetProxy(target, fieldInfo);
-                return true;
+                var valueType = fieldInfo.ValueType;
+                if (typeof(IObservableProperty).IsAssignableFrom(valueType))
+                {
+                    object observableValue = fieldInfo.GetValue(target);
+                    if (observableValue == null)
+                        return null;
+
+                    return new ObservableTargetProxy(target, (IObservableProperty)observableValue);
+                }
+
+                return new FieldTargetProxy(target, fieldInfo);
             }
 
-            var eventInfo = memberInfo as EventInfo;
+            var eventInfo = memberInfo as IProxyEventInfo;
             if (eventInfo != null)
-            {
-                proxy = new EventTargetProxy(target, eventInfo);
-                return true;
-            }
+                return new EventTargetProxy(target, eventInfo);
 
-            var methodInfo = memberInfo as MethodInfo;
+            var methodInfo = memberInfo as IProxyMethodInfo;
             if (methodInfo != null)
-            {
-                proxy = new VoidMethodTargetProxy(target, methodInfo);
-                return true;
-            }
+                return new MethodTargetProxy(target, methodInfo);
 
-            return false;
+            return null;
         }
     }
 }

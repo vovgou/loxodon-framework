@@ -1,44 +1,69 @@
-﻿using System;
-using System.Reflection;
-using System.ComponentModel;
+﻿using Loxodon.Framework.Binding.Reflection;
+using System;
 
-using Loxodon.Log;
-using Loxodon.Framework.Binding.Reflection;
+using INotifyPropertyChanged = System.ComponentModel.INotifyPropertyChanged;
+using PropertyChangedEventArgs = System.ComponentModel.PropertyChangedEventArgs;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
-    public class PropertyTargetProxy : AbstractTargetProxy, IObtainable
+    public class PropertyTargetProxy : ValueTargetProxyBase
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(PropertyTargetProxy));
+        //private static readonly ILog log = LogManager.GetLogger(typeof(PropertyTargetProxy));
 
-        protected readonly PropertyInfo propertyInfo;
-        protected readonly IProxyPropertyInfo proxyProperty;
+        protected readonly IProxyPropertyInfo propertyInfo;
 
-        public override Type Type { get { return this.propertyInfo.PropertyType; } }
-
-        public PropertyTargetProxy(object target, PropertyInfo propertyInfo) : base(target)
+        public PropertyTargetProxy(object target, IProxyPropertyInfo propertyInfo) : base(target)
         {
             this.propertyInfo = propertyInfo;
-            this.proxyProperty = propertyInfo.AsProxy();
         }
 
-        public virtual object GetValue()
+        public override Type Type { get { return this.propertyInfo.ValueType; } }
+
+        public override BindingMode DefaultMode { get { return BindingMode.TwoWay; } }
+
+        public override object GetValue()
         {
             var target = this.Target;
             if (target == null)
-            {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("Get value ignored in target's property \"{0}\",the weak reference to the target is null.", this.propertyInfo.Name);
+                return null;
 
-                return ReturnObject.UNSET;
-            }
-
-            return proxyProperty.GetValue(target);
+            return propertyInfo.GetValue(target);
         }
 
-        protected override void SetValueImpl(object target, object value)
+        public override TValue GetValue<TValue>()
         {
-            this.proxyProperty.SetValue(target, value);
+            var target = this.Target;
+            if (target == null)
+                return default(TValue);
+
+            if (propertyInfo is IProxyPropertyInfo<TValue>)
+                return ((IProxyPropertyInfo<TValue>)propertyInfo).GetValue(target);
+
+            return (TValue)propertyInfo.GetValue(target);
+        }
+
+        public override void SetValue(object value)
+        {
+            var target = this.Target;
+            if (target == null)
+                return;
+
+            this.propertyInfo.SetValue(target, value);
+        }
+
+        public override void SetValue<TValue>(TValue value)
+        {
+            var target = this.Target;
+            if (target == null)
+                return;
+
+            if (propertyInfo is IProxyPropertyInfo<TValue>)
+            {
+                ((IProxyPropertyInfo<TValue>)propertyInfo).SetValue(target, value);
+                return;
+            }
+
+            this.propertyInfo.SetValue(target, value);
         }
 
         protected override void DoSubscribeForValueChange(object target)
@@ -68,10 +93,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 if (target == null)
                     return;
 
-                var value = this.proxyProperty.GetValue(target);
-                this.RaiseValueChanged(value);
+                this.RaiseValueChanged();
             }
         }
     }
-
 }

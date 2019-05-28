@@ -24,26 +24,20 @@ namespace Loxodon.Framework.Binding
             ExpressionPathFinder expressionPathFinder = new ExpressionPathFinder();
             ConverterRegistry converterRegistry = new ConverterRegistry();
 
-            ObjectSourceProxyCreationService objectSourceProxyCreationService = new ObjectSourceProxyCreationService();
-            objectSourceProxyCreationService.Register(new UniversalObjectSourceProxyFactory(), 0);
-            objectSourceProxyCreationService.Register(new InteractionRequestSourceProxyFactory(), 1);
+            ObjectSourceProxyFactory objectSourceProxyFactory = new ObjectSourceProxyFactory();
+            objectSourceProxyFactory.Register(new UniversalNodeProxyFactory(), 0);
 
-            SourceProxyCreationService sourceFactoryService = new SourceProxyCreationService();
-            sourceFactoryService.Register(new LiteralSourceProxyFactory(), 0);
-            sourceFactoryService.Register(new ExpressionSourceProxyFactory(sourceFactoryService, expressionPathFinder), 1);
-            sourceFactoryService.Register(objectSourceProxyCreationService, 2);
+            SourceProxyFactory sourceFactory = new SourceProxyFactory();
+            sourceFactory.Register(new LiteralSourceProxyFactory(), 0);
+            sourceFactory.Register(new ExpressionSourceProxyFactory(sourceFactory, expressionPathFinder), 1);
+            sourceFactory.Register(objectSourceProxyFactory, 2);
 
-            TargetProxyCreationService targetFactoryService = new TargetProxyCreationService();
-            targetFactoryService.Register(new UniversalTargetProxyFactory(), 0);
-            targetFactoryService.Register(new UnityTargetProxyFactory(), 10);
-            targetFactoryService.Register(new ObservablePropertyTargetProxyFactory(), 20);
+            TargetProxyFactory targetFactory = new TargetProxyFactory();
+            targetFactory.Register(new UniversalTargetProxyFactory(), 0);
+            targetFactory.Register(new UnityTargetProxyFactory(), 10);
 
-            BindingFactory bindingFactory = new BindingFactory(sourceFactoryService, targetFactoryService);
+            BindingFactory bindingFactory = new BindingFactory(sourceFactory, targetFactory);
             StandardBinder binder = new StandardBinder(bindingFactory);
-            ProxyFactory proxyFactory = ProxyFactory.Default;
-
-            PropertyInfo info = typeof(UnityEngine.GameObject).GetProperty("activeSelf");
-            proxyFactory.Register(new ProxyPropertyInfo<UnityEngine.GameObject, bool>(info, g => g.activeSelf, (g, v) => g.SetActive(v)));
 
             container.Register<IBinder>(binder);
             container.Register<IBindingFactory>(bindingFactory);
@@ -52,17 +46,14 @@ namespace Loxodon.Framework.Binding
             container.Register<IExpressionPathFinder>(expressionPathFinder);
             container.Register<IPathParser>(pathParser);
 
-            container.Register<IObjectSourceProxyFactory>(objectSourceProxyCreationService);
-            container.Register<IObjectSourceProxyFactoryRegistry>(objectSourceProxyCreationService);
+            container.Register<INodeProxyFactory>(objectSourceProxyFactory);
+            container.Register<INodeProxyFactoryRegister>(objectSourceProxyFactory);
 
-            container.Register<ISourceProxyFactory>(sourceFactoryService);
-            container.Register<ISourceProxyFactoryRegistry>(sourceFactoryService);
+            container.Register<ISourceProxyFactory>(sourceFactory);
+            container.Register<ISourceProxyFactoryRegistry>(sourceFactory);
 
-            container.Register<ITargetProxyFactory>(targetFactoryService);
-            container.Register<ITargetProxyFactoryRegister>(targetFactoryService);
-
-            container.Register<IProxyFactory>(proxyFactory);
-            container.Register<IProxyRegistry>(proxyFactory);
+            container.Register<ITargetProxyFactory>(targetFactory);
+            container.Register<ITargetProxyFactoryRegister>(targetFactory);
         }
 
         protected override void OnStop(IServiceContainer container)
@@ -74,17 +65,14 @@ namespace Loxodon.Framework.Binding
             container.Unregister<IExpressionPathFinder>();
             container.Unregister<IPathParser>();
 
-            container.Unregister<IObjectSourceProxyFactory>();
-            container.Unregister<IObjectSourceProxyFactoryRegistry>();
+            container.Unregister<INodeProxyFactory>();
+            container.Unregister<INodeProxyFactoryRegister>();
 
             container.Unregister<ISourceProxyFactory>();
             container.Unregister<ISourceProxyFactoryRegistry>();
 
             container.Unregister<ITargetProxyFactory>();
             container.Unregister<ITargetProxyFactoryRegister>();
-
-            container.Unregister<IProxyFactory>();
-            container.Unregister<IProxyRegistry>();
         }
     }
 }

@@ -1,42 +1,29 @@
-﻿using System;
-using System.Reflection;
-
-using Loxodon.Log;
+﻿using Loxodon.Framework.Binding.Reflection;
+using System;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
-    public class EventTargetProxy : AbstractTargetProxy
+    public class EventTargetProxy : EventTargetProxyBase
     {
-        //private static readonly ILog log = LogManager.GetLogger(typeof(EventTargetProxy));
-
         private bool disposed = false;
-        protected readonly EventInfo eventInfo;
+        protected readonly IProxyEventInfo eventInfo;
         protected Delegate handler;
 
-        public override Type Type { get { return this.eventInfo.EventHandlerType; } }
-
-        public override BindingMode DefaultMode { get { return BindingMode.OneWay; } }
-
-        public EventTargetProxy(object target, EventInfo eventInfo) : base(target)
+        public EventTargetProxy(object target, IProxyEventInfo eventInfo) : base(target)
         {
             this.eventInfo = eventInfo;
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
-                var target = this.Target;
-                if (this.eventInfo.IsStatic() || target != null)
-                    this.Unbind(target);
+        public override Type Type { get { return this.eventInfo.HandlerType; } }
 
-                disposed = true;
-                base.Dispose(disposing);
-            }
-        }
+        public override BindingMode DefaultMode { get { return BindingMode.OneWay; } }
 
-        protected override void SetValueImpl(object target, object value)
+        public override void SetValue(object value)
         {
+            var target = this.Target;
+            if (target == null)
+                return;
+
             Unbind(target);
 
             if (value == null)
@@ -52,13 +39,18 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             throw new NotSupportedException();
         }
 
+        public override void SetValue<TValue>(TValue value)
+        {
+            this.SetValue((object)value);
+        }
+
         protected virtual void Bind(object target)
         {
             if (this.handler == null)
                 return;
 
             if (this.eventInfo != null)
-                this.eventInfo.AddEventHandler(target, handler);
+                this.eventInfo.Add(target, handler);
         }
 
         protected virtual void Unbind(object target)
@@ -67,9 +59,22 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 return;
 
             if (this.eventInfo != null)
-                this.eventInfo.RemoveEventHandler(target, handler);
+                this.eventInfo.Remove(target, handler);
 
             this.handler = null;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                var target = this.Target;
+                if (this.eventInfo.IsStatic || target != null)
+                    this.Unbind(target);
+
+                disposed = true;
+                base.Dispose(disposing);
+            }
         }
     }
 }

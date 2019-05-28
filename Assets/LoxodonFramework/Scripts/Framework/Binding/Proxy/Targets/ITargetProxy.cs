@@ -2,14 +2,12 @@
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
-
-    public interface ITargetProxy : IProxy
+    public interface ITargetProxy : IBindingProxy
     {
         Type Type { get; }
 
-        BindingMode DefaultMode { get; }
-
         object Target { get; }
 
+        BindingMode DefaultMode { get; }
     }
 }

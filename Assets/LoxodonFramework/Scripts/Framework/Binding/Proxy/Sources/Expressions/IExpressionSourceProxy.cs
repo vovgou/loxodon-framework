@@ -2,7 +2,7 @@
 
 namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
 {
-    public interface IExpressionSourceProxy:ISourceProxy,INotifiable<EventArgs>
+    public interface IExpressionSourceProxy:ISourceProxy,INotifiable
     {
     }
 }

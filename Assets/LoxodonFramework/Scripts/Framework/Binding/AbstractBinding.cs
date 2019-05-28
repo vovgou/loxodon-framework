@@ -4,7 +4,7 @@ namespace Loxodon.Framework.Binding
 {
     public abstract class AbstractBinding : IBinding
     {
-        private object target;
+        private readonly object target;
         private object dataContext;
 
         public AbstractBinding(object dataContext, object target)
@@ -30,8 +30,6 @@ namespace Loxodon.Framework.Binding
                 this.OnDataContextChanged();
             }
         }
-
-    
 
         protected abstract void OnDataContextChanged();
 

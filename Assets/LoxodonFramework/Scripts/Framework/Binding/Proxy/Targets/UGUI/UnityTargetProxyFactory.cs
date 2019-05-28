@@ -9,98 +9,80 @@ using Loxodon.Framework.Observables;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
-    public class UnityTargetProxyFactory : AbstractTargetProxyFactory
+    public class UnityTargetProxyFactory : ITargetProxyFactory
     {
         //private static readonly ILog log = LogManager.GetLogger(typeof(UnityTargetProxyFactory));
 
-        protected override bool TryCreateProxy(object target, BindingDescription description, out ITargetProxy proxy)
+        public ITargetProxy CreateProxy(object target, BindingDescription description)
         {
-            proxy = null;
-            Type type = target.GetType();
-            MemberInfo memberInfo = type.FindFirstMemberInfo(description.TargetName);
+            IProxyType type = target.GetType().AsProxy();
+            IProxyMemberInfo memberInfo = type.GetMember(description.TargetName);
             if (memberInfo == null)
-                return false;
+                return null;
 
             UnityEventBase updateTrigger = null;
             if (!string.IsNullOrEmpty(description.UpdateTrigger))
             {
                 var updateTriggerPropertyInfo = type.GetProperty(description.UpdateTrigger);
                 if (updateTriggerPropertyInfo != null)
-                    updateTrigger = updateTriggerPropertyInfo.AsProxy().GetValue(target) as UnityEventBase;
+                    updateTrigger = updateTriggerPropertyInfo.GetValue(target) as UnityEventBase;
 
                 if (updateTriggerPropertyInfo == null)
                 {
                     var updateTriggerFieldInfo = type.GetField(description.UpdateTrigger);
                     if (updateTriggerFieldInfo != null)
-                        updateTrigger = updateTriggerFieldInfo.AsProxy().GetValue(target) as UnityEventBase;
+                        updateTrigger = updateTriggerFieldInfo.GetValue(target) as UnityEventBase;
                 }
             }
 
-            var propertyInfo = memberInfo as PropertyInfo;
+            var propertyInfo = memberInfo as IProxyPropertyInfo;
             if (propertyInfo != null)
             {
-                if (typeof(IObservableProperty).IsAssignableFrom(propertyInfo.PropertyType))
-                    return false;
+                if (typeof(IObservableProperty).IsAssignableFrom(propertyInfo.ValueType))
+                    return null;
 
-                if (typeof(UnityEventBase).IsAssignableFrom(propertyInfo.PropertyType))
+                if (typeof(UnityEventBase).IsAssignableFrom(propertyInfo.ValueType))
                 {
                     //Event Type
-                    var proxyPropertyInfo = propertyInfo.AsProxy();
-                    object unityEvent = proxyPropertyInfo.GetValue(target);
-                    Type[] paramTypes = GetUnityEventParametersType(propertyInfo.PropertyType);
-                    proxy = CreateUnityEventProxy(target, (UnityEventBase)unityEvent, paramTypes);
-                    if (proxy != null)
-                        return true;
-                    return false;
+                    object unityEvent = propertyInfo.GetValue(target);
+                    Type[] paramTypes = GetUnityEventParametersType(propertyInfo.ValueType);
+                    return CreateUnityEventProxy(target, (UnityEventBase)unityEvent, paramTypes);
                 }
 
                 //Other Property Type
                 if (updateTrigger == null)/* by UniversalTargetProxyFactory */
-                    return false;
+                    return null;
 
-                proxy = CreateUnityPropertyProxy(target, propertyInfo, updateTrigger);
-                if (proxy != null)
-                    return true;
-
-                return false;
+                return CreateUnityPropertyProxy(target, propertyInfo, updateTrigger);
             }
 
-            var fieldInfo = memberInfo as FieldInfo;
+            var fieldInfo = memberInfo as IProxyFieldInfo;
             if (fieldInfo != null)
             {
-                if (typeof(IObservableProperty).IsAssignableFrom(fieldInfo.FieldType))
-                    return false;
+                if (typeof(IObservableProperty).IsAssignableFrom(fieldInfo.ValueType))
+                    return null;
 
-                if (typeof(UnityEventBase).IsAssignableFrom(fieldInfo.FieldType))
+                if (typeof(UnityEventBase).IsAssignableFrom(fieldInfo.ValueType))
                 {
                     //Event Type
-                    var proxyFieldInfo = fieldInfo.AsProxy();
-                    object unityEvent = proxyFieldInfo.GetValue(target);
-                    Type[] paramTypes = GetUnityEventParametersType(proxyFieldInfo.FieldType);
-                    proxy = CreateUnityEventProxy(target, (UnityEventBase)unityEvent, paramTypes);
-                    if (proxy != null)
-                        return true;
-                    return false;
+                    object unityEvent = fieldInfo.GetValue(target);
+                    Type[] paramTypes = GetUnityEventParametersType(fieldInfo.ValueType);
+                    return CreateUnityEventProxy(target, (UnityEventBase)unityEvent, paramTypes);
                 }
 
                 //Other Property Type
                 if (updateTrigger == null)/* by UniversalTargetProxyFactory */
-                    return false;
+                    return null;
 
-                proxy = CreateUnityFieldProxy(target, fieldInfo, updateTrigger);
-                if (proxy != null)
-                    return true;
-
-                return false;
+                return CreateUnityFieldProxy(target, fieldInfo, updateTrigger);
             }
 
-            proxy = null;
-            return false;
+            return null;
         }
 
-        protected virtual ITargetProxy CreateUnityPropertyProxy(object target, PropertyInfo propertyInfo, UnityEventBase updateTrigger)
+        protected virtual ITargetProxy CreateUnityPropertyProxy(object target, IProxyPropertyInfo propertyInfo, UnityEventBase updateTrigger)
         {
-            Type type = propertyInfo.PropertyType;
+            Type type = propertyInfo.ValueType;
 #if NETFX_CORE
             TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
 #else
@@ -129,14 +111,14 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 #if UNITY_IOS
                     throw new NotSupportedException();
 #else
-                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityPropertyProxy<>).MakeGenericType(propertyInfo.PropertyType), target, propertyInfo, updateTrigger);
+                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityPropertyProxy<>).MakeGenericType(propertyInfo.ValueType), target, propertyInfo, updateTrigger);
 #endif
             }
         }
 
-        protected virtual ITargetProxy CreateUnityFieldProxy(object target, FieldInfo fieldInfo, UnityEventBase updateTrigger)
+        protected virtual ITargetProxy CreateUnityFieldProxy(object target, IProxyFieldInfo fieldInfo, UnityEventBase updateTrigger)
         {
-            Type type = fieldInfo.FieldType;
+            Type type = fieldInfo.ValueType;
 #if NETFX_CORE
             TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
 #else
@@ -165,19 +147,17 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 #if UNITY_IOS
                     throw new NotSupportedException();
 #else
-                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityFieldProxy<>).MakeGenericType(fieldInfo.FieldType), target, fieldInfo, updateTrigger);
+                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityFieldProxy<>).MakeGenericType(fieldInfo.ValueType), target, fieldInfo, updateTrigger);
 #endif
             }
         }
 
         protected virtual ITargetProxy CreateUnityEventProxy(object target, UnityEventBase unityEvent, Type[] paramTypes)
         {
-            ITargetProxy proxy = null;
             switch (paramTypes.Length)
             {
                 case 0:
-                    proxy = new UnityEventProxy(target, (UnityEvent)unityEvent);
-                    break;
+                    return new UnityEventProxy(target, (UnityEvent)unityEvent);
                 case 1:
 #if NETFX_CORE
                     TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(paramTypes[0]);
@@ -187,64 +167,46 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     switch (typeCode)
                     {
                         case TypeCode.String:
-                            proxy = new UnityEventProxy<string>(target, (UnityEvent<string>)unityEvent);
-                            break;
+                            return new UnityEventProxy<string>(target, (UnityEvent<string>)unityEvent);
                         case TypeCode.Boolean:
-                            proxy = new UnityEventProxy<bool>(target, (UnityEvent<bool>)unityEvent);
-                            break;
+                            return new UnityEventProxy<bool>(target, (UnityEvent<bool>)unityEvent);
                         case TypeCode.SByte:
-                            proxy = new UnityEventProxy<sbyte>(target, (UnityEvent<sbyte>)unityEvent);
-                            break;
+                            return new UnityEventProxy<sbyte>(target, (UnityEvent<sbyte>)unityEvent);
                         case TypeCode.Byte:
-                            proxy = new UnityEventProxy<byte>(target, (UnityEvent<byte>)unityEvent);
-                            break;
+                            return new UnityEventProxy<byte>(target, (UnityEvent<byte>)unityEvent);
                         case TypeCode.Int16:
-                            proxy = new UnityEventProxy<short>(target, (UnityEvent<short>)unityEvent);
-                            break;
+                            return new UnityEventProxy<short>(target, (UnityEvent<short>)unityEvent);
                         case TypeCode.UInt16:
-                            proxy = new UnityEventProxy<ushort>(target, (UnityEvent<ushort>)unityEvent);
-                            break;
+                            return new UnityEventProxy<ushort>(target, (UnityEvent<ushort>)unityEvent);
                         case TypeCode.Int32:
-                            proxy = new UnityEventProxy<int>(target, (UnityEvent<int>)unityEvent);
-                            break;
+                            return new UnityEventProxy<int>(target, (UnityEvent<int>)unityEvent);
                         case TypeCode.UInt32:
-                            proxy = new UnityEventProxy<uint>(target, (UnityEvent<uint>)unityEvent);
-                            break;
+                            return new UnityEventProxy<uint>(target, (UnityEvent<uint>)unityEvent);
                         case TypeCode.Int64:
-                            proxy = new UnityEventProxy<long>(target, (UnityEvent<long>)unityEvent);
-                            break;
+                            return new UnityEventProxy<long>(target, (UnityEvent<long>)unityEvent);
                         case TypeCode.UInt64:
-                            proxy = new UnityEventProxy<ulong>(target, (UnityEvent<ulong>)unityEvent);
-                            break;
+                            return new UnityEventProxy<ulong>(target, (UnityEvent<ulong>)unityEvent);
                         case TypeCode.Char:
-                            proxy = new UnityEventProxy<char>(target, (UnityEvent<char>)unityEvent);
-                            break;
+                            return new UnityEventProxy<char>(target, (UnityEvent<char>)unityEvent);
                         case TypeCode.Single:
-                            proxy = new UnityEventProxy<float>(target, (UnityEvent<float>)unityEvent);
-                            break;
+                            return new UnityEventProxy<float>(target, (UnityEvent<float>)unityEvent);
                         case TypeCode.Double:
-                            proxy = new UnityEventProxy<double>(target, (UnityEvent<double>)unityEvent);
-                            break;
+                            return new UnityEventProxy<double>(target, (UnityEvent<double>)unityEvent);
                         case TypeCode.Decimal:
-                            proxy = new UnityEventProxy<decimal>(target, (UnityEvent<decimal>)unityEvent);
-                            break;
+                            return new UnityEventProxy<decimal>(target, (UnityEvent<decimal>)unityEvent);
                         case TypeCode.DateTime:
-                            proxy = new UnityEventProxy<DateTime>(target, (UnityEvent<DateTime>)unityEvent);
-                            break;
+                            return new UnityEventProxy<DateTime>(target, (UnityEvent<DateTime>)unityEvent);
                         case TypeCode.Object:
                         default:
 #if UNITY_IOS
                             throw new NotSupportedException();
 #else
-                            proxy = (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<>).MakeGenericType(paramTypes[0]), target, unityEvent);
-                            break;
+                            return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<>).MakeGenericType(paramTypes[0]), target, unityEvent);
 #endif
                     }
-                    break;
                 default:
                     throw new NotSupportedException("Too many parameters");
             }
-            return proxy;
         }
 
         protected Type[] GetUnityEventParametersType(Type type)

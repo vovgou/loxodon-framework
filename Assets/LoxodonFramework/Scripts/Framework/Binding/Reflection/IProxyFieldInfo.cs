@@ -1,26 +1,24 @@
 ﻿using System;
-using System.Reflection;
 
 namespace Loxodon.Framework.Binding.Reflection
 {
-    public interface IProxyFieldInfo
+    public interface IProxyFieldInfo : IProxyMemberInfo
     {
-        FieldInfo FieldInfo { get; }
-
-        Type DeclaringType { get; }
-
-        Type FieldType { get; }
-
-        bool IsStatic { get; }
-
-        string Name { get; }
+        Type ValueType { get; }
 
         object GetValue(object target);
 
         void SetValue(object target, object value);
     }
 
-    public interface IProxyFieldInfo<T, TValue> : IProxyFieldInfo
+    public interface IProxyFieldInfo<TValue> : IProxyFieldInfo
+    {
+        new TValue GetValue(object target);
+
+        void SetValue(object target, TValue value);
+    }
+
+    public interface IProxyFieldInfo<T, TValue> : IProxyFieldInfo<TValue>
     {
         TValue GetValue(T target);
 
