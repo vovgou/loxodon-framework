@@ -62,6 +62,10 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 ### 安装XLua ###
 从Xlua的Github仓库下载最新版的XLua，可以使用源码版本Source code.zip或者xlua_v2.x.xx.zip版本（建议使用xlua_v2.x.xx.zip版本，避免和XLua示例类名冲突）。请将下载好的xlua解压缩，拷贝到当前项目中。
 
+**注意：Unity2018请使用.net3.5,否则会出错，如果想使用.net4.6请参考xlua的FQA解决兼容性问题。**
+
+[XLua FQA](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/faq.md)
+
 [XLua下载](https://github.com/Tencent/xLua/releases "xlua")
 
 ![](images/xlua_2.1.14.png)
@@ -1564,6 +1568,114 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 #### 绑定的生命周期 ####
     
 一般来说数据绑定都在视图创建函数中来初始化，通过BindingSet来配置视图控件和视图模型之间的绑定关系，当调用BindingSet的Build函数时，Binder会创建BindingSet中所有的绑定关系对，被创建的绑定对会保存在当前视图的BindingContext中。BindingContext在首次调用时自动创建，同时自动生成了一个BindingContextLifecycle脚本，挂在当前视图对象上，由它来控制BindingContext的生命周期，当视图销毁时，BindingContext会随之销毁，存放在BindingContext中的绑定关系对也会随之销毁。
+
+#### 注册属性和域的访问器 ####
+
+在IOS平台不允许JIT编译，不允许动态生成代码，数据绑定功能访问对象的属性、域和方法时无法像其他平台一样通过动态生成委托来访问，只能通过反射来访问，众所周知反射的效率是很差的，所以我提供了静态注入访问器的功能来绕过反射。默认情况下，我已经创建了UGUI和Unity引擎的部分类的属性访问器，参考我的代码，你也可以将视图模型类的常用属性的访问器注册到类型代理中。
+
+    public class UnityProxyRegister
+    {
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void Initialize()
+        {
+            Register<Transform, Vector3>("localPosition", t => t.localPosition, (t, v) => t.localPosition = v);
+            Register<Transform, Vector3>("eulerAngles", t => t.eulerAngles, (t, v) => t.eulerAngles = v);
+            Register<Transform, Vector3>("localEulerAngles", t => t.localEulerAngles, (t, v) => t.localEulerAngles = v);
+            Register<Transform, Vector3>("right", t => t.right, (t, v) => t.right = v);
+            Register<Transform, Vector3>("up", t => t.up, (t, v) => t.up = v);
+            Register<Transform, Vector3>("forward", t => t.forward, (t, v) => t.forward = v);
+            Register<Transform, Vector3>("position", t => t.position, (t, v) => t.position = v);
+            Register<Transform, Vector3>("localScale", t => t.localScale, (t, v) => t.localScale = v);
+            Register<Transform, Vector3>("lossyScale", t => t.lossyScale, null);
+            Register<Transform, Quaternion>("rotation", t => t.rotation, (t, v) => t.rotation = v);
+            Register<Transform, Quaternion>("localRotation", t => t.localRotation, (t, v) => t.localRotation = v);
+            Register<Transform, Matrix4x4>("worldToLocalMatrix", t => t.worldToLocalMatrix, null);
+            Register<Transform, Matrix4x4>("localToWorldMatrix", t => t.localToWorldMatrix, null);
+            Register<Transform, int>("childCount", t => t.childCount, null);
+
+            Register<RectTransform, Vector2>("offsetMax", t => t.offsetMax, (t, v) => t.offsetMax = v);
+            Register<RectTransform, Vector2>("offsetMin", t => t.offsetMin, (t, v) => t.offsetMin = v);
+            Register<RectTransform, Vector2>("pivot", t => t.pivot, (t, v) => t.pivot = v);
+            Register<RectTransform, Vector2>("sizeDelta", t => t.sizeDelta, (t, v) => t.sizeDelta = v);
+            Register<RectTransform, Vector2>("anchoredPosition", t => t.anchoredPosition, (t, v) => t.anchoredPosition = v);
+            Register<RectTransform, Vector2>("anchorMax", t => t.anchorMax, (t, v) => t.anchorMax = v);
+            Register<RectTransform, Vector3>("anchoredPosition3D", t => t.anchoredPosition3D, (t, v) => t.anchoredPosition3D = v);
+            Register<RectTransform, Vector2>("anchorMin", t => t.anchorMin, (t, v) => t.anchorMin = v);
+            Register<RectTransform, Rect>("rect", t => t.rect, null);
+
+            Register<GameObject, bool>("activeSelf", t => t.activeSelf, (t, v) => t.SetActive(v));
+            Register<GameObject, int>("layer", t => t.layer, (t, v) => t.layer = v);
+            Register<GameObject, string>("tag", t => t.tag, (t, v) => t.tag = v);
+
+            Register<Behaviour, bool>("enabled", t => t.enabled, (t, v) => t.enabled = v);
+            Register<Behaviour, bool>("isActiveAndEnabled", t => t.isActiveAndEnabled, null);
+
+            Register<Component, string>("tag", t => t.tag, (t, v) => t.tag = v);
+
+            Register<Canvas, float>("planeDistance", t => t.planeDistance, (t, v) => t.planeDistance = v);
+            Register<Canvas, string>("sortingLayerName", t => t.sortingLayerName, (t, v) => t.sortingLayerName = v);
+            Register<Canvas, int>("sortingLayerID", t => t.sortingLayerID, (t, v) => t.sortingLayerID = v);
+            Register<Canvas, int>("renderOrder", t => t.renderOrder, null);
+
+            Register<CanvasGroup, float>("alpha", t => t.alpha, (t, v) => t.alpha = v);
+            Register<CanvasGroup, bool>("interactable", t => t.interactable, (t, v) => t.interactable = v);
+            Register<CanvasGroup, bool>("blocksRaycasts", t => t.blocksRaycasts, (t, v) => t.blocksRaycasts = v);
+            Register<CanvasGroup, bool>("ignoreParentGroups", t => t.ignoreParentGroups, (t, v) => t.ignoreParentGroups = v);
+
+            Register<GraphicRaycaster, bool>("ignoreReversedGraphics", t => t.ignoreReversedGraphics, (t, v) => t.ignoreReversedGraphics = v);
+
+            Register<Mask, bool>("showMaskGraphic", t => t.showMaskGraphic, (t, v) => t.showMaskGraphic = v);
+
+            Register<Selectable, SpriteState>("spriteState", t => t.spriteState, (t, v) => t.spriteState = v);
+            Register<Selectable, ColorBlock>("colors", t => t.colors, (t, v) => t.colors = v);
+            Register<Selectable, bool>("interactable", t => t.interactable, (t, v) => t.interactable = v);
+
+            Register<Button, Button.ButtonClickedEvent>("onClick", t => t.onClick, null);
+
+            Register<InputField, InputField.OnChangeEvent>("onValueChanged", t => t.onValueChanged, null);
+            Register<InputField, InputField.SubmitEvent>("onEndEdit", t => t.onEndEdit, null);
+            Register<InputField, string>("text", t => t.text, (t, v) => t.text = v);
+
+            Register<Scrollbar, Scrollbar.ScrollEvent>("onValueChanged", t => t.onValueChanged, null);
+            Register<Scrollbar, float>("size", t => t.size, (t, v) => t.size = v);
+            Register<Scrollbar, float>("value", t => t.value, (t, v) => t.value = v);
+
+            Register<Slider, Slider.SliderEvent>("onValueChanged", t => t.onValueChanged, null);
+            Register<Slider, float>("value", t => t.value, (t, v) => t.value = v);
+            Register<Slider, float>("maxValue", t => t.maxValue, (t, v) => t.maxValue = v);
+            Register<Slider, float>("minValue", t => t.minValue, (t, v) => t.minValue = v);
+
+            Register<Dropdown, int>("value", t => t.value, (t, v) => t.value = v);
+            Register<Dropdown, Dropdown.DropdownEvent>("onValueChanged", t => t.onValueChanged, null);
+
+            Register<Text, string>("text", t => t.text, (t, v) => t.text = v);
+            Register<Text, int>("fontSize", t => t.fontSize, (t, v) => t.fontSize = v);
+
+            Register<Toggle, bool>("isOn", t => t.isOn, (t, v) => t.isOn = v);
+            Register<Toggle, Toggle.ToggleEvent>("onValueChanged", t => t.onValueChanged, (t, v) => t.onValueChanged = v);
+
+            Register<ToggleGroup, bool>("allowSwitchOff", t => t.allowSwitchOff, (t, v) => t.allowSwitchOff = v);
+        }
+
+        static void Register<T, TValue>(string name, Func<T, TValue> getter, Action<T, TValue> setter)
+        {
+            var propertyInfo = typeof(T).GetProperty(name);
+            if (propertyInfo is PropertyInfo)
+            {
+                ProxyFactory.Default.Register(new ProxyPropertyInfo<T, TValue>(name, getter, setter));
+                return;
+            }
+
+            var fieldInfo = typeof(T).GetField(name);
+            if (fieldInfo is FieldInfo)
+            {
+                ProxyFactory.Default.Register(new ProxyFieldInfo<T, TValue>(name, getter, setter));
+                return;
+            }
+
+            throw new Exception(string.Format("Not found the property or field named '{0}' in {1} type", name, typeof(T).Name));
+        }
+    }
 
 ### UI框架 ###
 
