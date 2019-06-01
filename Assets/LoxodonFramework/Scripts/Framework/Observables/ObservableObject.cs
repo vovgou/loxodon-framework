@@ -49,6 +49,26 @@ namespace Loxodon.Framework.Observables
             }
         }
 
+        /// <summary>
+        /// Raises the PropertyChanging event.
+        /// </summary>
+        /// <param name="eventArgs">Property changed event.</param>
+        protected virtual void RaisePropertyChanged(PropertyChangedEventArgs eventArgs)
+        {
+            try
+            {
+                VerifyPropertyName(eventArgs.PropertyName);
+
+                if (propertyChanged != null)
+                    propertyChanged(this, eventArgs);
+            }
+            catch (Exception e)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("Set property '{0}', raise PropertyChanged failure.Exception:{1}", eventArgs.PropertyName, e);
+            }
+        }
+
         protected virtual string ParserPropertyName(LambdaExpression propertyExpression)
         {
             if (propertyExpression == null)
@@ -98,6 +118,24 @@ namespace Loxodon.Framework.Observables
 
             field = newValue;
             RaisePropertyChanged(propertyName);
+            return true;
+        }
+
+        /// <summary>
+        ///  Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set<T>(ref T field, T newValue, PropertyChangedEventArgs eventArgs)
+        {
+            if (object.Equals(field, newValue))
+                return false;
+
+            field = newValue;
+            RaisePropertyChanged(eventArgs);
             return true;
         }
     }

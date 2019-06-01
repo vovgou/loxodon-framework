@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using Loxodon.Log;
 using Loxodon.Framework.Observables;
 using Loxodon.Framework.Messaging;
+using System.ComponentModel;
 
 namespace Loxodon.Framework.ViewModels
 {
@@ -85,6 +86,29 @@ namespace Loxodon.Framework.ViewModels
 
             if (broadcast)
                 Broadcast(oldValue, newValue, propertyName);
+            return true;
+        }
+
+        /// <summary>
+        ///  Set the specified propertyName, field, newValue and broadcast.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <param name="broadcast"></param>
+        /// <returns></returns>
+        protected bool Set<T>(ref T field, T newValue, PropertyChangedEventArgs eventArgs, bool broadcast = false)
+        {
+            if (object.Equals(field, newValue))
+                return false;
+
+            var oldValue = field;
+            field = newValue;
+            RaisePropertyChanged(eventArgs);
+
+            if (broadcast)
+                Broadcast(oldValue, newValue, eventArgs.PropertyName);
             return true;
         }
 

@@ -1,5 +1,4 @@
-﻿using Loxodon.Framework.Binding.Proxy;
-using Loxodon.Framework.Binding.Reflection;
+﻿using Loxodon.Framework.Binding.Reflection;
 using Loxodon.Framework.Interactivity;
 using Loxodon.Log;
 using System;
@@ -38,57 +37,52 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
         public virtual void SetValue(object value)
         {
-            try
+            if (value != null && !(value is IProxyInvoker || value is Delegate || value is IScriptInvoker))
+                throw new ArgumentException("Binding object to InteractionRequest failed, unsupported object type", "value");
+
+            if (this.invoker != null)
+                this.invoker = null;
+
+            if (this.handler != null)
+                this.handler = null;
+
+            if (this.scriptInvoker != null)
+                this.scriptInvoker = null;
+
+            if (value == null)
+                return;
+
+            //Bind Method
+            IProxyInvoker invoker = value as IProxyInvoker;
+            if (invoker != null)
             {
-                if (this.invoker != null)
-                    this.invoker = null;
-
-                if (this.handler != null)
-                    this.handler = null;
-
-                if (this.scriptInvoker != null)
-                    this.scriptInvoker = null;
-
-                if (value == null)
+                if (this.IsValid(invoker))
+                {
+                    this.invoker = invoker;
                     return;
-
-                //Bind Method
-                IProxyInvoker invoker = value as IProxyInvoker;
-                if (invoker != null)
-                {
-                    if (this.IsValid(invoker))
-                    {
-                        this.invoker = invoker;
-                        return;
-                    }
-
-                    throw new ArgumentException("Bind method failed.the parameter types do not match.");
                 }
 
-                //Bind Delegate
-                Delegate handler = value as Delegate;
-                if (handler != null)
-                {
-                    if (this.IsValid(handler))
-                    {
-                        this.handler = handler;
-                        return;
-                    }
-
-                    throw new ArgumentException("Bind method failed.the parameter types do not match.");
-                }
-
-                //Bind Script Function
-                IScriptInvoker scriptInvoker = value as IScriptInvoker;
-                if (scriptInvoker != null)
-                {
-                    this.scriptInvoker = scriptInvoker;
-                }
+                throw new ArgumentException("Binding the IProxyInvoker to InteractionRequest failed, mismatched parameter type.");
             }
-            catch (Exception e)
+
+            //Bind Delegate
+            Delegate handler = value as Delegate;
+            if (handler != null)
             {
-                if (log.IsErrorEnabled)
-                    log.ErrorFormat("SetValue failed with exception,{0}", e);
+                if (this.IsValid(handler))
+                {
+                    this.handler = handler;
+                    return;
+                }
+
+                throw new ArgumentException("Binding the Delegate to InteractionRequest failed, mismatched parameter type.");
+            }
+
+            //Bind Script Function
+            IScriptInvoker scriptInvoker = value as IScriptInvoker;
+            if (scriptInvoker != null)
+            {
+                this.scriptInvoker = scriptInvoker;
             }
         }
 

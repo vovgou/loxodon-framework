@@ -108,5 +108,101 @@ namespace Loxodon.Framework.Binding
 
             throw new Exception(string.Format("Not found the property or field named '{0}' in {1} type", name, typeof(T).Name));
         }
+
+        //static void Register<T>(string name, Action<T> action)
+        //{
+        //    var methodInfo = typeof(T).GetMethod(name);
+        //    if (methodInfo != null && !methodInfo.IsStatic)
+        //    {
+        //        ProxyFactory.Default.Register(new ProxyActionInfo<T>(methodInfo, action));
+        //        return;
+        //    }
+
+        //    throw new Exception(string.Format("Not found the method named '{0}' in {1} type", name, typeof(T).Name));
+        //}
+
+        //static void Register<T, P1>(string name, Action<T, P1> action)
+        //{
+        //    var methodInfo = typeof(T).GetMethod(name);
+        //    if (methodInfo != null && !methodInfo.IsStatic)
+        //    {
+        //        ProxyFactory.Default.Register(new ProxyActionInfo<T, P1>(methodInfo, action));
+        //        return;
+        //    }
+
+        //    throw new Exception(string.Format("Not found the method named '{0}' in {1} type", name, typeof(T).Name));
+        //}
+
+        //static void Register<T, P1, P2>(string name, Action<T, P1, P2> action)
+        //{
+        //    var methodInfo = typeof(T).GetMethod(name);
+        //    if (methodInfo != null && !methodInfo.IsStatic)
+        //    {
+        //        ProxyFactory.Default.Register(new ProxyActionInfo<T, P1, P2>(methodInfo, action));
+        //        return;
+        //    }
+
+        //    throw new Exception(string.Format("Not found the method named '{0}' in {1} type", name, typeof(T).Name));
+        //}
+
+        //static void Register<T, P1, P2, P3>(string name, Action<T, P1, P2, P3> action)
+        //{
+        //    var methodInfo = typeof(T).GetMethod(name);
+        //    if (methodInfo != null && !methodInfo.IsStatic)
+        //    {
+        //        ProxyFactory.Default.Register(new ProxyActionInfo<T, P1, P2, P3>(methodInfo, action));
+        //        return;
+        //    }
+
+        //    throw new Exception(string.Format("Not found the method named '{0}' in {1} type", name, typeof(T).Name));
+        //}
+
+        //static void Register<T>(string name, Action action)
+        //{
+        //    var methodInfo = typeof(T).GetMethod(name);
+        //    if (methodInfo != null && methodInfo.IsStatic)
+        //    {
+        //        ProxyFactory.Default.Register(new StaticProxyActionInfo<T>(methodInfo, action));
+        //        return;
+        //    }
+
+        //    throw new Exception(string.Format("Not found the method named '{0}' in {1} type", name, typeof(T).Name));
+        //}
+
+        //static void Register<T, P1>(string name, Action<P1> action)
+        //{
+        //    var methodInfo = typeof(T).GetMethod(name);
+        //    if (methodInfo != null && methodInfo.IsStatic)
+        //    {
+        //        ProxyFactory.Default.Register(new StaticProxyActionInfo<T, P1>(methodInfo, action));
+        //        return;
+        //    }
+
+        //    throw new Exception(string.Format("Not found the method named '{0}' in {1} type", name, typeof(T).Name));
+        //}
+
+        //static void Register<T, P1, P2>(string name, Action<P1, P2> action)
+        //{
+        //    var methodInfo = typeof(T).GetMethod(name);
+        //    if (methodInfo != null && methodInfo.IsStatic)
+        //    {
+        //        ProxyFactory.Default.Register(new StaticProxyActionInfo<T, P1, P2>(methodInfo, action));
+        //        return;
+        //    }
+
+        //    throw new Exception(string.Format("Not found the method named '{0}' in {1} type", name, typeof(T).Name));
+        //}
+
+        //static void Register<T, P1, P2, P3>(string name, Action<P1, P2, P3> action)
+        //{
+        //    var methodInfo = typeof(T).GetMethod(name);
+        //    if (methodInfo != null && methodInfo.IsStatic)
+        //    {
+        //        ProxyFactory.Default.Register(new StaticProxyActionInfo<T, P1, P2, P3>(methodInfo, action));
+        //        return;
+        //    }
+
+        //    throw new Exception(string.Format("Not found the method named '{0}' in {1} type", name, typeof(T).Name));
+        //}
     }
 }

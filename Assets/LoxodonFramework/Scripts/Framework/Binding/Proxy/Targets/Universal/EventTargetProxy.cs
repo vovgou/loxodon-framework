@@ -20,6 +20,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public override void SetValue(object value)
         {
+            if (value != null && !value.GetType().Equals(this.Type))
+                throw new ArgumentException("Binding delegate to event failed, mismatched delegate type", "value");
+
             var target = this.Target;
             if (target == null)
                 return;
@@ -35,8 +38,6 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 Bind(target);
                 return;
             }
-
-            throw new NotSupportedException();
         }
 
         public override void SetValue<TValue>(TValue value)

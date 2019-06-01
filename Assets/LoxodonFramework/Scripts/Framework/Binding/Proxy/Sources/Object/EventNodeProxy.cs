@@ -30,7 +30,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
         public virtual void SetValue(object value)
         {
             if (value != null && !value.GetType().Equals(this.Type))
-                throw new NotSupportedException();
+                throw new ArgumentException("Binding delegate to event failed, mismatched delegate type", "value");
 
             Unbind(this.Source, this.handler);
             this.handler = (Delegate)value;
