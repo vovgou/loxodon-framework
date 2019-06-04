@@ -1,5 +1,5 @@
 ﻿Loxodon Framework
-Version: 1.8.0
+Version: 1.8.2
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,10 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.8.2
+	Fixed a bug in expression binding.
+	Fixed a bug when loading lua scripts via file path.
+
 version 1.8.0
 	Rewrite the code of the data binding module to optimize data binding performance and reduce gc as much as possible.Please remove the old version of the code before updating to 1.8.0.
 
