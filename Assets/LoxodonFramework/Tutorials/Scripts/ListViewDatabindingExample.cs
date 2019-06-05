@@ -161,6 +161,7 @@ namespace Loxodon.Framework.Tutorials
             {
                 viewModel.AddItem();
             }
+            viewModel.Items[0].IsSelected = true;
 
             IBindingContext bindingContext = this.BindingContext();
             bindingContext.DataContext = viewModel;

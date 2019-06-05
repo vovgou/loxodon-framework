@@ -251,8 +251,6 @@ namespace Loxodon.Framework.Views
             t.SetParent(null, worldPositionStays);
         }
 
-
-
         public ITransition Show(IWindow window)
         {
             ShowTransition transition = new ShowTransition(this, (Window)window);

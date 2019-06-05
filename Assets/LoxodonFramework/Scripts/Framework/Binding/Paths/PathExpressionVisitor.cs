@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Loxodon.Log;
-#if UNITY_IOS
+#if UNITY_IOS || ENABLE_IL2CPP
 using Loxodon.Framework.Binding.Expressions;
 #endif
 
@@ -101,8 +101,15 @@ namespace Loxodon.Framework.Binding.Paths
 
         protected virtual Expression VisitBinary(BinaryExpression node)
         {
-            List<Expression> list = new List<Expression>() { node.Left, node.Right, node.Conversion };
-            this.Visit(list);
+            if (node.NodeType == ExpressionType.ArrayIndex)
+            {
+                this.Visit(this.ParseMemberPath(node, null, this.list));
+            }
+            else
+            {
+                List<Expression> list = new List<Expression>() { node.Left, node.Right, node.Conversion };
+                this.Visit(list);
+            }
             return null;
         }
 
@@ -203,37 +210,28 @@ namespace Loxodon.Framework.Binding.Paths
             if (argument is ConstantExpression)
                 return argument;
 
-            try
-            {
-                var boxed = Expression.Convert(argument, typeof(object));
-#if !UNITY_IOS
-                var fun = Expression.Lambda<Func<object>>(boxed).Compile();
-                var constant = fun();
+            var boxed = Expression.Convert(argument, typeof(object));
+#if UNITY_IOS || ENABLE_IL2CPP
+            var fun = (Func<object[], object>)Expression.Lambda<Func<object>>(boxed).DynamicCompile();
+            var constant = fun(new object[] { });
+
 #else
-                var fun = (Func<object[],object>)Expression.Lambda<Func<object>>(boxed).DynamicCompile();
-                var constant = fun(new object[] { });
+            var fun = Expression.Lambda<Func<object>>(boxed).Compile();
+            var constant = fun();
 #endif
 
-                var constExpr = Expression.Constant(constant);
-                return constExpr;
-            }
-            catch (Exception e)
-            {
-                throw e;
-                //if (log.IsWarnEnabled)
-                //    log.Warn("Failed to evaluate member expression.", e);
-            }
+            return Expression.Constant(constant);
         }
 
         private IList<Expression> ParseMemberPath(Expression expression, Path path, IList<Path> list)
         {
-            if (expression.NodeType != ExpressionType.MemberAccess && expression.NodeType != ExpressionType.Call)
+            if (expression.NodeType != ExpressionType.MemberAccess && expression.NodeType != ExpressionType.Call && expression.NodeType != ExpressionType.ArrayIndex)
                 throw new Exception();
 
             List<Expression> result = new List<Expression>();
 
             Expression current = expression;
-            while (current != null && (current is MemberExpression || current is MethodCallExpression || current is ParameterExpression || current is ConstantExpression))
+            while (current != null && (current is MemberExpression || current is MethodCallExpression || current is BinaryExpression || current is ParameterExpression || current is ConstantExpression))
             {
                 if (current is MemberExpression)
                 {
@@ -261,7 +259,7 @@ namespace Loxodon.Framework.Binding.Paths
                     if (property != null)
                     {
                         if (property.IsStatic())
-                        {                           
+                        {
                             path.Prepend(new MemberNode(property));
                         }
                         else
@@ -285,10 +283,7 @@ namespace Loxodon.Framework.Binding.Paths
 
                         var argument = mc.Arguments[0];
                         if (!(argument is ConstantExpression))
-                        {
                             argument = ConvertMemberAccessToConstant(argument);
-                            //throw new NotSupportedException();
-                        }
 
                         object value = (argument as ConstantExpression).Value;
                         if (value is string)
@@ -302,22 +297,52 @@ namespace Loxodon.Framework.Binding.Paths
 
                         current = mc.Object;
                     }
-                    else {
+                    else
+                    {
                         current = null;
                         result.AddRange(mc.Arguments);
                         result.Add(mc.Object);
                     }
                 }
+                else if (current is BinaryExpression)
+                {
+                    var binary = current as BinaryExpression;
+                    if (binary.NodeType == ExpressionType.ArrayIndex)
+                    {
+                        if (path == null)
+                        {
+                            path = new Path();
+                            list.Add(path);
+                        }
+
+                        var left = binary.Left;
+                        var right = binary.Right;
+                        if (!(right is ConstantExpression))
+                            right = ConvertMemberAccessToConstant(right);
+
+                        object value = (right as ConstantExpression).Value;
+                        if (value is string)
+                        {
+                            path.PrependIndexed((string)value);
+                        }
+                        else if (value is Int32)
+                        {
+                            path.PrependIndexed((int)value);
+                        }
+
+                        current = left;
+                    }
+                    else
+                    {
+                        current = null;
+                    }
+                }
                 else if (current is ParameterExpression)
                 {
-                    //ParameterExpression e = (ParameterExpression)current;
-                    //path.PrependProperty(e.Name);
                     current = null;
                 }
                 else if (current is ConstantExpression)
                 {
-                    //ConstantExpression e = (ConstantExpression)current;
-                    //path.PrependProperty (e.Value.ToString());
                     current = null;
                 }
             }

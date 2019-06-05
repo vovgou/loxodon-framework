@@ -196,6 +196,8 @@ namespace Loxodon.Framework.Binding.Paths
         {
             if (output.Length > 0)
                 output.Append(".");
+            if (IsStatic)
+                output.Append(this.type.FullName).Append(".");
             output.Append(this.Name);
         }
 

@@ -7,8 +7,6 @@ namespace Loxodon.Framework.Binding.Reflection
 {
     public class ProxyItemInfo : IProxyItemInfo
     {
-        //private static readonly ILog log = LogManager.GetLogger(typeof(ProxyItemInfo));
-
         private readonly bool isValueType;
         protected PropertyInfo propertyInfo;
         protected MethodInfo getMethod;
@@ -53,12 +51,22 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             if (target is IList)
             {
-                return ((IList)target)[(int)key];
+                int index = (int)key;
+                IList list = target as IList;
+
+                if (index < 0 || index >= list.Count)
+                    throw new ArgumentOutOfRangeException("key", string.Format("The index is out of range, the key value is {0}, it is not between 0 and {1}", index, list.Count));
+
+                return list[index];
             }
 
             if (target is IDictionary)
             {
-                return ((IDictionary)target)[key];
+                IDictionary dict = target as IDictionary;
+                if (!dict.Contains(key))
+                    return null;
+
+                return dict[key];
             }
 
             if (this.getMethod == null)
@@ -71,7 +79,13 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             if (target is IList)
             {
-                ((IList)target)[(int)key] = value;
+                int index = (int)key;
+                IList list = target as IList;
+
+                if (index < 0 || index >= list.Count)
+                    throw new ArgumentOutOfRangeException("key", string.Format("The index is out of range, the key value is {0}, it is not between 0 and {1}", index, list.Count));
+
+                list[index] = value;
                 return;
             }
 
@@ -99,6 +113,9 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public TValue GetValue(T target, int key)
         {
+            if (key < 0 || key >= target.Count)
+                throw new ArgumentOutOfRangeException("key", string.Format("The index is out of range, the key value is {0}, it is not between 0 and {1}", key, target.Count));
+
             return target[key];
         }
 
@@ -109,6 +126,9 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public void SetValue(T target, int key, TValue value)
         {
+            if (key < 0 || key >= target.Count)
+                throw new ArgumentOutOfRangeException("key", string.Format("The index is out of range, the key value is {0}, it is not between 0 and {1}", key, target.Count));
+
             target[key] = value;
         }
 
@@ -128,6 +148,9 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public TValue GetValue(T target, TKey key)
         {
+            if (!target.ContainsKey(key))
+                return default(TValue);
+
             return target[key];
         }
 
@@ -167,12 +190,22 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public virtual object GetValue(object target, object key)
         {
-            return ((Array)target).GetValue((int)key);
+            int index = (int)key;
+            Array array = target as Array;
+            if (index < 0 || index >= array.Length)
+                throw new ArgumentOutOfRangeException("key", string.Format("The index is out of range, the key value is {0}, it is not between 0 and {1}", index, array.Length));
+
+            return array.GetValue(index);
         }
 
         public virtual void SetValue(object target, object key, object value)
         {
-            ((Array)target).SetValue(value, (int)key);
+            int index = (int)key;
+            Array array = target as Array;
+            if (index < 0 || index >= array.Length)
+                throw new ArgumentOutOfRangeException("key", string.Format("The index is out of range, the key value is {0}, it is not between 0 and {1}", index, array.Length));
+
+            array.SetValue(value, index);
         }
     }
 
@@ -184,6 +217,9 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public TValue GetValue(T target, int key)
         {
+            if (key < 0 || key >= target.Count)
+                throw new ArgumentOutOfRangeException("key", string.Format("The index is out of range, the key value is {0}, it is not between 0 and {1}", key, target.Count));
+
             return target[key];
         }
 
@@ -194,6 +230,9 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public void SetValue(T target, int key, TValue value)
         {
+            if (key < 0 || key >= target.Count)
+                throw new ArgumentOutOfRangeException("key", string.Format("The index is out of range, the key value is {0}, it is not between 0 and {1}", key, target.Count));
+
             target[key] = value;
         }
 

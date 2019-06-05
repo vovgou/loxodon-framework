@@ -18,6 +18,7 @@ namespace Loxodon.Framework.Views
         private bool created = false;
         private bool dismissed = false;
         private bool activated = false;
+        private ITransition dismissTransition;
         private WindowState state = WindowState.NONE;
 
         private readonly object _lock = new object();
@@ -244,6 +245,9 @@ namespace Loxodon.Framework.Views
 
         public void Create(IBundle bundle = null)
         {
+            if (this.dismissTransition != null || this.dismissed)
+                throw new ObjectDisposedException(this.Name);
+
             if (this.created)
                 return;
 
@@ -261,7 +265,7 @@ namespace Loxodon.Framework.Views
 
         public ITransition Show(bool ignoreAnimation = false)
         {
-            if (this.dismissed)
+            if (this.dismissTransition != null || this.dismissed)
                 throw new InvalidOperationException("The window has been destroyed");
 
             if (this.Visibility)
@@ -376,10 +380,14 @@ namespace Loxodon.Framework.Views
 
         public ITransition Dismiss(bool ignoreAnimation = false)
         {
-            if (this.dismissed)
-                throw new InvalidOperationException("The window has been destroyed.");
+            if (this.dismissTransition != null)
+                return this.dismissTransition;
 
-            return this.WindowManager.Dismiss(this).DisableAnimation(ignoreAnimation);
+            if (this.dismissed)
+                throw new InvalidOperationException(string.Format("The window[{0}] has been destroyed.", this.Name));
+
+            this.dismissTransition = this.WindowManager.Dismiss(this).DisableAnimation(ignoreAnimation);
+            return this.dismissTransition;
         }
 
         public virtual void DoDismiss()
@@ -394,6 +402,7 @@ namespace Loxodon.Framework.Views
                 if (this.gameObject != null)
                     GameObject.Destroy(this.gameObject);
                 this.State = WindowState.DISMISS_END;
+                this.dismissTransition = null;
             }
         }
 
@@ -403,7 +412,7 @@ namespace Loxodon.Framework.Views
 
         protected override void OnDestroy()
         {
-            if (!this.Dismissed)
+            if (!this.Dismissed && this.dismissTransition == null)
             {
                 this.Dismiss(true);
             }
