@@ -332,7 +332,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     
     function AccountViewModel:ctor(t)
         --执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
-        AccountViewModel.super.ctor(self,t)
+        AccountViewModel.base(self).ctor(self,t)
         
         if not (t and type(t)=="table") then
             self.id = 0
@@ -351,7 +351,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     
     function DatabindingViewModel:ctor(t)
         --执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
-        DatabindingViewModel.super.ctor(self,t)
+        DatabindingViewModel.base(self).ctor(self,t)
         
         if not (t and type(t)=="table") then
             self.account = Account()
@@ -1238,7 +1238,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
                 enumerator = new InterceptableEnumerator(routine);
 
             //注册一个条件语句块，如果任务取消，IsCancellationRequested = true，则结束任务
-               enumerator.RegisterConditionBlock(() => !(promise.IsCancellationRequested));
+            enumerator.RegisterConditionBlock(() => !(promise.IsCancellationRequested));
 
             //注册一个异常捕获语句块，如果协程执行错误，则将异常赋值到任务结果，并打印错误
             enumerator.RegisterCatchBlock(e =>
@@ -2509,7 +2509,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
     -- Cat类的构造函数
     function Cat:ctor()
         -- 重载了构造函数，会覆盖父类构造函数，通过如下显示的调用父类构造函数
-        Cat.super.ctor(self)
+        Cat.base(self).ctor(self)
         self.age = 5
     end
 
@@ -2689,12 +2689,30 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
     local result = ProgressResult(true)
     Executors.RunOnCoroutineNoReturn(util.cs_generator(function() self:doLoad(result) end))
 
-使用我在Lua中扩展封装的函数 RunLuaOnCoroutine
+在Lua中，继承C#的Executors类，扩展了两个函数RunLuaOnCoroutine和RunLuaOnCoroutineNoReturn，通过它们可以将Lua函数自动包装成一个IEnumerator放入Unity3D的协程中执行。
 
     local Executors = require("framework.Executors")
 
+    --前一个示例中，我们也可以如下方式执行doLoad函数
     local result = ProgressResult(true)
-    Executors.RunLuaOnCoroutine(function() self:doLoad(result) end)
+    Executors.RunLuaOnCoroutineNoReturn(function(r) self:doLoad(r) end,result)
+
+    --或者使用下面方式执行，它与前面的方式是等价的，self.doLoad 是需要执行的函数，self和result是doLoad函数的参数
+    --Executors.RunLuaOnCoroutineNoReturn(self.doLoad,self,result)
+    return result
+
+以闭包的方式定义、执行一个协程函数。
+
+    --执行一个协程并且返回一个IAsyncResult。传入一个过期时间duration（单位秒），执行duration秒后协程退出
+	return Executors.RunLuaOnCoroutine(function(duration)
+			local wait = CS.UnityEngine.WaitForSeconds(0.05)
+			local startTime = Time.realtimeSinceStartup
+			while Time.realtimeSinceStartup - startTime < duration do				
+				coroutine.yield(wait)
+			end
+		end,duration)
+
+关于Lua协程更多的信息，请看framework.Executors和示例 LoxodonFramework/Lua/Examples/Coroutine Tutorials
 
 ## 联系方式 ## 
 邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
