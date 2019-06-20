@@ -2,12 +2,10 @@
 
 namespace Loxodon.Framework.Commands
 {
-    public class SimpleCommand : ICommand
+    public class SimpleCommand : CommandBase
     {
         private bool enabled = true;
         private readonly Action execute;
-        private readonly object _lock = new object();
-        private EventHandler canExecuteChanged;
 
         public SimpleCommand(Action execute, bool keepStrongRef = false)
         {
@@ -17,12 +15,6 @@ namespace Loxodon.Framework.Commands
             this.execute = keepStrongRef ? execute : execute.AsWeak();
         }
 
-        public event EventHandler CanExecuteChanged
-        {
-            add { lock (_lock) { this.canExecuteChanged += value; } }
-            remove { lock (_lock) { this.canExecuteChanged -= value; } }
-        }
-
         public bool Enabled
         {
             get { return this.enabled; }
@@ -36,31 +28,22 @@ namespace Loxodon.Framework.Commands
             }
         }
 
-        protected void RaiseCanExecuteChanged()
-        {
-            var handler = this.canExecuteChanged;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-        }
-
-        public bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
             return this.Enabled;
         }
 
-        public virtual void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             if (this.CanExecute(parameter) && this.execute != null)
                 this.execute();
         }
     }
 
-    public class SimpleCommand<T> : ICommand
+    public class SimpleCommand<T> : CommandBase
     {
         private bool enabled = true;
         private readonly Action<T> execute;
-        private readonly object _lock = new object();
-        private EventHandler canExecuteChanged;
 
         public SimpleCommand(Action<T> execute, bool keepStrongRef = false)
         {
@@ -70,12 +53,6 @@ namespace Loxodon.Framework.Commands
             this.execute = keepStrongRef ? execute : execute.AsWeak();
         }
 
-        public event EventHandler CanExecuteChanged
-        {
-            add { lock (_lock) { this.canExecuteChanged += value; } }
-            remove { lock (_lock) { this.canExecuteChanged -= value; } }
-        }
-
         public bool Enabled
         {
             get { return this.enabled; }
@@ -89,19 +66,12 @@ namespace Loxodon.Framework.Commands
             }
         }
 
-        protected void RaiseCanExecuteChanged()
-        {
-            var handler = this.canExecuteChanged;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-        }
-
-        public bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
             return this.Enabled;
         }
 
-        public virtual void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             if (this.CanExecute(parameter) && this.execute != null)
                 this.execute((T)parameter);

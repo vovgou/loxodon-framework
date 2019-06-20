@@ -10,6 +10,8 @@ using Loxodon.Framework.Binding.Proxy.Sources.Expressions;
 using Loxodon.Framework.Binding.Converters;
 using Loxodon.Framework.Binding.Contexts;
 using Loxodon.Framework.Contexts;
+using Loxodon.Framework.Commands;
+using Loxodon.Framework.Binding.Commands;
 
 namespace Loxodon.Framework.Binding.Builder
 {
@@ -143,6 +145,12 @@ namespace Loxodon.Framework.Binding.Builder
             {
                 Expression = expression
             };
+        }
+
+        protected void SetCommandParameter(object parameter)
+        {
+            this.description.CommandParameter = parameter;
+            this.description.Converter = new GenericConverter<ICommand, ICommand>((command) => { return new ParameterWrapCommand(command, this.description.CommandParameter); }, null);
         }
 
         protected void SetSourceDescription(SourceDescription source)

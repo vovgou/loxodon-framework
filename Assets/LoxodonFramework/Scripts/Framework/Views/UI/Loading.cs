@@ -48,15 +48,18 @@ namespace Loxodon.Framework.Views
             if (!disposed)
             {
                 disposed = true;
-                lock (_lock)
+                Execution.Executors.RunOnMainThread(() =>
                 {
-                    refCount--;
-                    if (refCount <= 0)
+                    lock (_lock)
                     {
-                        window.Dismiss(this.ignoreAnimation);
-                        window = null;
+                        refCount--;
+                        if (refCount <= 0)
+                        {
+                            window.Dismiss(this.ignoreAnimation);
+                            window = null;
+                        }
                     }
-                }
+                });
             }
         }
 
@@ -71,5 +74,5 @@ namespace Loxodon.Framework.Views
             GC.SuppressFinalize(this);
         }
         #endregion      
-    }    
+    }
 }

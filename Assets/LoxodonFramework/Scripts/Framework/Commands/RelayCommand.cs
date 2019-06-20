@@ -2,12 +2,10 @@
 
 namespace Loxodon.Framework.Commands
 {
-    public class RelayCommand : ICommand
+    public class RelayCommand : CommandBase
     {
         private readonly Action execute;
         private readonly Func<bool> canExecute;
-        private readonly object _lock = new object();
-        private EventHandler canExecuteChanged;
 
         public RelayCommand(Action execute) : this(execute, null)
         {
@@ -28,37 +26,22 @@ namespace Loxodon.Framework.Commands
                 this.canExecute = keepStrongRef ? canExecute : canExecute.AsWeak();
         }
 
-        public event EventHandler CanExecuteChanged
-        {
-            add { lock (_lock) { this.canExecuteChanged += value; } }
-            remove { lock (_lock) { this.canExecuteChanged -= value; } }
-        }
-
-        public void RaiseCanExecuteChanged()
-        {
-            var handler = this.canExecuteChanged;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-        }
-
-        public bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
             return this.canExecute == null || this.canExecute();
         }
 
-        public virtual void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             if (this.CanExecute(parameter) && this.execute != null)
                 this.execute();
         }
     }
 
-    public class RelayCommand<T> : ICommand
+    public class RelayCommand<T> : CommandBase
     {
         private readonly Action<T> execute;
         private readonly Func<bool> canExecute;
-        private readonly object _lock = new object();
-        private EventHandler canExecuteChanged;
 
         public RelayCommand(Action<T> execute) : this(execute, null)
         {
@@ -79,25 +62,12 @@ namespace Loxodon.Framework.Commands
                 this.canExecute = keepStrongRef ? canExecute : canExecute.AsWeak();
         }
 
-        public event EventHandler CanExecuteChanged
-        {
-            add { lock (_lock) { this.canExecuteChanged += value; } }
-            remove { lock (_lock) { this.canExecuteChanged -= value; } }
-        }
-
-        public void RaiseCanExecuteChanged()
-        {
-            var handler = this.canExecuteChanged;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-        }
-
-        public bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
             return this.canExecute == null || this.canExecute();
         }
 
-        public virtual void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             if (this.CanExecute(parameter) && this.execute != null)
                 this.execute((T)parameter);

@@ -1,5 +1,5 @@
 ﻿Loxodon Framework
-Version: 1.8.3
+Version: 1.8.4
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,10 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.8.4
+	Added a logging system to the Lua plugin
+	Added CommandParameter for data binding,support multiple buttons to bind to the same command.
+
 version 1.8.2
 	Fixed a bug in expression binding.
 	Fixed a bug when loading lua scripts via file path.

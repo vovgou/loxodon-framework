@@ -9,16 +9,13 @@ namespace Loxodon.Framework.Commands
     /// <summary>
     /// The CompositeCommand composes one or more ICommands.
     /// </summary>
-    public class CompositeCommand : ICommand
+    public class CompositeCommand : CommandBase
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(CompositeCommand));
 
         private readonly List<ICommand> commands = new List<ICommand>();
         private readonly bool monitorCommandActivity;
         private readonly EventHandler onCanExecuteChangedHandler;
-
-        private readonly object _lock = new object();
-        private EventHandler canExecuteChanged;
 
         /// <summary>
         /// Initializes a new instance of <see cref="CompositeCommand"/>.
@@ -120,7 +117,7 @@ namespace Loxodon.Framework.Commands
         /// If the command does not require data to be passed, this object can be set to <see langword="null" />.
         /// </param>
         /// <returns><see langword="true" /> if all of the commands return <see langword="true" />; otherwise, <see langword="false" />.</returns>
-        public virtual bool CanExecute(object parameter)
+        public override bool CanExecute(object parameter)
         {
             bool executable = false;
 
@@ -145,21 +142,12 @@ namespace Loxodon.Framework.Commands
         }
 
         /// <summary>
-        /// Occurs when any of the registered commands raise <see cref="ICommand.CanExecuteChanged"/>.
-        /// </summary>
-        public event EventHandler CanExecuteChanged
-        {
-            add { lock (_lock) { this.canExecuteChanged += value; } }
-            remove { lock (_lock) { this.canExecuteChanged -= value; } }
-        }
-
-        /// <summary>
         /// Forwards <see cref="ICommand.Execute"/> to the registered commands.
         /// </summary>
         /// <param name="parameter">Data used by the command.
         /// If the command does not require data to be passed, this object can be set to <see langword="null" />.
         /// </param>
-        public virtual void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             Queue<ICommand> commands;
             lock (this.commands)
@@ -222,13 +210,6 @@ namespace Loxodon.Framework.Commands
 
                 return commandList;
             }
-        }
-
-        protected virtual void RaiseCanExecuteChanged()
-        {
-            var handler = this.canExecuteChanged;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
         }
     }
 }

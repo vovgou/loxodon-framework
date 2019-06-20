@@ -113,6 +113,12 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
+        public BindingBuilder<TTarget, TSource> CommandParameter(object parameter)
+        {
+            this.SetCommandParameter(parameter);
+            return this;
+        }
+
         public BindingBuilder<TTarget, TSource> WithConversion(string converterName)
         {
             var converter = this.ConverterByName(converterName);
@@ -243,6 +249,12 @@ namespace Loxodon.Framework.Binding.Builder
         public BindingBuilder<TTarget> OneTime()
         {
             this.SetMode(BindingMode.OneTime);
+            return this;
+        }
+
+        public BindingBuilder<TTarget> CommandParameter(object parameter)
+        {
+            this.SetCommandParameter(parameter);
             return this;
         }
 

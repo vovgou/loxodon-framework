@@ -244,7 +244,6 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     return;
                 }
 
-
                 if (this.handler != null)
                 {
                     if (this.handler is UnityAction)

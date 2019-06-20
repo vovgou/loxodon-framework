@@ -62,7 +62,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 ### 安装XLua ###
 从Xlua的Github仓库下载最新版的XLua，可以使用源码版本Source code.zip或者xlua_v2.x.xx.zip版本（建议使用xlua_v2.x.xx.zip版本，避免和XLua示例类名冲突）。请将下载好的xlua解压缩，拷贝到当前项目中。
 
-**注意：Unity2018请使用.net3.5,否则会出错，如果想使用.net4.6请参考xlua的FQA解决兼容性问题。**
+**注意：XLua在Unity2018有兼容性问题，在编辑器模式下，请使用.Net3.5 或者 .Net4.x 不要使用.Net Standard2.0,否则会出错，如果想使用.Net Standard2.0 请参考xlua的FQA解决兼容性问题。**
 
 [XLua FQA](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/faq.md)
 
@@ -875,6 +875,29 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 更多的示例请查看教程 [Localization Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
+### 日志系统 ###
+
+框架提供了一个可分级的日志系统，它支持ALL、DEBUG、INFO、WARN、ERROR、FATAL等多个级别，在项目在开发阶段和发布上线可以使用不同的日志打印级别。
+
+日志系统我提供了一个Unity3D的Debug版本的实现，它基本满足了一般的开发和调试需求，但是如果需要更强的日志功能，比如打印日志到文件系统，移动终端通过局域网将日志打印到电脑等，可以下载我的日志插件[Loxodon.Framework.Log4Net](https://assetstore.unity.com/packages/tools/utilities/loxodon-framework-log4net-79440)，它是一个用Log4Net实现的插件，功能非常强大。
+
+默认日志系统的使用示例
+
+    //设置默认日志系统的日志级别，默认日志工厂自动初始化
+    LogManager.Default.Level = Level.DEBUG
+
+    //如果是一个自定义的日志实现，可以如下方式来初始化
+    DefaultLogFactory factory = new DefaultLogFactory();
+    factory.Level = Level.ALL
+    LogManager.Registry(factory)
+    
+    //为类AsyncResult，定义一个ILog
+    private static readonly ILog log = LogManager.GetLogger(typeof(AsyncResult));
+
+    //打印日志
+    log.DebugFormat("My name is {0}",name)
+
+
 ### 线程/协程异步结果和异步任务 ###
 
 为了方便协程和线程的异步调用，我根据Future/Promise的设计模式，设计一组异步结果、异步任务，在使用时我们可以通过同步的方式来获得任务的执行结果，也可以通过回调的方式来获得任务的结果，跟随下面的示例，我们来了解异步结果的使用。
@@ -1551,6 +1574,71 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
         //绑定标题到类Res的一个静态变量databinding_tutorials_title
         staticBindingSet.Bind(this.title).For(v => v.text).To(() => Res.databinding_tutorials_title).OneWay();
+
+#### Command Parameter ####
+
+命令类型（ICommand）的绑定支持自定义命令参数，使用Command Parameter可以为没有参数的UI事件添加一个自定义参数，如果UI事件本事有参数则会被覆盖。使用Command Parameter可以很方便的将多个Button的Click事件绑定到视图模型的同一个函数OnClick(int buttonNo)上。详情请参考下面的示例
+
+在示例中将一组Button按钮的Click事件绑定到视图模型的OnClick函数上，通过参数buttonNo可以知道当前按下了哪个按钮。
+
+    public class ButtonGroupViewModel : ViewModelBase
+    {
+        private string text;
+        private readonly SimpleCommand<int> click;
+        public ButtonGroupViewModel()
+        {
+            this.click = new SimpleCommand<int>(OnClick);
+        }
+
+        public string Text
+        {
+            get { return this.text; }
+            set { this.Set<string>(ref text, value, "Text"); }
+        }
+
+        public ICommand Click
+        {
+            get { return this.click; }
+        }
+
+        public void OnClick(int buttonNo)
+        {
+            Executors.RunOnCoroutineNoReturn(DoClick(buttonNo));
+        }
+
+        private IEnumerator DoClick(int buttonNo)
+        {
+            this.click.Enabled = false;
+            this.Text = string.Format("Click Button:{0}.Restore button status after one second", buttonNo);
+            Debug.LogFormat("Click Button:{0}", buttonNo);
+
+            //Restore button status after one second
+            yield return new WaitForSeconds(1f);
+            this.click.Enabled = true;
+        }
+
+    }
+
+
+    protected override void Start()
+    {
+        ButtonGroupViewModel viewModel = new ButtonGroupViewModel();
+
+        IBindingContext bindingContext = this.BindingContext();
+        bindingContext.DataContext = viewModel;
+
+        /* databinding */
+        BindingSet<DatabindingForButtonGroupExample, ButtonGroupViewModel> bindingSet = this.CreateBindingSet<DatabindingForButtonGroupExample, ButtonGroupViewModel>();
+        bindingSet.Bind(this.button1).For(v => v.onClick).To(vm => vm.Click).CommandParameter(1);
+        bindingSet.Bind(this.button2).For(v => v.onClick).To(vm => vm.Click).CommandParameter(2);
+        bindingSet.Bind(this.button3).For(v => v.onClick).To(vm => vm.Click).CommandParameter(3);
+        bindingSet.Bind(this.button4).For(v => v.onClick).To(vm => vm.Click).CommandParameter(4);
+        bindingSet.Bind(this.button5).For(v => v.onClick).To(vm => vm.Click).CommandParameter(5);
+
+        bindingSet.Bind(this.text).For(v => v.text).To(vm => vm.Text).OneWay();
+
+        bindingSet.Build();
+    }
 
 #### Scope Key ####
 
@@ -2638,7 +2726,7 @@ Lua的Table要满足MVVM数据绑定的要求，在属性改变时能够触发�
     
     function M:ctor(t)
         --执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
-        Account.super.ctor(self)
+        M.base(self).ctor(self)
         
         self.id = 0
         self.username = ""
@@ -2713,6 +2801,22 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
 		end,duration)
 
 关于Lua协程更多的信息，请看framework.Executors和示例 LoxodonFramework/Lua/Examples/Coroutine Tutorials
+
+### Lua中使用日志系统 ###
+框架提供了一个Lua版本的日志系统，底层仍然是使用Loxodon.Log.ILog来提供服务，但是在Lua中对函数重新封装。它支持DEBUG、INFO、WARN、ERROR、FATAL多个级别，可以在代码或者配置文件中（如果使用log4net）设置日志打印的级别。同时它还支持显示日志所在的文件路径和行号，方便代码调试。
+
+    --如果使用默认的日志工厂，可以如下设置日志打印的级别
+    --如果使用log4net，请在log4net配置文件中设置日志打印的级别
+    CS.Loxodon.Log.LogManager.Default.Level = CS.Loxodon.Log.Level.INFO 
+
+    --初始化日志系统
+    local logger = require("framework.Logger").GetLogger()
+
+    --打印日志
+    logger:debug("This is a test.")
+    logger:info("This is a test.")
+
+    
 
 ## 联系方式 ## 
 邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   

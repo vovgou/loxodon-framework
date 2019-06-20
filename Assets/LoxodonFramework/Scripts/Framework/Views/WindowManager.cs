@@ -204,14 +204,41 @@ namespace Loxodon.Framework.Views
             return this.windows.FindAll(w => w.Visibility == visible);
         }
 
+        public virtual IWindow Find(Type windowType)
+        {
+            if (windowType == null)
+                return null;
+
+            return this.windows.Find(w => windowType.IsAssignableFrom(w.GetType()));
+        }
+
         public virtual T Find<T>() where T : IWindow
         {
             return (T)this.windows.Find(w => w is T);
         }
 
+        public virtual IWindow Find(string name, Type windowType)
+        {
+            if (name == null || windowType == null)
+                return null;
+
+            return this.windows.Find(w => windowType.IsAssignableFrom(w.GetType()) && w.Name.Equals(name));
+        }
+
         public virtual T Find<T>(string name) where T : IWindow
         {
             return (T)this.windows.Find(w => w is T && w.Name.Equals(name));
+        }
+
+        public virtual List<IWindow> FindAll(Type windowType)
+        {
+            List<IWindow> list = new List<IWindow>();
+            foreach (IWindow window in this.windows)
+            {
+                if (windowType.IsAssignableFrom(window.GetType()))
+                    list.Add(window);
+            }
+            return list;
         }
 
         public virtual List<T> FindAll<T>() where T : IWindow
