@@ -1,4 +1,5 @@
 ﻿using Loxodon.Framework.Binding.Reflection;
+using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.Observables;
 using System.Reflection;
 
@@ -29,6 +30,15 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     return new ObservableTargetProxy(target, (IObservableProperty)observableValue);
                 }
 
+                if (typeof(IInteractionAction).IsAssignableFrom(valueType))
+                {
+                    object interactionAction = propertyInfo.GetValue(target);
+                    if (interactionAction == null)
+                        return null;
+
+                    return new InteractionTargetProxy(target, (IInteractionAction)interactionAction);
+                }
+
                 return new PropertyTargetProxy(target, propertyInfo);
             }
 
@@ -43,6 +53,15 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                         return null;
 
                     return new ObservableTargetProxy(target, (IObservableProperty)observableValue);
+                }
+
+                if (typeof(IInteractionAction).IsAssignableFrom(valueType))
+                {
+                    object interactionAction = fieldInfo.GetValue(target);
+                    if (interactionAction == null)
+                        return null;
+
+                    return new InteractionTargetProxy(target, (IInteractionAction)interactionAction);
                 }
 
                 return new FieldTargetProxy(target, fieldInfo);

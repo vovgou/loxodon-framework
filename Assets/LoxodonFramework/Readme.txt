@@ -19,6 +19,8 @@ UPDATE NOTES
 version 1.8.4
 	Added a logging system to the Lua plugin
 	Added CommandParameter for data binding,support multiple buttons to bind to the same command.
+	Added InteractionAction.
+	Added IDialogService.
 
 version 1.8.2
 	Fixed a bug in expression binding.

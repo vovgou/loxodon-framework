@@ -48,7 +48,7 @@ namespace Loxodon.Framework.Interactivity
     /// <summary>
     /// Implementation of the <see cref="IInteractionRequest"/> interface.
     /// </summary>
-    public class InteractionRequest<T> : IInteractionRequest where T : class
+    public class InteractionRequest<T> : IInteractionRequest
     {
         private static readonly InteractionEventArgs emptyEventArgs = new InteractionEventArgs(null, null);
 

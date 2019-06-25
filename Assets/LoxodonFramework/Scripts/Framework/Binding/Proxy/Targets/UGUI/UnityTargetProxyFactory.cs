@@ -18,6 +18,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             IProxyType type = target.GetType().AsProxy();
             IProxyMemberInfo memberInfo = type.GetMember(description.TargetName);
             if (memberInfo == null)
+                memberInfo = type.GetMember(description.TargetName, BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (memberInfo == null)
                 return null;
 
             UnityEventBase updateTrigger = null;

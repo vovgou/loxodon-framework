@@ -4,6 +4,7 @@ using Loxodon.Log;
 using Loxodon.Framework.Execution;
 using Loxodon.Framework.ViewModels;
 using Loxodon.Framework.Contexts;
+using UnityEngine;
 
 namespace Loxodon.Framework.Views
 {
@@ -164,13 +165,12 @@ namespace Loxodon.Framework.Views
                 throw new NotFoundException("Not found the \"IUIViewLocator\".");
             }
             AlertDialogWindow window = locator.LoadView<AlertDialogWindow>(ViewName);
-
             if (window == null)
             {
                 if (log.IsWarnEnabled)
-                    log.WarnFormat("Not found the \"{0}\".", typeof(AlertDialogWindow).Name);
+                    log.WarnFormat("Not found the dialog window named \"{0}\".", viewName);
 
-                throw new NotFoundException("Not found the \"AlertDialogWindow\".");
+                throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", viewName));
             }
 
             AlertDialog dialog = new AlertDialog(window, contentView, viewModel);
@@ -208,35 +208,48 @@ namespace Loxodon.Framework.Views
         /// <returns>A AlertDialog.</returns>
         public static AlertDialog ShowMessage(string viewName, string contentViewName, AlertDialogViewModel viewModel)
         {
-            ApplicationContext context = Context.GetApplicationContext();
-            IUIViewLocator locator = context.GetService<IUIViewLocator>();
-            if (locator == null)
-            {
-                if (log.IsWarnEnabled)
-                    log.Warn("Not found the \"IUIViewLocator\".");
-
-                throw new NotFoundException("Not found the \"IUIViewLocator\".");
-            }
-
-            if (string.IsNullOrEmpty(viewName))
-                viewName = ViewName;
-
-            AlertDialogWindow window = locator.LoadView<AlertDialogWindow>(viewName);
-            if (window == null)
-            {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("Not found the \"{0}\".", typeof(AlertDialogWindow).Name);
-
-                throw new NotFoundException("Not found the \"AlertDialogWindow\".");
-            }
-
+            AlertDialogWindow window = null;
             IUIView contentView = null;
-            if (!string.IsNullOrEmpty(contentViewName))
-                contentView = locator.LoadView<IUIView>(contentViewName);
+            try
+            {
+                ApplicationContext context = Context.GetApplicationContext();
+                IUIViewLocator locator = context.GetService<IUIViewLocator>();
+                if (locator == null)
+                {
+                    if (log.IsWarnEnabled)
+                        log.Warn("Not found the \"IUIViewLocator\".");
 
-            AlertDialog dialog = new AlertDialog(window, contentView, viewModel);
-            dialog.Show();
-            return dialog;
+                    throw new NotFoundException("Not found the \"IUIViewLocator\".");
+                }
+
+                if (string.IsNullOrEmpty(viewName))
+                    viewName = ViewName;
+
+                window = locator.LoadView<AlertDialogWindow>(viewName);
+                if (window == null)
+                {
+                    if (log.IsWarnEnabled)
+                        log.WarnFormat("Not found the dialog window named \"{0}\".", viewName);
+
+                    throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", viewName));
+                }
+
+                if (!string.IsNullOrEmpty(contentViewName))
+                    contentView = locator.LoadView<IUIView>(contentViewName);
+
+                AlertDialog dialog = new AlertDialog(window, contentView, viewModel);
+                dialog.Show();
+                return dialog;
+            }
+            catch (Exception e)
+            {
+                if (window != null)
+                    window.Dismiss();
+                if (contentView != null)
+                    GameObject.Destroy(contentView.Owner);
+
+                throw e;
+            }
         }
 
         private AlertDialogWindow window;

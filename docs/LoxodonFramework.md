@@ -2093,6 +2093,29 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
 请查看示例 [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
+#### 交互行为(InteractionAction) ####
+
+InteractionAction配合InteractionRequest配对使用，由交互请求发起交互申请，由交互行为来完成交互的任务，它是对上一节中视图方法绑定到交互请求的一个扩展，通常来说使用方法绑定交互请求就可以了，但是针对一些通用的功能，比如请求开启或者关闭一个Loading窗可以用InteractionAction来实现，以方便代码重用，在不同的视图中，只需要创建一个LoadingInteractionAction实例就可以完成Loading窗的开启功能。下面请看开启Loading的示例
+
+    //在ViewModel中创建一个交互请求
+    this.loadingRequest = new InteractionRequest<VisibilityNotification>();
+
+    //在ViewModel中创建一个显示Loading窗口的命令，通过命令调用交互请求打开一个Loading界面
+    this.ShowLoading = new SimpleCommand(() =>
+    {
+        VisibilityNotification notification = new VisibilityNotification(true);
+        this.loadingRequest.Raise(notification);
+    });
+    
+
+    //在View中创建一个交互请求LoadingInteractionAction
+    this.loadingInteractionAction = new LoadingInteractionAction();
+
+    //绑定InteractionAction到InteractionRequest
+    bindingSet.Bind().For(v => v.loadingInteractionAction).To(vm => vm.LoadingRequest);
+
+请查看示例 [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+
 #### 集合与列表视图的绑定 ####
 在Unity3D游戏开发中，我们经常要使用到UGUI的ScrollRect控件，比如我们要展示一个装备列表，或者一个背包中的所有物品。那么我们可以使用数据绑定功能来自动更新列表中的内容吗，比如添加、删除、修改一个装备集合中的数据，装备列表视图会自动更新界面内容吗？ 答案是肯定的，使用ObservableList或者ObservableDictionary集合来存储装备信息，通过数据绑定集合到一个视图脚本上，就可以自动的更新装备列表的内容，只是这里的视图脚本需要我们自己实现，因为每个项目列表视图并不是标准化的，我无法提供一个通用的脚本来提供集合的绑定。
 

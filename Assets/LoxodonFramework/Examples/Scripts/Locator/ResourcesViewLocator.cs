@@ -73,7 +73,10 @@ namespace Loxodon.Framework.Examples
 
             GameObject go = GameObject.Instantiate(viewTemplateGo);
             go.name = viewTemplateGo.name;
-            return go.GetComponent<T>();
+            T view = go.GetComponent<T>();
+            if (view == null && go != null)
+                GameObject.Destroy(go);
+            return view;
         }
 
         public override IProgressTask<float, T> LoadViewAsync<T>(string name)
@@ -132,8 +135,17 @@ namespace Loxodon.Framework.Examples
 
             GameObject go = GameObject.Instantiate(viewTemplateGo);
             go.name = viewTemplateGo.name;
-            promise.UpdateProgress(1f);
-            promise.SetResult(go.GetComponent<T>());
+            T view = go.GetComponent<T>();
+            if (view == null)
+            {
+                GameObject.Destroy(go);
+                promise.SetException(new NotFoundException(name));
+            }
+            else
+            {
+                promise.UpdateProgress(1f);
+                promise.SetResult(view);
+            }
         }
 
         public override T LoadWindow<T>(string name)
