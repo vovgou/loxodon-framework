@@ -875,6 +875,67 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 更多的示例请查看教程 [Localization Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
+### 配置文件（Properties文件） ###
+
+在游戏或者应用开发中，配置文件是一个必不可少的东西，通过配置文件来管理游戏或者应用的配置参数，特别现在游戏开发要接入不同的平台，有众多的SDK配置参数，而且不同平台有不同的接入要求，有不同的升级更新策略，虽然这些配置我们也可以继承Unity3D的ScriptableObject类来创建一个配置类，但是因为接入平台多，参数不统一，随着需求的变化会导致频繁的修改这些配置类，为了避免这种情况，我这里采用传统的配置文件来配置这些参数，一个properties文件满足所有的配置需求。
+
+配置文件示例如下：
+
+    #application config
+    application.app.version = 1.0.0
+    application.data.version = 1.0.0
+    
+    #gateway     
+    application.config-group = local
+    
+    #local
+    application.local.upgrade.url = http://test.your domain name.com/loxodon/framework/upgrade/check
+    application.local.username = loxodon.framework
+    application.local.password = loxodon.framework
+    application.local.gateway = 127.0.0.1:8000 , 192.168.0.30:8000
+    
+    #develop
+    application.develop.upgrade.url = http://test.your domain name.com/loxodon/framework/upgrade/check
+    application.develop.username = loxodon.framework
+    application.develop.password = loxodon.framework
+    application.develop.gateway = 192.168.0.1:8000
+    
+    #pre-release
+    application.pre-release.upgrade.url = http://pre.release.your domain name.com/loxodon/framework/upgrade/check
+    application.pre-release.username = loxodon.framework
+    application.pre-release.password = loxodon.framework
+    application.pre-release.gateway = 172.217.160.78:8000 , 172.217.160.79:8000 , 172.217.160.80:8000
+    
+    #release
+    application.release.upgrade.url = http://release.your domain name.com/loxodon/framework/upgrade/check
+    application.release.username = loxodon.framework
+    application.release.password = loxodon.framework
+    application.release.gateway =  172.217.161.78:8000 , 172.217.161.79:8000 , 172.217.161.80:8000
+
+配置文件读取示例
+
+    //初始化配置文件
+    TextAsset text = Resources.Load<TextAsset>("application.properties");
+    IConfiguration conf = new PropertiesConfiguration(text.text);
+
+    //应用版本号
+    Version appVersion = conf.GetVersion("application.app.version");
+    //数据版本号
+    Version dataVersion = conf.GetVersion("application.data.version");
+
+    //当前配置的组名
+    string groupName = conf.GetString("application.config-group");
+
+    //根据前缀获 application.local 得配置的子集
+    IConfiguration currentGroupConf = conf.Subset("application." + groupName);
+
+    //通过子集获配置信息
+    string upgradeUrl = currentGroupConf.GetString("upgrade.url");
+    string username = currentGroupConf.GetString("username");
+    string password = currentGroupConf.GetString("password");
+    string[] gatewayArray = currentGroupConf.GetArray<string>("gateway");
+
+
 ### 日志系统 ###
 
 框架提供了一个可分级的日志系统，它支持ALL、DEBUG、INFO、WARN、ERROR、FATAL等多个级别，在项目在开发阶段和发布上线可以使用不同的日志打印级别。

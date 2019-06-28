@@ -1,131 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Globalization;
-
-using Loxodon.Framework.Observables;
 
 namespace Loxodon.Framework.Localizations
 {
-    public class Localization : ILocalization
+    class SubsetLocalization : ILocalization
     {
-        private const string DEFAULT_ROOT = "Localization";
-        private static readonly object _lock = new object();
-        private static Localization instance;
-
-        private CultureInfo cultureInfo;
-        private List<IDataProvider> providers;
-        private Dictionary<string, IObservableProperty> data = new Dictionary<string, IObservableProperty>();
-
-        public static Localization Current
+        private readonly string prefix;
+        private readonly Localization parent;
+        public SubsetLocalization(Localization parent, string prefix) : base()
         {
-            get
-            {
-                if (instance == null)
-                {
-                    lock (_lock)
-                    {
-                        if (instance == null)
-                            instance = Create(new DefaultDataProvider(DEFAULT_ROOT, new XmlDocumentParser()));
-                    }
-                }
-                return instance;
-            }
-            set { lock (_lock) { instance = value; } }
+            this.parent = parent;
+            this.prefix = prefix;
         }
 
-        public static Localization Create(IDataProvider provider)
+        protected string GetParentKey(string key)
         {
-            return Create(provider, null);
-        }
+            if ("".Equals(key) || key == null)
+                throw new ArgumentNullException(key);
 
-        public static Localization Create(IDataProvider provider, CultureInfo cultureInfo)
-        {
-            return new Localization(provider, cultureInfo);
-        }
-
-        protected Localization(IDataProvider provider, CultureInfo cultureInfo)
-        {
-            this.cultureInfo = cultureInfo;
-            if (this.cultureInfo == null)
-                this.cultureInfo = Locale.GetCultureInfo();
-
-            this.providers = new List<IDataProvider>();
-            if (provider != null)
-                this.providers.Add(provider);
-
-            this.Load();
-        }
-
-        public virtual CultureInfo CultureInfo
-        {
-            get { return this.cultureInfo; }
-            set
-            {
-                if (this.cultureInfo != null && this.cultureInfo.Equals(value))
-                    return;
-
-                this.cultureInfo = value;
-                this.OnCultureInfoChanged();
-            }
-        }
-
-        protected virtual void OnCultureInfoChanged()
-        {
-            this.Load();
-        }
-
-        public virtual void AddDataProvider(IDataProvider provider)
-        {
-            if (provider == null)
-                return;
-
-            if (this.providers.Contains(provider))
-                return;
-
-            this.providers.Add(provider);
-
-            provider.Load(this.CultureInfo, OnLoadCompleted);
-        }
-
-        public virtual void Refresh()
-        {
-            this.Load();
-        }
-
-        protected virtual void Load()
-        {
-            if (this.providers == null || this.providers.Count <= 0)
-                return;
-
-            foreach (IDataProvider provider in this.providers)
-            {
-                try
-                {
-                    provider.Load(this.CultureInfo, OnLoadCompleted);
-                }
-                catch (Exception) { }
-            }
-        }
-
-        protected virtual void OnLoadCompleted(Dictionary<string, object> dict)
-        {
-            if (dict == null || dict.Count <= 0)
-                return;
-
-            foreach (KeyValuePair<string, object> kv in dict)
-            {
-                IObservableProperty property;
-                if (this.data.TryGetValue(kv.Key, out property))
-                {
-                    property.Value = kv.Value;
-                }
-                else
-                {
-                    property = new ObservableProperty(kv.Value);
-                    this.data[kv.Key] = property;
-                }
-            }
+            return string.Format("{0}.{1}", prefix, key);
         }
 
         /// <summary>
@@ -137,7 +30,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns>a subset localization</returns>
         public virtual ILocalization Subset(string prefix)
         {
-            return new SubsetLocalization(this, prefix);
+            return parent.Subset(GetParentKey(prefix));
         }
 
         /// <summary>
@@ -147,7 +40,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual bool ContainsKey(string key)
         {
-            return this.data.ContainsKey(key);
+            return parent.ContainsKey(GetParentKey(key));
         }
 
         /// <summary>
@@ -383,18 +276,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual T Get<T>(string key, T defaultValue)
         {
-            IObservableProperty value;
-            if (this.data.TryGetValue(key, out value))
-            {
-                if (value is T)
-                    return (T)value;
-
-                if (value.Value is T)
-                    return (T)(value.Value);
-
-                return (T)Convert.ChangeType(value.Value, typeof(T));
-            }
-            return defaultValue;
+            return parent.Get(GetParentKey(key), defaultValue);
         }
     }
 }
