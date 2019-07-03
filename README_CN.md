@@ -25,6 +25,11 @@ IOS
 Android  
 UWP(window10)
 
+## 中文文档
+
+- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
+- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
+
 ## 下载  
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
 - [Releases](https://github.com/cocowolf/loxodon-framework/releases)
@@ -73,11 +78,6 @@ UWP(window10)
  ![](docs/images/Localization.gif) 
 
 ![](docs/images/Interaction.gif)
-
-## 中文文档
-
-- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
-- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
 
 ## Loxodon.Framework.XLua插件导入教程 
 
