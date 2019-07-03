@@ -26,6 +26,11 @@ IOS
 Android  
 UWP(window10)
 
+## Chinese manual
+
+- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
+- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
+
 ## Downloads  
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
 - [Releases](https://github.com/cocowolf/loxodon-framework/releases)
@@ -72,11 +77,6 @@ UWP(window10)
  ![](docs/images/Localization.gif) 
 
 ![](docs/images/Interaction.gif)
-
-## Chinese manual
-
-- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
-- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
 
 ## Quick start of Loxodon.Framework.XLua
 - You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.([XLua Download](https://github.com/Tencent/xLua/releases))
