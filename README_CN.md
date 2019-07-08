@@ -34,6 +34,11 @@ UWP(window10)
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
 - [Releases](https://github.com/cocowolf/loxodon-framework/releases)
 
+## Plugins
+- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
+  
+    支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
+
 ## 关键功能：
 - MVVM框架;
 - 支持XLua，可以完全使用Lua脚本开发（可选）

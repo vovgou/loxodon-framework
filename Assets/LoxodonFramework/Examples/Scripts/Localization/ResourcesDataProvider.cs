@@ -10,58 +10,58 @@ using Loxodon.Log;
 
 namespace Loxodon.Framework.Examples
 {
-	/// <summary>
-	/// Resources data provider.
-	/// dir:
-	/// root/default/
-	/// 
-	/// root/zh/
-	/// root/zh-CN/
-	/// root/zh-TW/
-	/// root/zh-HK/
-	/// 
-	/// root/en/
-	/// root/en-US/
-	/// root/en-CA/
-	/// root/en-AU/
-	/// </summary>
-	public class ResourcesDataProvider : IDataProvider
-	{
+    /// <summary>
+    /// Resources data provider.
+    /// dir:
+    /// root/default/
+    /// 
+    /// root/zh/
+    /// root/zh-CN/
+    /// root/zh-TW/
+    /// root/zh-HK/
+    /// 
+    /// root/en/
+    /// root/en-US/
+    /// root/en-CA/
+    /// root/en-AU/
+    /// </summary>
+    public class ResourcesDataProvider : IDataProvider
+    {
         private static readonly ILog log = LogManager.GetLogger(typeof(ResourcesDataProvider));
 
         private string root;
-		private IDocumentParser parser;
+        private IDocumentParser parser;
 
-		public ResourcesDataProvider (string root, IDocumentParser parser)
-		{
-			if (string.IsNullOrEmpty (root))
-				throw new ArgumentNullException ("root");
+        public ResourcesDataProvider(string root, IDocumentParser parser)
+        {
+            if (string.IsNullOrEmpty(root))
+                throw new ArgumentNullException("root");
 
-			if (parser == null)
-				throw new ArgumentNullException ("parser");
+            if (parser == null)
+                throw new ArgumentNullException("parser");
 
-			this.root = root;
-			this.parser = parser;
-		}
+            this.root = root;
+            this.parser = parser;
+        }
 
-		protected string GetDefaultPath ()
-		{
-			return GetPath ("default");
-		}
+        protected string GetDefaultPath()
+        {
+            return GetPath("default");
+        }
 
-		protected string GetPath (string dir)
-		{
-			StringBuilder buf = new StringBuilder ();
-			buf.Append (this.root);
-			if (!this.root.EndsWith ("/"))
-				buf.Append ("/");
-			buf.Append (dir);
-			return buf.ToString ();
-		}
+        protected string GetPath(string dir)
+        {
+            StringBuilder buf = new StringBuilder();
+            buf.Append(this.root);
+            if (!this.root.EndsWith("/"))
+                buf.Append("/");
+            buf.Append(dir);
+            return buf.ToString();
+        }
 
-		public void Load (CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
-		{
-			Dictionary<string, object> dict = new Dictionary<string, object> ();			
+        public void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
+        {
+            Dictionary<string, object> dict = new Dictionary<string, object>();
 
             try
             {
@@ -69,9 +69,9 @@ namespace Loxodon.Framework.Examples
                 TextAsset[] twoLetterISOTexts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.TwoLetterISOLanguageName));//eg:zh  en
                 TextAsset[] texts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.Name));//eg:zh-CN  en-US
 
-                FillData(dict, defaultTexts);
-                FillData(dict, twoLetterISOTexts);
-                FillData(dict, texts);
+                FillData(dict, defaultTexts, cultureInfo);
+                FillData(dict, twoLetterISOTexts, cultureInfo);
+                FillData(dict, texts, cultureInfo);
             }
             finally
             {
@@ -80,7 +80,7 @@ namespace Loxodon.Framework.Examples
             }
         }
 
-        private void FillData(Dictionary<string, object> dict, TextAsset[] texts)
+        private void FillData(Dictionary<string, object> dict, TextAsset[] texts, CultureInfo cultureInfo)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace Loxodon.Framework.Examples
                     {
                         using (MemoryStream stream = new MemoryStream(text.bytes))
                         {
-                            var data = parser.Parse(stream);
+                            var data = parser.Parse(stream, cultureInfo);
                             foreach (KeyValuePair<string, object> kv in data)
                             {
                                 dict[kv.Key] = kv.Value;

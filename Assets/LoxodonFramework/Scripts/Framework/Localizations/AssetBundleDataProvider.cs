@@ -91,9 +91,9 @@ namespace Loxodon.Framework.Localizations
                     List<string> twoLetterISOpaths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.TwoLetterISOLanguageName)));//eg:zh  en
                     List<string> paths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.Name)));//eg:zh-CN  en-US
 
-                    FillData(dict, bundle, defaultPaths);
-                    FillData(dict, bundle, twoLetterISOpaths);
-                    FillData(dict, bundle, paths);
+                    FillData(dict, bundle, defaultPaths, cultureInfo);
+                    FillData(dict, bundle, twoLetterISOpaths, cultureInfo);
+                    FillData(dict, bundle, paths, cultureInfo);
                 }
                 finally
                 {
@@ -110,7 +110,7 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        private void FillData(Dictionary<string, object> dict, AssetBundle bundle, List<string> paths)
+        private void FillData(Dictionary<string, object> dict, AssetBundle bundle, List<string> paths, CultureInfo cultureInfo)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace Loxodon.Framework.Localizations
                         TextAsset text = bundle.LoadAsset<TextAsset>(path);
                         using (MemoryStream stream = new MemoryStream(text.bytes))
                         {
-                            var data = parser.Parse(stream);
+                            var data = parser.Parse(stream, cultureInfo);
                             foreach (KeyValuePair<string, object> kv in data)
                             {
                                 dict[kv.Key] = kv.Value;

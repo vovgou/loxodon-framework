@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Loxodon.Framework.Localizations
@@ -21,7 +22,7 @@ namespace Loxodon.Framework.Localizations
             this.converters.Add(new PrimitiveTypeConverter());
         }
 
-        public abstract Dictionary<string, object> Parse(Stream input);
+        public abstract Dictionary<string, object> Parse(Stream input, CultureInfo cultureInfo);
 
         protected virtual object Parse(string typeName, string value)
         {
@@ -37,7 +38,7 @@ namespace Loxodon.Framework.Localizations
             throw new NotSupportedException(string.Format("The '{0}' is not supported.", typeName));
         }
 
-        protected virtual object Parse(string typeName, List<string> values)
+        protected virtual object Parse(string typeName, IList<string> values)
         {
             foreach (ITypeConverter converter in this.converters)
             {

@@ -45,7 +45,7 @@ namespace Loxodon.Framework.Editors
 					if (!path.ToLower ().EndsWith (EXTENSION))
 						continue;
 					
-					var dict = parser.Parse (new MemoryStream ((s as TextAsset).bytes));
+					var dict = parser.Parse (new MemoryStream ((s as TextAsset).bytes), Locale.GetCultureInfo());
 					foreach (KeyValuePair<string,object> kv in dict) {
 						data [kv.Key] = kv.Value;
 					}

@@ -20,7 +20,8 @@ version 1.8.6
 	Changed Localization.GetText(string key, params object[] args) to GetFormattedText(string key, params object[] args).
 	Changed IConfiguration.GetString(string key, params object[] args) to GetFormattedString(string key, params object[] args).
 	Deleted Localization.GetText(string key, string defaultValue, params object[] args) and IConfiguration.GetString(string key, string defaultValue, params object[] args).
-	
+	In order to support localized files in csv format,changed IDocumentParser.Parse(Stream input) to IDocumentParser.Parse(Stream input, CultureInfo cultureInfo)
+
 version 1.8.5
 	Added configuration module to read properties file.
 	Added "Subset" method in the "Localization" class to support the creation of a subset of Localization.

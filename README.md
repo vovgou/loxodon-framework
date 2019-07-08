@@ -35,6 +35,11 @@ UWP(window10)
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
 - [Releases](https://github.com/cocowolf/loxodon-framework/releases)
 
+## Plugins
+- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
+  
+    It supports localization files in csv format, requires Unity2018.4 or higher.
+
 ## Key Features:
 - MVVM Framework;
 - Multiple platforms;

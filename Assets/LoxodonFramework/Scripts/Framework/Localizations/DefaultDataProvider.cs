@@ -68,9 +68,9 @@ namespace Loxodon.Framework.Localizations
                 TextAsset[] twoLetterISOTexts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.TwoLetterISOLanguageName));//eg:zh  en
                 TextAsset[] texts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.Name));//eg:zh-CN  en-US
 
-                FillData(dict, defaultTexts);
-                FillData(dict, twoLetterISOTexts);
-                FillData(dict, texts);
+                FillData(dict, defaultTexts, cultureInfo);
+                FillData(dict, twoLetterISOTexts, cultureInfo);
+                FillData(dict, texts, cultureInfo);
             }
             finally
             {
@@ -79,7 +79,7 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        private void FillData(Dictionary<string, object> dict, TextAsset[] texts)
+        private void FillData(Dictionary<string, object> dict, TextAsset[] texts, CultureInfo cultureInfo)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace Loxodon.Framework.Localizations
                     {
                         using (MemoryStream stream = new MemoryStream(text.bytes))
                         {
-                            var data = parser.Parse(stream);
+                            var data = parser.Parse(stream, cultureInfo);
                             foreach (KeyValuePair<string, object> kv in data)
                             {
                                 dict[kv.Key] = kv.Value;

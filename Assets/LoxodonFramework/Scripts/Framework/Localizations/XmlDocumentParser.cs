@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Xml;
 
@@ -17,7 +18,7 @@ namespace Loxodon.Framework.Localizations
         {            
         }
 
-        public override Dictionary<string, object> Parse(Stream input)
+        public override Dictionary<string, object> Parse(Stream input, CultureInfo cultureInfo)
         {
             Dictionary<string, object> data = new Dictionary<string, object>();
             using (XmlTextReader reader = new XmlTextReader(input))
