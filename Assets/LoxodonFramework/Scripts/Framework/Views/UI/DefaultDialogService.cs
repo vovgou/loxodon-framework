@@ -46,7 +46,7 @@ namespace Loxodon.Framework.Views
             return result;
         }
 
-        public virtual IAsyncResult<TViewModel> ShowDialog<TViewModel>(string viewName, TViewModel viewModel)
+        public virtual IAsyncResult<TViewModel> ShowDialog<TViewModel>(string viewName, TViewModel viewModel) where TViewModel : IViewModel
         {
             AsyncResult<TViewModel> result = new AsyncResult<TViewModel>();
             Window window = null;
@@ -98,9 +98,9 @@ namespace Loxodon.Framework.Views
             return result;
         }
 
-        public Asynchronous.IAsyncResult ShowDialog(string viewName, object viewModel)
+        public IAsyncResult<IViewModel> ShowDialog(string viewName, IViewModel viewModel)
         {
-            return this.ShowDialog<object>(viewName, viewModel);
+            return this.ShowDialog<IViewModel>(viewName, viewModel);
         }
     }
 }

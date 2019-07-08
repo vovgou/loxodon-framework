@@ -176,9 +176,9 @@ namespace Loxodon.Framework.Configurations
             return GetProperty<string>(key, defaultValue);
         }
 
-        public string GetString(string key, string defaultFormat, params object[] args)
+        public string GetFormattedString(string key, params object[] args)
         {
-            string format = GetString(key, defaultFormat);
+            string format = GetString(key, null);
             if (format == null)
                 return null;
 

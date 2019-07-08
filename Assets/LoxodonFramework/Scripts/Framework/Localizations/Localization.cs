@@ -161,17 +161,6 @@ namespace Loxodon.Framework.Localizations
         }
 
         /// <summary>
-        /// Gets a message based on a key using the supplied args, as defined in "string.Format", or the provided key if no message is found.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public virtual string GetText(string key, params object[] args)
-        {
-            return this.GetText(key, key, args);
-        }
-
-        /// <summary>
         /// Gets a message based on a key, or, if the message is not found, a supplied default value is returned.
         /// </summary>
         /// <param name="key"></param>
@@ -179,19 +168,21 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual string GetText(string key, string defaultValue)
         {
-            return this.Get<string>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
-        /// Gets a message based on a key using the supplied args, as defined in "string.Format", or, if the message is not found, a supplied  default value is returned.
+        /// Gets a message based on a key using the supplied args, as defined in "string.Format", or the provided key if no message is found.
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public virtual string GetText(string key, string defaultValue, params object[] args)
+        public virtual string GetFormattedText(string key, params object[] args)
         {
-            string format = this.Get<string>(key, defaultValue);
+            string format = this.Get<string>(key, null);
+            if (format == null)
+                return key;
+
             return string.Format(format, args);
         }
 
@@ -202,7 +193,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual bool GetBoolean(string key)
         {
-            return this.Get<bool>(key);
+            return this.Get(key, false);
         }
 
         /// <summary>
@@ -213,7 +204,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual bool GetBoolean(string key, bool defaultValue)
         {
-            return this.Get<bool>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -234,7 +225,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual int GetInt(string key, int defaultValue)
         {
-            return this.Get<int>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -255,7 +246,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual long GetLong(string key, long defaultValue)
         {
-            return this.Get<long>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -276,7 +267,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual double GetDouble(string key, double defaultValue)
         {
-            return this.Get<double>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -297,7 +288,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual float GetFloat(string key, float defaultValue)
         {
-            return this.Get<float>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -318,7 +309,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual Color GetColor(string key, Color defaultValue)
         {
-            return this.Get<Color>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -339,7 +330,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual Vector3 GetVector3(string key, Vector3 defaultValue)
         {
-            return this.Get<Vector3>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -349,7 +340,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual DateTime GetDateTime(string key)
         {
-            return this.Get<DateTime>(key, new DateTime(0));
+            return this.Get(key, new DateTime(0));
         }
 
         /// <summary>
@@ -360,7 +351,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual DateTime GetDateTime(string key, DateTime defaultValue)
         {
-            return this.Get<DateTime>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -371,7 +362,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual T Get<T>(string key)
         {
-            return this.Get<T>(key, default(T));
+            return this.Get(key, default(T));
         }
 
         /// <summary>

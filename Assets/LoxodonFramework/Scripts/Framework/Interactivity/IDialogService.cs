@@ -71,7 +71,7 @@ namespace Loxodon.Framework.Interactivity
         /// <param name="viewName">The name of the dialog view, loading the dialog view based on the view name</param>
         /// <param name="viewModel">The view model of the dialog</param>
         /// <returns>The result</returns>
-        IAsyncResult ShowDialog(string viewName, object viewModel);
+        IAsyncResult<IViewModel> ShowDialog(string viewName, IViewModel viewModel);
 
         /// <summary>
         /// Displays information to the user.
@@ -79,6 +79,6 @@ namespace Loxodon.Framework.Interactivity
         /// <param name="viewName">The name of the dialog view, loading the dialog view based on the view name</param>
         /// <param name="viewModel">The view model of the dialog</param>
         /// <returns>The result</returns>
-        IAsyncResult<TViewModel> ShowDialog<TViewModel>(string viewName, TViewModel viewModel);
+        IAsyncResult<TViewModel> ShowDialog<TViewModel>(string viewName, TViewModel viewModel) where TViewModel : IViewModel;
     }
 }

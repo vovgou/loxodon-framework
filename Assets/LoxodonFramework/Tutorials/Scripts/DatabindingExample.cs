@@ -131,6 +131,7 @@ namespace Loxodon.Framework.Tutorials
 
     public class DatabindingExample : UIView
     {
+        public Text description;
         public Text title;
         public Text username;
         public Text password;
@@ -146,6 +147,8 @@ namespace Loxodon.Framework.Tutorials
         public Toggle rememberEdit;
         public Button submit;
 
+        private Localization localization;
+
         protected override void Awake()
         {
             ApplicationContext context = Context.GetApplicationContext();
@@ -155,7 +158,7 @@ namespace Loxodon.Framework.Tutorials
 
             CultureInfo cultureInfo = Locale.GetCultureInfo();
             Localization.Current = Localization.Create(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()), cultureInfo);
-
+            this.localization = Localization.Current;
         }
 
         protected override void Start()
@@ -190,6 +193,7 @@ namespace Loxodon.Framework.Tutorials
              vm.Account.Birthday.ToString("yyyy-MM-dd"), (DateTime.Now.Year - vm.Account.Birthday.Year))).OneWay();
 
             bindingSet.Bind(this.address).For(v => v.text).To(vm => vm.Account.Address).OneWay();
+            bindingSet.Bind(this.description).For(v => v.text).ToExpression(vm => localization.GetFormattedText("databinding.tutorials.description", vm.Account.Username, vm.Username)).OneWay();
 
             bindingSet.Bind(this.errorMessage).For(v => v.text).To(vm => vm.Errors["errorMessage"]).OneWay();
 

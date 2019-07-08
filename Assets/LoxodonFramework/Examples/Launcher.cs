@@ -20,7 +20,7 @@ namespace Loxodon.Framework.Examples
 		{           
 			GlobalWindowManager windowManager = FindObjectOfType<GlobalWindowManager>();
 			if (windowManager == null)
-				throw new NotFoundException("Can't find the GlobalWindowManager.");
+				throw new NotFoundException("Not found the GlobalWindowManager.");
 			
 			context = Context.GetApplicationContext();
 

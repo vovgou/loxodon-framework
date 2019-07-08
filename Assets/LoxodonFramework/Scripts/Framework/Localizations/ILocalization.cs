@@ -29,14 +29,6 @@ namespace Loxodon.Framework.Localizations
         string GetText(string key);
 
         /// <summary>
-        /// Gets a message based on a key using the supplied args, as defined in "string.Format", or the provided key if no message is found.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        string GetText(string key, params object[] args);
-
-        /// <summary>
         /// Gets a message based on a key, or, if the message is not found, a supplied default value is returned.
         /// </summary>
         /// <param name="key"></param>
@@ -45,13 +37,12 @@ namespace Loxodon.Framework.Localizations
         string GetText(string key, string defaultValue);
 
         /// <summary>
-        /// Gets a message based on a key using the supplied args, as defined in "string.Format", or, if the message is not found, a supplied  default value is returned.
+        /// Gets a message based on a key using the supplied args, as defined in "string.Format", or the provided key if no message is found.
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        string GetText(string key, string defaultValue, params object[] args);
+        string GetFormattedText(string key, params object[] args);
 
         /// <summary>
         /// Gets a boolean value based on a key, or, if the value is not found, the value 'false' is returned.

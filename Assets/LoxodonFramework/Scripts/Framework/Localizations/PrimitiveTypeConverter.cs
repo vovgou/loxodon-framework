@@ -70,47 +70,7 @@ namespace Loxodon.Framework.Localizations
 
         public object Convert(Type type, object value)
         {
-#if NETFX_CORE
-            TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
-#else
-            TypeCode typeCode = Type.GetTypeCode(type);
-#endif
-            string text = (string)value;
-            switch (typeCode)
-            {
-                case TypeCode.String:
-                    return text;
-                case TypeCode.Boolean:
-                    return bool.Parse(text);
-                case TypeCode.SByte:
-                    return sbyte.Parse(text);
-                case TypeCode.Byte:
-                    return byte.Parse(text);
-                case TypeCode.Int16:
-                    return short.Parse(text);
-                case TypeCode.UInt16:
-                    return ushort.Parse(text);
-                case TypeCode.Int32:
-                    return int.Parse(text);
-                case TypeCode.UInt32:
-                    return uint.Parse(text);
-                case TypeCode.Int64:
-                    return long.Parse(text);
-                case TypeCode.UInt64:
-                    return ulong.Parse(text);
-                case TypeCode.Char:
-                    return char.Parse(text);
-                case TypeCode.Single:
-                    return float.Parse(text);
-                case TypeCode.Double:
-                    return double.Parse(text);
-                case TypeCode.Decimal:
-                    return decimal.Parse(text);
-                case TypeCode.DateTime:
-                    return DateTime.Parse(text);
-            }
-
-            throw new NotSupportedException();
+            return System.Convert.ChangeType(value, type);
         }
     }
 }

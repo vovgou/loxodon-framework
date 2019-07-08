@@ -205,15 +205,14 @@ namespace Loxodon.Framework.Configurations
 
         /// <summary>
         /// Retrieve a string value from the configuration.
-        /// The method returns defaultValue if the key is not found.
+        /// The method returns null if the key is not found.
         /// </summary>
         /// <param name="key">The name of the property to retrieve</param>
-        /// <param name="defaultFormat">Value returned if this property does not exist</param>
         /// <param name="args">Parameters used to format a string</param>
         /// <exception cref="FormatException"></exception>
         /// <returns>Returns the value if it exists, or defaultValue. Throws
         /// Exception if there is a property with this key that is not a string.</returns>
-        string GetString(string key, string defaultFormat, params object[] args);
+        string GetFormattedString(string key, params object[] args);
 
         /// <summary>
         /// Retrieve a <c>DateTime</c> value from the configuration.

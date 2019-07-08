@@ -54,17 +54,6 @@ namespace Loxodon.Framework.Localizations
         }
 
         /// <summary>
-        /// Gets a message based on a key using the supplied args, as defined in "string.Format", or the provided key if no message is found.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public virtual string GetText(string key, params object[] args)
-        {
-            return this.GetText(key, key, args);
-        }
-
-        /// <summary>
         /// Gets a message based on a key, or, if the message is not found, a supplied default value is returned.
         /// </summary>
         /// <param name="key"></param>
@@ -76,16 +65,14 @@ namespace Loxodon.Framework.Localizations
         }
 
         /// <summary>
-        /// Gets a message based on a key using the supplied args, as defined in "string.Format", or, if the message is not found, a supplied  default value is returned.
+        /// Gets a message based on a key using the supplied args, as defined in "string.Format", or the provided key if no message is found.
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public virtual string GetText(string key, string defaultValue, params object[] args)
+        public virtual string GetFormattedText(string key, params object[] args)
         {
-            string format = this.Get<string>(key, defaultValue);
-            return string.Format(format, args);
+            return this.GetFormattedText(key, key, args);
         }
 
         /// <summary>
