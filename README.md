@@ -39,6 +39,8 @@ UWP(window10)
 - [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
   
     It supports localization files in csv format, requires Unity2018.4 or higher.
+   
+ - [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
 
 ## Key Features:
 - MVVM Framework;
