@@ -34,7 +34,7 @@ UWP(window10)
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
 - [Releases](https://github.com/cocowolf/loxodon-framework/releases)
 
-## 插件
+## 官方插件（可选）
 - [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
   
     支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
@@ -46,6 +46,14 @@ UWP(window10)
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
     AssetBundle加载和管理的工具，也是一个AssetBundle资源冗余分析工具。它能够自动管理AssetBundle之间复杂的依赖关系，它通过引用计数来维护AssetBundle之间的依赖。你既可以预加载一个AssetBundle，自己管理它的释放，也可以直接通过异步的资源加载函数直接加载资源，资源加载函数会自动去查找资源所在的AB包，自动加载AB，使用完后又会自动释放AB。 它还支持弱缓存，如果对象模板已经在缓存中，则不需要重新去打开AB。它支持多种加载方式，WWW加载，UnityWebRequest加载，File方式的加载等等（在Unity5.6以上版本，请不要使用WWW加载器，它会产生内存峰值）。它提供了一个AssetBundle的打包界面，支持加密AB包（只建议加密敏感资源，因为会影响性能）。同时它也绕开了Unity3D早期版本的一些bug，比如多个协程并发加载同一个资源，在android系统会出错。它的冗余分析是通过解包AssetBundle进行的，这比在编辑器模式下分析的冗余更准确。
+
+    ![](docs/images/bundle.jpg)
+
+- [Loxodon Framework Log4Net](http://u3d.as/Gmr)
+
+    支持使用Log4Net在Unity中打印日志的插件，支持在局域网中远程调试。
+
+    ![](docs/images/log4net.jpg)
 
 ## 关键功能：
 - MVVM框架;

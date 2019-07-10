@@ -55,6 +55,29 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 - [Unity3d官方商店下载](https://www.assetstore.unity3d.com/#!/content/77446)
 - [Github下载](https://github.com/cocowolf/loxodon-framework/releases)
 
+## 官方插件（可选） ##
+
+- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
+  
+    支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
+   
+- [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
+
+    Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。
+
+- [Loxodon Framework Bundle](http://u3d.as/NkT)
+
+    Loxodon.Framework.Bundle 是AssetBundle加载和管理的工具，也是一个AssetBundle资源冗余分析工具。它能够自动管理AssetBundle之间复杂的依赖关系，它通过引用计数来维护AssetBundle之间的依赖。你既可以预加载一个AssetBundle，自己管理它的释放，也可以直接通过异步的资源加载函数直接加载资源，资源加载函数会自动去查找资源所在的AB包，自动加载AB，使用完后又会自动释放AB。 它还支持弱缓存，如果对象模板已经在缓存中，则不需要重新去打开AB。它支持多种加载方式，WWW加载，UnityWebRequest加载，File方式的加载等等（在Unity5.6以上版本，请不要使用WWW加载器，它会产生内存峰值）。它提供了一个AssetBundle的打包界面，支持加密AB包（只建议加密敏感资源，因为会影响性能）。同时它也绕开了Unity3D早期版本的一些bug，比如多个协程并发加载同一个资源，在android系统会出错。它的冗余分析是通过解包AssetBundle进行的，这比在编辑器模式下分析的冗余更准确。
+
+    ![](images/bundle.jpg)
+
+- [Loxodon Framework Log4Net](http://u3d.as/Gmr)
+
+    支持使用Log4Net在Unity中打印日志的插件，支持在局域网中远程调试。
+
+    ![](images/log4net.jpg)
+
+
 ## Lua插件安装（可选） ##
 
 在本框架中，对于Lua语言的支持是通过插件扩展的方式来支持，它依赖腾讯的XLua项目和Loxodon.Framework.XLua插件，在项目的LoxodonFramework/Docs/XLua目录中可以找到Loxodon.Framework.XLua的插件，它是可选的，只有需要热更新并且使用Lua语言开发的项目才需要安装它。具体安装步骤如下，为避免出错，请严格按以下步骤安装。
@@ -746,6 +769,23 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
             <string name="login.input.password.prompt">请输入密码...</string>
         </resources>
 
+- **XML特殊字符**
+
+    在XML的名称、属性和本文内容中，"<"、">"、"&"等字符是不能直接使用的，如果在一个XML标记中出现这些字符，XML的解析会报错，如果我们使用的内容必须包括这些字符，有两种解决方式，第一是使用转义字符，如前文中的三个字符可以使用”&lt;”、”&gt;”、”&amp;”来替换。第二种方式是使用<![CDATA[]]>标记将文本内容包起来，比如<![CDATA[&lt;color=#FF0000&gt;This is a test.&lt;/color&gt;]]>，它表示的文本内容是“&lt;color=#FF0000&gt;This is a test &lt;/color&gt;”。一般来说推荐使用CDATA标记。
+
+    转义字符表
+
+    ![](images/xml_special_chars.png)
+
+    转义字符或者<![CDATA[]]>示例
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <resources>
+            <string name="mainpage.title"><![CDATA[This text is <color=#FF0000>red</color>]]></string>
+            <string name="mainpage.text">This text is &lt;color=#FF0000&gt;red&lt;/color&gt;</string>
+        </resources>
+
+
 - **支持的数值类型**
 
     默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
@@ -878,8 +918,42 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
         </resources>
 
 
-更多的示例请查看教程 [Localization Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+    更多的示例请查看教程 [Localization Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
+- **支持CSV格式的本地化插件**
+
+    如果习惯使用Excel的朋友可以下载我的CSV插件，它支持读取CSV文件格式的本地化配置，但是要求Unity版本在2018以上，支持.net 4.x或者.net standard 2.0。
+
+    下载地址：
+    [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv/releases)
+  
+    配置文件格式如下。
+
+    - key：配置文件的key，不能为空，此列必须存在。
+    - type：配置文件值的类型，此列必须存在。如：字符串类型 string ，整形数组 int-array
+    - description:描述，可以为空，并且此列可以省略
+    - default：默认值，最好不要为空,如果此列不存在，则会使用值的第一列作为默认列
+    - zh:中文配置，zh取值自CultureInfo.TwoLetterISOLanguageName，如果字段为空则使用默认配置
+    - zh-CN：中国，简体中文配置,zh-CN取值自CultureInfo.Name，如果字段为空，则使用zh的配置
+
+    以上只有key列和type列是必须存在的，其他可以根据实际情况添加或者省略。
+
+    **关于值的本地化查询规则是根据System.Globalization.CultureInfo类的TwoLetterISOLanguageName和Name字段来查询的。
+优先按CultureInfo.Name查询，如果不存在则使用CultureInfo.TwoLetterISOLanguageName查询，最后才会使用默认值，比如下图中，如果当前语言是zh-CN的话，优先使用zh-CN的配置，如果不存在zh-CN的列或者zh-CN配置为空，则使用zh列的配置，如果zh列不存在或者字段为空则使用默认列的配置。**
+
+    ![](images/csv.png)
+
+    XML的配置文件和CSV的配置文件可以相互转换，但是对于数组类型的配置需要注意，在CSV中是使用","分割的，而在XML中是<item>标识分割的，在<item></item>之间如果包含了","转换为csv文件格式时可能出错。
+
+    选择XML配置文件的根目录，右键选择Loxodon/Xml To Csv 命令，会自动将目录下的所有xml文件转换为csv格式的文件，XML中不同语言版本会合并到同一个csv文件中。同样，CSV文件也可以转换为XML文件，如果CSV文件中包含多个语言的配置版本，会被拆分成多个XML文件。
+
+    ![](images/xml2csv.png)
+
+    生成csv文件如下
+
+    ![](images/xml2csv2.png)
+
+    
 ### 配置文件（Properties文件） ###
 
 在游戏或者应用开发中，配置文件是一个必不可少的东西，通过配置文件来管理游戏或者应用的配置参数，特别现在游戏开发要接入不同的平台，有众多的SDK配置参数，而且不同平台有不同的接入要求，有不同的升级更新策略，虽然这些配置我们也可以继承Unity3D的ScriptableObject类来创建一个配置类，但是因为接入平台多，参数不统一，随着需求的变化会导致频繁的修改这些配置类，为了避免这种情况，我这里采用传统的配置文件来配置这些参数，一个properties文件满足所有的配置需求。

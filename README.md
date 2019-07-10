@@ -40,13 +40,23 @@ UWP(window10)
   
     It supports localization files in csv format, requires Unity2018.4 or higher.
    
- - [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
+- [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
+
+    It supports making games with lua scripts.
  
- - [Loxodon Framework Bundle](http://u3d.as/NkT)
+- [Loxodon Framework Bundle](http://u3d.as/NkT)
     
     Loxodon Framework Bundle is an AssetBundle manager.It provides a functionality that can automatically manage/load an AssetBundle and its dependencies from local or remote location.Asset Dependency Management including BundleManifest that keep track of every AssetBundle and all of their dependencies. An AssetBundle Simulation Mode which allows for iterative testing of AssetBundles in a the Unity editor without ever building an AssetBundle.
     
     The asset redundancy analyzer can help you find the redundant assets included in the AssetsBundles.Create a fingerprint for the asset by collecting the characteristic data of the asset. Find out the redundant assets in all AssetBundles by fingerprint comparison.it only supports the AssetBundle of Unity 5.6 or higher.
+
+    ![](docs/images/bundle.jpg)
+
+- [Loxodon Framework Log4Net](http://u3d.as/Gmr)
+
+    This is a log plugin.It allows you to use Log4Net in the Unity3d.
+
+    ![](docs/images/log4net.jpg)
 
 ## Key Features:
 - MVVM Framework;
