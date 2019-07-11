@@ -1,4 +1,4 @@
- ,![](images/icon.png)
+![](images/icon.png)
 
 # Loxodon Framework
 
@@ -472,121 +472,121 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
 在上下文中，我创建了一个服务容器（有关服务容器的介绍请看下一章节）来存储与当前上下文相关的服务，同时创建了个字典来存储数据。通过上下文的Dispose()，可以释放所有在上下文容器中注册的服务。**但是需要注意的是，服务必须继承System.IDisposable接口，否则不能自动释放。**
 
-- **全局/应用上下文（ApplicationContext）**
+#### 全局/应用上下文（ApplicationContext） ####
 
-    应用上下文是一个全局的上下文，它是单例的，它主要存储全局共享的一些数据和服务。所有的基础服务，比如视图定位服务、资源加载服务，网络连接服务、本地化服务、配置文件服务、Json/Xml解析服务、数据绑定服务等等，这些在整个游戏中都可能使用到的基础服务都应该注册到应用上下文的服务容器当中，可以通过应用上下文来获得。
+应用上下文是一个全局的上下文，它是单例的，它主要存储全局共享的一些数据和服务。所有的基础服务，比如视图定位服务、资源加载服务，网络连接服务、本地化服务、配置文件服务、Json/Xml解析服务、数据绑定服务等等，这些在整个游戏中都可能使用到的基础服务都应该注册到应用上下文的服务容器当中，可以通过应用上下文来获得。
 
-        //获得全局的应用上下文
-        ApplicationContext context = Context.GetApplicationContext();
+    //获得全局的应用上下文
+    ApplicationContext context = Context.GetApplicationContext();
 
-        //获得上下文中的服务容器
-        IServiceContainer container = context.GetContainer();
+    //获得上下文中的服务容器
+    IServiceContainer container = context.GetContainer();
 
-        //初始化数据绑定服务，这是一组服务，通过ServiceBundle来初始化并注册到服务容器中
-        BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
-        bundle.Start();
+    //初始化数据绑定服务，这是一组服务，通过ServiceBundle来初始化并注册到服务容器中
+    BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
+    bundle.Start();
 
-        //初始化IUIViewLocator，并注册到容器
-        container.Register<IUIViewLocator>(new ResourcesViewLocator ());
+    //初始化IUIViewLocator，并注册到容器
+    container.Register<IUIViewLocator>(new ResourcesViewLocator ());
 
-        //初始化本地化服务，并注册到容器中
-        CultureInfo cultureInfo = Locale.GetCultureInfo();
-        var dataProvider = new ResourcesDataProvider("LocalizationExamples", new XmlDocumentParser());
-        Localization.Current = Localization.Create(dataProvider, cultureInfo);
-        container.Register<Localization>(Localization.Current);
+    //初始化本地化服务，并注册到容器中
+    CultureInfo cultureInfo = Locale.GetCultureInfo();
+    var dataProvider = new ResourcesDataProvider("LocalizationExamples", new XmlDocumentParser());
+    Localization.Current = Localization.Create(dataProvider, cultureInfo);
+    container.Register<Localization>(Localization.Current);
 
-        //从全局上下文获得IUIViewLocator服务
-        IUIViewLocator locator = context.GetService<IUIViewLocator>();
+    //从全局上下文获得IUIViewLocator服务
+    IUIViewLocator locator = context.GetService<IUIViewLocator>();
 
-        //从全局上下文获得本地化服务
-        Localization localization = context.GetService<Localization>();
-
-
-- **玩家上下文（PlayerContext）**
-
-    玩家上下文是只跟当前登录的游戏玩家相关的上下文，比如一个游戏玩家Clark登录游戏后，他在游戏中的基本信息和与之相关的服务，都应该存储在玩家上下文中。比如背包服务，它负责拉取和同步玩家的背包数据，缓存了玩家背包中的武器、装备、道具等等，它只与当前玩家有关，当玩家退出登录切换账号时，这些数据都应该被清理和释放。我们使用了玩家上下文来存储这些服务和数值时，只需要调用PlayerContext.Dispose()函数，就可以释放与当前玩家有关的所有数据和服务。
-
-    玩家上下文中默认继承了全局上下文的所有服务和属性，所以通过玩家上下文可以获取到所有在全局上下文中的服务和数据，当玩家上下文注册了与全局上下文中Key值相同的服务或者是属性时，它会在玩家上下文中存储，不会覆盖全局上下文中存储的数据，当通过Key访问时，优先返回玩家上下文中的数据，只有在玩家上下文中找不到时才会去全局上下文中查找。
-
-        //为玩家clark创建一个玩家上下文
-        PlayerContext playerContext = new PlayerContext("clark");
-
-        //获得玩家上下文中的服务容器
-        IServiceContainer container = playerContext.GetContainer();
-
-        //将角色信息存入玩家上下文
-        playerContext.Set("roleInfo", roleInfo);
-
-        //初始化背包服务，注册到玩家上下文的服务容器中
-        container.Register<IKnapsackService>(new KnapsackService());
-
-        //从通过玩家上下文获得在全局上下文注册的IViewLocator服务
-        IUIViewLocator locator = playerContext.GetService<IUIViewLocator>();
-
-        //从通过玩家上下文获得在全局上下文注册的本地化服务
-        Localization localization = playerContext.GetService<Localization>();
-
-        //当用户clark退出登录时，注销玩家上下文，自动注销所有注册在当前玩家上下文中的服务。
-        playerContext.Dispose();
+    //从全局上下文获得本地化服务
+    Localization localization = context.GetService<Localization>();
 
 
-- **其它上下文（Context）**
+#### 玩家上下文（PlayerContext） ####
 
-    一般来说，在很多游戏开发中，我们只需要全局上下文和玩家上下文就足以满足要求，但是在某些情况下，我们还需要一个上下文来存储环境数据，比如在MMO游戏中，进入某个特定玩法的副本，那么我就需要为这个副本创建一个专属的上下文，当副本中的战斗结束，退出副本时，则销毁这个副本上下文来释放资源。
+玩家上下文是只跟当前登录的游戏玩家相关的上下文，比如一个游戏玩家Clark登录游戏后，他在游戏中的基本信息和与之相关的服务，都应该存储在玩家上下文中。比如背包服务，它负责拉取和同步玩家的背包数据，缓存了玩家背包中的武器、装备、道具等等，它只与当前玩家有关，当玩家退出登录切换账号时，这些数据都应该被清理和释放。我们使用了玩家上下文来存储这些服务和数值时，只需要调用PlayerContext.Dispose()函数，就可以释放与当前玩家有关的所有数据和服务。
 
-        //创建一个上下文，参数container值为null，在Context内部会自动创建
-        //参数contextBase值为playerContext，自动继承了playerContext中的服务和属性
-        Context context = new Context(null,playerContext);
-        
-        //获得上下文中的服务容器
-        IServiceContainer container = context.GetContainer();
+玩家上下文中默认继承了全局上下文的所有服务和属性，所以通过玩家上下文可以获取到所有在全局上下文中的服务和数据，当玩家上下文注册了与全局上下文中Key值相同的服务或者是属性时，它会在玩家上下文中存储，不会覆盖全局上下文中存储的数据，当通过Key访问时，优先返回玩家上下文中的数据，只有在玩家上下文中找不到时才会去全局上下文中查找。
 
-        //注册一个战斗服务到容器中
-        container.Register<IBattleService>(new BattleService());
+    //为玩家clark创建一个玩家上下文
+    PlayerContext playerContext = new PlayerContext("clark");
+
+    //获得玩家上下文中的服务容器
+    IServiceContainer container = playerContext.GetContainer();
+
+    //将角色信息存入玩家上下文
+    playerContext.Set("roleInfo", roleInfo);
+
+    //初始化背包服务，注册到玩家上下文的服务容器中
+    container.Register<IKnapsackService>(new KnapsackService());
+
+    //从通过玩家上下文获得在全局上下文注册的IViewLocator服务
+    IUIViewLocator locator = playerContext.GetService<IUIViewLocator>();
+
+    //从通过玩家上下文获得在全局上下文注册的本地化服务
+    Localization localization = playerContext.GetService<Localization>();
+
+    //当用户clark退出登录时，注销玩家上下文，自动注销所有注册在当前玩家上下文中的服务。
+    playerContext.Dispose();
+
+
+#### 其它上下文（Context） ####
+
+一般来说，在很多游戏开发中，我们只需要全局上下文和玩家上下文就足以满足要求，但是在某些情况下，我们还需要一个上下文来存储环境数据，比如在MMO游戏中，进入某个特定玩法的副本，那么我就需要为这个副本创建一个专属的上下文，当副本中的战斗结束，退出副本时，则销毁这个副本上下文来释放资源。
+
+    //创建一个上下文，参数container值为null，在Context内部会自动创建
+    //参数contextBase值为playerContext，自动继承了playerContext中的服务和属性
+    Context context = new Context(null,playerContext);
+    
+    //获得上下文中的服务容器
+    IServiceContainer container = context.GetContainer();
+
+    //注册一个战斗服务到容器中
+    container.Register<IBattleService>(new BattleService());
 
 ### 服务容器 ###
 在项目开始时，我曾调研过很多C#的控制反转和依赖注入（IoC/DI）方面的开源项目，开始是想用Zenject来做为服务的容器使用，后来因为考虑到移动项目中，内存和CPU资源都相当宝贵，不想再引入一个这么大的库来消耗内存，也不想因为反射导致的性能损失，而且强制用户使用IoC/DI也不太合适，毕竟不是所有人都喜欢，所以我就自己设计了一个简单的服务容器，来满足服务注册、注销、读取这些最基本的功能。
 
 **注意：所有注册的服务，只有继承System.IDisposable接口，实现了Dispose函数，才能在IServiceContainer.Dispose()时自动释放。**
 
-- **服务注册器(IServiceRegistry)**
+#### 服务注册器(IServiceRegistry) ####
 
-    服务注册负责注册和注销服务，它可以根据服务类型或者名称注册一个服务实例到容器中，也可以注册一个服务工厂到容器中，用户可以根据自己的需求来选择是否需要注册一个服务工厂，是创建一个单态的服务，还是每次都创建一个新的服务实例。
+服务注册负责注册和注销服务，它可以根据服务类型或者名称注册一个服务实例到容器中，也可以注册一个服务工厂到容器中，用户可以根据自己的需求来选择是否需要注册一个服务工厂，是创建一个单态的服务，还是每次都创建一个新的服务实例。
 
-        IServiceContainer container = ...
-        IBinder binder = ...
-        IPathParser pathParser = ...
+    IServiceContainer container = ...
+    IBinder binder = ...
+    IPathParser pathParser = ...
 
-        //注册一个类型为IBinder的服务到容器中,可以通过container.Resolve<IBinder>() 或者 
-        //container.Resolve("IBinder") 来访问这个服务，在容器中默认使用了IBinder.Name做为Key存储。
-        container.Register<IBinder>(binder);
+    //注册一个类型为IBinder的服务到容器中,可以通过container.Resolve<IBinder>() 或者 
+    //container.Resolve("IBinder") 来访问这个服务，在容器中默认使用了IBinder.Name做为Key存储。
+    container.Register<IBinder>(binder);
 
-        //注册一个名为parser的IPathParser到容器中
-        //只能通过container.Resolve("parser")来访问这个服务
-        container.Register("parser",pathParser);
+    //注册一个名为parser的IPathParser到容器中
+    //只能通过container.Resolve("parser")来访问这个服务
+    container.Register("parser",pathParser);
 
-- **服务定位器(IServiceLocator)** 
+#### 服务定位器(IServiceLocator)  ####
 
-    通过服务定位器可以获得服务，服务定位器可以根据服务名称或者类型来查询服务，当服务以类型的方式注册，则可以通过类型或者类型名来查找服务，当服务以特定的名称为Key注册，则只能通过服务名来查找服务。
+通过服务定位器可以获得服务，服务定位器可以根据服务名称或者类型来查询服务，当服务以类型的方式注册，则可以通过类型或者类型名来查找服务，当服务以特定的名称为Key注册，则只能通过服务名来查找服务。
 
-        IServiceContainer container = ...
-        
-        //IBinder服务在上段代码中，以类型方式注册，所以可以通过类型或者名称方式查询服务
-        IBinder binder = container.Resolve<IBinder>()；//or container.Resolve("IBinder")
+    IServiceContainer container = ...
+    
+    //IBinder服务在上段代码中，以类型方式注册，所以可以通过类型或者名称方式查询服务
+    IBinder binder = container.Resolve<IBinder>()；//or container.Resolve("IBinder")
 
-        //IPathParser在上段代码中以特定名称"parser"注册，则只能通过名称"parser"来查询服务
-        IPathParser pathParser = container.Resolve("parser");
+    //IPathParser在上段代码中以特定名称"parser"注册，则只能通过名称"parser"来查询服务
+    IPathParser pathParser = container.Resolve("parser");
 
-- **服务Bundle(IServiceBundle)**
+#### 服务Bundle(IServiceBundle) ####
 
-    ServiceBundle的作用是将一组相关的服务打包注册和注销，比如我的数据绑定服务，就是通过ServiceBundle.Start()方法一次性注册所有数据绑定有关的服务，当服务不在需要时，又可以通过ServiceBundle.Stop()方法来注销整个模块的所有服务（见下面的代码）。这在某些时候非常有用，比如启动和停止一个模块的所有服务。
+ServiceBundle的作用是将一组相关的服务打包注册和注销，比如我的数据绑定服务，就是通过ServiceBundle.Start()方法一次性注册所有数据绑定有关的服务，当服务不在需要时，又可以通过ServiceBundle.Stop()方法来注销整个模块的所有服务（见下面的代码）。这在某些时候非常有用，比如启动和停止一个模块的所有服务。
 
-        //初始化数据绑定模块，启动数据绑定服务,注册服务
-        BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
-        bundle.Start();
+    //初始化数据绑定模块，启动数据绑定服务,注册服务
+    BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
+    bundle.Start();
 
-        //停止数据绑定模块，注销所有数据绑定相关的服务
-        bundle.Stop();
+    //停止数据绑定模块，注销所有数据绑定相关的服务
+    bundle.Stop();
 
 
 ### 应用配置（Preference） ###
@@ -685,280 +685,329 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 国际化和本地化是指软件、应用、游戏等使之能适应目标市场的语言、地区差异以及技术需要等。所以在游戏开发中，为适用不同的市场需求，本地化是必不可少的功能，我参考了Android的本地化设计思路，设计了本框架的本地化模块。本地化模块和前面提到的任何模块一样，它也是可以自定义的，可以自由扩展的，下面我就来介绍一下如何来使用本地化模块。
 
-- **目录结构**
+#### 目录结构 ####
 
-    本地化文件可以放在Resources目录下，通过Unity3D的Resources来访问，也可以放入AssetBundle中，通过AssetBundle来加载，甚至你可以放入任何其他地方，通过自定义的IDataProvider来读取。并且这些方式可以同时存在，后加载的覆盖先加载的。在本框架中，我提供了DefaultDataProvider和AssetBundleDataProvider两个数据提供器分别来加载Resources中和AssetBundle中的本地化数据文件。无论在Resources中还是在AssetBundle，其目录结构和加载规则是一致的。首先必须有一个本地化配置文件的根目录，如下图的LocalizationExamples目录，在根目录下创建各个语言的目录，比如 default、zh、zh-CN、zh-TW、zh-HK、en、en-US、en-CA、en-AU等等（具体可以参考System.Globalization.CultureInfo类的Name和TwoLetterISOLanguageName，如zh-CN是Name，zh是TwoLetterISOLanguageName）。在default目录中的配置必须是最完整的，它是默认语言配置，而且是必须的，而其他目录都是可选的。zh目录是中文目录，zh-CN是中国大陆的配置目录，zh-TW是台湾区的配置目录，zh-HK是中国香港的配置目录。从配置文件的优先级来说（zh-CN|zh-TW|zh-HK) > zh > default，优先级高的配置将覆盖优先级低的配置。
+本地化文件可以放在Resources目录下，通过Unity3D的Resources来访问，也可以放入AssetBundle中，通过AssetBundle来加载，甚至你可以放入任何其他地方，通过自定义的IDataProvider来读取。并且这些方式可以同时存在，后加载的覆盖先加载的。在本框架中，我提供了DefaultDataProvider和AssetBundleDataProvider两个数据提供器分别来加载Resources中和AssetBundle中的本地化数据文件。无论在Resources中还是在AssetBundle，其目录结构和加载规则是一致的。首先必须有一个本地化配置文件的根目录，如下图的LocalizationExamples目录，在根目录下创建各个语言的目录，比如 default、zh、zh-CN、zh-TW、zh-HK、en、en-US、en-CA、en-AU等等（具体可以参考System.Globalization.CultureInfo类的Name和TwoLetterISOLanguageName，如zh-CN是Name，zh是TwoLetterISOLanguageName）。在default目录中的配置必须是最完整的，它是默认语言配置，而且是必须的，而其他目录都是可选的。zh目录是中文目录，zh-CN是中国大陆的配置目录，zh-TW是台湾区的配置目录，zh-HK是中国香港的配置目录。从配置文件的优先级来说（zh-CN|zh-TW|zh-HK) > zh > default，优先级高的配置将覆盖优先级低的配置。
 
-    在每一个配置文件目录中，配置文件建议按业务模块分多个文件配置，不要所有的配置都写入一个文本文件中，如下图所示，所有全局的配置写入application.xml中，而其他的配置则按模块名称来命名配置文件。
+在每一个配置文件目录中，配置文件建议按业务模块分多个文件配置，不要所有的配置都写入一个文本文件中，如下图所示，所有全局的配置写入application.xml中，而其他的配置则按模块名称来命名配置文件。
 
-    ![](images/Localization_dir.png)
+![](images/Localization_dir.png)
 
-- **配置文件的格式**
+#### 配置文件的格式 ####
 
-    配置文件默认只支持XML格式，如有必要也可以通过自定义IDocumentParser来支持其他的格式，如Json格式，二进制格式，或者从SQLite中加载等。
+配置文件默认只支持XML格式，如有必要也可以通过自定义IDocumentParser来支持其他的格式，如Json格式，二进制格式，或者从SQLite中加载等。
 
-    default版本的application和module如下:
+default版本的application和module如下:
 
-        <!-- application.xml -->
-        <?xml version="1.0" encoding="utf-8"?>
-        <resources>
-            <string name="app.name">Loxodon Framework Examples</string>
-            <string name="framework.name">LoxodonFramework</string>
-            <vector3 name="user.position">(20 , 20.2 , 30)</vector3>
-            <color name="color.black">#000000</color>
-            <color-array name="button.transition.colors">
-                <item>#FFFFFFFF</item>
-                <item>#F5F5F5FF</item>
-                <item>#C8C8C8FF</item>
-                <item>#C8C8C880</item>
-            </color-array>
-            <datetime name="created">2016-10-27T00:00:00.000</datetime>
-        </resources>
+    <!-- application.xml -->
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <string name="app.name">Loxodon Framework Examples</string>
+        <string name="framework.name">LoxodonFramework</string>
+        <vector3 name="user.position">(20 , 20.2 , 30)</vector3>
+        <color name="color.black">#000000</color>
+        <color-array name="button.transition.colors">
+            <item>#FFFFFFFF</item>
+            <item>#F5F5F5FF</item>
+            <item>#C8C8C8FF</item>
+            <item>#C8C8C880</item>
+        </color-array>
+        <datetime name="created">2016-10-27T00:00:00.000</datetime>
+    </resources>
 
-        <!-- module.xml -->
-        <?xml version="1.0" encoding="utf-8"?>
-        <resources>
-            <string name="startup.progressbar.tip.loading">Loading...</string>
-            <string name="startup.progressbar.tip.unziping">Unziping...</string>
-            <string name="login.failure.tip">Login failure.</string>
-            <string name="login.exception.tip">Login exception.</string>
-            <string name="login.validation.username.error">Please enter a valid username.</string>
-            <string name="login.validation.password.error">Please enter a valid password.</string>
-            <string name="login.label.title.text">Sign in</string>
-            <string name="login.button.confirm.text">Confirm</string>
-            <string name="login.button.cancel.text">Cancel</string>
-            <string name="login.label.username.text">Username:</string>
-            <string name="login.label.password.text">Password:</string>
-            <string name="login.input.username.prompt">Enter username...</string>
-            <string name="login.input.password.prompt">Enter password...</string>
-        </resources>
+    <!-- module.xml -->
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <string name="startup.progressbar.tip.loading">Loading...</string>
+        <string name="startup.progressbar.tip.unziping">Unziping...</string>
+        <string name="login.failure.tip">Login failure.</string>
+        <string name="login.exception.tip">Login exception.</string>
+        <string name="login.validation.username.error">Please enter a valid username.</string>
+        <string name="login.validation.password.error">Please enter a valid password.</string>
+        <string name="login.label.title.text">Sign in</string>
+        <string name="login.button.confirm.text">Confirm</string>
+        <string name="login.button.cancel.text">Cancel</string>
+        <string name="login.label.username.text">Username:</string>
+        <string name="login.label.password.text">Password:</string>
+        <string name="login.input.username.prompt">Enter username...</string>
+        <string name="login.input.password.prompt">Enter password...</string>
+    </resources>
     
-    zh-CN版本的application和module如下:
+zh-CN版本的application和module如下:
 
-        <!-- application.xml -->
-        <?xml version="1.0" encoding="utf-8"?>
-        <resources>
-            <string name="app.name">Loxodon Framework 示例</string>
-            <string name="framework.name">LoxodonFramework</string>
-            <vector3 name="user.position">(20 , 20.2 , 30)</vector3>
-            <color name="color.black">#000000</color>
-            <color-array name="button.transition.colors">
-                <item>#FFFFFFFF</item>
-                <item>#F5F5F5FF</item>
-                <item>#C8C8C8FF</item>
-                <item>#C8C8C880</item>
-            </color-array>
-            <datetime name="created">2016-10-27T00:00:00.000</datetime>
-        </resources>
+    <!-- application.xml -->
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <string name="app.name">Loxodon Framework 示例</string>
+        <string name="framework.name">LoxodonFramework</string>
+        <vector3 name="user.position">(20 , 20.2 , 30)</vector3>
+        <color name="color.black">#000000</color>
+        <color-array name="button.transition.colors">
+            <item>#FFFFFFFF</item>
+            <item>#F5F5F5FF</item>
+            <item>#C8C8C8FF</item>
+            <item>#C8C8C880</item>
+        </color-array>
+        <datetime name="created">2016-10-27T00:00:00.000</datetime>
+    </resources>
 
-        <!-- module.xml -->
-        <?xml version="1.0" encoding="utf-8"?>
-        <resources>
-            <string name="startup.progressbar.tip.loading">加载中...</string>
-            <string name="startup.progressbar.tip.unziping">解压中...</string>
-            <string name="login.failure.tip">登录失败</string>
-            <string name="login.exception.tip">登录异常</string>
-            <string name="login.validation.username.error">输入的用户名格式错误</string>
-            <string name="login.validation.password.error">输入的密码格式错误</string>
-            <string name="login.label.title.text">登录</string>
-            <string name="login.button.confirm.text">确认</string>
-            <string name="login.button.cancel.text">取消</string>
-            <string name="login.label.username.text">用户名:</string>
-            <string name="login.label.password.text">密  码:</string>
-            <string name="login.input.username.prompt">请输入用户名...</string>
-            <string name="login.input.password.prompt">请输入密码...</string>
-        </resources>
+    <!-- module.xml -->
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <string name="startup.progressbar.tip.loading">加载中...</string>
+        <string name="startup.progressbar.tip.unziping">解压中...</string>
+        <string name="login.failure.tip">登录失败</string>
+        <string name="login.exception.tip">登录异常</string>
+        <string name="login.validation.username.error">输入的用户名格式错误</string>
+        <string name="login.validation.password.error">输入的密码格式错误</string>
+        <string name="login.label.title.text">登录</string>
+        <string name="login.button.confirm.text">确认</string>
+        <string name="login.button.cancel.text">取消</string>
+        <string name="login.label.username.text">用户名:</string>
+        <string name="login.label.password.text">密  码:</string>
+        <string name="login.input.username.prompt">请输入用户名...</string>
+        <string name="login.input.password.prompt">请输入密码...</string>
+    </resources>
 
-- **XML特殊字符**
+#### XML特殊字符 ####
 
-    在XML的名称、属性和本文内容中，"<"、">"、"&"等字符是不能直接使用的，如果在一个XML标记中出现这些字符，XML的解析会报错，如果我们使用的内容必须包括这些字符，有两种解决方式，第一是使用转义字符，如前文中的三个字符可以使用”&lt;”、”&gt;”、”&amp;”来替换。第二种方式是使用<![CDATA[]]>标记将文本内容包起来，比如<![CDATA[&lt;color=#FF0000&gt;This is a test.&lt;/color&gt;]]>，它表示的文本内容是“&lt;color=#FF0000&gt;This is a test &lt;/color&gt;”。一般来说推荐使用CDATA标记。
+在XML的名称、属性和本文内容中，"<"、">"、"&"等字符是不能直接使用的，如果在一个XML标记中出现这些字符，XML的解析会报错，如果我们使用的内容必须包括这些字符，有两种解决方式，第一是使用转义字符，如前文中的三个字符可以使用”&lt;”、”&gt;”、”&amp;”来替换。第二种方式是使用<![CDATA[]]>标记将文本内容包起来，比如<![CDATA[&lt;color=#FF0000&gt;This is a test.&lt;/color&gt;]]>，它表示的文本内容是“&lt;color=#FF0000&gt;This is a test &lt;/color&gt;”。一般来说推荐使用CDATA标记。
 
-    转义字符表
+**转义字符表**
 
-    ![](images/xml_special_chars.png)
+![](images/xml_special_chars.png)
 
-    转义字符或者<![CDATA[]]>示例
+**转义字符或者<![CDATA[]]>示例**
 
-        <?xml version="1.0" encoding="utf-8"?>
-        <resources>
-            <string name="mainpage.title"><![CDATA[This text is <color=#FF0000>red</color>]]></string>
-            <string name="mainpage.text">This text is &lt;color=#FF0000&gt;red&lt;/color&gt;</string>
-        </resources>
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <string name="mainpage.title"><![CDATA[This text is <color=#FF0000>red</color>]]></string>
+        <string name="mainpage.text">This text is &lt;color=#FF0000&gt;red&lt;/color&gt;</string>
+    </resources>
 
 
-- **支持的数值类型**
+#### 支持的数值类型 ####
 
-    默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
+默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
 
-        string
-        boolean
-        sbyte
-        byte
-        short
-        ushort
-        int
-        uint
-        long
-        ulong
-        char
-        float
-        double
-        decimal
-        datetime
-        vector2
-        vector3
-        vector4
-        color
+数组类型的表述方式是在基本类型后面添加"-array"的后缀，如前文中字符串数组类型：string-array，在&lt;string-array&gt;&lt;/string-array&gt;之间用&lt;item&gt;&lt;item&gt;添加数组元素。
 
-- **生成C#脚本**
+| 基本类型(Type) | 默认值(Default Value) | 描述(Description) |
+| :------| ------: | :------: |
+| string | "" | 字符串类型 |
+| boolean | false | 布尔值，flase或者true |
+| sbyte | 0 | 有符号的byte，-127-128 |
+| byte | 0 | 无符号byte，0-255 |
+| short | 0 | short类型 |
+| ushort | 0 | 无符号short类型 |
+| int | 0 | 整形 |
+| uint | 0 | 无符号整形 |
+| long | 0 | 长整形 |
+| ulong | 0 | 无符号长整型 |
+| char | ‘’ | 字符类型 |
+| float | 0 | 单精度浮点类型 |
+| double | 0 | 双精度浮点类型 |
+| decimal | 0 | 数字类型 |
+| datetime | 1970-01-01T00:00:00 | 时间类型 |
+| vector2 | (0,0) | Vector2类型,示例：(0,0) |
+| vector3 | (0,0,0) | Vector3类型，示例：(0,0,0) |
+| vector4 | (0,0,0) | Vector4类型，示例：(0,0,0,0)|
+| color | #000000 | Vector2类型，示例：#FF0000 |
+
+#### 生成C#脚本 ####
     
-    本地化配置的属性，类似Android配置一样，可以生成一个静态类来使用，如果是使用C#版本的MVVM，可以这么使用，这样增加了语言的编译校验机制，避免出错。如果是使用Lua编程，则不建议这么做，直接使用Localization类即可。
+本地化配置的属性，类似Android配置一样，可以生成一个静态类来使用，如果是使用C#版本的MVVM，可以这么使用，这样增加了语言的编译校验机制，避免出错。如果是使用Lua编程，则不建议这么做，直接使用Localization类即可。
 
-    在本地化配置的根目录右击，弹出代码生成菜单如下图，点击Localization Make，选择代码目录和文件名，生成C#静态类。
+在本地化配置的根目录右击，弹出代码生成菜单如下图，点击Localization Make，选择代码目录和文件名，生成C#静态类。
 
-    ![](images/Localization_Make.png)
+![](images/Localization_Make.png)
 
-        public static partial class R
+    public static partial class R
+    {
+        public readonly static V<string> startup_progressbar_tip_loading = new V<string>("startup.progressbar.tip.loading"); 
+    
+        public readonly static V<string> startup_progressbar_tip_unziping = new V<string>("startup.progressbar.tip.unziping"); 
+    
+        public readonly static V<string> login_failure_tip = new V<string>("login.failure.tip"); 
+    
+        public readonly static V<string> login_exception_tip = new V<string>("login.exception.tip"); 
+    }
+
+#### 使用示例 ####
+
+通过生成的C#代码调用或者通过Localization类调用。
+        
+    Localization localization = Localization.Current
+    
+    //通过Localization的成员方法调用
+    string errorMessage = localization.GetText("login.validation.username.error", "Please enter a valid username.");
+
+    //通过生成的静态代码调用（比如提前生成C#代码）
+    string loadingMessage = R.startup_progressbar_tip_loading;
+
+    //获得本地化配置的子集，通过子集访问
+    ILocalization localizationSubset = localization.Subset("login");
+    errorMessage = localizationSubset.GetText("validation.username.error", "Please enter a valid username.");
+        
+
+配合UI组件使用本地化配置，下面我们模拟一个游戏中语言切换的使用场景，来了解本地化模块的用法。在下图中，红色线框中的英文通过本地化服务来加载和修改，它是通过挂在Text对象上的LocalizedText组件来实现中文和英文切换的。
+
+![](images/Localization_Example.png)
+
+    public class LocalizationExample : MonoBehaviour
+    {
+        public Dropdown dropdown;
+
+        private Localization localization;
+
+        void Awake ()
         {
-            public readonly static V<string> startup_progressbar_tip_loading = new V<string>("startup.progressbar.tip.loading"); 
-        
-            public readonly static V<string> startup_progressbar_tip_unziping = new V<string>("startup.progressbar.tip.unziping"); 
-        
-            public readonly static V<string> login_failure_tip = new V<string>("login.failure.tip"); 
-        
-            public readonly static V<string> login_exception_tip = new V<string>("login.exception.tip"); 
+            CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
+
+            //创建一个数据提供器，从LocalizationTutorials目录中加载本地化文件
+            var dataProvider = new DefaultDataProvider ("LocalizationTutorials", new XmlDocumentParser ())；
+
+            //创建一个本地化服务
+            Localization.Current = Localization.Create (dataProvider, cultureInfo);
+            this.localization = Localization.Current;
+
+            //监听下拉列表的改变，在英文和中文间切换
+            this.dropdown.onValueChanged.AddListener (OnValueChanged);
         }
 
-- **使用示例**
-
-    通过生成的C#代码调用或者通过Localization类调用。
-        
-        Localization localization = Localization.Current
-        
-        //通过Localization的成员方法调用
-        string errorMessage = localization.GetText("login.validation.username.error", "Please enter a valid username.");
-
-        //通过生成的静态代码调用（比如提前生成C#代码）
-        string loadingMessage = R.startup_progressbar_tip_loading;
-
-        //获得本地化配置的子集，通过子集访问
-        ILocalization localizationSubset = localization.Subset("login");
-        errorMessage = localizationSubset.GetText("validation.username.error", "Please enter a valid username.");
-        
-
-    配合UI组件使用本地化配置，下面我们模拟一个游戏中语言切换的使用场景，来了解本地化模块的用法。在下图中，红色线框中的英文通过本地化服务来加载和修改，它是通过挂在Text对象上的LocalizedText组件来实现中文和英文切换的。
-
-    ![](images/Localization_Example.png)
-
-
-        public class LocalizationExample : MonoBehaviour
+        void OnValueChanged (int value)
         {
-            public Dropdown dropdown;
-    
-            private Localization localization;
-    
-            void Awake ()
-            {
-                CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
-
-                //创建一个数据提供器，从LocalizationTutorials目录中加载本地化文件
-                var dataProvider = new DefaultDataProvider ("LocalizationTutorials", new XmlDocumentParser ())；
-
-                //创建一个本地化服务
-                Localization.Current = Localization.Create (dataProvider, cultureInfo);
-                this.localization = Localization.Current;
-    
-                //监听下拉列表的改变，在英文和中文间切换
-                this.dropdown.onValueChanged.AddListener (OnValueChanged);
-            }
-    
-            void OnValueChanged (int value)
-            {
-                switch (value) {
-                case 0:
-                    //设置本地化服务当前语言为英文
-                    this.localization.CultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
-                    break;
-                case 1:
-                    //设置本地化服务当前语言为中文
-                    this.localization.CultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.ChineseSimplified);
-                    break;
-                default:
-                    //设置本地化服务当前语言为英文
-                    this.localization.CultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
-                    break;
-                }
-            }
-    
-            void OnDestroy ()
-            {
-                this.dropdown.onValueChanged.RemoveListener (OnValueChanged);
+            switch (value) {
+            case 0:
+                //设置本地化服务当前语言为英文
+                this.localization.CultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
+                break;
+            case 1:
+                //设置本地化服务当前语言为中文
+                this.localization.CultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.ChineseSimplified);
+                break;
+            default:
+                //设置本地化服务当前语言为英文
+                this.localization.CultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
+                break;
             }
         }
 
-    本地化文件配置如下
+        void OnDestroy ()
+        {
+            this.dropdown.onValueChanged.RemoveListener (OnValueChanged);
+        }
+    }
 
-        <!-- 英文版 -->
-        <?xml version="1.0" encoding="utf-8"?>
-        <resources>
-            <string name="app.name">LoxodonFramework</string>
-            <string name="databinding.tutorials.title">Databinding Examples</string>
-            <string name="localization.tutorials.content">People's living, the book is dead, 
-                the living dead reading, can take the book to read. dead books read living, 
-                people reading can be put to death.</string>
-        </resources>
+本地化文件配置如下
 
-        <!-- 中文版 -->
-        <?xml version="1.0" encoding="utf-8"?>
-        <resources>
-            <string name="app.name">LoxodonFramework</string>
-            <string name="databinding.tutorials.title">数据绑定示例</string>
-            <string name="localization.tutorials.content">人是活的，书是死的，活人读死书，可以把书读活。
-            死书读活人，可以把人读死。</string>
-        </resources>
+    <!-- 英文版 -->
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <string name="app.name">LoxodonFramework</string>
+        <string name="databinding.tutorials.title">Databinding Examples</string>
+        <string name="localization.tutorials.content">People's living, the book is dead, 
+            the living dead reading, can take the book to read. dead books read living, 
+            people reading can be put to death.</string>
+    </resources>
+
+    <!-- 中文版 -->
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <string name="app.name">LoxodonFramework</string>
+        <string name="databinding.tutorials.title">数据绑定示例</string>
+        <string name="localization.tutorials.content">人是活的，书是死的，活人读死书，可以把书读活。
+        死书读活人，可以把人读死。</string>
+    </resources>
 
 
-    更多的示例请查看教程 [Localization Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 [Localization Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-- **支持CSV格式的本地化插件**
+#### 支持CSV格式的本地化插件 ####
 
-    如果习惯使用Excel的朋友可以下载我的CSV插件，它支持读取CSV文件格式的本地化配置，但是要求Unity版本在2018以上，支持.net 4.x或者.net standard 2.0。
+如果习惯使用Excel的朋友可以下载我的CSV插件，它支持读取CSV文件格式的本地化配置，但是要求Unity版本在2018以上，支持.net 4.x或者.net standard 2.0。
 
-    下载地址：
-    [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv/releases)
+下载地址：[Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv/releases)
   
-    配置文件格式如下。
+**配置文件格式如下**
 
-    - key：配置文件的key，不能为空，此列必须存在。
-    - type：配置文件值的类型，此列必须存在。如：字符串类型 string ，整形数组 int-array
-    - description:描述，可以为空，并且此列可以省略
-    - default：默认值，最好不要为空,如果此列不存在，则会使用值的第一列作为默认列
-    - zh:中文配置，zh取值自CultureInfo.TwoLetterISOLanguageName，如果字段为空则使用默认配置
-    - zh-CN：中国，简体中文配置,zh-CN取值自CultureInfo.Name，如果字段为空，则使用zh的配置
+- key：配置文件的key，不能为空，此列必须存在。
+- type：配置文件值的类型，此列必须存在。如：字符串类型 string ，整形数组 int-array
+- description:描述，可以为空，并且此列可以省略
+- default：默认值，最好不要为空,如果此列不存在，则会使用值的第一列作为默认列
+- zh:中文配置，zh取值自CultureInfo.TwoLetterISOLanguageName，如果字段为空则使用默认配置
+- zh-CN：中国，简体中文配置,zh-CN取值自CultureInfo.Name，如果字段为空，则使用zh的配置
 
-    以上只有key列和type列是必须存在的，其他可以根据实际情况添加或者省略。
+以上只有key列和type列是必须存在的，其他可以根据实际情况添加或者省略。
 
-    **关于值的本地化查询规则是根据System.Globalization.CultureInfo类的TwoLetterISOLanguageName和Name字段来查询的。
+**关于值的本地化查询规则是根据System.Globalization.CultureInfo类的TwoLetterISOLanguageName和Name字段来查询的。
 优先按CultureInfo.Name查询，如果不存在则使用CultureInfo.TwoLetterISOLanguageName查询，最后才会使用默认值，比如下图中，如果当前语言是zh-CN的话，优先使用zh-CN的配置，如果不存在zh-CN的列或者zh-CN配置为空，则使用zh列的配置，如果zh列不存在或者字段为空则使用默认列的配置。**
 
-    ![](images/csv.png)
+![](images/csv.png)
 
-    XML的配置文件和CSV的配置文件可以相互转换，但是对于数组类型的配置需要注意，在CSV中是使用","分割的，而在XML中是<item>标识分割的，在<item></item>之间如果包含了","转换为csv文件格式时可能出错。
+**支持类型和数组的表示**
 
-    选择XML配置文件的根目录，右键选择Loxodon/Xml To Csv 命令，会自动将目录下的所有xml文件转换为csv格式的文件，XML中不同语言版本会合并到同一个csv文件中。同样，CSV文件也可以转换为XML文件，如果CSV文件中包含多个语言的配置版本，会被拆分成多个XML文件。
+CSV配置同样支持上一节中XML配置所支持的所有基本数据类型，唯一不同的是CSV文件中使用逗号分隔符来支持数组类型，如下表所示。
 
-    ![](images/xml2csv.png)
+**注意：数组使用半角逗号分隔，在半角的双引号、单引号、小括号()、中括号[]、大括号{}、尖括号<>之间的逗号会被忽略，如数组的字符串中有逗号，请使用双引号或者单引号将字符串引起来,否则在数组分隔时会出错**
 
-    生成csv文件如下
+| key | type | us-EN |
+| :------| ------: | :------: |
+| usernames | string-array | tom,clark,kate |
+| chars | string-array | "a,b,c","d,e,f","g,h,i" |
+| positions | vector3-array | (0,1,1.2),(2,2,0),(1.3,0.5,5) |
+| colors | color-array | #FF0000,#00FF00 |
 
-    ![](images/xml2csv2.png)
+**XML和CSV的相互转换**
 
-    
+XML的配置文件和CSV的配置文件可以相互转换，但是对于数组类型的配置需要注意，在CSV中是使用","分割的，而在XML中是<item>标识分割的，在<item></item>之间如果包含了","转换为csv文件格式时可能出错。
+
+选择XML配置文件的根目录，右键选择Loxodon/Xml To Csv 命令，会自动将目录下的所有xml文件转换为csv格式的文件，XML中不同语言版本会合并到同一个csv文件中。同样，CSV文件也可以转换为XML文件，如果CSV文件中包含多个语言的配置版本，会被拆分成多个XML文件。
+
+![](images/xml2csv.png)
+
+生成csv文件如下
+
+![](images/xml2csv2.png)
+
+
 ### 配置文件（Properties文件） ###
 
 在游戏或者应用开发中，配置文件是一个必不可少的东西，通过配置文件来管理游戏或者应用的配置参数，特别现在游戏开发要接入不同的平台，有众多的SDK配置参数，而且不同平台有不同的接入要求，有不同的升级更新策略，虽然这些配置我们也可以继承Unity3D的ScriptableObject类来创建一个配置类，但是因为接入平台多，参数不统一，随着需求的变化会导致频繁的修改这些配置类，为了避免这种情况，我这里采用传统的配置文件来配置这些参数，一个properties文件满足所有的配置需求。
 
-配置文件示例如下：
+#### 支持的数值类型 ####
+
+默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
+
+| 基本类型(Type) | 默认值(Default Value) | 描述(Description) |
+| :------| ------: | :------: |
+| string | "" | 字符串类型 |
+| boolean | false | 布尔值，flase或者true |
+| sbyte | 0 | 有符号的byte，-127-128 |
+| byte | 0 | 无符号byte，0-255 |
+| short | 0 | short类型 |
+| ushort | 0 | 无符号short类型 |
+| int | 0 | 整形 |
+| uint | 0 | 无符号整形 |
+| long | 0 | 长整形 |
+| ulong | 0 | 无符号长整型 |
+| char | ‘’ | 字符类型 |
+| float | 0 | 单精度浮点类型 |
+| double | 0 | 双精度浮点类型 |
+| datetime | 1970-01-01T00:00:00 | 时间类型 |
+| vector2 | (0,0) | Vector2类型,示例：(0,0) |
+| vector3 | (0,0,0) | Vector3类型，示例：(0,0,0) |
+| vector4 | (0,0,0) | Vector4类型，示例：(0,0,0,0)|
+| color | #000000 | Vector2类型，示例：#FF0000 |
+| version | 1.0.0 | Version类型，示例：1.0.0 |
+
+#### 数组分隔符 ####
+
+与CSV格式的本地化配置一样，数组使用半角逗号分隔，在半角的双引号、单引号、小括号()、中括号[]、大括号{}、尖括号<>之间的逗号会被忽略，如数组的字符串中有逗号，请使用双引号或者单引号将字符串引起来。
+
+#### 配置文件示例 ####
+
+Properties文件格式如下，以key = value 的方式配置所有内容，以#开头的是注释文字，空行会被忽略：
 
     #application config
     application.app.version = 1.0.0
@@ -1042,21 +1091,35 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 为了方便协程和线程的异步调用，我根据Future/Promise的设计模式，设计一组异步结果、异步任务，在使用时我们可以通过同步的方式来获得任务的执行结果，也可以通过回调的方式来获得任务的结果，跟随下面的示例，我们来了解异步结果的使用。
 
-- **AsyncResult** 
+#### AsyncResult ####
 
-    利用AsyncResult，我们来创建一个可以取消的协程任务，并分别通过同步阻塞的方式和回调的方式来获得执行结果。
+利用AsyncResult，我们来创建一个可以取消的协程任务，并分别通过同步阻塞的方式和回调的方式来获得执行结果。
 
-        public class AsyncResultExample : MonoBehaviour
+    public class AsyncResultExample : MonoBehaviour
+    {
+
+        protected IEnumerator Start ()
         {
+            //********启动任务，同步方式调用示例***********//
+            IAsyncResult<bool> result = StartTask();
     
-            protected IEnumerator Start ()
-            {
-                //********启动任务，同步方式调用示例***********//
-                IAsyncResult<bool> result = StartTask();
-        
-                //等待任务完成，result.WaitForDone ()函数返回一个迭代器IEnumerator
-                yield return result.WaitForDone ();
+            //等待任务完成，result.WaitForDone ()函数返回一个迭代器IEnumerator
+            yield return result.WaitForDone ();
 
+            if(r.Exception !=null)
+            {
+                Debug.LogFormat("任务执行失败：{0}",r.Exception);
+            }
+            else
+            {    
+                Debug.LogFormat("任务执行成功 result = {0}",r.Result);
+            }
+            
+
+            //********启动任务，回调方式调用示例***********//
+            result = StartTask();
+            result.Callbackable().OnCallback((r) => 
+            {
                 if(r.Exception !=null)
                 {
                     Debug.LogFormat("任务执行失败：{0}",r.Exception);
@@ -1065,112 +1128,221 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
                 {    
                     Debug.LogFormat("任务执行成功 result = {0}",r.Result);
                 }
-                
-
-                //********启动任务，回调方式调用示例***********//
-                result = StartTask();
-                result.Callbackable().OnCallback((r) => 
-                {
-                    if(r.Exception !=null)
-                    {
-                        Debug.LogFormat("任务执行失败：{0}",r.Exception);
-                    }
-                    else
-                    {    
-                        Debug.LogFormat("任务执行成功 result = {0}",r.Result);
-                    }
-                });
-                
-            }
-
-            //创建一个任务
-            public IAsyncResult<bool> StartTask()
-            {
-                //创建一个异步结果，参数cancelable = true，支持取消操作
-                AsyncResult<bool> result = new AsyncResult<bool> (true);
-    
-                //启动任务
-                this.StartCoroutine (DoTask (result));
-
-                return result;
-            }
-    
-            /// <summary>
-            /// 模拟一个任务
-            /// </summary>
-            /// <returns>The task.</returns>
-            /// <param name="promise">Promise.</param>
-            protected IEnumerator DoTask (IPromise<bool> promise)
-            {
-                for (int i = 0; i < 20; i++) {
-                    //如果外部调用了AsyncResult.Cancel()函数，则这里的IsCancellationRequested = true，请求取消任务
-                    if (promise.IsCancellationRequested) {        
-                        promise.SetCancelled ();
-                        yield break;
-                    }
-                    yield return new WaitForSeconds (0.5f);
-                }
-                
-                //执行完成必须设置结果
-                promise.SetResult (true);
-            }
+            });
+            
         }
 
-- **ProgressResult**
+        //创建一个任务
+        public IAsyncResult<bool> StartTask()
+        {
+            //创建一个异步结果，参数cancelable = true，支持取消操作
+            AsyncResult<bool> result = new AsyncResult<bool> (true);
 
-    ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面我来看示例。
+            //启动任务
+            this.StartCoroutine (DoTask (result));
+
+            return result;
+        }
 
         /// <summary>
-        /// 任务进度
+        /// 模拟一个任务
         /// </summary>
-        public class Progress
+        /// <returns>The task.</returns>
+        /// <param name="promise">Promise.</param>
+        protected IEnumerator DoTask (IPromise<bool> promise)
         {
-            public int bytes;
-            public int TotalBytes;
-    
-            public int Percentage { get { return (bytes * 100) / TotalBytes; } }
+            for (int i = 0; i < 20; i++) {
+                //如果外部调用了AsyncResult.Cancel()函数，则这里的IsCancellationRequested = true，请求取消任务
+                if (promise.IsCancellationRequested) {        
+                    promise.SetCancelled ();
+                    yield break;
+                }
+                yield return new WaitForSeconds (0.5f);
+            }
+            
+            //执行完成必须设置结果
+            promise.SetResult (true);
         }
-    
-        public class ProgressResultExample : MonoBehaviour
+    }
+
+#### ProgressResult ####
+
+ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面我来看示例。
+
+    /// <summary>
+    /// 任务进度
+    /// </summary>
+    public class Progress
+    {
+        public int bytes;
+        public int TotalBytes;
+
+        public int Percentage { get { return (bytes * 100) / TotalBytes; } }
+    }
+
+    public class ProgressResultExample : MonoBehaviour
+    {
+        protected void Start()
         {
-            protected void Start()
+            //开始一个任务
+            IProgressResult<Progress, string> result = StartTask();
+
+            //打印任务进度
+            result.Callbackable().OnProgressCallback(progress => 
             {
-                //开始一个任务
-                IProgressResult<Progress, string> result = StartTask();
-    
-                //打印任务进度
-                result.Callbackable().OnProgressCallback(progress => 
-                {
-                    Debug.LogFormat("Percentage: {0}% ", progress.Percentage);
-                });
-    
-                //监听任务结果
-                result.Callbackable().OnCallback(r =>
-                {
-                    Debug.LogFormat("IsDone:{0} Result:{1}", r.IsDone, r.Result);
-                });
-            }
-    
-            public IProgressResult<Progress, string> StartTask()
+                Debug.LogFormat("Percentage: {0}% ", progress.Percentage);
+            });
+
+            //监听任务结果
+            result.Callbackable().OnCallback(r =>
             {
-                ProgressResult<Progress, string> result = new ProgressResult<Progress, string>(true);
-    
-                this.StartCoroutine(DoTask(result));
-    
-                return result;
+                Debug.LogFormat("IsDone:{0} Result:{1}", r.IsDone, r.Result);
+            });
+        }
+
+        public IProgressResult<Progress, string> StartTask()
+        {
+            ProgressResult<Progress, string> result = new ProgressResult<Progress, string>(true);
+
+            this.StartCoroutine(DoTask(result));
+
+            return result;
+        }
+
+        /// <summary>
+        /// 模拟一个有进度的任务
+        /// </summary>
+        /// <returns>The task.</returns>
+        /// <param name="promise">Promise.</param>
+        protected IEnumerator DoTask(IProgressPromise<Progress, string> promise)
+        {
+            int n = 50;
+            Progress progress = new Progress();
+            progress.TotalBytes = n;
+            progress.bytes = 0;
+            StringBuilder buf = new StringBuilder();
+            for (int i = 0; i < n; i++)
+            {
+                /* If the task is cancelled, then stop the task */
+                if (promise.IsCancellationRequested)
+                {
+                    promise.SetCancelled();
+                    yield break;
+                }
+
+                progress.bytes += 1;
+                buf.Append(" ").Append(i);
+                promise.UpdateProgress(progress);/* update the progress of task. */
+                yield return new WaitForSeconds(0.01f);
             }
+
+            //执行完成必须设置结果
+            promise.SetResult(buf.ToString()); 
+        }
+
+    }
+
+#### AsyncTask ####
+
+异步任务是对一个线程任务或者一个协程任务的封装，将一个迭代器IEnumerator传入AsyncTask可以创建一个协程任务，或者将一个委托函数传入，可以创建一个后台线程执行的任务。根据任务执行过程，将一个任务拆分成执行前、执行成功后/执行失败后、执行结束几个阶段，在每一个阶段中都可以通过一个委托回调来注册自己的代码块。下面的示例中，我们来看看怎么创建一个协程任务。
+
+    public class AsyncTaskExample : MonoBehaviour
+    {
+        protected IEnumerator Start()
+        {
+            AsyncTask task = new AsyncTask(DoTask(), true);
+
+            /* 开始任务 */
+            task.OnPreExecute(() =>
+            {
+                //任务执行前调用
+                Debug.Log("The task has started.");
+            }).OnPostExecute(() =>
+            {
+                //任务成功执行后调用
+                Debug.Log("The task has completed.");/* only execute successfully */
+            }).OnError((e) =>
+            {
+                //任务执行失败调用
+                Debug.LogFormat("An error occurred:{0}", e);
+            }).OnFinish(() =>
+            {
+                //任务执行完毕，无论成功失败，都会调用
+                Debug.Log("The task has been finished.");/* completed or error or canceled*/
+            }).Start();
+
+            //等待任务结束
+            yield return task.WaitForDone();
+
+            Debug.LogFormat("IsDone:{0} IsCanceled:{1} Exception:{2}", task.IsDone, task.IsCancelled, task.Exception);
+        }
+
+        /// <summary>
+        /// 模拟一个任务的执行
+        /// </summary>
+        /// <returns>The task.</returns>
+        /// <param name="promise">Promise.</param>
+        protected IEnumerator DoTask()
+        {
+            int n = 10;
+            for (int i = 0; i < n; i++)
+            {
+                yield return new WaitForSeconds(0.5f);
+            }
+        }    
+    }
+
+#### ProgressTask ####
     
-            /// <summary>
-            /// 模拟一个有进度的任务
-            /// </summary>
-            /// <returns>The task.</returns>
-            /// <param name="promise">Promise.</param>
-            protected IEnumerator DoTask(IProgressPromise<Progress, string> promise)
+ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样ProgressTask既可以创建一个协程任务，也可以创建一个后台线程的任务。
+
+    public class ProgressTaskExample : MonoBehaviour
+    {
+        protected IEnumerator Start()
+        {
+            //创建一个任务，这个任务将在一个后台线程中执行
+            ProgressTask<float, string> task = new ProgressTask<float, string>(
+                    new Action<IProgressPromise<float, string>>(DoTask), false, true);
+
+            /* 开始一个任务 */
+            task.OnPreExecute(() =>
+            {
+                //在任务执行前调用
+                Debug.Log("The task has started.");
+            }).OnPostExecute((result) =>
+            {
+                //在任务成功执行后调用
+                Debug.LogFormat("The task has completed. result:{0}", result);/* only execute successfully */
+            }).OnProgressUpdate((progress) =>
+            {
+                //任务执行的进度
+                Debug.LogFormat("The current progress:{0}%", (int)(progress * 100));
+            }).OnError((e) =>
+            {
+                //在任务执行失败后调用
+                Debug.LogFormat("An error occurred:{0}", e);
+            }).OnFinish(() =>
+            {
+                //任务执行完毕，无论成功失败，都会调用
+                Debug.Log("The task has been finished.");/* completed or error or canceled*/
+            }).Start();
+
+            yield return task.WaitForDone();
+
+            Debug.LogFormat("IsDone:{0} IsCanceled:{1} Exception:{2}", task.IsDone, task.IsCancelled, task.Exception);
+        }
+
+        /// <summary>
+        /// 模拟一个任务，这不是一个迭代器，这将会在一个后台线程中执行
+        /// </summary>
+        /// <returns>The task.</returns>
+        /// <param name="promise">Promise.</param>
+        protected void DoTask(IProgressPromise<float, string> promise)
+        {
+            try
             {
                 int n = 50;
-                Progress progress = new Progress();
-                progress.TotalBytes = n;
-                progress.bytes = 0;
+                float progress = 0f;
                 StringBuilder buf = new StringBuilder();
                 for (int i = 0; i < n; i++)
                 {
@@ -1178,254 +1350,131 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
                     if (promise.IsCancellationRequested)
                     {
                         promise.SetCancelled();
-                        yield break;
+                        break;
                     }
-    
-                    progress.bytes += 1;
+
+                    progress = i / (float)n;
                     buf.Append(" ").Append(i);
                     promise.UpdateProgress(progress);/* update the progress of task. */
-                    yield return new WaitForSeconds(0.01f);
+                    Thread.Sleep(200);
                 }
-
-                //执行完成必须设置结果
-                promise.SetResult(buf.ToString()); 
+                promise.UpdateProgress(1f);
+                promise.SetResult(buf.ToString()); /* update the result. */
             }
-    
-        }
-
-- **AsyncTask**
-
-    异步任务是对一个线程任务或者一个协程任务的封装，将一个迭代器IEnumerator传入AsyncTask可以创建一个协程任务，或者将一个委托函数传入，可以创建一个后台线程执行的任务。根据任务执行过程，将一个任务拆分成执行前、执行成功后/执行失败后、执行结束几个阶段，在每一个阶段中都可以通过一个委托回调来注册自己的代码块。下面的示例中，我们来看看怎么创建一个协程任务。
-
-        public class AsyncTaskExample : MonoBehaviour
-        {
-            protected IEnumerator Start()
+            catch (System.Exception e)
             {
-                AsyncTask task = new AsyncTask(DoTask(), true);
-    
-                /* 开始任务 */
-                task.OnPreExecute(() =>
-                {
-                    //任务执行前调用
-                    Debug.Log("The task has started.");
-                }).OnPostExecute(() =>
-                {
-                    //任务成功执行后调用
-                    Debug.Log("The task has completed.");/* only execute successfully */
-                }).OnError((e) =>
-                {
-                    //任务执行失败调用
-                    Debug.LogFormat("An error occurred:{0}", e);
-                }).OnFinish(() =>
-                {
-                    //任务执行完毕，无论成功失败，都会调用
-                    Debug.Log("The task has been finished.");/* completed or error or canceled*/
-                }).Start();
-    
-                //等待任务结束
-                yield return task.WaitForDone();
-    
-                Debug.LogFormat("IsDone:{0} IsCanceled:{1} Exception:{2}", task.IsDone, task.IsCancelled, task.Exception);
-            }
-    
-            /// <summary>
-            /// 模拟一个任务的执行
-            /// </summary>
-            /// <returns>The task.</returns>
-            /// <param name="promise">Promise.</param>
-            protected IEnumerator DoTask()
-            {
-                int n = 10;
-                for (int i = 0; i < n; i++)
-                {
-                    yield return new WaitForSeconds(0.5f);
-                }
-            }    
-        }
-
-- **ProgressTask**
-    
-    ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样ProgressTask既可以创建一个协程任务，也可以创建一个后台线程的任务。
-
-        public class ProgressTaskExample : MonoBehaviour
-        {
-            protected IEnumerator Start()
-            {
-                //创建一个任务，这个任务将在一个后台线程中执行
-                ProgressTask<float, string> task = new ProgressTask<float, string>(
-                        new Action<IProgressPromise<float, string>>(DoTask), false, true);
-    
-                /* 开始一个任务 */
-                task.OnPreExecute(() =>
-                {
-                    //在任务执行前调用
-                    Debug.Log("The task has started.");
-                }).OnPostExecute((result) =>
-                {
-                    //在任务成功执行后调用
-                    Debug.LogFormat("The task has completed. result:{0}", result);/* only execute successfully */
-                }).OnProgressUpdate((progress) =>
-                {
-                    //任务执行的进度
-                    Debug.LogFormat("The current progress:{0}%", (int)(progress * 100));
-                }).OnError((e) =>
-                {
-                    //在任务执行失败后调用
-                    Debug.LogFormat("An error occurred:{0}", e);
-                }).OnFinish(() =>
-                {
-                    //任务执行完毕，无论成功失败，都会调用
-                    Debug.Log("The task has been finished.");/* completed or error or canceled*/
-                }).Start();
-    
-                yield return task.WaitForDone();
-    
-                Debug.LogFormat("IsDone:{0} IsCanceled:{1} Exception:{2}", task.IsDone, task.IsCancelled, task.Exception);
-            }
-    
-            /// <summary>
-            /// 模拟一个任务，这不是一个迭代器，这将会在一个后台线程中执行
-            /// </summary>
-            /// <returns>The task.</returns>
-            /// <param name="promise">Promise.</param>
-            protected void DoTask(IProgressPromise<float, string> promise)
-            {
-                try
-                {
-                    int n = 50;
-                    float progress = 0f;
-                    StringBuilder buf = new StringBuilder();
-                    for (int i = 0; i < n; i++)
-                    {
-                        /* If the task is cancelled, then stop the task */
-                        if (promise.IsCancellationRequested)
-                        {
-                            promise.SetCancelled();
-                            break;
-                        }
-    
-                        progress = i / (float)n;
-                        buf.Append(" ").Append(i);
-                        promise.UpdateProgress(progress);/* update the progress of task. */
-                        Thread.Sleep(200);
-                    }
-                    promise.UpdateProgress(1f);
-                    promise.SetResult(buf.ToString()); /* update the result. */
-                }
-                catch (System.Exception e)
-                {
-                    promise.SetException(e);
-                }
+                promise.SetException(e);
             }
         }
+    }
 
 更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ### 线程/协程执行器 ###
 在Unity3d逻辑脚本的开发中，是不支持多线程的，所有的UnityEngine.Object对象，都只能在主线程中访问和修改，但是在游戏开发过程中，我们很难避免会使用到多线程编程，比如通过Socket连接从网络上接受数据，通过多线程下载资源，一些纯计CPU计算的逻辑切入到后台线程去运算等等。这里就会面临一个线程切换的问题。所以在Loxodon.Framework框架中，我设计了一个线程和协程的执行器配合前文中的任务结果来使用，它能够很方便的将任务切换到主线程执行，也能很方便的开启一个后台线程任务。
 
-- **执行器(Executors)**
+#### 执行器(Executors) ####
 
-        public class ExecutorExample : MonoBehaviour
-        {
-        
-            IEnumerator Start()
-            {
-                //在后台线程中异步运行一个任务
-                Executors.RunAsync(() =>
-                {
-                    Debug.LogFormat("RunAsync ");
-                });
-        
-                //在后台线程中异步运行一个任务
-                Executors.RunAsync(() =>
-                {
-                    //睡眠1000毫秒
-                    Thread.Sleep(1000);
-        
-                    //从后台线程切换到主线程中，
-                    //waitForExecution = true，当前函数直到主线程执行完后才返回
-                    Executors.RunOnMainThread(() =>
-                    {
-                        Debug.LogFormat("RunOnMainThread Time:{0} frame:{1}", Time.time, Time.frameCount);
-                    }, true);
-                });
-        
-                //运行一个协程任务
-                IAsyncResult result = Executors.RunOnCoroutine(DoRun());
-        
-                //等待任务完成
-                yield return result.WaitForDone();
-            }
-        
-            IEnumerator DoRun()
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    Debug.LogFormat("i = {0}", i);
-                    yield return null;
-                }
-            }
-        }
-
-- **定时任务执行器(IScheduledExecutor)**
-
-    在本框架中提供了一个线程的定时任务执行器(ThreadScheduledExecutor)和一个Unity3D协程的定时任务执行器(CoroutineScheduledExecutor),下面我们以线程的定时任务执行器为例，来介绍它的用法。
-
-        //创建并启动一个线程的定时任务执行器
-        var scheduled = new ThreadScheduledExecutor(); 
-        scheduled.Start();
-
-        //延时1000毫秒后执行，以固定频率，每隔2000毫秒，打印一句“This is a test.”
-        IAsyncResult result = scheduled.ScheduleAtFixedRate(() =>
-        {
-            Debug.Log("This is a test.");
-        }, 1000, 2000);
-
-
-- **可拦截的迭代器(InterceptableEnumerator)**
+    public class ExecutorExample : MonoBehaviour
+    {
     
-    在Unity3D的协程中，如果发生异常，是无法捕获到异常的，try catch不允许跨yield使用，finally也不能确保代码块在协程异常结束时还能被执行，所以很多时候无法知道一个协程是否正常执行结束，出现错误也不方便查找原因，根据Unity3D协程其本质是一个迭代器的原理，我设计了一个可以在协程执行过程中注入代码块，捕获异常的可拦截迭代器。使用InterceptableEnumerator对原迭代器进行包装，就可以捕获到协程代码执行异常，并且无论协程是否正常结束，都可在协程退出前插入一个代码块，确保这个代码块一定会在协程结束时执行。在我的Executors中，我就是利用InterceptableEnumerator来确保任务正常结束的，无论协程执行成功或者异常我都能通过注册的Finally语句块来设置AsyncResult的结果，确保AsyncResult.IsDone等于true，不会造成任务卡死。
-
-    InterceptableEnumerator支持条件语句块，可以在外部插入一个条件语句块，控制协程逻辑或中止协程。异常语句块，可以捕获到协程异常，Finally语句块，确保协程结束一定会调用这个语句块。下面我们来看看示例。
-
-        /// <summary>
-        /// 这是一个迭代器的包装函数
-        /// </summary>
-        protected static InterceptableEnumerator WrapEnumerator(IEnumerator routine, IPromise promise)
+        IEnumerator Start()
         {
-            InterceptableEnumerator enumerator;
-            if(routine is InterceptableEnumerator)
-                enumerator = (InterceptableEnumerator)routine;
-            else
-                enumerator = new InterceptableEnumerator(routine);
-
-            //注册一个条件语句块，如果任务取消，IsCancellationRequested = true，则结束任务
-            enumerator.RegisterConditionBlock(() => !(promise.IsCancellationRequested));
-
-            //注册一个异常捕获语句块，如果协程执行错误，则将异常赋值到任务结果，并打印错误
-            enumerator.RegisterCatchBlock(e =>
+            //在后台线程中异步运行一个任务
+            Executors.RunAsync(() =>
             {
-                if (promise != null)
-                    promise.SetException(e);
-            
-                if (log.IsErrorEnabled)
-                    log.Error(e);
+                Debug.LogFormat("RunAsync ");
             });
-
-            //注册一个Finally语句块，确保任务能够正常结束退出
-            enumerator.RegisterFinallyBlock(() =>
+    
+            //在后台线程中异步运行一个任务
+            Executors.RunAsync(() =>
             {
-                if (promise != null && !promise.IsDone)
+                //睡眠1000毫秒
+                Thread.Sleep(1000);
+    
+                //从后台线程切换到主线程中，
+                //waitForExecution = true，当前函数直到主线程执行完后才返回
+                Executors.RunOnMainThread(() =>
                 {
-                    if (promise.GetType().IsSubclassOfGenericTypeDefinition(typeof(IPromise<>)))
-                        promise.SetException(new Exception("No value given the Result"));
-                    else
-                        promise.SetResult();
-                }
+                    Debug.LogFormat("RunOnMainThread Time:{0} frame:{1}", Time.time, Time.frameCount);
+                }, true);
             });
-            return enumerator;
+    
+            //运行一个协程任务
+            IAsyncResult result = Executors.RunOnCoroutine(DoRun());
+    
+            //等待任务完成
+            yield return result.WaitForDone();
         }
+    
+        IEnumerator DoRun()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Debug.LogFormat("i = {0}", i);
+                yield return null;
+            }
+        }
+    }
+
+#### 定时任务执行器(IScheduledExecutor) ####
+
+在本框架中提供了一个线程的定时任务执行器(ThreadScheduledExecutor)和一个Unity3D协程的定时任务执行器(CoroutineScheduledExecutor),下面我们以线程的定时任务执行器为例，来介绍它的用法。
+
+    //创建并启动一个线程的定时任务执行器
+    var scheduled = new ThreadScheduledExecutor(); 
+    scheduled.Start();
+
+    //延时1000毫秒后执行，以固定频率，每隔2000毫秒，打印一句“This is a test.”
+    IAsyncResult result = scheduled.ScheduleAtFixedRate(() =>
+    {
+        Debug.Log("This is a test.");
+    }, 1000, 2000);
+
+
+#### 可拦截的迭代器(InterceptableEnumerator) ####
+    
+在Unity3D的协程中，如果发生异常，是无法捕获到异常的，try catch不允许跨yield使用，finally也不能确保代码块在协程异常结束时还能被执行，所以很多时候无法知道一个协程是否正常执行结束，出现错误也不方便查找原因，根据Unity3D协程其本质是一个迭代器的原理，我设计了一个可以在协程执行过程中注入代码块，捕获异常的可拦截迭代器。使用InterceptableEnumerator对原迭代器进行包装，就可以捕获到协程代码执行异常，并且无论协程是否正常结束，都可在协程退出前插入一个代码块，确保这个代码块一定会在协程结束时执行。在我的Executors中，我就是利用InterceptableEnumerator来确保任务正常结束的，无论协程执行成功或者异常我都能通过注册的Finally语句块来设置AsyncResult的结果，确保AsyncResult.IsDone等于true，不会造成任务卡死。
+
+InterceptableEnumerator支持条件语句块，可以在外部插入一个条件语句块，控制协程逻辑或中止协程。异常语句块，可以捕获到协程异常，Finally语句块，确保协程结束一定会调用这个语句块。下面我们来看看示例。
+
+    /// <summary>
+    /// 这是一个迭代器的包装函数
+    /// </summary>
+    protected static InterceptableEnumerator WrapEnumerator(IEnumerator routine, IPromise promise)
+    {
+        InterceptableEnumerator enumerator;
+        if(routine is InterceptableEnumerator)
+            enumerator = (InterceptableEnumerator)routine;
+        else
+            enumerator = new InterceptableEnumerator(routine);
+
+        //注册一个条件语句块，如果任务取消，IsCancellationRequested = true，则结束任务
+        enumerator.RegisterConditionBlock(() => !(promise.IsCancellationRequested));
+
+        //注册一个异常捕获语句块，如果协程执行错误，则将异常赋值到任务结果，并打印错误
+        enumerator.RegisterCatchBlock(e =>
+        {
+            if (promise != null)
+                promise.SetException(e);
+        
+            if (log.IsErrorEnabled)
+                log.Error(e);
+        });
+
+        //注册一个Finally语句块，确保任务能够正常结束退出
+        enumerator.RegisterFinallyBlock(() =>
+        {
+            if (promise != null && !promise.IsDone)
+            {
+                if (promise.GetType().IsSubclassOfGenericTypeDefinition(typeof(IPromise<>)))
+                    promise.SetException(new Exception("No value given the Result"));
+                else
+                    promise.SetResult();
+            }
+        });
+        return enumerator;
+    }
 
 更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 

@@ -233,7 +233,7 @@ namespace Loxodon.Framework.Configurations
                     return defaultValue;
 
                 List<object> list = new List<object>();
-                string[] items = str.Split(new char[] { ',' });
+                string[] items = StringSpliter.Split(str, ',');
                 foreach (string item in items)
                 {
                     object ret = null;
@@ -294,7 +294,7 @@ namespace Loxodon.Framework.Configurations
                     return defaultValue;
 
                 List<T> list = new List<T>();
-                string[] items = str.Split(new char[] { ',' });
+                string[] items = StringSpliter.Split(str, ',');
                 foreach (string item in items)
                 {
                     T ret = default(T);
