@@ -23,7 +23,7 @@ namespace Loxodon.Framework.Utilities
         public static string[] Split(string input, params char[] characters)
         {
             if (string.IsNullOrEmpty(input))
-                return null;
+                return new string[0];
 
             var spliter = Spliter;
             try
@@ -41,6 +41,7 @@ namespace Loxodon.Framework.Utilities
         private char[] separators;
         private int total = 0;
         private int pos = -1;
+        private readonly List<string> items = new List<string>();
         private StringSpliter()
         {
         }
@@ -51,12 +52,14 @@ namespace Loxodon.Framework.Utilities
                 throw new ArgumentException("Invalid argument", "text");
 
             if (separators == null || separators.Length == 0)
-                throw new ArgumentException("Invalid argument", "separators");
+                this.separators = new char[] { ',' };
+            else
+                this.separators = separators;
 
             this.text = text;
-            this.separators = separators;
             this.total = this.text.Length;
             this.pos = -1;
+            this.items.Clear();
         }
 
         public char Current
@@ -88,6 +91,7 @@ namespace Loxodon.Framework.Utilities
         public void Reset()
         {
             this.pos = -1;
+            this.items.Clear();
         }
 
         public void Clear()
@@ -96,28 +100,28 @@ namespace Loxodon.Framework.Utilities
             this.separators = null;
             this.pos = -1;
             this.total = 0;
+            this.items.Clear();
         }
 
         public string[] Split()
         {
-            List<string> list = new List<string>();
             while (this.MoveNext())
             {
                 char ch = this.Current;
                 if (separators.Contains(ch))
                 {
-                    list.Add("");
+                    items.Add("");
                     continue;
                 }
 
                 string content = this.ReadString(separators);
-                list.Add(content);
+                items.Add(content);
             }
 
             if (separators.Contains(this.Current))
-                list.Add("");
+                items.Add("");
 
-            return list.ToArray();
+            return items.ToArray();
         }
 
         private bool IsEOF()
@@ -167,14 +171,16 @@ namespace Loxodon.Framework.Utilities
 
         private void ReadQuotedString(StringBuilder buf, char start, char end)
         {
+            char prev = '\0';
             char ch = this.Current;
             if (ch != start)
                 throw new Exception(string.Format("Error parsing string , unexpected quote character {0} in text {1}", ch, this.text));
 
             while (this.MoveNext())
             {
+                prev = ch;
                 ch = this.Current;
-                if (ch == end)
+                if (prev != '\\' && ch == end)
                     return;
 
                 buf.Append(ch);
@@ -222,6 +228,9 @@ namespace Loxodon.Framework.Utilities
                     buf.Append(ch);
                 }
             } while (this.MoveNext());
+
+            buf.Replace("&quot;", "\"");
+            buf.Replace("\\\"", "\"");
             return buf.ToString();
         }
     }

@@ -14,6 +14,7 @@ namespace Loxodon.Framework.Binding.Contexts
         private readonly Dictionary<object, List<IBinding>> bindings = new Dictionary<object, List<IBinding>>();
 
         private IBinder binder;
+        private object owner;
         private object dataContext;
         private readonly object _lock = new object();
         private EventHandler dataContextChanged;
@@ -24,22 +25,28 @@ namespace Loxodon.Framework.Binding.Contexts
             remove { lock (_lock) { this.dataContextChanged -= value; } }
         }
 
-        public BindingContext(IBinder binder) : this(binder, (object)null)
+        public BindingContext(IBinder binder) : this(null, binder, (object)null)
         {
         }
 
-        public BindingContext(IBinder binder, object dataContext)
+        public BindingContext(object owner, IBinder binder) : this(owner, binder, (object)null)
         {
+        }
+
+        public BindingContext(object owner, IBinder binder, object dataContext)
+        {
+            this.owner = owner;
             this.binder = binder;
             this.DataContext = dataContext;
         }
 
-        public BindingContext(IBinder binder, IDictionary<object, IEnumerable<BindingDescription>> firstBindings) : this(binder, null, firstBindings)
+        public BindingContext(object owner, IBinder binder, IDictionary<object, IEnumerable<BindingDescription>> firstBindings) : this(owner, binder, null, firstBindings)
         {
         }
 
-        public BindingContext(IBinder binder, object dataContext, IDictionary<object, IEnumerable<BindingDescription>> firstBindings)
+        public BindingContext(object owner, IBinder binder, object dataContext, IDictionary<object, IEnumerable<BindingDescription>> firstBindings)
         {
+            this.owner = owner;
             this.binder = binder;
             this.DataContext = dataContext;
 
@@ -56,6 +63,8 @@ namespace Loxodon.Framework.Binding.Contexts
         {
             get { return this.binder; }
         }
+
+        public object Owner { get { return this.owner; } }
 
         public object DataContext
         {
@@ -126,6 +135,7 @@ namespace Loxodon.Framework.Binding.Contexts
                 return;
 
             List<IBinding> list = this.GetOrCreateList(key);
+            binding.BindingContext = this;
             list.Add(binding);
         }
 
@@ -135,18 +145,22 @@ namespace Loxodon.Framework.Binding.Contexts
                 return;
 
             List<IBinding> list = this.GetOrCreateList(key);
-            list.AddRange(bindings);
+            foreach (IBinding binding in bindings)
+            {
+                binding.BindingContext = this;
+                list.Add(binding);
+            }
         }
 
         public virtual void Add(object target, BindingDescription description, object key = null)
         {
-            IBinding binding = this.Binder.Bind(this.DataContext, target, description);
+            IBinding binding = this.Binder.Bind(this, this.DataContext, target, description);
             this.Add(binding, key);
         }
 
         public virtual void Add(object target, IEnumerable<BindingDescription> descriptions, object key = null)
         {
-            IEnumerable<IBinding> bindings = this.Binder.Bind(this.DataContext, target, descriptions);
+            IEnumerable<IBinding> bindings = this.Binder.Bind(this, this.DataContext, target, descriptions);
             this.Add(bindings, key);
         }
 
@@ -188,6 +202,8 @@ namespace Loxodon.Framework.Binding.Contexts
                 if (disposing)
                 {
                     this.Clear();
+                    this.owner = null;
+                    this.binder = null;
                 }
                 disposed = true;
             }

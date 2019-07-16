@@ -12,8 +12,6 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 {
     public abstract class UnityEventProxyBase<T> : EventTargetProxyBase where T : UnityEventBase
     {
-        //private static readonly ILog log = LogManager.GetLogger(typeof(UnityEventProxyBase<T>));
-
         private bool disposed = false;
         protected ICommand command;/* Command Binding */
         protected IProxyInvoker invoker;/* Method Binding */
@@ -263,8 +261,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
             catch (Exception e)
             {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("{0}", e);
+                if (log.IsErrorEnabled)
+                    log.ErrorFormat("{0}", e);
             }
         }
     }
@@ -356,8 +354,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
             catch (Exception e)
             {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("{0}", e);
+                if (log.IsErrorEnabled)
+                    log.ErrorFormat("{0}", e);
             }
         }
     }
@@ -451,8 +449,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
             catch (Exception e)
             {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("{0}", e);
+                if (log.IsErrorEnabled)
+                    log.ErrorFormat("{0}", e);
             }
         }
     }
@@ -549,8 +547,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
             catch (Exception e)
             {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("{0}", e);
+                if (log.IsErrorEnabled)
+                    log.ErrorFormat("{0}", e);
             }
         }
     }
@@ -649,8 +647,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
             catch (Exception e)
             {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("{0}", e);
+                if (log.IsErrorEnabled)
+                    log.ErrorFormat("{0}", e);
             }
         }
     }

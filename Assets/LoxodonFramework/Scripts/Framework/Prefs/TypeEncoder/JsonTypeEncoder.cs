@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 #if NETFX_CORE
@@ -19,12 +20,16 @@ namespace Loxodon.Framework.Prefs
 
         public bool IsSupport(Type type)
         {
+            if (typeof(IList).IsAssignableFrom(type) || typeof(IDictionary).IsAssignableFrom(type))
+                return false;
+
 #if NETFX_CORE
             if (type.GetTypeInfo().IsPrimitive)
 #else
             if (type.IsPrimitive)
 #endif
                 return false;
+
             return true;
         }
 

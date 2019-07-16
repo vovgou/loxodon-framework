@@ -1,4 +1,5 @@
-﻿using Loxodon.Framework.Binding.Proxy.Sources;
+﻿using Loxodon.Framework.Binding.Contexts;
+using Loxodon.Framework.Binding.Proxy.Sources;
 using Loxodon.Framework.Binding.Proxy.Targets;
 
 namespace Loxodon.Framework.Binding
@@ -26,9 +27,9 @@ namespace Loxodon.Framework.Binding
             this.targetProxyFactory = targetProxyFactory;
         }
 
-        public IBinding Create(object source, object target, BindingDescription bindingDescription)
+        public IBinding Create(IBindingContext bindingContext, object source, object target, BindingDescription bindingDescription)
         {
-            return new Binding(source, target, bindingDescription, this.sourceProxyFactory, this.targetProxyFactory);
+            return new Binding(bindingContext, source, target, bindingDescription, this.sourceProxyFactory, this.targetProxyFactory);
         }
     }
 }

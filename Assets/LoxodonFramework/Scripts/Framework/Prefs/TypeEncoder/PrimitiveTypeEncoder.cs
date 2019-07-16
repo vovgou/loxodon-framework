@@ -82,33 +82,20 @@ namespace Loxodon.Framework.Prefs
                 case TypeCode.String:
                     return input;
                 case TypeCode.Boolean:
-                    return Convert.ToBoolean(input);
                 case TypeCode.SByte:
-                    return Convert.ToSByte(input);
                 case TypeCode.Byte:
-                    return Convert.ToByte(input);
                 case TypeCode.Int16:
-                    return Convert.ToInt16(input);
                 case TypeCode.UInt16:
-                    return Convert.ToUInt16(input);
                 case TypeCode.Int32:
-                    return Convert.ToInt32(input);
                 case TypeCode.UInt32:
-                    return Convert.ToUInt32(input);
                 case TypeCode.Int64:
-                    return Convert.ToInt64(input);
                 case TypeCode.UInt64:
-                    return Convert.ToUInt64(input);
                 case TypeCode.Char:
-                    return Convert.ToChar(input);
                 case TypeCode.Single:
-                    return Convert.ToSingle(input);
                 case TypeCode.Double:
-                    return Convert.ToDouble(input);
                 case TypeCode.Decimal:
-                    return Convert.ToDecimal(input);
                 case TypeCode.DateTime:
-                    return Convert.ToDateTime(input);
+                    return Convert.ChangeType(input, type);
             }
 
             throw new NotSupportedException();

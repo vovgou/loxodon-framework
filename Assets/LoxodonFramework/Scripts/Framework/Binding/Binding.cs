@@ -11,6 +11,7 @@ using Loxodon.Framework.Binding.Proxy.Targets;
 using UnityEngine.Events;
 using Loxodon.Framework.Execution;
 using UnityEngine;
+using Loxodon.Framework.Binding.Contexts;
 
 namespace Loxodon.Framework.Binding
 {
@@ -35,18 +36,34 @@ namespace Loxodon.Framework.Binding
         private object _lock = new object();
         private bool isUpdatingSource;
         private bool isUpdatingTarget;
+        private string targetTypeName;
 
-        public Binding(object source, object target, BindingDescription bindingDescription, ISourceProxyFactory sourceProxyFactory, ITargetProxyFactory targetProxyFactory) : base(source, target)
+        public Binding(IBindingContext bindingContext, object source, object target, BindingDescription bindingDescription, ISourceProxyFactory sourceProxyFactory, ITargetProxyFactory targetProxyFactory) : base(bindingContext, source, target)
         {
+            this.targetTypeName = target.GetType().Name;
             this.bindingDescription = bindingDescription;
 
             this.converter = bindingDescription.Converter;
             this.sourceProxyFactory = sourceProxyFactory;
             this.targetProxyFactory = targetProxyFactory;
 
-            this.CreateTargetProxy(this.Target, this.bindingDescription);
+            this.CreateTargetProxy(target, this.bindingDescription);
             this.CreateSourceProxy(this.DataContext, this.bindingDescription.Source);
             this.UpdateDataOnBind();
+        }
+
+        protected virtual string GetViewName()
+        {
+            if (this.BindingContext == null)
+                return "unknown";
+
+            var owner = this.BindingContext.Owner;
+            if (owner == null)
+                return "unknown";
+
+            string typeName = owner.GetType().Name;
+            string name = (owner is Behaviour) ? ((Behaviour)owner).name : "";
+            return string.IsNullOrEmpty(name) ? typeName : string.Format("{0}[{1}]", typeName, name);
         }
 
         protected override void OnDataContextChanged()
@@ -335,7 +352,7 @@ namespace Loxodon.Framework.Binding
                     catch (Exception e)
                     {
                         if (log.IsErrorEnabled)
-                            log.ErrorFormat("An exception occurs when the target property is updated.Please check this binding \"{0}\".exception: {1}", this.bindingDescription.ToString(), e);
+                            log.ErrorFormat("An exception occurs when the target property is updated.Please check the binding \"{0}{1}\" in the view \"{2}\".exception: {3}", this.targetTypeName, this.bindingDescription.ToString(), GetViewName(), e);
                     }
                     finally
                     {
@@ -362,7 +379,6 @@ namespace Loxodon.Framework.Binding
                 IModifiable modifier = this.sourceProxy as IModifiable;
                 if (modifier == null)
                     return;
-
 #if NETFX_CORE
                 TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(valueType);
 #else
@@ -515,7 +531,7 @@ namespace Loxodon.Framework.Binding
             catch (Exception e)
             {
                 if (log.IsErrorEnabled)
-                    log.ErrorFormat("An exception occurs when the source property is updated.Please check this binding \"{0}\".exception: {1}", this.bindingDescription.ToString(), e);
+                    log.ErrorFormat("An exception occurs when the source property is updated.Please check the binding \"{0}{1}\" in the view \"{2}\".exception: {3}", this.targetTypeName, this.bindingDescription.ToString(), GetViewName(), e);
             }
             finally
             {
@@ -644,6 +660,7 @@ namespace Loxodon.Framework.Binding
             {
                 this.DisposeSourceProxy();
                 this.DisposeTargetProxy();
+                this.bindingDescription = null;
                 disposed = true;
                 base.Dispose(disposing);
             }

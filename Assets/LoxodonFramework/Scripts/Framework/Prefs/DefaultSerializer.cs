@@ -57,7 +57,7 @@ namespace Loxodon.Framework.Prefs
                 }
 
             }
-            throw new NotSupportedException();
+            throw new NotSupportedException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", input, type.Name));
         }
 
         public virtual string Serialize(object value)
@@ -77,7 +77,7 @@ namespace Loxodon.Framework.Prefs
                     catch (Exception) { }
                 }
             }
-            throw new NotSupportedException();
+            throw new NotSupportedException(string.Format("Unsupported type, this value \"{0}\" cannot be serialized", value));
         }
 
         class ComparerImpl<T> : IComparer<T> where T : ITypeEncoder

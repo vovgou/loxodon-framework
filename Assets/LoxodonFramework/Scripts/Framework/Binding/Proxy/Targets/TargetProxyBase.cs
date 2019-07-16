@@ -1,5 +1,6 @@
 ﻿using Loxodon.Log;
 using System;
+using UnityEngine.EventSystems;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
@@ -18,7 +19,40 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public abstract Type Type { get; }
 
-        public virtual object Target { get { return this.target != null && this.target.IsAlive ? this.target.Target : null; } }
+        public virtual object Target
+        {
+            get
+            {
+                var target = this.target != null ? this.target.Target : null;
+                return IsAlive(target) ? target : null;
+            }
+        }
+        private bool IsAlive(object target)
+        {
+            try
+            {
+                if (target is UIBehaviour)
+                {
+                    if (((UIBehaviour)target).IsDestroyed())
+                        return false;
+                    return true;
+                }
+
+                if (target is UnityEngine.Object)
+                {
+                    //Check if the object is valid because it may have been destroyed.
+                    //Unmanaged objects,the weak caches do not accurately track the validity of objects.
+                    var name = ((UnityEngine.Object)target).name;
+                    return true;
+                }
+
+                return target != null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         public virtual BindingMode DefaultMode { get { return BindingMode.OneWay; } }
     }

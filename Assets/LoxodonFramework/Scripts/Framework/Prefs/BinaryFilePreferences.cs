@@ -143,6 +143,29 @@ namespace Loxodon.Framework.Prefs
             }
         }
 
+        public override object GetObject(string key, Type type, object defaultValue)
+        {
+            if (!this.dict.ContainsKey(key))
+                return defaultValue;
+
+            string str = this.dict[key];
+            if (string.IsNullOrEmpty(str))
+                return defaultValue;
+
+            return serializer.Deserialize(str, type);
+        }
+
+        public override void SetObject(string key, object value)
+        {
+            if (value == null)
+            {
+                this.dict.Remove(key);
+                return;
+            }
+
+            this.dict[key] = serializer.Serialize(value);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -152,21 +175,14 @@ namespace Loxodon.Framework.Prefs
         /// <returns></returns>
         public override T GetObject<T>(string key, T defaultValue)
         {
-            try
-            {
-                if (!this.dict.ContainsKey(key))
-                    return defaultValue;
+            if (!this.dict.ContainsKey(key))
+                return defaultValue;
 
-                string str = this.dict[key];
-                if (string.IsNullOrEmpty(str))
-                    return defaultValue;
+            string str = this.dict[key];
+            if (string.IsNullOrEmpty(str))
+                return defaultValue;
 
-                return (T)serializer.Deserialize(str, typeof(T));
-            }
-            catch (Exception e)
-            {
-                throw new NotSupportedException("unsupported type", e);
-            }
+            return (T)serializer.Deserialize(str, typeof(T));
         }
 
         /// <summary>
@@ -177,20 +193,101 @@ namespace Loxodon.Framework.Prefs
         /// <param name="value"></param>
         public override void SetObject<T>(string key, T value)
         {
-            try
+            if (value == null)
             {
-                if (value == null)
-                {
-                    this.dict.Remove(key);
-                    return;
-                }
+                this.dict.Remove(key);
+                return;
+            }
 
-                this.dict[key] = serializer.Serialize(value);
-            }
-            catch (Exception e)
+            this.dict[key] = serializer.Serialize(value);
+        }
+
+        public override object[] GetArray(string key, Type type, object[] defaultValue)
+        {
+            if (!this.dict.ContainsKey(key))
+                return defaultValue;
+
+            string str = this.dict[key];
+            if (string.IsNullOrEmpty(str))
+                return defaultValue;
+
+            string[] items = str.Split(ARRAY_SEPARATOR);
+            List<object> list = new List<object>();
+            for (int i = 0; i < items.Length; i++)
             {
-                throw new NotSupportedException("unsupported type", e);
+                string item = items[i];
+                if (string.IsNullOrEmpty(item))
+                    list.Add(null);
+                else
+                {
+                    list.Add(serializer.Deserialize(items[i], type));
+                }
             }
+            return list.ToArray();
+        }
+
+        public override void SetArray(string key, object[] values)
+        {
+            if (values == null || values.Length == 0)
+            {
+                this.dict.Remove(key);
+                return;
+            }
+
+            StringBuilder buf = new StringBuilder();
+            for (int i = 0; i < values.Length; i++)
+            {
+                var value = values[i];
+                buf.Append(serializer.Serialize(value));
+                if (i < values.Length - 1)
+                    buf.Append(ARRAY_SEPARATOR);
+            }
+
+            this.dict[key] = buf.ToString();
+        }
+
+        public override T[] GetArray<T>(string key, T[] defaultValue)
+        {
+            if (!this.dict.ContainsKey(key))
+                return defaultValue;
+
+            string str = this.dict[key];
+            if (string.IsNullOrEmpty(str))
+                return defaultValue;
+
+            string[] items = str.Split(ARRAY_SEPARATOR);
+            List<T> list = new List<T>();
+            for (int i = 0; i < items.Length; i++)
+            {
+                string item = items[i];
+                if (string.IsNullOrEmpty(item))
+                    list.Add(default(T));
+                else
+                {
+                    list.Add((T)serializer.Deserialize(items[i], typeof(T)));
+                }
+            }
+            return list.ToArray();
+        }
+
+        public override void SetArray<T>(string key, T[] values)
+        {
+            if (values == null || values.Length == 0)
+            {
+                this.dict.Remove(key);
+                return;
+            }
+
+            StringBuilder buf = new StringBuilder();
+            for (int i = 0; i < values.Length; i++)
+            {
+                var value = values[i];
+                buf.Append(serializer.Serialize(value));
+                if (i < values.Length - 1)
+                    buf.Append(ARRAY_SEPARATOR);
+            }
+
+            this.dict[key] = buf.ToString();
         }
 
         /// <summary>

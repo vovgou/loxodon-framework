@@ -12,6 +12,7 @@ namespace Loxodon.Framework.Prefs
         /// The name of global preferences.
         /// </summary>
         protected static readonly string GLOBAL_NAME = "_GLOBAL_";
+        protected const char ARRAY_SEPARATOR = '|';
         private static Dictionary<string, Preferences> cache = new Dictionary<string, Preferences>();
         private static IFactory _defaultFactory;
         private static IFactory _factory;
@@ -341,9 +342,45 @@ namespace Loxodon.Framework.Prefs
         }
 
         /// <summary>
+        /// Retrieve a value from the preferences.
+        /// The method returns null if the key is not found.
+        /// Supported Types:ValueType,string, Vector2 ,Vector3 ,Vector4,Color,Color32 and Serializable types
+        /// </summary>       
+        /// <param name="key">The name of the preference to retrieve</param>
+        /// <param name="type">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32,Version and Serializable types</param>
+        /// <exception cref="Exception"></exception>
+        /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
+        /// Exception if there is a preference with this name that is not the type.</returns>
+        public object GetObject(string key, Type type)
+        {
+            return this.GetObject(key, type, null);
+        }
+
+        /// <summary>
+        /// Retrieve a value from the preferences. 
+        /// The method returns defaultValue if the key is not found.
+        /// Supported Types:ValueType,string, Vector2 ,Vector3 ,Vector4,Color,Color32,Version and Serializable types
+        /// </summary>
+        /// <param name="key">The name of the preference to retrieve</param>
+        /// <param name="type">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32,Version and Serializable types</param>
+        /// <param name="defaultValue">Value to return if this preference does not exist</param>
+        /// <exception cref="Exception"></exception>
+        /// <returns>Returns the preference value if it exists, or defaultValue.Throws
+        /// Exception if there is a preference with this name that is not the type.</returns>
+        public abstract object GetObject(string key, Type type, object defaultValue);
+
+        /// <summary>
+        /// Set a value in the preferences
+        /// Supported Types:ValueType,string, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types
+        /// </summary>
+        /// <param name="key">The name of the preference</param>
+        /// <param name="value">The new value for the preference</param>
+        public abstract void SetObject(string key, object value);
+
+        /// <summary>
         /// Retrieve a T value from the preferences.
         /// The method returns default(T) if the key is not found.
-        /// Supported Types:ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types
+        /// Supported Types:ValueType,string, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types
         /// </summary>
         /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
         /// <param name="key">The name of the preference to retrieve</param>
@@ -358,9 +395,9 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// Retrieve a T value from the preferences. 
         /// The method returns defaultValue if the key is not found.
-        /// Supported Types:ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32,Version and  Serializable types
+        /// Supported Types:ValueType,string, Vector2 ,Vector3 ,Vector4,Color,Color32,Version and Serializable types
         /// </summary>
-        /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32,Version and  Serializable types</typeparam>
+        /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32,Version and Serializable types</typeparam>
         /// <param name="key">The name of the preference to retrieve</param>
         /// <param name="defaultValue">Value to return if this preference does not exist</param>
         /// <exception cref="Exception"></exception>
@@ -370,12 +407,86 @@ namespace Loxodon.Framework.Prefs
 
         /// <summary>
         /// Set a T value in the preferences
-        /// Supported Types:ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types
+        /// Supported Types:ValueType,string, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types
         /// </summary>
-        /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
+        /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and Serializable types</typeparam>
         /// <param name="key">The name of the preference</param>
         /// <param name="value">The new value for the preference</param>
         public abstract void SetObject<T>(string key, T value);
+
+        /// <summary>
+        /// Retrieve an array from the preferences. 
+        /// The method returns null if the key is not found.
+        /// Supported Types:ValueType,string[], Vector2[],Vector3[],Vector4[],Color[],Color32[],Version[] and  Serializable types
+        /// </summary>
+        /// <param name="key">The name of the preference</param>
+        /// <param name="type">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</param>
+        /// <exception cref="Exception"></exception>
+        /// <returns>Returns the preference value if it exists, or defaultValue.Throws
+        /// Exception if there is a preference with this name that is not an array.</returns>
+        public object[] GetArray(string key, Type type)
+        {
+            return GetArray(key, type, null);
+        }
+
+        /// <summary>
+        /// Retrieve an array from the preferences. 
+        /// The method returns defaultValue if the key is not found.
+        /// Supported Types:ValueType,string[], Vector2[],Vector3[],Vector4[],Color[],Color32[],Version[] and  Serializable types
+        /// </summary>
+        /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
+        /// <param name="key">The name of the preference</param>
+        /// <param name="defaultValue">Value to return if this preference does not exist</param>
+        /// <exception cref="Exception"></exception>
+        /// <returns>Returns the preference value if it exists, or defaultValue.Throws
+        /// Exception if there is a preference with this name that is not an array.</returns>
+        public abstract object[] GetArray(string key, Type type, object[] defaultValue);
+
+        /// <summary>
+        /// Set an array in the preferences
+        /// Supported Types:ValueType,string[], Vector2[],Vector3[],Vector4[],Color[],Color32[],Version[] and  Serializable types
+        /// </summary>
+        /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
+        /// <param name="key">The name of the preference</param>
+        /// <param name="values">The new value for the preference</param>
+        public abstract void SetArray(string key, object[] values);
+
+        /// <summary>
+        /// Retrieve the array value of T from the preferences. 
+        /// The method returns null if the key is not found.
+        /// Supported Types:ValueType,string[], Vector2[],Vector3[],Vector4[],Color[],Color32[],Version[] and  Serializable types
+        /// </summary>
+        /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
+        /// <param name="key">The name of the preference</param>
+        /// <exception cref="Exception"></exception>
+        /// <returns>Returns the preference value if it exists, or defaultValue.Throws
+        /// Exception if there is a preference with this name that is not an array of T.</returns>
+        public T[] GetArray<T>(string key)
+        {
+            return GetArray<T>(key, null);
+        }
+
+        /// <summary>
+        /// Retrieve the array value of T from the preferences. 
+        /// The method returns defaultValue if the key is not found.
+        /// Supported Types:ValueType,string[], Vector2[],Vector3[],Vector4[],Color[],Color32[],Version[] and  Serializable types
+        /// </summary>
+        /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
+        /// <param name="key">The name of the preference</param>
+        /// <param name="defaultValue">Value to return if this preference does not exist</param>
+        /// <exception cref="Exception"></exception>
+        /// <returns>Returns the preference value if it exists, or defaultValue.Throws
+        /// Exception if there is a preference with this name that is not an array of T.</returns>
+        public abstract T[] GetArray<T>(string key, T[] defaultValue);
+
+        /// <summary>
+        /// Set an array value of T in the preferences
+        /// Supported Types:ValueType,string[], Vector2[],Vector3[],Vector4[],Color[],Color32[],Version[] and  Serializable types
+        /// </summary>
+        /// <typeparam name="T">Supported: ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 and  Serializable types</typeparam>
+        /// <param name="key">The name of the preference</param>
+        /// <param name="values">The new value for the preference</param>
+        public abstract void SetArray<T>(string key, T[] values);
 
         /// <summary>
         /// Checks whether the preferences contains a preference.

@@ -7,6 +7,8 @@ namespace Loxodon.Framework.Binding.Contexts
     {
         event EventHandler DataContextChanged;
 
+        object Owner { get; }
+
         object DataContext { get; set; }
 
         void Add(IBinding binding,object key=null);

@@ -207,40 +207,6 @@ namespace Loxodon.Framework.Binding.Paths
         }
     }
 
-    //[Serializable]
-    //public class TypeNode : IPathNode
-    //{
-    //    private Type type;
-    //    public TypeNode(string name)
-    //    {
-    //        this.Name = name;
-    //    }
-
-    //    public TypeNode(Type type)
-    //    {
-    //        this.Name = type.FullName;
-    //        this.type = type;
-    //    }
-
-    //    public Type Type { get { return type; } }
-
-    //    public string Name { get; private set; }
-
-    //    public bool IsStatic { get { return true; } }
-
-    //    public void AppendTo(StringBuilder output)
-    //    {
-    //        if (output.Length > 0)
-    //            output.Append(".");
-    //        output.Append(this.Name);
-    //    }
-
-    //    public override string ToString()
-    //    {
-    //        return "TypeNode:" + (this.Name == null ? "null" : this.Name);
-    //    }
-    //}
-
     [Serializable]
     public abstract class IndexedNode : IPathNode
     {
