@@ -25,30 +25,30 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
 **关键特性**
 
-- 支持多平台，高扩展性，面向接口开发; 
-- 支持C#和Lua开发; 
-- 支持线程和协程的异步结果和异步任务，采用Future/Promise设计模式; 
-- 提供了多线程组件，线程切换组件和定时执行器; 
-- 提供了一个消息系统，支持订阅和发布; 
-- 提供可加密的配置文件，支持对象存取，可自定义类型转换器，扩展功能; 
-- 提供了本地化支持，与Android的本地化类似，支持基本数据类型、数组、和U3D的一些值类型; 
-- 支持全局上下文和玩家上下文; 
-- 提供了一个服务容器，支持注册和注销服务; 
-- 提供了AlertDialog、Loading、Toast等通用UI控件，支持自定义外观; 
-- 提供了UI视图的控制和管理功能； 
-- 提供数据绑定功能: 
-    - Field绑定，只支持OneTime的模式，因无法支持改变通知; 
-    - 属性绑定，支持TwoWay双向绑定，值修改自动通知; 
-    - 普通字典、列表绑定，不支持改变通知; 
-    - 支持C#事件绑定; 
-    - 支持Unity3D的EventBase事件绑定; 
-    - 支持静态类的属性和Field的绑定; 
-    - 支持方法绑定（包括静态方法）; 
-    - 支持命令绑定，通过命令绑定可以方便控制按钮的有效无效状态; 
-    - 支持可观察属性、字典、列表的绑定，支持改变通知，视图模型修改自动更改UI显示; 
-    - 支持表达式的绑定; 
-    - 支持类型转换器，可以将图片名称转换为图集中的Sprite; 
-    - 可以自定义扩展更多的绑定类型; 
+- 支持多平台，高扩展性，面向接口开发;
+- 支持C#和Lua开发;
+- 支持线程和协程的异步结果和异步任务，采用Future/Promise设计模式;
+- 提供了多线程组件，线程切换组件和定时执行器;
+- 提供了一个消息系统，支持订阅和发布;
+- 提供可加密的配置文件，支持对象存取，可自定义类型转换器，扩展功能;
+- 提供了本地化支持，与Android的本地化类似，支持基本数据类型、数组、和U3D的一些值类型;
+- 支持全局上下文和玩家上下文;
+- 提供了一个服务容器，支持注册和注销服务;
+- 提供了AlertDialog、Loading、Toast等通用UI控件，支持自定义外观;
+- 提供了UI视图的控制和管理功能；
+- 提供数据绑定功能:
+    - Field绑定，只支持OneTime的模式，因无法支持改变通知;
+    - 属性绑定，支持TwoWay双向绑定，值修改自动通知;
+    - 普通字典、列表绑定，不支持改变通知;
+    - 支持C#事件绑定;
+    - 支持Unity3D的EventBase事件绑定;
+    - 支持静态类的属性和Field的绑定;
+    - 支持方法绑定（包括静态方法）;
+    - 支持命令绑定，通过命令绑定可以方便控制按钮的有效无效状态;
+    - 支持可观察属性、字典、列表的绑定，支持改变通知，视图模型修改自动更改UI显示;
+    - 支持表达式的绑定;
+    - 支持类型转换器，可以将图片名称转换为图集中的Sprite;
+    - 可以自定义扩展更多的绑定类型;
 
 ## 下载 ##
 
@@ -58,9 +58,9 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 ## 官方插件（可选） ##
 
 - [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
-  
+
     支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
-   
+
 - [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
 
     Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。
@@ -116,7 +116,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
 在一个UI视图的根对象上添加视图脚本组件DatabindingExample，并且将UI控件赋值到对应的属性上,这个示例中属性都是通过C#硬编码来定义的，当然你也可以使用动态的属性表VariableArray来动态定义属性，具体可以看Lua的例子，配置好属性后如下图所示。
 
-![](images/DatabindingExample_03.png) 
+![](images/DatabindingExample_03.png)
 
 下面请看代码，我们是如果来定义视图模型和视图脚本的，又是怎么样来绑定视图到视图模型的。
 
@@ -305,7 +305,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
             //绑定UI控件到视图模型
             BindingSet<DatabindingExample, DatabindingViewModel> bindingSet;
             bindingSet = this.CreateBindingSet<DatabindingExample, DatabindingViewModel>();
-            
+
             //绑定左侧视图到账号子视图模型
             bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).OneWay();
             bindingSet.Bind(this.password).For(v => v.text).To(vm => vm.Account.Password).OneWay();
@@ -342,21 +342,21 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 在Lua脚本DatabindingExample.lua中，上图所有的动态属性都被注册到Lua环境中，我们可以通过self对象来访问所有的属性，请看下面的代码。
 
     require("framework.System")
-    
+
     local Context = CS.Loxodon.Framework.Contexts.Context
     local LuaBindingServiceBundle = CS.Loxodon.Framework.Binding.LuaBindingServiceBundle
     local ObservableObject = require("framework.ObservableObject")
     local ObservableDictionary = require("framework.ObservableDictionary")
-    
+
     ---
     --创建一个Account子视图模型
     --@module AccountViewModel
     local AccountViewModel = class("AccountViewModel",ObservableObject)
-    
+
     function AccountViewModel:ctor(t)
         --执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
         AccountViewModel.base(self).ctor(self,t)
-        
+
         if not (t and type(t)=="table") then
             self.id = 0
             self.username = ""
@@ -366,16 +366,16 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
             self.address = ""
         end
     end
-    
+
     ---
     --创建一个数据绑定示例的视图模型
     --@module DatabindingViewModel
     local DatabindingViewModel = class("DatabindingViewModel",ObservableObject)
-    
+
     function DatabindingViewModel:ctor(t)
         --执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
         DatabindingViewModel.base(self).ctor(self,t)
-        
+
         if not (t and type(t)=="table") then
             self.account = Account()
             self.remember = false
@@ -383,43 +383,43 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
             self.email = ""
             self.errors = ObservableDictionary()
         end
-        
+
     end
-    
+
     function DatabindingViewModel:submit()
         if #self.username < 1 then
             --注意C#字典类型的使用方式，通过set_Item或者get_Item 访问
             self.errors:set_Item("errorMessage","Please enter a valid username.")
             return
         end
-        
+
         if #self.email < 1 then
             --注意C#字典类型的使用方式，通过set_Item或者get_Item 访问
             self.errors:set_Item("errorMessage","Please enter a valid email.")
             return
         end
-        
+
         self.errors:Clear()
-        
+
         self.account.username = self.username
         self.account.email = self.email
         self.account.remember = self.remember
     end
-    
+
     ---
     --创建一个数据绑定视图,扩展DatabindingExample.cs 对象，这里的target是从C#脚本传过来的
     --@module DatabindingExample
     local M = class("DatabindingExample",target)
-    
+
     function M:awake()
         local context = Context.GetApplicationContext()
         local container = context:GetContainer()
-        
+
         --初始化Lua的数据绑定服务，一般建议在游戏的C#启动脚本创建
         local bundle = LuaBindingServiceBundle(container)
         bundle:Start();
     end
-    
+
     function M:start()
         --初始化Account子视图模型
         local account = AccountViewModel({
@@ -431,7 +431,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
                 address = "beijing",
                 remember = true
             })
-        
+
         --初始化视图模型
         self.viewModel = DatabindingViewModel({
                 account = account,
@@ -440,12 +440,12 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
                 remember = true,
                 errors = ObservableDictionary()
             })
-        
+
         self:BindingContext().DataContext = self.viewModel
-        
+
         --绑定UI控件到视图模型
         local bindingSet = self:CreateBindingSet();
-        
+
         bindingSet:Bind(self.username):For("text"):To("account.username"):OneWay()
         bindingSet:Bind(self.password):For("text"):To("account.password"):OneWay()
         bindingSet:Bind(self.email):For("text"):To("account.email"):OneWay()
@@ -459,10 +459,10 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
         bindingSet:Bind(self.emailInput):For("text","onEndEdit"):To("email"):TwoWay()
         bindingSet:Bind(self.rememberInput):For("isOn","onValueChanged"):To("remember"):TwoWay()
         bindingSet:Bind(self.submit):For("onClick"):To("submit"):OneWay()
-        
+
         bindingSet:Build()
     end
-    
+
     return M
 
 ## 功能介绍 ##
@@ -537,7 +537,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     //创建一个上下文，参数container值为null，在Context内部会自动创建
     //参数contextBase值为playerContext，自动继承了playerContext中的服务和属性
     Context context = new Context(null,playerContext);
-    
+
     //获得上下文中的服务容器
     IServiceContainer container = context.GetContainer();
 
@@ -557,7 +557,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     IBinder binder = ...
     IPathParser pathParser = ...
 
-    //注册一个类型为IBinder的服务到容器中,可以通过container.Resolve<IBinder>() 或者 
+    //注册一个类型为IBinder的服务到容器中,可以通过container.Resolve<IBinder>() 或者
     //container.Resolve("IBinder") 来访问这个服务，在容器中默认使用了IBinder.Name做为Key存储。
     container.Register<IBinder>(binder);
 
@@ -570,7 +570,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 通过服务定位器可以获得服务，服务定位器可以根据服务名称或者类型来查询服务，当服务以类型的方式注册，则可以通过类型或者类型名来查找服务，当服务以特定的名称为Key注册，则只能通过服务名来查找服务。
 
     IServiceContainer container = ...
-    
+
     //IBinder服务在上段代码中，以类型方式注册，所以可以通过类型或者名称方式查询服务
     IBinder binder = container.Resolve<IBinder>()；//or container.Resolve("IBinder")
 
@@ -601,13 +601,13 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
     //获得全局配置，如果不存在则自动创建
     Preferences globalPreferences = Preferences.GetGlobalPreferences();
-    
+
     //存储当前资源更新后的数据版本
     globalPreferences.SetObject<Version>("DATA_VERSION",dataVersion);
 
     //存储游戏最后成功登录的用户名，下次启动游戏时自动填写在账号输入框中
     globalPreferences.SetString("username","clark");
-    
+
     //数据修改后调用Save函数保存数据
     globalPreferences.Save();
 
@@ -651,7 +651,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
             Color color;
             if(ColorUtility.TryParseHtmlString(value,out color))
                 return color;
-        
+
             return null;
         }
 
@@ -732,7 +732,7 @@ default版本的application和module如下:
         <string name="login.input.username.prompt">Enter username...</string>
         <string name="login.input.password.prompt">Enter password...</string>
     </resources>
-    
+
 zh-CN版本的application和module如下:
 
     <!-- application.xml -->
@@ -815,7 +815,7 @@ zh-CN版本的application和module如下:
 | color | #000000 | Vector2类型，示例：#FF0000 |
 
 #### 生成C#脚本 ####
-    
+
 本地化配置的属性，类似Android配置一样，可以生成一个静态类来使用，如果是使用C#版本的MVVM，可以这么使用，这样增加了语言的编译校验机制，避免出错。如果是使用Lua编程，则不建议这么做，直接使用Localization类即可。
 
 在本地化配置的根目录右击，弹出代码生成菜单如下图，点击Localization Make，选择代码目录和文件名，生成C#静态类。
@@ -824,21 +824,21 @@ zh-CN版本的application和module如下:
 
     public static partial class R
     {
-        public readonly static V<string> startup_progressbar_tip_loading = new V<string>("startup.progressbar.tip.loading"); 
-    
-        public readonly static V<string> startup_progressbar_tip_unziping = new V<string>("startup.progressbar.tip.unziping"); 
-    
-        public readonly static V<string> login_failure_tip = new V<string>("login.failure.tip"); 
-    
-        public readonly static V<string> login_exception_tip = new V<string>("login.exception.tip"); 
+        public readonly static V<string> startup_progressbar_tip_loading = new V<string>("startup.progressbar.tip.loading");
+
+        public readonly static V<string> startup_progressbar_tip_unziping = new V<string>("startup.progressbar.tip.unziping");
+
+        public readonly static V<string> login_failure_tip = new V<string>("login.failure.tip");
+
+        public readonly static V<string> login_exception_tip = new V<string>("login.exception.tip");
     }
 
 #### 使用示例 ####
 
 通过生成的C#代码调用或者通过Localization类调用。
-        
+
     Localization localization = Localization.Current
-    
+
     //通过Localization的成员方法调用
     string errorMessage = localization.GetText("login.validation.username.error", "Please enter a valid username.");
 
@@ -848,7 +848,7 @@ zh-CN版本的application和module如下:
     //获得本地化配置的子集，通过子集访问
     ILocalization localizationSubset = localization.Subset("login");
     errorMessage = localizationSubset.GetText("validation.username.error", "Please enter a valid username.");
-        
+
 
 配合UI组件使用本地化配置，下面我们模拟一个游戏中语言切换的使用场景，来了解本地化模块的用法。在下图中，红色线框中的英文通过本地化服务来加载和修改，它是通过挂在Text对象上的LocalizedText组件来实现中文和英文切换的。
 
@@ -906,8 +906,8 @@ zh-CN版本的application和module如下:
     <resources>
         <string name="app.name">LoxodonFramework</string>
         <string name="databinding.tutorials.title">Databinding Examples</string>
-        <string name="localization.tutorials.content">People's living, the book is dead, 
-            the living dead reading, can take the book to read. dead books read living, 
+        <string name="localization.tutorials.content">People's living, the book is dead,
+            the living dead reading, can take the book to read. dead books read living,
             people reading can be put to death.</string>
     </resources>
 
@@ -928,7 +928,7 @@ zh-CN版本的application和module如下:
 如果习惯使用Excel的朋友可以下载我的CSV插件，它支持读取CSV文件格式的本地化配置，但是要求Unity版本在2018以上，支持.net 4.x或者.net standard 2.0。
 
 下载地址：[Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv/releases)
-  
+
 **配置文件格式如下**
 
 - key：配置文件的key，不能为空，此列必须存在。
@@ -1012,28 +1012,28 @@ Properties文件格式如下，以key = value 的方式配置所有内容，以#
     #application config
     application.app.version = 1.0.0
     application.data.version = 1.0.0
-    
+
     #gateway     
     application.config-group = local
-    
+
     #local
     application.local.upgrade.url = http://test.your domain name.com/loxodon/framework/upgrade/check
     application.local.username = loxodon.framework
     application.local.password = loxodon.framework
     application.local.gateway = 127.0.0.1:8000 , 192.168.0.30:8000
-    
+
     #develop
     application.develop.upgrade.url = http://test.your domain name.com/loxodon/framework/upgrade/check
     application.develop.username = loxodon.framework
     application.develop.password = loxodon.framework
     application.develop.gateway = 192.168.0.1:8000
-    
+
     #pre-release
     application.pre-release.upgrade.url = http://pre.release.your domain name.com/loxodon/framework/upgrade/check
     application.pre-release.username = loxodon.framework
     application.pre-release.password = loxodon.framework
     application.pre-release.gateway = 172.217.160.78:8000 , 172.217.160.79:8000 , 172.217.160.80:8000
-    
+
     #release
     application.release.upgrade.url = http://release.your domain name.com/loxodon/framework/upgrade/check
     application.release.username = loxodon.framework
@@ -1079,7 +1079,7 @@ Properties文件格式如下，以key = value 的方式配置所有内容，以#
     DefaultLogFactory factory = new DefaultLogFactory();
     factory.Level = Level.ALL
     LogManager.Registry(factory)
-    
+
     //为类AsyncResult，定义一个ILog
     private static readonly ILog log = LogManager.GetLogger(typeof(AsyncResult));
 
@@ -1102,7 +1102,7 @@ Properties文件格式如下，以key = value 的方式配置所有内容，以#
         {
             //********启动任务，同步方式调用示例***********//
             IAsyncResult<bool> result = StartTask();
-    
+
             //等待任务完成，result.WaitForDone ()函数返回一个迭代器IEnumerator
             yield return result.WaitForDone ();
 
@@ -1114,11 +1114,11 @@ Properties文件格式如下，以key = value 的方式配置所有内容，以#
             {    
                 Debug.LogFormat("任务执行成功 result = {0}",r.Result);
             }
-            
+
 
             //********启动任务，回调方式调用示例***********//
             result = StartTask();
-            result.Callbackable().OnCallback((r) => 
+            result.Callbackable().OnCallback((r) =>
             {
                 if(r.Exception !=null)
                 {
@@ -1129,7 +1129,7 @@ Properties文件格式如下，以key = value 的方式配置所有内容，以#
                     Debug.LogFormat("任务执行成功 result = {0}",r.Result);
                 }
             });
-            
+
         }
 
         //创建一个任务
@@ -1159,7 +1159,7 @@ Properties文件格式如下，以key = value 的方式配置所有内容，以#
                 }
                 yield return new WaitForSeconds (0.5f);
             }
-            
+
             //执行完成必须设置结果
             promise.SetResult (true);
         }
@@ -1188,7 +1188,7 @@ ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面�
             IProgressResult<Progress, string> result = StartTask();
 
             //打印任务进度
-            result.Callbackable().OnProgressCallback(progress => 
+            result.Callbackable().OnProgressCallback(progress =>
             {
                 Debug.LogFormat("Percentage: {0}% ", progress.Percentage);
             });
@@ -1237,7 +1237,7 @@ ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面�
             }
 
             //执行完成必须设置结果
-            promise.SetResult(buf.ToString()); 
+            promise.SetResult(buf.ToString());
         }
 
     }
@@ -1293,7 +1293,7 @@ ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面�
     }
 
 #### ProgressTask ####
-    
+
 ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样ProgressTask既可以创建一个协程任务，也可以创建一个后台线程的任务。
 
     public class ProgressTaskExample : MonoBehaviour
@@ -1377,7 +1377,7 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
 
     public class ExecutorExample : MonoBehaviour
     {
-    
+
         IEnumerator Start()
         {
             //在后台线程中异步运行一个任务
@@ -1385,13 +1385,13 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
             {
                 Debug.LogFormat("RunAsync ");
             });
-    
+
             //在后台线程中异步运行一个任务
             Executors.RunAsync(() =>
             {
                 //睡眠1000毫秒
                 Thread.Sleep(1000);
-    
+
                 //从后台线程切换到主线程中，
                 //waitForExecution = true，当前函数直到主线程执行完后才返回
                 Executors.RunOnMainThread(() =>
@@ -1399,14 +1399,14 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
                     Debug.LogFormat("RunOnMainThread Time:{0} frame:{1}", Time.time, Time.frameCount);
                 }, true);
             });
-    
+
             //运行一个协程任务
             IAsyncResult result = Executors.RunOnCoroutine(DoRun());
-    
+
             //等待任务完成
             yield return result.WaitForDone();
         }
-    
+
         IEnumerator DoRun()
         {
             for (int i = 0; i < 10; i++)
@@ -1422,7 +1422,7 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
 在本框架中提供了一个线程的定时任务执行器(ThreadScheduledExecutor)和一个Unity3D协程的定时任务执行器(CoroutineScheduledExecutor),下面我们以线程的定时任务执行器为例，来介绍它的用法。
 
     //创建并启动一个线程的定时任务执行器
-    var scheduled = new ThreadScheduledExecutor(); 
+    var scheduled = new ThreadScheduledExecutor();
     scheduled.Start();
 
     //延时1000毫秒后执行，以固定频率，每隔2000毫秒，打印一句“This is a test.”
@@ -1433,7 +1433,7 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
 
 
 #### 可拦截的迭代器(InterceptableEnumerator) ####
-    
+
 在Unity3D的协程中，如果发生异常，是无法捕获到异常的，try catch不允许跨yield使用，finally也不能确保代码块在协程异常结束时还能被执行，所以很多时候无法知道一个协程是否正常执行结束，出现错误也不方便查找原因，根据Unity3D协程其本质是一个迭代器的原理，我设计了一个可以在协程执行过程中注入代码块，捕获异常的可拦截迭代器。使用InterceptableEnumerator对原迭代器进行包装，就可以捕获到协程代码执行异常，并且无论协程是否正常结束，都可在协程退出前插入一个代码块，确保这个代码块一定会在协程结束时执行。在我的Executors中，我就是利用InterceptableEnumerator来确保任务正常结束的，无论协程执行成功或者异常我都能通过注册的Finally语句块来设置AsyncResult的结果，确保AsyncResult.IsDone等于true，不会造成任务卡死。
 
 InterceptableEnumerator支持条件语句块，可以在外部插入一个条件语句块，控制协程逻辑或中止协程。异常语句块，可以捕获到协程异常，Finally语句块，确保协程结束一定会调用这个语句块。下面我们来看看示例。
@@ -1457,7 +1457,7 @@ InterceptableEnumerator支持条件语句块，可以在外部插入一个条件
         {
             if (promise != null)
                 promise.SetException(e);
-        
+
             if (log.IsErrorEnabled)
                 log.Error(e);
         });
@@ -1648,19 +1648,19 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
 #### 绑定模式 ####
 
-- **OneWay**(View <-- ViewModel) 
+- **OneWay**(View <-- ViewModel)
 
     单向绑定，只能视图模型修改视图中UI控件的值，ViewModel必须继承了INotifyPropertyChanged接口，并且属性值变化时会触发PropertyChanged事件，否则效果与OneTime一致，只有初始化绑定赋值一次。如Field则只能首次有效。
 
-- **TwoWay**(View <--> ViewModel) 
+- **TwoWay**(View <--> ViewModel)
 
     双向绑定，视图控件修改，会自动修改视图模型，视图模型修改会自动修改视图控件。ViewModel必须支持PropertyChanged事件，UI控件必须支持onEndEdit事件，并且绑定了onEndEdit事件。
 
-- **OneTime**(View <-- ViewModel) 
+- **OneTime**(View <-- ViewModel)
 
     只赋值一次，只有在绑定关系初始化的时候将ViewModel的值赋值到视图控件上。
 
-- **OneWayToSource**(View --> ViewModel) 
+- **OneWayToSource**(View --> ViewModel)
 
     单向绑定，方向与OneWay相反，只能视图UI控件赋值到视图模型的属性。
 
@@ -1724,16 +1724,16 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 - **方法绑定**
 
     方法绑定与属性绑定类似，也支持拉姆达表达式和字符串参数两个版本，方法绑定要确保控件的事件参数类型与视图模型被绑定方法的参数类型一致，否则可能导致绑定失败。
-        
+
         //C#，拉姆达表达式方式的绑定，Button.onClick 与视图模型的成员OnSubmit方法绑定
         bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit());
-        
+
         //C#，拉姆达表达式方式的绑定，方法带参数，绑定时随便填写一个默认参数就行，此代码并不会被调用，只用来解析绑定关系
         bindingSet.Bind(this.emailEdit).For(v => v.onValueChanged).To(vm => vm.OnEmailValueChanged(""));
 
         --Lua，通过字符串参数绑定，Button.onClick 与视图模型的成员submit方法绑定
         bindingSet:Bind(self.submit):For("onClick"):To("submit"):OneWay()
-    
+
 
 - **命令和交互请求绑定**
 
@@ -1840,10 +1840,10 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
     //通过Scope Key移除绑定
     this.ClearBindings(scopeKey); //or this.BindingContext().Clear(scopeKey)
-    
+
 
 #### 绑定的生命周期 ####
-    
+
 一般来说数据绑定都在视图创建函数中来初始化，通过BindingSet来配置视图控件和视图模型之间的绑定关系，当调用BindingSet的Build函数时，Binder会创建BindingSet中所有的绑定关系对，被创建的绑定对会保存在当前视图的BindingContext中。BindingContext在首次调用时自动创建，同时自动生成了一个BindingContextLifecycle脚本，挂在当前视图对象上，由它来控制BindingContext的生命周期，当视图销毁时，BindingContext会随之销毁，存放在BindingContext中的绑定关系对也会随之销毁。
 
 #### 注册属性和域的访问器 ####
@@ -2050,14 +2050,14 @@ UI视图定位器是一个查询和加载UI视图的服务，它提供了同步�
     --模块
     --@module AlphaAnimation
     local M=class("AlphaAnimation",target)
-    
+
     function M:play(view,startCallback,endCallback)
         view.CanvasGroup:DOFade(self.to, self.duration)
             :OnStart(function() startCallback() end)
             :OnComplete(function() endCallback() end)
             :Play()    
     end
-    
+
     return M
 
 #### UI控件 ####
@@ -2091,7 +2091,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
     在UI开发中，我们经常会发现一个UI界面可以划分很多的区域，比如Top栏，左边栏，右边栏，Bottom栏，内容区域等等，并且有些部分在多个UI界面之间是可以共享使用的。根据这些特点，我就可以将不同的区域分别做成不同的视图，在最后界面显示时，通过视图组装配成完整的视图，这样既有助于提高代码的重复利用，又大大降低了代码的耦合性和复杂性。**重点说一下，我们可以用这种设计思路来设计游戏的新手引导系统，只有界面需要显示引导时，才将引导界面动态插入到当前的界面中。新手引导的逻辑与正常游戏逻辑完全分离，避免造成引导逻辑和游戏逻辑的高度耦合。**
 
     同样，在游戏场景视图中，我们也可以将复杂视图拆分成大大小小的视图组和子视图，并且在游戏过程中，动态的添加和删除子视图。比如一个游戏角色，就是场景中的一个子视图，当角色进入视野时添加视图，当从视野消失时，删除视图。
-    
+
     以王者荣耀日常活动界面为例，可以拆分为顶菜单栏、左侧菜单栏和内容区域，菜单栏视图可以复用，每次只需要改变内容区域的视图即可。
 
     ![](images/View_Example.png)
@@ -2107,11 +2107,11 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
             public Slider progressBarSlider;
             public Text tipText;
             public Button button;
-    
+
             protected override void OnCreate(IBundle bundle)
             {
                 BindingSet<ExampleWindow, ExampleViewModel> bindingSet = this.CreateBindingSet(new ExampleViewModel());
-    
+
                 bindingSet.Bind(this.progressBarSlider).For("value", "onValueChanged").To("ProgressBar.Progress").TwoWay();
                 bindingSet.Bind(this.progressBarSlider.gameObject).For(v => v.activeSelf).To(vm => vm.ProgressBar.Enable).OneWay();
                 bindingSet.Bind(this.progressBarText).For(v => v.text).ToExpression(
@@ -2122,7 +2122,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
                 binding,bound to the onClick event and interactable property.
                 bindingSet.Build();
             }
-    
+
             protected override void OnDismiss()
             {
             }
@@ -2130,21 +2130,21 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
         --Lua,创建窗口
         require("framework.System")
-        
+
         local ExampleViewModel = require("LuaUI.Startup.ExampleViewModel")
-        
+
         ---
         --模块
         --@module ExampleWindow
         local M=class("ExampleWindow",target)
-        
+
         function M:onCreate(bundle)
             self.viewModel = ExampleViewModel()
-        
+
             self:BindingContext().DataContext = self.viewModel
-        
+
             local bindingSet = self:CreateBindingSet()
-        
+
             bindingSet:Bind(self.progressBarSlider):For("value", "onValueChanged"):To("progressBar.progress"):TwoWay()
             bindingSet:Bind(self.progressBarSlider.gameObject):For("activeSelf"):To("progressBar.enable"):OneWay()
             bindingSet:Bind(self.progressBarText):For("text"):ToExpression(
@@ -2295,7 +2295,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         VisibilityNotification notification = new VisibilityNotification(true);
         this.loadingRequest.Raise(notification);
     });
-    
+
 
     //在View中创建一个交互请求LoadingInteractionAction
     this.loadingInteractionAction = new LoadingInteractionAction();
@@ -2506,10 +2506,10 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         {
             int i = this.items.Count;
             int iconIndex = Random.Range(1, 30);
-            this.items.Add(new ListItemViewModel() { 
-                Title = "Equip " + i, 
-                Icon = string.Format("EquipImages_{0}", iconIndex), 
-                Price = Random.Range(10f, 100f) 
+            this.items.Add(new ListItemViewModel() {
+                Title = "Equip " + i,
+                Icon = string.Format("EquipImages_{0}", iconIndex),
+                Price = Random.Range(10f, 100f)
             });
         }
 
@@ -2715,7 +2715,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         /// <returns></returns>
         IEnumerator LoadSprite()
         {
-            yield return new WaitForSeconds(1f); 
+            yield return new WaitForSeconds(1f);
 
             Sprite[] sprites = Resources.LoadAll<Sprite>(this.spritePath);
             foreach(var sprite in sprites)
@@ -2788,24 +2788,24 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
 
     -- 定义一个名为 Animal 的基类
     local Animal = class("Animal")
-    
+
     -- Animal类的构造函数，通过Animal()来创建Animal类的实例，同时会调用这个构造函数
     function Animal:ctor(...)
     end
-    
+
     -- 为Animal定义一个walk()的方法
     function Animal:walk()
         print("animal walk")
     end
-    
+
     -- 为Animal定义一个run()方法
     function Animal:run()
         print("animal run")
     end
-    
+
     -- 定义一个名为Cat的类，它继承了Animal类
     local Cat = class("Cat",Animal)
-    
+
     -- Cat类的构造函数
     function Cat:ctor()
         -- 重载了构造函数，会覆盖父类构造函数，通过如下显示的调用父类构造函数
@@ -2818,9 +2818,9 @@ Lua除了可以继承模块，也可以继承C#的类，当然也包括静态类
 **注意：调用父类函数必须使用模块名调用，不要使用self调用**
 
     M.base(self).Get(self,name,cascade) --正确
-    
+
     self:base().Get(self,name,cascade) --错误
-    
+
     M.base(self):Get(name,cascade) --错误
 
 Lua继承C#类Loxodon.Framework.Contexts.Context，新增GetName()函数，重写Context.Get(string name,bool cascade)函数。
@@ -2830,9 +2830,9 @@ Lua继承C#类Loxodon.Framework.Contexts.Context，新增GetName()函数，重�
 
     -- 新增一个函数
     function M:GetName()
-    
+
         --代码省略
-        
+
     end
 
     -- 重写父类的函数，调用父类的函数
@@ -2842,7 +2842,7 @@ Lua继承C#类Loxodon.Framework.Contexts.Context，新增GetName()函数，重�
         if ret then return ret end
 
         --代码省略
-        
+
     end
 
     return M
@@ -2865,10 +2865,11 @@ C#代码，LuaLauncher脚本中初始化lua执行环境的部分。
     scriptEnv.Set("target", this);
 
     string scriptText = "";
-    if(script.Type == ScriptReferenceType.TextAsset) 
+    if(script.Type == ScriptReferenceType.TextAsset)
         scriptText = script.Text.text;
     else
-        scriptText = string.Format("return require(\"{0}\")", script.Filename);
+        string.Format("require(\"framework.System\");local cls = require(\"{0}\");return extends(target,cls);",
+         script.Filename)
 
     object[] result = luaEnv.DoString(scriptText, string.Format("{0}({1})", "Launcher", this.name), scriptEnv);
 
@@ -2893,35 +2894,35 @@ C#代码，LuaLauncher脚本中初始化lua执行环境的部分。
     --Launcher 模块，参数target是约定的，请不要修改。
     --@module Launcher
     local M=class("Launcher",target)
-    
+
     function M:start()
         -- 获得应用上下文，一个游戏建议创建应用上下文和玩家上下文。
         -- 全局的服务都放入应用上下文中，如账号服务，网络组件，配置服务等基础组件和服务
         -- 只与某个玩家相关的如背包服务、装备服务、角色服务都放入玩家上下文，当登出游戏可以统一释放
         local context = Context.GetApplicationContext()
-        
+
         -- 从应用上下文获得一个视图定位器
         local locator = context:GetService("IUIViewLocator")
-    
+
         -- 创建一个名为MAIN的窗口容器
         local winContainer = WindowContainer.Create("MAIN")
-        
+
         -- 通过视图定位器，加载一个启动窗口视图
         local window = locator:LoadWindow(winContainer, "LuaUI/Startup/Startup")
 
         --创建窗口
-        window:Create() 
+        window:Create()
 
         --显示窗口，返回一个transition对象，窗口显示一般会有窗口动画，所以是一个持续过程的操作
-        local transition = window:Show() 
+        local transition = window:Show()
 
         --监听显示窗口过程的窗口状态
-        transition:OnStateChanged(function(w,state) print("Window:"..w.Name.." State:"..state:ToString()) end) 
-        
+        transition:OnStateChanged(function(w,state) print("Window:"..w.Name.." State:"..state:ToString()) end)
+
         --监听窗口显示完成事件        
-        transition:OnFinish(function() print("OnFinished")  end) 
+        transition:OnFinish(function() print("OnFinished")  end)
     end
-    
+
     return M
 
 ### Lua的ObserableObject ###
@@ -2930,16 +2931,16 @@ Lua的Table要满足MVVM数据绑定的要求，在属性改变时能够触发�
     require("framework.System")
 
     local ObservableObject = require("framework.ObservableObject")
-    
+
     ---
     --创建一个Account视图模型
     --@module AccountViewModel
     local M = class("AccountViewModel",ObservableObject)
-    
+
     function M:ctor(t)
         --执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
         M.base(self).ctor(self)
-        
+
         self.id = 0
         self.username = ""
         self.Password = ""
@@ -2963,15 +2964,15 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
     -- 模拟一个加载任务
     function M:doLoad(promise)
         print("task start")
-        
+
         for i = 1, 50 do
             --如果有取消请求，即调用了ProgressResult的Cancel()函数，则终止任务
             if promise.IsCancellationRequested then
                 break
             end
-            
+
             promise:UpdateProgress(i/50) --更新任务进度        
-            
+
             --这里coroutine.yield中可以不传入参数，则表示是每帧执行一次，
             --也可以传入所有继承了YieldInstruction的参数，如:UnityEngine.WaitForSeconds(0.1)
             --还可以传入一个IEnumerator对象，如：AsyncResult.WaitForDone()
@@ -3019,7 +3020,7 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
 
     --如果使用默认的日志工厂，可以如下设置日志打印的级别
     --如果使用log4net，请在log4net配置文件中设置日志打印的级别
-    CS.Loxodon.Log.LogManager.Default.Level = CS.Loxodon.Log.Level.INFO 
+    CS.Loxodon.Log.LogManager.Default.Level = CS.Loxodon.Log.Level.INFO
 
     --初始化日志系统
     local logger = require("framework.Logger").GetLogger()
@@ -3028,9 +3029,87 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
     logger:debug("This is a test.")
     logger:info("This is a test.")
 
-    
+### Lua 预编译工具 ###
 
-## 联系方式 ## 
+使用Lua预编译工具可以将Lua脚本预编译为字节码文件，并且可以选择是否加密该文件。Lua官方的luac命令编译的字节码分64位和32位，如果想编译64位和32位兼容的字节码，请参考XLua的官方文件，有关通用字节码编译的部分[《通用字节码》](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/compatible_bytecode.md)。
+
+![](images/LuaPrecompileWizard.png)
+
+
+- Bin:luac命令的路径，如果要编译64位或者32位或者两者相兼容的字节码，请选择对应的luac命令。
+- Output：编译后的字节码文件的存储目录。可以选择Assets下面的某个目录，统一打包为一个AssetBundle，也可以选择StreamingAssets下的某个目录，直接从StreamingAssets文件夹中加载。预编译后的字节码文件的扩展名可以选择".luac"或者".bytes"，也可以自定义其他的扩展名。
+- Src：lua源代码的根目录，支持多个源代码目录。源代码文件扩展名必须是".lua"或者".lua.txt"。
+- Encryption：加密功能，默认支持AES加密方式，也可以自己扩展新的加密方式，加密部分的面板是动态的，扩展了新的加密方式，会自动显示在工具的界面中。
+- Apply：保存设置
+- Precompile：预编译Lua脚本
+
+#### Lua加载器 ####
+
+- FileLoader 文件加载
+    
+    文件加载器，支持从本地文件夹加载Lua脚本或者Lua字节码文件，同时也支持从Android的apk或者obb中加载文件，所以如果你的lua源代码或者字节码文件存放在StreamingAssets文件夹中，在Android平台也能够正确加载。
+    
+- AssetBundleLoader 加载器
+    
+    支持从AssetBundle中加载lua脚本或者字节码，一般来说建议将所有的lua字节码都放在同一个AssetBundle中，在游戏启动时加载到内存，配置AssetBundleLoader加载器，优先从这个AssetBundle中加载lua代码。
+
+- DecodableLoader 可解码的加载器
+
+    可解码的加载器，它配合文件加载器或者AssetBundle加载器一起使用，对二进制数据进行解密。
+
+#### 示例 ####
+
+在下面的示例中，在Editor模式，通过FileLoader从Assets/LuaScripts/目录中加载扩展名为".lua.txt"或者".lua"的lua文件。在真机模式，则通过FileLoader从Application.persistentDataPath + "/LuaScripts/"目录加载lua字节码文件，如果没有找到则搜索Application.streamingAssetsPath + "/LuaScripts/"目录，并且使用DecodableLoader加载器进行解密。
+
+**在LuaEnv中可以添加多个加载器，后加入的加载器优先级高于先加入的加载器。**
+
+    var luaEnv = LuaEnvironment.LuaEnv;
+
+    #if UNITY_EDITOR
+        //开发模式，从本地目录加载lua源码
+        luaEnv.AddLoader(new FileLoader(Application.dataPath + "/LuaScripts/", ".lua"));
+        luaEnv.AddLoader(new FileLoader(Application.dataPath + "/LuaScripts/", ".lua.txt"));
+    #else
+        //真机模式，从persistentDataPath或者streamingAssetsPath目录加载lua的bytecode.
+        var key = Encoding.ASCII.GetBytes("E4YZgiGQ0aqe5LEJ");
+        var iv = Encoding.ASCII.GetBytes("5Hh2390dQlVh0AqC");
+        var decryptor = new RijndaelCryptograph(128,key, iv);
+        
+        var loader1 = new FileLoader(Application.streamingAssetsPath + "/LuaScripts/", ".bytes");
+        luaEnv.AddLoader(new DecodableLoader(loader1, decryptor));
+        
+        var loader2 = new FileLoader(Application.persistentDataPath + "/LuaScripts/", ".bytes");
+        luaEnv.AddLoader(new DecodableLoader(loader2, decryptor));
+    #endif
+    
+#### 扩展其他加密方式 ####
+
+继承Loxodon.Framework.Security.Cryptography.IDecryptor和Loxodon.Framework.Security.Cryptography.IEncryptor接口创建加密解密器，具体实现可以参考RijndaelCryptograph类的源代码。 
+
+继承Loxodon.Framework.XLua.Editors.EncryptorFactory类可以为新的加密器创建一个工厂类，将加密需要的参数作为类的成员变量定义在类中，并标识字段为可序列化，即添加"SerializeField"属性。，这样预编译工具可以自动搜索到这个类，并为它创建一个编辑界面。具体实现请参考RijndaelCryptographFactory类。
+
+比如添加如下代码，则可以在编辑界面看到如图中所示的界面
+
+    public class ExampleCryptographFactory : EncryptorFactory
+    {
+        [Multiline(2)]
+        [SerializeField]
+        private string privateKey;
+
+        [Multiline(5)]
+        [SerializeField]
+        private string publicKey;
+
+        public override IEncryptor Create()
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
+![](images/LuaPrecompileWizard2.png)
+
+
+## 联系方式 ##
 邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
 网站: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)  
 QQ群: 622321589 [![](images/qq_group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)
