@@ -43,6 +43,10 @@ UWP(window10)
 - [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
 
     It supports making games with lua scripts.
+    
+    Lua precompilation tool
+    
+    ![](docs/images/LuaPrecompileWizard.png)
  
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
     
