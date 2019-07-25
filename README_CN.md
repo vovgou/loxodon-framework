@@ -41,7 +41,11 @@ UWP(window10)
    
 - [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
 
-    Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。
+    Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。    
+        
+    Lua 预编译工具
+    
+    ![](docs/images/LuaPrecompileWizard.png)
 
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
