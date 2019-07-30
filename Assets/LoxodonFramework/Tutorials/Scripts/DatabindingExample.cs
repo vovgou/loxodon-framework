@@ -198,11 +198,11 @@ namespace Loxodon.Framework.Tutorials
             bindingSet.Bind(this.errorMessage).For(v => v.text).To(vm => vm.Errors["errorMessage"]).OneWay();
 
             bindingSet.Bind(this.usernameEdit).For(v => v.text, v => v.onEndEdit).To(vm => vm.Username).TwoWay();
-            bindingSet.Bind(this.usernameEdit).For(v => v.onValueChanged).To(vm => vm.OnUsernameValueChanged(""));
+            bindingSet.Bind(this.usernameEdit).For(v => v.onValueChanged).To<string>(vm => vm.OnUsernameValueChanged);
             bindingSet.Bind(this.emailEdit).For(v => v.text, v => v.onEndEdit).To(vm => vm.Email).TwoWay();
-            bindingSet.Bind(this.emailEdit).For(v => v.onValueChanged).To(vm => vm.OnEmailValueChanged(""));
+            bindingSet.Bind(this.emailEdit).For(v => v.onValueChanged).To<string>(vm => vm.OnEmailValueChanged);
             bindingSet.Bind(this.rememberEdit).For(v => v.isOn, v => v.onValueChanged).To(vm => vm.Remember).TwoWay();
-            bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit());
+            bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit);
             bindingSet.Build();
 
             BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();

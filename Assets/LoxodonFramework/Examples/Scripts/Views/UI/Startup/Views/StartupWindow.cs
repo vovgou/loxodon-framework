@@ -36,8 +36,8 @@ namespace Loxodon.Framework.Examples
 
             /* databinding, Bound to the ViewModel. */
             BindingSet<StartupWindow, StartupViewModel> bindingSet = this.CreateBindingSet(viewModel);
-            bindingSet.Bind().For(v => v.OnOpenLoginWindow(null, null)).To(vm => vm.LoginRequest);
-            bindingSet.Bind().For(v => v.OnDismissRequest(null, null)).To(vm => vm.DismissRequest);
+            bindingSet.Bind().For(v => v.OnOpenLoginWindow).To(vm => vm.LoginRequest);
+            bindingSet.Bind().For(v => v.OnDismissRequest).To(vm => vm.DismissRequest);
 
             bindingSet.Bind(this.progressBarSlider).For("value", "onValueChanged").To("ProgressBar.Progress").TwoWay();
             //bindingSet.Bind (this.progressBarSlider).For (v => v.value, v => v.onValueChanged).To (vm => vm.ProgressBar.Progress).TwoWay ();

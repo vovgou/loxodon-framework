@@ -44,6 +44,8 @@ namespace Loxodon.Framework.Configurations
                             return true;
                         if (type.Equals(typeof(Vector4)))
                             return true;
+                        if (type.Equals(typeof(Rect)))
+                            return true;
                         return false;
                     }
             }
@@ -181,6 +183,26 @@ namespace Loxodon.Framework.Configurations
                                 string[] s = val.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                                 if (s.Length == 4)
                                     return new Vector4(float.Parse(s[0]), float.Parse(s[1]), float.Parse(s[2]), float.Parse(s[3]));
+                            }
+                            catch (Exception e)
+                            {
+                                throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name), e);
+                            }
+                        }
+                        else if (type.Equals(typeof(Rect)))
+                        {
+                            if (value is Rect)
+                                return (Rect)value;
+
+                            if (!(value is string))
+                                throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name));
+
+                            try
+                            {
+                                var val = Regex.Replace(((string)value).Trim(), @"(^\()|(\)$)", "");
+                                string[] s = val.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (s.Length == 4)
+                                    return new Rect(float.Parse(s[0]), float.Parse(s[1]), float.Parse(s[2]), float.Parse(s[3]));
                             }
                             catch (Exception e)
                             {

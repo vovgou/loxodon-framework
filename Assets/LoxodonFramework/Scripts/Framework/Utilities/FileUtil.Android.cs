@@ -1,13 +1,11 @@
 ﻿#if UNITY_ANDROID && !UNITY_EDITOR
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using UnityEngine;
 
 namespace Loxodon.Framework.Utilities
 {
-    public class AndroidFileUtil
+    public class ZipAccessorForAndroidStreamingAssets : FileUtil.IZipAccessor
     {
         private const string ACTIVITY_JAVA_CLASS = "com.unity3d.player.UnityPlayer";
 
@@ -31,86 +29,57 @@ namespace Loxodon.Framework.Utilities
             }
         }
 
-        protected static string GetAssetFilePath(string filename)
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void OnInitialized()
         {
-            if (string.IsNullOrEmpty(filename))
-                return filename;
+            FileUtil.Register(new ZipAccessorForAndroidStreamingAssets());
+        }
 
-            int start = filename.LastIndexOf("!/assets/");
+        protected string GetAssetFilePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return path;
+
+            int start = path.LastIndexOf("!/assets/");
             if (start < 0)
-                return filename;
+                return path;
 
-            return filename.Substring(start + 9);
+            return path.Substring(start + 9);
         }
 
-        public static Stream OpenFileStream(string filename)
-        {
-            if (filename == null)
-                throw new ArgumentNullException("filename");
-            if (filename.Length == 0)
-                throw new ArgumentException("the filename is empty.");
+        public int Priority { get { return 0; } }
 
-            return new InputStreamWrapper(AssetManager.Call<AndroidJavaObject>("open", GetAssetFilePath(filename)));
-        }
-
-        public static byte[] ReadAllBytes(string filename)
-        {
-            using (var stream = OpenFileStream(filename))
-            {
-                byte[] buffer = new byte[stream.Length];
-                stream.Read(buffer, 0, buffer.Length);
-                return buffer;
-            }
-        }
-
-        public static string ReadAllText(string filename)
-        {
-            return ReadAllText(filename, Encoding.UTF8);
-        }
-
-        public static string ReadAllText(string filename, Encoding encoding)
-        {
-            using (var stream = OpenFileStream(filename))
-            {
-                using (StreamReader sr = new StreamReader(stream, encoding, true))
-                {
-                    return sr.ReadToEnd();
-                }
-            }
-        }
-
-        public static string[] ReadAllLines(string filename)
-        {
-            return ReadAllLines(filename, Encoding.UTF8);
-        }
-
-        public static string[] ReadAllLines(string filename, Encoding encoding)
-        {
-            string line;
-            List<string> lines = new List<string>();
-
-            using (var stream = OpenFileStream(filename))
-            {
-                using (StreamReader sr = new StreamReader(stream, encoding, true))
-                {
-                    while ((line = sr.ReadLine()) != null)
-                        lines.Add(line);
-                }
-            }
-            return lines.ToArray();
-        }
-
-        public static bool Exists(string filename)
+        public bool Exists(string path)
         {
             try
             {
-                using (AndroidJavaObject fileDescriptor = AssetManager.Call<AndroidJavaObject>("openFd", GetAssetFilePath(filename)))
+                using (AndroidJavaObject fileDescriptor = AssetManager.Call<AndroidJavaObject>("openFd", GetAssetFilePath(path)))
                 {
                     if (fileDescriptor != null)
                         return true;
                 }
             }
             catch (Exception) { }
+
+            return false;
+        }
+
+        public Stream OpenRead(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("the filename is null or empty.");
+
+            return new InputStreamWrapper(AssetManager.Call<AndroidJavaObject>("open", GetAssetFilePath(path)));
+        }
+
+        public bool Support(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return false;
+
+            string fullname = path.ToLower();
+            if (fullname.IndexOf(@"\.apk") > 0 && fullname.LastIndexOf("!/assets/") > 0)
+                return true;
 
             return false;
         }

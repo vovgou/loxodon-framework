@@ -3,6 +3,7 @@
 	<string name="app.name">Loxodon Framework Examples</string>
 	<string name="framework.name">LoxodonFramework</string>
 	<vector3 name="user.position">(20 , 20.2 , 30)</vector3>
+  <rect name="button.coordinates">(100.0,100.0,240,60)</rect>
 	<color name="color.black">#000000</color>
 	<color-array name="button.transition.colors">
 		<item>#FFFFFFFF</item>

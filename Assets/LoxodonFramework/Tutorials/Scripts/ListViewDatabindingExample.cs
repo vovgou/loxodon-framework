@@ -168,12 +168,12 @@ namespace Loxodon.Framework.Tutorials
 
             BindingSet<ListViewDatabindingExample, ListViewViewModel> bindingSet = this.CreateBindingSet<ListViewDatabindingExample, ListViewViewModel>();
             bindingSet.Bind(this.listView).For(v => v.Items).To(vm => vm.Items).OneWay();
-            bindingSet.Bind(this.listView).For(v => v.OnSelectChanged).To(vm => vm.Select(0)).OneWay();
+            bindingSet.Bind(this.listView).For(v => v.OnSelectChanged).To<int>(vm => vm.Select).OneWay();
 
-            bindingSet.Bind(this.addButton).For(v => v.onClick).To(vm => vm.AddItem());
-            bindingSet.Bind(this.removeButton).For(v => v.onClick).To(vm => vm.RemoveItem());
-            bindingSet.Bind(this.clearButton).For(v => v.onClick).To(vm => vm.ClearItem());
-            bindingSet.Bind(this.changeIconButton).For(v => v.onClick).To(vm => vm.ChangeItemIcon());
+            bindingSet.Bind(this.addButton).For(v => v.onClick).To(vm => vm.AddItem);
+            bindingSet.Bind(this.removeButton).For(v => v.onClick).To(vm => vm.RemoveItem);
+            bindingSet.Bind(this.clearButton).For(v => v.onClick).To(vm => vm.ClearItem);
+            bindingSet.Bind(this.changeIconButton).For(v => v.onClick).To(vm => vm.ChangeItemIcon);
 
             bindingSet.Build();
         }

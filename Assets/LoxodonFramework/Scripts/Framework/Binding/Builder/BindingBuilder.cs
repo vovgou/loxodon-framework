@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using Loxodon.Log;
 using Loxodon.Framework.Binding.Contexts;
 using Loxodon.Framework.Binding.Converters;
+using Loxodon.Framework.Interactivity;
 
 namespace Loxodon.Framework.Binding.Builder
 {
@@ -55,7 +56,17 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
+        [Obsolete("Please use \"For(v => v.MethodName)\" instead of this method.")]
         public BindingBuilder<TTarget, TSource> For(Expression<Action<TTarget>> memberExpression)
+        {
+            string targetName = this.PathParser.ParseMemberName(memberExpression);
+            this.description.TargetName = targetName;
+            this.description.UpdateTrigger = null;
+            this.OneWayToSource();
+            return this;
+        }
+
+        public BindingBuilder<TTarget, TSource> For(Expression<Func<TTarget, EventHandler<InteractionEventArgs>>> memberExpression)
         {
             string targetName = this.PathParser.ParseMemberName(memberExpression);
             this.description.TargetName = targetName;
@@ -76,7 +87,20 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
+        [Obsolete("Please use \"To(vm => vm.MethodName)\" or \"To<TParameter>(vm => vm.MethodName)\" instead of this method.")]
         public BindingBuilder<TTarget, TSource> To(Expression<Action<TSource>> path)
+        {
+            this.SetMemberPath(this.PathParser.Parse(path));
+            return this;
+        }
+
+        public BindingBuilder<TTarget, TSource> To<TParameter>(Expression<Func<TSource, Action<TParameter>>> path)
+        {
+            this.SetMemberPath(this.PathParser.Parse(path));
+            return this;
+        }
+
+        public BindingBuilder<TTarget, TSource> To(Expression<Func<TSource, Action>> path)
         {
             this.SetMemberPath(this.PathParser.Parse(path));
             return this;
@@ -185,7 +209,17 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
+        [Obsolete("Please use \"For(v => v.MethodName)\" instead of this method.")]
         public BindingBuilder<TTarget> For(Expression<Action<TTarget>> memberExpression)
+        {
+            string targetName = this.PathParser.ParseMemberName(memberExpression);
+            this.description.TargetName = targetName;
+            this.description.UpdateTrigger = null;
+            this.OneWayToSource();
+            return this;
+        }
+
+        public BindingBuilder<TTarget> For(Expression<Func<TTarget, EventHandler<InteractionEventArgs>>> memberExpression)
         {
             string targetName = this.PathParser.ParseMemberName(memberExpression);
             this.description.TargetName = targetName;
@@ -208,7 +242,20 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
+        [Obsolete("Please use \"To(() => Class.MethodName)\" or \"To<TParameter>(() => Class.MethodName)\" instead of this method.")]
         public BindingBuilder<TTarget> To(Expression<Action> path)
+        {
+            this.SetStaticMemberPath(this.PathParser.ParseStaticPath(path));
+            return this;
+        }
+
+        public BindingBuilder<TTarget> To<TParameter>(Expression<Func<Action<TParameter>>> path)
+        {
+            this.SetStaticMemberPath(this.PathParser.ParseStaticPath(path));
+            return this;
+        }
+
+        public BindingBuilder<TTarget> To(Expression<Func<Action>> path)
         {
             this.SetStaticMemberPath(this.PathParser.ParseStaticPath(path));
             return this;

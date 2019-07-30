@@ -61,7 +61,7 @@ namespace Loxodon.Framework.Tutorials
         void Start()
         {
             BindingSet<DatabindingForLocalizationExample, DatabindingForLocalizationViewModel> bindingSet = this.CreateBindingSet<DatabindingForLocalizationExample, DatabindingForLocalizationViewModel>(new DatabindingForLocalizationViewModel(this.localization));
-            bindingSet.Bind(this.dropdown).For(v => v.onValueChanged).To(vm => vm.OnValueChanged(0));
+            bindingSet.Bind(this.dropdown).For(v => v.onValueChanged).To<int>(vm => vm.OnValueChanged);
             bindingSet.Build();
 
             BindingSet<DatabindingForLocalizationExample> staticBindingSet = this.CreateBindingSet<DatabindingForLocalizationExample>();

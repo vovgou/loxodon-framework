@@ -126,17 +126,17 @@ namespace Loxodon.Framework.Tutorials
             BindingSet<InterationExample, InterationViewModel> bindingSet = this.CreateBindingSet<InterationExample, InterationViewModel>();
 
             /* Bind the method "OnOpenAlert" to an interactive request */
-            bindingSet.Bind().For(v => v.OnOpenAlert(null, null)).To(vm => vm.AlertDialogRequest);
+            bindingSet.Bind().For(v => v.OnOpenAlert).To(vm => vm.AlertDialogRequest);
 
             /* Bind the ToastInteractionAction to an interactive request */
             bindingSet.Bind().For(v => v.toastInteractionAction).To(vm => vm.ToastRequest);
             /* or bind the method "OnShowToast" to an interactive request */
-            //bindingSet.Bind().For(v => v.OnShowToast(null, null)).To(vm => vm.ToastRequest);
+            //bindingSet.Bind().For(v => v.OnShowToast).To(vm => vm.ToastRequest);
 
             /* Bind the LoadingInteractionAction to an interactive request */
             bindingSet.Bind().For(v => v.loadingInteractionAction).To(vm => vm.LoadingRequest);
             /* or bind the method "OnShowOrHideLoading" to an interactive request */
-            //bindingSet.Bind().For(v => v.OnShowOrHideLoading(null, null)).To(vm => vm.LoadingRequest);
+            //bindingSet.Bind().For(v => v.OnShowOrHideLoading).To(vm => vm.LoadingRequest);
 
             /* Binding command */
             bindingSet.Bind(this.openAlert).For(v => v.onClick).To(vm => vm.OpenAlertDialog);

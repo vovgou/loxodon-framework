@@ -97,6 +97,7 @@ namespace Loxodon.Framework.Binding.Paths
                     return;
                 }
 
+                //Delegate.CreateDelegate(Type type, object firstArgument, MethodInfo method)
                 if (methodCall.Method.Name.Equals("CreateDelegate") && methodCall.Arguments.Count == 3)
                 {
                     var info = (MethodInfo)(methodCall.Arguments[2] as ConstantExpression).Value;
@@ -265,12 +266,25 @@ namespace Loxodon.Framework.Binding.Paths
             if (method != null)
                 return method.Method.Name;
 
+            //Delegate.CreateDelegate(Type type, object firstArgument, MethodInfo method)
+            var unary = expression.Body as UnaryExpression;
+            if (unary != null && unary.NodeType == ExpressionType.Convert)
+            {
+                MethodCallExpression methodCall = (MethodCallExpression)unary.Operand;
+                if (methodCall.Method.Name.Equals("CreateDelegate") && methodCall.Arguments.Count == 3)
+                {
+                    var info = (MethodInfo)(methodCall.Arguments[2] as ConstantExpression).Value;
+                    return info.Name;
+                }
+                throw new ArgumentException(string.Format("Invalid argument:{0}", expression), "expression");
+            }
+
             var body = expression.Body as MemberExpression;
             if (body == null)
-                throw new ArgumentException("Invalid argument", "expression");
+                throw new ArgumentException(string.Format("Invalid argument:{0}", expression), "expression");
 
             if (!(body.Expression is ParameterExpression))
-                throw new NotSupportedException("Invalid argument");
+                throw new ArgumentException(string.Format("Invalid argument:{0}", expression), "expression");
 
             return body.Member.Name;
         }

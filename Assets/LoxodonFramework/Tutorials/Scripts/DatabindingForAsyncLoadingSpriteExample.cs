@@ -50,7 +50,7 @@ namespace Loxodon.Framework.Tutorials
             BindingSet<DatabindingForAsyncLoadingSpriteExample, SpriteViewModel> bindingSet = this.CreateBindingSet<DatabindingForAsyncLoadingSpriteExample, SpriteViewModel>();
             bindingSet.Bind(this.spriteLoader).For(v => v.SpriteName).To(vm => vm.SpriteName).OneWay();
 
-            bindingSet.Bind(this.changeSpriteButton).For(v => v.onClick).To(vm => vm.ChangeSpriteName());
+            bindingSet.Bind(this.changeSpriteButton).For(v => v.onClick).To(vm => vm.ChangeSpriteName);
 
             bindingSet.Build();
         }

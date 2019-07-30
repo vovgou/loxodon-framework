@@ -1,5 +1,5 @@
 ﻿Loxodon Framework
-Version: 1.8.6
+Version: 1.8.8
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,11 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.8.7
+	Added encryption and decryption feature.
+	Added lua precompilation tools
+	Added lua script loader
+
 version 1.8.6
 	Changed Localization.GetText(string key, params object[] args) to GetFormattedText(string key, params object[] args).
 	Changed IConfiguration.GetString(string key, params object[] args) to GetFormattedString(string key, params object[] args).
