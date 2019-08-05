@@ -1,4 +1,4 @@
-﻿#if UNITY_ANDROID && !UNITY_EDITOR
+﻿#if UNITY_ANDROID
 using System;
 using System.IO;
 using UnityEngine;
@@ -78,7 +78,7 @@ namespace Loxodon.Framework.Utilities
                 return false;
 
             string fullname = path.ToLower();
-            if (fullname.IndexOf(@"\.apk") > 0 && fullname.LastIndexOf("!/assets/") > 0)
+            if (fullname.IndexOf(".apk") > 0 && fullname.LastIndexOf("!/assets/") > 0)
                 return true;
 
             return false;

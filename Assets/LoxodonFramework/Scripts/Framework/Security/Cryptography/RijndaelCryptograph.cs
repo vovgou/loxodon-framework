@@ -103,8 +103,6 @@ namespace Loxodon.Framework.Security.Cryptography
 
             this.algorithmName = string.Format("AES{0}_{1}_{2}", rijndael.KeySize, rijndael.Mode, rijndael.Padding);
 #endif
-
-
         }
 
 #if !NETFX_CORE

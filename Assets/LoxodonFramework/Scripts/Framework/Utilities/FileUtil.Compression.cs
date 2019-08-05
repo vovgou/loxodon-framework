@@ -1,4 +1,4 @@
-﻿#if UNITY_ANDROID && !UNITY_EDITOR && NET_STANDARD_2_0
+﻿#if UNITY_ANDROID && NET_STANDARD_2_0
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +27,7 @@ namespace Loxodon.Framework.Utilities
 
         protected string GetCompressedEntryName(string url)
         {
-            return url.Substring(url.LastIndexOf("!") + 1);
+            return url.Substring(url.LastIndexOf("!") + 2);
         }
 
         protected ZipArchive GetZipArchive(string path)
@@ -85,7 +85,7 @@ namespace Loxodon.Framework.Utilities
                 return false;
 
             string fullname = path.ToLower();
-            if ((fullname.IndexOf(@"\.apk") > 0 || fullname.IndexOf(@"\.obb") > 0) && fullname.LastIndexOf("!/assets/") > 0)
+            if ((fullname.IndexOf(".apk") > 0 || fullname.IndexOf(".obb") > 0) && fullname.LastIndexOf("!/assets/") > 0)
                 return true;
 
             return false;

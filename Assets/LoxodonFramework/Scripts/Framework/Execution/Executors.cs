@@ -96,6 +96,10 @@ namespace Loxodon.Framework.Execution
                     mainThread = currentThread;
 #endif
                     executor = CreateMainThreadExecutor(dontDestroy, useFixedUpdate);
+
+                    if (SynchronizationContext.Current == null)
+                        SynchronizationContext.SetSynchronizationContext(new UnitySynchronizationContext());
+
                 }
                 catch (Exception e)
                 {
@@ -751,6 +755,28 @@ namespace Loxodon.Framework.Execution
                 {
                     stopingQueue.Add(routine);
                 }
+            }
+        }
+
+        sealed class UnitySynchronizationContext : SynchronizationContext
+        {
+            public UnitySynchronizationContext()
+            {
+            }
+
+            public override void Send(SendOrPostCallback callback, object state)
+            {
+                RunOnMainThread(() => { callback(state); }, true);
+            }
+
+            public override void Post(SendOrPostCallback callback, object state)
+            {
+                RunOnMainThread(() => { callback(state); }, false);
+            }
+
+            public override SynchronizationContext CreateCopy()
+            {
+                return this;
             }
         }
     }

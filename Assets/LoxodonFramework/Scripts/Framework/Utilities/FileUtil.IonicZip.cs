@@ -1,4 +1,4 @@
-﻿#if UNITY_ANDROID && !UNITY_EDITOR && IONIC_ZIP
+﻿#if UNITY_ANDROID && IONIC_ZIP
 using Ionic.Zip;
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace Loxodon.Framework.Utilities
 
         protected string GetCompressedEntryName(string url)
         {
-            return url.Substring(url.LastIndexOf("!") + 1);
+            return url.Substring(url.LastIndexOf("!") + 2);
         }
 
         protected ZipFile GetZipArchive(string path)
@@ -86,7 +86,7 @@ namespace Loxodon.Framework.Utilities
                 return false;
 
             string fullname = path.ToLower();
-            if ((fullname.IndexOf(@"\.apk") > 0 || fullname.IndexOf(@"\.obb") > 0) && fullname.LastIndexOf("!/assets/") > 0)
+            if ((fullname.IndexOf(".apk") > 0 || fullname.IndexOf(".obb") > 0) && fullname.LastIndexOf("!/assets/") > 0)
                 return true;
 
             return false;
