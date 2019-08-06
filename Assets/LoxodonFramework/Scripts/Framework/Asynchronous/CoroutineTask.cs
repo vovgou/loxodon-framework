@@ -392,6 +392,11 @@ namespace Loxodon.Framework.Asynchronous
             }
         }
 
+        public object WaitForDone()
+        {
+            return this.asyncResult.WaitForDone();
+        }
+
         protected bool IsExecutable(IAsyncResult ar, CoroutineTaskContinuationOptions continuationOptions)
         {
             bool executable = (continuationOptions == CoroutineTaskContinuationOptions.None);

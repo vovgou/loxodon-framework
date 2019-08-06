@@ -1,12 +1,101 @@
 ![](images/icon.png)
-
 # Loxodon Framework
 
-![release](images/release_version.png)
-
-**MVVM Framework for Unity3D （C# & XLua）**
+*MVVM Framework for Unity3D(C# & XLua)*
 
 *开发者 Clark*
+*Version 1.8.9*
+
+<div style="page-break-after: always;"></div>
+
+目录
+---
+
+<!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
+<!-- code_chunk_output -->
+
+- [概述](#概述)
+- [下载](#下载)
+- [官方插件（可选）](#官方插件可选)
+- [Lua插件安装（可选）](#lua插件安装可选)
+  - [安装XLua](#安装xlua)
+  - [配置宏定义](#配置宏定义)
+  - [导入Lua插件](#导入lua插件)
+  - [查看示例](#查看示例)
+- [快速入门](#快速入门)
+  - [C# 示例](#c-示例)
+  - [Lua 示例](#lua-示例)
+- [功能介绍](#功能介绍)
+  - [上下文（Context）](#上下文context)
+    - [应用上下文（ApplicationContext）](#应用上下文applicationcontext)
+    - [玩家上下文（PlayerContext）](#玩家上下文playercontext)
+    - [其它上下文（Context）](#其它上下文context)
+  - [服务容器](#服务容器)
+    - [服务注册器(IServiceRegistry)](#服务注册器iserviceregistry)
+    - [服务定位器(IServiceLocator)](#服务定位器iservicelocator)
+    - [服务Bundle(IServiceBundle)](#服务bundleiservicebundle)
+  - [应用配置（Preference）](#应用配置preference)
+  - [国际化和本地化](#国际化和本地化)
+    - [目录结构](#目录结构)
+    - [配置文件的格式](#配置文件的格式)
+    - [XML特殊字符](#xml特殊字符)
+    - [支持的数值类型](#支持的数值类型)
+    - [生成C#脚本](#生成c脚本)
+    - [本地化视图组件](#本地化视图组件)
+    - [使用示例](#使用示例)
+    - [支持CSV格式的本地化插件](#支持csv格式的本地化插件)
+  - [配置文件（Properties文件）](#配置文件properties文件)
+    - [支持的数值类型](#支持的数值类型-1)
+    - [数组分隔符](#数组分隔符)
+    - [配置文件示例](#配置文件示例)
+  - [日志系统](#日志系统)
+  - [线程/协程异步结果和异步任务](#线程协程异步结果和异步任务)
+    - [AsyncResult](#asyncresult)
+    - [ProgressResult](#progressresult)
+    - [AsyncTask](#asynctask)
+    - [ProgressTask](#progresstask)
+    - [CoroutineTask](#coroutinetask)
+  - [线程/协程执行器](#线程协程执行器)
+    - [执行器(Executors)](#执行器executors)
+    - [定时任务执行器(IScheduledExecutor)](#定时任务执行器ischeduledexecutor)
+    - [可拦截的迭代器(InterceptableEnumerator)](#可拦截的迭代器interceptableenumerator)
+  - [消息系统(Messenger)](#消息系统messenger)
+  - [可观察的对象(Observables)](#可观察的对象observables)
+  - [数据绑定(Databinding)](#数据绑定databinding)
+    - [数据绑定示例](#数据绑定示例)
+    - [绑定模式](#绑定模式)
+    - [类型转换器(IConverter)](#类型转换器iconverter)
+    - [绑定类型](#绑定类型)
+    - [Command Parameter](#command-parameter)
+    - [Scope Key](#scope-key)
+    - [绑定的生命周期](#绑定的生命周期)
+    - [注册属性和域的访问器](#注册属性和域的访问器)
+  - [UI框架](#ui框架)
+    - [动态变量集(Variables)](#动态变量集variables)
+    - [UI视图定位器(IUIViewLocator)](#ui视图定位器iuiviewlocator)
+    - [UI视图动画(Animations)](#ui视图动画animations)
+    - [UI控件](#ui控件)
+    - [视图、窗口和窗口管理器](#视图-窗口和窗口管理器)
+    - [交互请求(InteractionRequest)](#交互请求interactionrequest)
+    - [交互行为(InteractionAction)](#交互行为interactionaction)
+    - [集合与列表视图的绑定](#集合与列表视图的绑定)
+    - [数据绑定与异步加载精灵](#数据绑定与异步加载精灵)
+- [Lua](#lua)
+  - [模块与继承](#模块与继承)
+  - [Lua的ObserableObject](#lua的obserableobject)
+  - [Lua中使用Unity的协程](#lua中使用unity的协程)
+  - [Lua中使用日志系统](#lua中使用日志系统)
+  - [Lua 预编译工具](#lua-预编译工具)
+    - [Lua加载器](#lua加载器)
+    - [示例](#示例)
+    - [扩展其他加密方式](#扩展其他加密方式)
+- [联系方式](#联系方式)
+
+<!-- /code_chunk_output -->
+<div style="page-break-after: always;"></div>
+
+
+## 概述
 
 **要求Unity 5.6.0或者更高版本**
 
@@ -1453,6 +1542,57 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
                 promise.SetException(e);
             }
         }
+    }
+
+
+#### CoroutineTask
+
+在C# 4.0之前需要执行一个复杂的异步操作时，一般都使用线程池技术来执行一个任务。在C# 4.0中引人了Task（System.Threading.Tasks.Task）机制，它提供了更为方便和简洁的API，为保持Unity3D协程异步任务和线程异步任务Task用法一致，我实现了CoroutineTask类，它的API基本上和Task是一致的，唯一的区别就是它执行的是协程异步任务，它的所有任务都是在主线程中执行。
+
+    public class CoroutineTaskExample : MonoBehaviour
+    {
+        IEnumerator Start()
+        {
+            CoroutineTask task = new CoroutineTask(DoTask())
+                .ContinueWith(
+                    DoContinueTask(),
+                    CoroutineTaskContinuationOptions.OnCompleted
+                    | CoroutineTaskContinuationOptions.OnFaulted
+                ).ContinueWith(
+                    () => { Debug.Log("The task is completed"); }
+                );
+
+            yield return task.WaitForDone();
+
+            Debug.LogFormat("IsDone:{0} IsCompleted:{1} IsFaulted:{2} IsCancelled:{3}",
+                task.IsDone, task.IsCompleted, task.IsFaulted, task.IsCancelled);
+        }
+
+        /// <summary>
+        /// Simulate a task.
+        /// </summary>
+        /// <returns>The task.</returns>
+        /// <param name="promise">Promise.</param>
+        protected IEnumerator DoTask()
+        {
+            int n = 10;
+            for (int i = 0; i < n; i++)
+            {
+                Debug.LogFormat("Task:i = {0}", i);
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+
+        protected IEnumerator DoContinueTask()
+        {
+            int n = 10;
+            for (int i = 0; i < n; i++)
+            {
+                Debug.LogFormat("ContinueTask:i = {0}", i);
+                yield return new WaitForSeconds(0.5f);
+            }
+        }    
+
     }
 
 更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)

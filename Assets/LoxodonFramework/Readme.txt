@@ -16,6 +16,11 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.8.9
+	Added CoroutineTask.
+	Fixed a bug in the PathParser.
+	Added LocalizedAudioSourceInResources,LocalizedImageInResources,LocalizedRawImageInResources.
+
 version 1.8.7
 	Added encryption and decryption feature.
 	Added lua precompilation tools
