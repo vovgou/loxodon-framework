@@ -1,5 +1,5 @@
 ﻿Loxodon Framework
-Version: 1.8.8
+Version: 1.8.10
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,9 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.8.10
+	Added AES CTR encryption algorithm, and supports stream encryption and the "Seek" feature of encrypted stream.
+
 version 1.8.9
 	Added CoroutineTask.
 	Fixed a bug in the PathParser.
