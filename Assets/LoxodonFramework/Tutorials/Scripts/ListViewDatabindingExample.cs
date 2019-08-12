@@ -149,7 +149,6 @@ namespace Loxodon.Framework.Tutorials
 
     public class ListViewDatabindingExample : MonoBehaviour
     {
-        private int itemCount;
         private ListViewViewModel viewModel;
 
         public Button addButton;

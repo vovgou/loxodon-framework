@@ -101,8 +101,6 @@ namespace Loxodon.Framework.Tutorials
         public Button showLoading;
         public Button hideLoading;
 
-        private List<Loading> list = new List<Loading>();
-
         protected override void Awake()
         {
             ApplicationContext context = Context.GetApplicationContext();

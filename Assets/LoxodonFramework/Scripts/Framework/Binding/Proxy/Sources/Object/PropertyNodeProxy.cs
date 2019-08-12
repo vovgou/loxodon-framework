@@ -25,6 +25,9 @@
 using Loxodon.Framework.Binding.Reflection;
 using Loxodon.Log;
 using System;
+#if NETFX_CORE
+using System.Reflection;
+#endif
 
 using INotifyPropertyChanged = System.ComponentModel.INotifyPropertyChanged;
 using PropertyChangedEventArgs = System.ComponentModel.PropertyChangedEventArgs;

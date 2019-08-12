@@ -26,6 +26,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if NETFX_CORE
+using System.Reflection;
+#endif
 
 using Loxodon.Log;
 using Loxodon.Framework.Asynchronous;

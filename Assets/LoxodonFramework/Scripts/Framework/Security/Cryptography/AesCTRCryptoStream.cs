@@ -33,7 +33,6 @@ namespace Loxodon.Framework.Security.Cryptography
     {
         private readonly object _lock = new object();
         private Stream stream;
-        private CryptoStreamMode streamMode;
 
         private bool leaveOpen;
         private bool canRead;
@@ -52,7 +51,6 @@ namespace Loxodon.Framework.Security.Cryptography
         {
             this.stream = stream;
             this.transform = transform;
-            this.streamMode = streamMode;
             this.leaveOpen = leaveOpen;
 
             this.canRead = stream.CanRead;

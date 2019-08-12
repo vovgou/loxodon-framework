@@ -270,7 +270,7 @@ namespace Loxodon.Framework.Binding.Reflection
             IProxyFieldInfo info;
             if (this.fields.TryGetValue(name, out info))
                 return info;
-            
+
             FieldInfo fieldInfo = this.type.GetField(name);
             if (fieldInfo != null && fieldInfo.DeclaringType.Equals(type))
             {
@@ -414,7 +414,11 @@ namespace Loxodon.Framework.Binding.Reflection
             if (info != null)
                 return info;
 
+#if NETFX_CORE
+            MethodInfo methodInfo = this.type.GetMethod(name, flags);
+#else
             MethodInfo methodInfo = this.type.GetMethod(name, flags, null, parameterTypes, null);
+#endif
             if (methodInfo != null && methodInfo.DeclaringType.Equals(type))
             {
                 return this.CreateProxyMethodInfo(methodInfo);

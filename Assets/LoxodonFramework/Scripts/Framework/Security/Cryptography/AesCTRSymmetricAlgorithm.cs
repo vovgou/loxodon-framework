@@ -76,7 +76,6 @@ namespace Loxodon.Framework.Security.Cryptography
     {
         private readonly byte[] key;
         private readonly byte[] iv;
-        private readonly SymmetricAlgorithm algorithm;
         private readonly ICryptoTransform transform;
         private readonly int blockSize;
 
@@ -89,8 +88,7 @@ namespace Loxodon.Framework.Security.Cryptography
             this.key = key;
             this.iv = iv;
             this.blockSize = algorithm.BlockSize / 8;
-            this.algorithm = algorithm;
-            this.transform = algorithm.CreateEncryptor(key, new byte[blockSize]);
+            this.transform = algorithm.CreateEncryptor(this.key, new byte[blockSize]);
 
             this.masks = new byte[blockSize];
             this.counter = 0;

@@ -24,6 +24,9 @@
 
 using Loxodon.Framework.Binding.Reflection;
 using System;
+#if NETFX_CORE
+using System.Reflection;
+#endif
 
 namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 {

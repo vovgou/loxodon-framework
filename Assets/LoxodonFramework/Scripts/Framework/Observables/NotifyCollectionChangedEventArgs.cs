@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#if NET_2_0 || NET_2_0_SUBSET || (UNITY_EDITOR && UNITY_METRO)
+#if NET_2_0 || NET_2_0_SUBSET || (UNITY_EDITOR && UNITY_METRO && !(NET_STANDARD_2_0 || NET_4_6))
 using System;
 using System.Collections;
 #if NETFX_CORE

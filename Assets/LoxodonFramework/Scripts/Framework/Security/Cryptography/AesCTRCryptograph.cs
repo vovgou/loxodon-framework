@@ -54,7 +54,7 @@ namespace Loxodon.Framework.Security.Cryptography
                 buf.Append(arr[rnd.Next(0, arr.Length)]);
             return buf.ToString();
         }
-
+         
         /// <summary>
         /// The 'Key' must be 16byte 24byte or 32byte.
         /// </summary>

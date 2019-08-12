@@ -37,7 +37,7 @@ namespace Loxodon.Framework.Configurations
         private static readonly DefaultTypeConverter defaultTypeConverter = new DefaultTypeConverter();
 
         protected static readonly string KEY_DELIMITER = ".";
-        protected static readonly Version DEFAULT_VERSION = new Version();
+        protected static readonly Version DEFAULT_VERSION = new Version("1.0.0");
         protected static readonly DateTime DEFAULT_DATETIME = new DateTime();
 
         private List<ITypeConverter> converters = new List<ITypeConverter>();

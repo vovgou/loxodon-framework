@@ -121,9 +121,10 @@ namespace Loxodon.Framework.Execution
 #endif
                     executor = CreateMainThreadExecutor(dontDestroy, useFixedUpdate);
 
+#if !NETFX_CORE
                     if (SynchronizationContext.Current == null)
                         SynchronizationContext.SetSynchronizationContext(new UnitySynchronizationContext());
-
+#endif
                 }
                 catch (Exception e)
                 {
@@ -782,6 +783,7 @@ namespace Loxodon.Framework.Execution
             }
         }
 
+#if !NETFX_CORE
         sealed class UnitySynchronizationContext : SynchronizationContext
         {
             public UnitySynchronizationContext()
@@ -803,5 +805,6 @@ namespace Loxodon.Framework.Execution
                 return this;
             }
         }
+#endif
     }
 }

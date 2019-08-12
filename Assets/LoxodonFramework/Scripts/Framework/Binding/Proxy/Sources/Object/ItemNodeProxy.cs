@@ -26,6 +26,9 @@ using Loxodon.Framework.Binding.Reflection;
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
+#if NETFX_CORE
+using System.Reflection;
+#endif
 
 using INotifyCollectionChanged = System.Collections.Specialized.INotifyCollectionChanged;
 using NotifyCollectionChangedAction = System.Collections.Specialized.NotifyCollectionChangedAction;
