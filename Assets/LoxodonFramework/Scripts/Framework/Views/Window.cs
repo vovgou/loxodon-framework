@@ -423,7 +423,8 @@ namespace Loxodon.Framework.Views
                 this.OnDismiss();
                 this.RaiseOnDismissed();
                 this.WindowManager.Remove(this);
-                if (this.gameObject != null)
+
+                if (!this.IsDestroyed() && this.gameObject != null)
                     GameObject.Destroy(this.gameObject);
                 this.State = WindowState.DISMISS_END;
                 this.dismissTransition = null;

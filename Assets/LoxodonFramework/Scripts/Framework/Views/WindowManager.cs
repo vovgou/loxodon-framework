@@ -120,9 +120,9 @@ namespace Loxodon.Framework.Views
 
         public virtual void Clear()
         {
-            for (int i = this.windows.Count; i > 0; i--)
+            for (int i = 0; i < this.windows.Count; i++)
             {
-                this.windows[0].Dismiss(true);
+                this.windows[i].Dismiss(true);
             }
             this.windows.Clear();
         }
