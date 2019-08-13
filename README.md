@@ -69,7 +69,7 @@ UWP(window10)
 
 - [Loxodon Framework Log4Net](http://u3d.as/Gmr)
 
-    This is a log plugin.It allows you to use Log4Net in the Unity3d.
+    This is a log plugin.It helps you to use Log4Net in the Unity3d.
 
     ![](docs/images/log4net.jpg)
 
