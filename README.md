@@ -89,6 +89,11 @@ UWP(window10)
 - LoxodonFramework supports .Net4.x and .Net Standard2.0  
 - LoxodonFramework supports Mono2x and IL2CPP  
 - AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampolines=8192" for IOS  
+    
+    The configuration of trampolines is not necessary now, but in the early versions of Unity3d,if not configured, it will cause the game to crash on the iOS platform.
+    
+     ![](docs/images/trampolines.png)
+     
 
 ## Tutorials and Examples
 
