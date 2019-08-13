@@ -105,6 +105,59 @@ UWP(window10)
     
      ![](docs/images/trampolines.png)
      
+## Quick Start
+
+Create a view and view model of the progress bar.
+
+    public class ProgressBarViewModel : ViewModelBase
+    {
+        private string tip;
+        private bool enabled;
+        private float value;
+        public ProgressBarViewModel()
+        {
+        }
+
+        public string Tip
+        {
+            get { return this.tip; }
+            set { this.Set<string>(ref this.tip, value, nameof(Tip)); }
+        }
+
+        public bool Enabled
+        {
+            get { return this.enabled; }
+            set { this.Set<bool>(ref this.enabled, value, nameof(Enabled)); }
+        }
+
+        public float Value
+        {
+            get { return this.value; }
+            set { this.Set<float>(ref this.value, value, nameof(Value)); }
+        }
+    }
+	
+	public class ProgressBarView : UIView
+    {
+        public GameObject progressBar;
+        public Text progressTip;
+        public Text progressText;
+        public Slider progressSlider;
+
+        protected override void Awake()
+        {
+            var bindingSet = this.CreateBindingSet<ProgressBar, ProgressBarViewModel>();
+
+            bindingSet.Bind(this.progressBar).For(v => v.activeSelf).To(vm => vm.Enabled).OneWay();
+            bindingSet.Bind(this.progressTip).For(v => v.text).To(vm => vm.Tip).OneWay();
+            bindingSet.Bind(this.progressText).For(v => v.text)
+                .ToExpression(vm => string.Format("{0:0.00}%", vm.Value * 100)).OneWay();
+            bindingSet.Bind(this.progressSlider).For(v => v.value).To(vm => vm.Value).OneWay();
+
+            bindingSet.Build();
+        }
+    }
+	
 
 ## Tutorials and Examples
 
@@ -120,12 +173,6 @@ UWP(window10)
  ![](docs/images/Localization.gif) 
 
 ![](docs/images/Interaction.gif)
-
-## Quick start of Loxodon.Framework.XLua
-- You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.([XLua Download](https://github.com/Tencent/xLua/releases))
-- Configure a macro definition called "XLUA" in PlayerSetting/Scripting Defin Symbols.It is recommended to configure all platforms.
-- Find Loxodon.Framework.XLua.unitypackage in the LoxodonFramework/Docs/XLua directory and import it into the project.
-- Please see the example in the LoxodonFramework/Lua/Examples directory to enjoy your lua tour.
 
 ## Introduction
 - Window View 

@@ -101,6 +101,60 @@ UWP(window10)
     现在这个配置不是必要的，在早期的Unity3D版本，在IOS平台上，不配置它们可能导致游戏崩溃。
     
      ![](docs/images/trampolines.png)
+     
+## 快速开始
+
+创建一个进度条的视图和视图模型，并将视图中的UI控件和视图模型绑定，修改视图模型ProgressBarViewModel中的属性，视图UI界面将会自动改变。
+
+    public class ProgressBarViewModel : ViewModelBase
+    {
+        private string tip;
+        private bool enabled;
+        private float value;
+        public ProgressBarViewModel()
+        {
+        }
+
+        public string Tip
+        {
+            get { return this.tip; }
+            set { this.Set<string>(ref this.tip, value, nameof(Tip)); }
+        }
+
+        public bool Enabled
+        {
+            get { return this.enabled; }
+            set { this.Set<bool>(ref this.enabled, value, nameof(Enabled)); }
+        }
+
+        public float Value
+        {
+            get { return this.value; }
+            set { this.Set<float>(ref this.value, value, nameof(Value)); }
+        }
+    }
+	
+	public class ProgressBarView : UIView
+    {
+        public GameObject progressBar;
+        public Text progressTip;
+        public Text progressText;
+        public Slider progressSlider;
+
+        protected override void Awake()
+        {
+            var bindingSet = this.CreateBindingSet<ProgressBar, ProgressBarViewModel>();
+
+            bindingSet.Bind(this.progressBar).For(v => v.activeSelf).To(vm => vm.Enabled).OneWay();
+            bindingSet.Bind(this.progressTip).For(v => v.text).To(vm => vm.Tip).OneWay();
+            bindingSet.Bind(this.progressText).For(v => v.text)
+                .ToExpression(vm => string.Format("{0:0.00}%", vm.Value * 100)).OneWay();
+            bindingSet.Bind(this.progressSlider).For(v => v.value).To(vm => vm.Value).OneWay();
+
+            bindingSet.Build();
+        }
+    }
+	
 
 ## 教程和示例
 
