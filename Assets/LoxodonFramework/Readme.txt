@@ -16,11 +16,10 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
-version 1.8.11
-	Fixed a bug that WindowManager.Clear() cannot clear.
-
 version 1.8.10
+	Fixed a bug that WindowManager.Clear() cannot clear.
 	Added AES CTR encryption algorithm, and supports stream encryption and the "Seek" feature of encrypted stream.
+	Fixed bugs on the UWP.
 
 version 1.8.9
 	Added CoroutineTask.

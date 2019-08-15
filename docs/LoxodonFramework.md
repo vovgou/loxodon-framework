@@ -4,7 +4,7 @@
 *MVVM Framework for Unity3D(C# & XLua)*
 
 *开发者 Clark*
-*Version 1.8.9*
+*Version 1.8.10*
 
 <div style="page-break-after: always;"></div>
 
@@ -110,7 +110,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 - **PC/Mac/Linux**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
 - **IOS**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
 - **Android**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
-- **UWP(window10)** (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
+- **UWP(window10)** (.Net4.x; .Net Standard 2.0; IL2CPP)  
 
 **关键特性**
 
@@ -136,6 +136,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     - 支持命令绑定，通过命令绑定可以方便控制按钮的有效无效状态;
     - 支持可观察属性、字典、列表的绑定，支持改变通知，视图模型修改自动更改UI显示;
     - 支持表达式的绑定;
+    - 支持交互请求和交互行为的绑定;
     - 支持类型转换器，可以将图片名称转换为图集中的Sprite;
     - 可以自定义扩展更多的绑定类型;
 
@@ -152,7 +153,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
 - [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
 
-    Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。
+    Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。安装步骤详见下一章节或者查看[Loxodon.Framework.XLua的文档](https://github.com/cocowolf/loxodon-framework-xlua)    
 
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
@@ -174,9 +175,9 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 ### 安装XLua
 从Xlua的Github仓库下载最新版的XLua，可以使用源码版本Source code.zip或者xlua_v2.x.xx.zip版本（建议使用xlua_v2.x.xx.zip版本，避免和XLua示例类名冲突）。请将下载好的xlua解压缩，拷贝到当前项目中。
 
-**注意：XLua在Unity2018有兼容性问题，在编辑器模式下，请使用.Net3.5 或者 .Net4.x 不要使用.Net Standard2.0,否则会出错，如果想使用.Net Standard2.0 请参考xlua的FQA解决兼容性问题。**
+**注意：XLua在Unity2018有兼容性问题，在编辑器模式下，请使用.Net3.5 或者 .Net4.x 不要使用.Net Standard2.0,否则会出错，如果想使用.Net Standard2.0 请参考xlua的FAQ解决兼容性问题。**
 
-[XLua FQA](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/faq.md)
+[XLua FAQ](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/faq.md)
 
 [XLua下载](https://github.com/Tencent/xLua/releases "xlua")
 
