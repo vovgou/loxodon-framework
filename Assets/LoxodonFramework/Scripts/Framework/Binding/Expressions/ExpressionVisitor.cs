@@ -96,10 +96,10 @@ namespace Loxodon.Framework.Binding.Expressions
 
                 case ExpressionType.Parameter:
                     return this.VisitParameter((ParameterExpression)expr);
-
+                case ExpressionType.NewArrayInit:
+                    return this.VisitNewArrayInit((NewArrayExpression)expr);
                 //case ExpressionType.New:
-                //    return this.VisitNew((NewExpression)expr);
-                //case ExpressionType.NewArrayInit:
+                //return this.VisitNew((NewExpression)expr);
                 //case ExpressionType.NewArrayBounds:
                 //    return this.VisitNewArray((NewArrayExpression)expr);
                 //case ExpressionType.MemberInit:
@@ -211,6 +211,14 @@ namespace Loxodon.Framework.Binding.Expressions
             Expression expression = this.Visit(expr.Expression);
             if (expression != expr.Expression)
                 return Expression.TypeIs(expression, expr.TypeOperand);
+            return expr;
+        }
+
+        protected virtual Expression VisitNewArrayInit(NewArrayExpression expr)
+        {
+            IEnumerable<Expression> args = VisitExpressionList(expr.Expressions);
+            if (args != expr.Expressions)
+                return Expression.NewArrayInit(expr.Type, args);
             return expr;
         }
 

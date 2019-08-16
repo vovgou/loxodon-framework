@@ -606,7 +606,8 @@ namespace Loxodon.Framework.Binding.Expressions
                             if (expr.Conversion != null)
                                 result = Evaluate(expr.Conversion, values, result);
                         }
-                        else {
+                        else
+                        {
                             result = right;
                         }
                         break;
@@ -618,14 +619,16 @@ namespace Loxodon.Framework.Binding.Expressions
                         {
                             result = ((Array)left).GetValue((int)right);
                         }
-                        else {
+                        else
+                        {
                             result = ((Array)left).GetValue((long)right);
                         }
 #endif
                         break;
                 }
             }
-            else {
+            else
+            {
 #if NETFX_CORE
                 TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(unliftedLeft);
 #else
@@ -693,7 +696,8 @@ namespace Loxodon.Framework.Binding.Expressions
                 realSourceType = Unlift(expr.Operand.Type);
                 realTargetType = Unlift(expr.Type);
             }
-            else {
+            else
+            {
                 realSourceType = expr.Operand.Type;
                 realTargetType = expr.Type;
             }
@@ -977,6 +981,21 @@ namespace Loxodon.Framework.Binding.Expressions
             var toInvoke = (Delegate)((ConstantExpression)Visit(expr.Expression)).Value;
             var result = InvokeMethod(args => toInvoke.DynamicInvoke(args), expr.Arguments);
             return Expression.Constant(result, expr.Type.Equals(typeof(void)) ? typeof(object) : expr.Type);
+        }
+
+        protected override Expression VisitNewArrayInit(NewArrayExpression expr)
+        {
+            var expressions = expr.Expressions;
+            int count = expressions != null ? expressions.Count : 0;
+            Array array = (Array)Activator.CreateInstance(expr.Type, count);
+            for (int i = 0; i < count; i++)
+            {
+                var expression = this.Visit(expressions[i]);
+                ConstantExpression constantExpression = expression as ConstantExpression;
+                if (constantExpression != null)
+                    array.SetValue(constantExpression.Value, i);
+            }
+            return Expression.Constant(array, expr.Type);
         }
 
         internal static object Evaluate(LambdaExpression expr, Scope scope, params object[] args)

@@ -127,7 +127,7 @@ namespace Loxodon.Framework.Binding.Reflection
             if (fieldInfo.IsInitOnly)
                 return null;
 
-#if !ENABLE_IL2CPP
+#if !UNITY_IOS && !ENABLE_IL2CPP
 #if NETFX_CORE || NET_STANDARD_2_0
             try
             {
@@ -143,7 +143,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
-#elif !UNITY_IOS
+#else
             try
             {
                 DynamicMethod m = new DynamicMethod("Setter", typeof(void), new Type[] { typeof(T), typeof(TValue) }, typeof(T));
