@@ -1,0 +1,14 @@
+# FAQ
+
+## 在Unity3d 2018及以上版本，导入 XLua 插件后，执行LoxodonFramework/Lua/Examples目录下的示例报错，或者是执行xlua生成代码的命令生成代码后报错。
+
+这是XLua在Unity3D 2018及以上版本兼容性问题，在Editor下，项目开发过程中，请如下图修改 Api Compatibility Level 为".NET 4.x"，并且不要生成代码，可以正常执行。
+
+当发布版本时请改为 ".NET Standard 2.0"，并且执行xlua生成代码的命令生成代码，如报错，请将报错的函数或者属性加入黑名单。具体详情可查看XLua的[FAQs](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/faq.md)。
+
+![](images/faq001.png)
+
+## 在Unity 2018版本，打包Android平台的Apk时，StreamingAssets中的资源都没有被打包到APK文件中
+
+这应该是Unity的一个bug，如下图修改Build System为Gradle可以成功打包。
+![](images/faq002.png)

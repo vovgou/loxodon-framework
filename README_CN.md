@@ -29,6 +29,7 @@ UWP(window10)
 
 - [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
 - [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
+- [常见问题解答 FAQ](https://github.com/cocowolf/loxodon-framework/blob/master/docs/faq.md)
 
 ## 下载  
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
