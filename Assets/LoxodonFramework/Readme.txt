@@ -1,4 +1,4 @@
-﻿Loxodon Framework
+﻿  Loxodon Framework
 Version: 1.8.11
 © 2016, Clark Yang
 =======================================
@@ -21,6 +21,7 @@ version 1.8.10
 	Added AES CTR encryption algorithm, and supports stream encryption and the "Seek" feature of encrypted stream.
 	Fixed bugs on the UWP.
 	Fixed a bug that failed to compile on the ios platform.
+	Added System.Type.IsSZArray to the blacklist to avoid errors when xlua generates code.
 
 version 1.8.9
 	Added CoroutineTask.
