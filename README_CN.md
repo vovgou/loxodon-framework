@@ -156,6 +156,10 @@ UWP(window10)
 
     ![](docs/images/log4net.jpg)
     
+- [Json.Net.Aot](https://github.com/Daddoon/Json.NET.Aot)
+
+    这是Json.Net的一个分支，支持Unity3D，支持.net standard 2.0，如果你的Unity是2018及以上版本，推荐使用这个。
+    
 - [LiteDB](https://github.com/mbdavid/LiteDB)
 
     这是一个NoSQL的嵌入式文档数据库，它完全可以替代SQLite，它由C#语言开发，支持加密，支持ORM，很小巧，性能也不错，有数据库客户端，用它来存储游戏数值配表或者客户端数据存储，它是一个非常不错的选择。

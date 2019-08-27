@@ -158,6 +158,10 @@ Create a view and view model of the progress bar.
 
     ![](docs/images/log4net.jpg)
     
+- [Json.Net.Aot](https://github.com/Daddoon/Json.NET.Aot)
+
+    This implementation is actually a fork of the excellent work of SaladLab, Json.Net.Unity3D, and of course, the excellent work of the initial author, Newtonsoft!
+    
 - [LiteDB](https://github.com/mbdavid/LiteDB)
 
     LiteDB is a small, fast and lightweight NoSQL embedded database.
