@@ -174,10 +174,6 @@ UWP(window10)
 
     lua版本的protobuf解码项目，支持protobuf 3，使用lua开发的同学可以使用这个来解码，推荐。
 
-- [DotNetty](https://github.com/Azure/DotNetty)
-
-    这是大名鼎鼎的java项目Netty的C#版本，一个异步事件驱动的网络框架，底层支持TCP、UDP，同时也支持很多应用层的协议，它是由微软的Microsoft Azure团队开发和维护，网络层强烈推荐使用它。
-
     
 ## 教程和示例
 
