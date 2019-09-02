@@ -3424,7 +3424,7 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
 
 ### 基础层(Infrastructure)
 
-基础层包含框架、数据库访问组件、网络组件、Log组件、Probubuf组件、公共的辅助类和方法。
+基础层包含框架、数据库访问组件、网络组件、Log组件、Protobuf组件、公共的辅助类和方法。
 
 ## 联系方式
 邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
