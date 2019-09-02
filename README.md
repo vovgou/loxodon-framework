@@ -174,9 +174,6 @@ Create a view and view model of the progress bar.
 
     It uses the great [sqlite-net](https://github.com/praeclarum/sqlite-net/) library as a base so you will have Linq besides sql. For a further reference on what possibilities you have available with this library I encourage you to visit its github repository.
     
-- [DotNetty](https://github.com/Azure/DotNetty)
-
-    DotNetty is a port of Netty, asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers & clients.
 
 ## Tutorials and Examples
 
