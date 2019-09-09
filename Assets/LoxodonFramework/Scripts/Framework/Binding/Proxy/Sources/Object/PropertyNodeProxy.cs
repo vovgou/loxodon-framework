@@ -79,9 +79,6 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
         public virtual TValue GetValue<TValue>()
         {
-            if (!typeof(TValue).IsAssignableFrom(this.propertyInfo.ValueType))
-                throw new InvalidCastException();
-
             var proxy = propertyInfo as IProxyPropertyInfo<TValue>;
             if (proxy != null)
                 return proxy.GetValue(source);
