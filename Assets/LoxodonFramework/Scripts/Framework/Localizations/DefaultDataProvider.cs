@@ -82,7 +82,7 @@ namespace Loxodon.Framework.Localizations
             return buf.ToString();
         }
 
-        public virtual void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
+        public virtual void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onLoadCompleted)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
 
@@ -90,7 +90,7 @@ namespace Loxodon.Framework.Localizations
             {
                 TextAsset[] defaultTexts = Resources.LoadAll<TextAsset>(GetDefaultPath()); //eg:default
                 TextAsset[] twoLetterISOTexts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.TwoLetterISOLanguageName));//eg:zh  en
-                TextAsset[] texts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.Name));//eg:zh-CN  en-US
+                TextAsset[] texts = cultureInfo.Name.Equals(cultureInfo.TwoLetterISOLanguageName) ? null : Resources.LoadAll<TextAsset>(GetPath(cultureInfo.Name));//eg:zh-CN  en-US
 
                 FillData(dict, defaultTexts, cultureInfo);
                 FillData(dict, twoLetterISOTexts, cultureInfo);
@@ -98,8 +98,8 @@ namespace Loxodon.Framework.Localizations
             }
             finally
             {
-                if (onCompleted != null)
-                    onCompleted(dict);
+                if (onLoadCompleted != null)
+                    onLoadCompleted(dict);
             }
         }
 

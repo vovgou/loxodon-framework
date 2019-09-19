@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.Localizations;
+using Loxodon.Log;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -30,13 +30,31 @@ using UnityEngine.UI;
 
 namespace Loxodon.Framework.Localizations
 {
+    [AddComponentMenu("Loxodon/Localization/LocalizedRawImageInResources")]
+    [DisallowMultipleComponent]
     [RequireComponent(typeof(RawImage))]
     public class LocalizedRawImageInResources : AbstractLocalized<RawImage>
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(LocalizedRawImageInResources));
+
         protected override void OnValueChanged(object sender, EventArgs e)
         {
-            string path = (string)this.value.Value;
-            this.StartCoroutine(DoLoad(path));
+            object v = this.value.Value;
+            if (v is Texture2D)
+            {
+                this.target.texture = (Texture2D)v;
+            }
+            else if (v is string)
+            {
+                string path = (string)v;
+                this.StartCoroutine(DoLoad(path));
+            }
+            else
+            {
+                if (log.IsErrorEnabled)
+                    log.ErrorFormat("There is an invalid localization value \"{0}\" on the GameObject named \"{1}\".", v, this.name);
+            }
+
         }
 
         protected virtual IEnumerator DoLoad(string path)

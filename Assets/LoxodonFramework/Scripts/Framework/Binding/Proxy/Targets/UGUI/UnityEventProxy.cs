@@ -38,9 +38,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
     {
         private bool disposed = false;
         protected ICommand command;/* Command Binding */
-        protected IProxyInvoker invoker;/* Method Binding */
+        protected IInvoker invoker;/* Method Binding or Lua Function Binding */
         protected Delegate handler;/* Delegate Binding */
-        protected IScriptInvoker scriptInvoker;/* Script Function Binding  */
 
         protected IProxyPropertyInfo interactable;
 
@@ -89,19 +88,10 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             if (this.invoker != null)
-            {
-                this.invoker = null;
-            }
+                this.invoker = null;            
 
             if (this.handler != null)
-            {
-                this.handler = null;
-            }
-
-            if (this.scriptInvoker != null)
-            {
-                this.scriptInvoker = null;
-            }
+                this.handler = null;            
 
             if (value == null)
                 return;
@@ -124,12 +114,12 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             //Bind Method
-            IProxyInvoker invoker = value as IProxyInvoker;
-            if (invoker != null)
+            IProxyInvoker proxyInvoker = value as IProxyInvoker;
+            if (proxyInvoker != null)
             {
-                if (this.IsValid(invoker))
+                if (this.IsValid(proxyInvoker))
                 {
-                    this.invoker = invoker;
+                    this.invoker = proxyInvoker;
                     return;
                 }
 
@@ -150,10 +140,10 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             //Bind Script Function
-            IScriptInvoker scriptInvoker = value as IScriptInvoker;
-            if (scriptInvoker != null)
+            IInvoker invoker = value as IInvoker;
+            if (invoker != null)
             {
-                this.scriptInvoker = scriptInvoker;
+                this.invoker = invoker;
             }
         }
 
@@ -276,12 +266,6 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     }
                     return;
                 }
-
-                if (this.scriptInvoker != null)
-                {
-                    this.scriptInvoker.Invoke();
-                    return;
-                }
             }
             catch (Exception e)
             {
@@ -367,12 +351,6 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     {
                         this.handler.DynamicInvoke(parameter);
                     }
-                    return;
-                }
-
-                if (this.scriptInvoker != null)
-                {
-                    this.scriptInvoker.Invoke(parameter);
                     return;
                 }
             }
@@ -462,12 +440,6 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     {
                         this.handler.DynamicInvoke(t0, t1);
                     }
-                    return;
-                }
-
-                if (this.scriptInvoker != null)
-                {
-                    this.scriptInvoker.Invoke(t0, t1);
                     return;
                 }
             }
@@ -562,12 +534,6 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     }
                     return;
                 }
-
-                if (this.scriptInvoker != null)
-                {
-                    this.scriptInvoker.Invoke(t0, t1, t2);
-                    return;
-                }
             }
             catch (Exception e)
             {
@@ -660,12 +626,6 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     {
                         this.handler.DynamicInvoke(t0, t1, t2, t3);
                     }
-                    return;
-                }
-
-                if (this.scriptInvoker != null)
-                {
-                    this.scriptInvoker.Invoke(t0, t1, t2, t3);
                     return;
                 }
             }

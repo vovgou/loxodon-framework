@@ -4,7 +4,7 @@
 *MVVM Framework for Unity3D(C# & XLua)*
 
 *开发者 Clark*
-*Version 1.8.10*
+*Version 1.9.0*
 
 <div style="page-break-after: always;"></div>
 
@@ -39,13 +39,14 @@
     - [目录结构](#目录结构)
     - [配置文件的格式](#配置文件的格式)
     - [XML特殊字符](#xml特殊字符)
-    - [支持的数值类型](#支持的数值类型)
+    - [XML支持的数值类型](#xml支持的数值类型)
     - [生成C#脚本](#生成c脚本)
     - [本地化视图组件](#本地化视图组件)
+    - [数据加载器(IDataProvider)](#数据加载器idataprovider)
     - [使用示例](#使用示例)
     - [支持CSV格式的本地化插件](#支持csv格式的本地化插件)
   - [配置文件（Properties文件）](#配置文件properties文件)
-    - [支持的数值类型](#支持的数值类型-1)
+    - [支持的数值类型](#支持的数值类型)
     - [数组分隔符](#数组分隔符)
     - [配置文件示例](#配置文件示例)
   - [日志系统](#日志系统)
@@ -790,79 +791,60 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 #### 配置文件的格式
 
-配置文件默认只支持XML格式，如有必要也可以通过自定义IDocumentParser来支持其他的格式，如Json格式，二进制格式，或者从SQLite中加载等。
+配置文件默认支持XML、Asset文件（LocalizationSourceAsset）格式和本地化数据源脚本方式。如有必要也可以通过自定义IDocumentParser来支持其他的格式，如Json格式，csv文件格式，二进制格式，或者从SQLite中加载等。
 
-default版本的application和module如下:
+精灵(Sprite)、纹理(Texture2D/Texture3D)、字体(Font)、音效(AudioClip)、视频(VideoClip)等属于UnityEngine.Object对象资源只能使用Asset文件格式或者本地化数据源脚本存储。其他可以文本化的资源推荐使用XML或者其他文本文件格式存储。
 
-    <!-- application.xml -->
-    <?xml version="1.0" encoding="utf-8"?>
-    <resources>
-        <string name="app.name">Loxodon Framework Examples</string>
-        <string name="framework.name">LoxodonFramework</string>
-        <vector3 name="user.position">(20 , 20.2 , 30)</vector3>
-        <color name="color.black">#000000</color>
-        <color-array name="button.transition.colors">
-            <item>#FFFFFFFF</item>
-            <item>#F5F5F5FF</item>
-            <item>#C8C8C8FF</item>
-            <item>#C8C8C880</item>
-        </color-array>
-        <datetime name="created">2016-10-27T00:00:00.000</datetime>
-    </resources>
+- Asset文件格式(LocalizationSourceAsset)
+本地化数据源Asset文件格式如下图，可以配置多种类型的资源，每一个文件对应一种语言的资源，它的目录规则与XML方式完全一致，唯一不同是文件格式。
+图片、声音等文件都比较占用内存，请按业务模块拆分资源，同一个模块的配置在同一个Asset文件中，在需要使用之前加载到内存，在使用完之后从内存中卸载资源。
+创建的Asset资源文件的方式见下图。
+![](images/Localization_Asset.png)
+![](images/Localization_Asset2.png)
 
-    <!-- module.xml -->
-    <?xml version="1.0" encoding="utf-8"?>
-    <resources>
-        <string name="startup.progressbar.tip.loading">Loading...</string>
-        <string name="startup.progressbar.tip.unziping">Unziping...</string>
-        <string name="login.failure.tip">Login failure.</string>
-        <string name="login.exception.tip">Login exception.</string>
-        <string name="login.validation.username.error">Please enter a valid username.</string>
-        <string name="login.validation.password.error">Please enter a valid password.</string>
-        <string name="login.label.title.text">Sign in</string>
-        <string name="login.button.confirm.text">Confirm</string>
-        <string name="login.button.cancel.text">Cancel</string>
-        <string name="login.label.username.text">Username:</string>
-        <string name="login.label.password.text">Password:</string>
-        <string name="login.input.username.prompt">Enter username...</string>
-        <string name="login.input.password.prompt">Enter password...</string>
-    </resources>
+- 本地化数据源脚本方式(LocalizationSourceBehaviour)
+通过本地化数据源脚本挂在GameObject对象上，可以直接存储在Prefab中或场景中，它无法按语言分别存储，所有支持语言的本地化资源都应该配置在同一个脚本文件中。LocalizationSourceBehaviour脚本中自带了DataProvider，当脚本运行会自动加载数据，当对象销毁时又会自动卸载数据。这种方式特别适合与UIView配合使用，当UIView创建时自动加载本地化数据，当UIView关闭时又会释放本地化数据。与Asset文件格式相比，它的缺点是所配置多个语言版本的数据都会加载到内存中，会占用更多的内存。
+![](images/Localization_Prefab1.png)
+![](images/Localization_Prefab2.png)
 
-zh-CN版本的application和module如下:
+- XML文件格式
+XML文件格式可以很方便的配置文本类型的数据，但是无法直接配置UnityEngine.Object对象的资源。如果要使用XML配置声音、图片、字体等资源，只能将声音、图片、字体等资源的文件路径配置在XML中，在使用时通过文件路径的改变动态加载这些资源。
+文本类型的本地化不会占用太多内存，建议在游戏启动时全部加载到内存中，并且不要释放它们。
+XML 格式配置如下:
 
-    <!-- application.xml -->
-    <?xml version="1.0" encoding="utf-8"?>
-    <resources>
-        <string name="app.name">Loxodon Framework 示例</string>
-        <string name="framework.name">LoxodonFramework</string>
-        <vector3 name="user.position">(20 , 20.2 , 30)</vector3>
-        <color name="color.black">#000000</color>
-        <color-array name="button.transition.colors">
-            <item>#FFFFFFFF</item>
-            <item>#F5F5F5FF</item>
-            <item>#C8C8C8FF</item>
-            <item>#C8C8C880</item>
-        </color-array>
-        <datetime name="created">2016-10-27T00:00:00.000</datetime>
-    </resources>
+      <!-- application.xml -->
+      <?xml version="1.0" encoding="utf-8"?>
+      <resources>
+          <string name="app.name">Loxodon Framework Examples</string>
+          <string name="framework.name">LoxodonFramework</string>
+          <vector3 name="user.position">(20 , 20.2 , 30)</vector3>
+          <color name="color.black">#000000</color>
+          <color-array name="button.transition.colors">
+              <item>#FFFFFFFF</item>
+              <item>#F5F5F5FF</item>
+              <item>#C8C8C8FF</item>
+              <item>#C8C8C880</item>
+          </color-array>
+          <datetime name="created">2016-10-27T00:00:00.000</datetime>
+      </resources>
 
-    <!-- module.xml -->
-    <?xml version="1.0" encoding="utf-8"?>
-    <resources>
-        <string name="startup.progressbar.tip.loading">加载中...</string>
-        <string name="startup.progressbar.tip.unziping">解压中...</string>
-        <string name="login.failure.tip">登录失败</string>
-        <string name="login.exception.tip">登录异常</string>
-        <string name="login.validation.username.error">输入的用户名格式错误</string>
-        <string name="login.validation.password.error">输入的密码格式错误</string>
-        <string name="login.label.title.text">登录</string>
-        <string name="login.button.confirm.text">确认</string>
-        <string name="login.button.cancel.text">取消</string>
-        <string name="login.label.username.text">用户名:</string>
-        <string name="login.label.password.text">密  码:</string>
-        <string name="login.input.username.prompt">请输入用户名...</string>
-        <string name="login.input.password.prompt">请输入密码...</string>
-    </resources>
+      <!-- module.xml -->
+      <?xml version="1.0" encoding="utf-8"?>
+      <resources>
+          <string name="startup.progressbar.tip.loading">Loading...</string>
+          <string name="startup.progressbar.tip.unziping">Unziping...</string>
+          <string name="login.failure.tip">Login failure.</string>
+          <string name="login.exception.tip">Login exception.</string>
+          <string name="login.validation.username.error">Please enter a valid username.</string>
+          <string name="login.validation.password.error">Please enter a valid password.</string>
+          <string name="login.label.title.text">Sign in</string>
+          <string name="login.button.confirm.text">Confirm</string>
+          <string name="login.button.cancel.text">Cancel</string>
+          <string name="login.label.username.text">Username:</string>
+          <string name="login.label.password.text">Password:</string>
+          <string name="login.input.username.prompt">Enter username...</string>
+          <string name="login.input.password.prompt">Enter password...</string>
+      </resources>
 
 #### XML特殊字符
 
@@ -881,7 +863,7 @@ zh-CN版本的application和module如下:
     </resources>
 
 
-#### 支持的数值类型
+#### XML支持的数值类型
 
 默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
 
@@ -937,9 +919,11 @@ zh-CN版本的application和module如下:
 
     ![](images/Localization_Text.png)
 
-- **图片或声音的本地化**
+- **图片、声音、视频、字体的本地化**
 
-    图片、声音资源无法在本地化配置中直接配置，但是可以根据不同的语言配置不同的资源加载路径，当语言改变，图片或者声音的路径改变，通过视图脚本异步加载资源，然后替换资源。图片或者声音的本地化与资源的存储方式（在Resources中还是在AssetBundle中，是否是图集）和加载资源的方式有关，这里没办法支持一个满足所有应用需求的视图组件。我提供了一个从Resources中加载声音或者图片的组件，可以参考我的组件扩展更多的图片和声音的本地化方式。
+    图片、声音、视频、字体等资源的本地化推荐使用Asset文件配置（LocalizationSourceAsset），将不同语言版本的资源配置按业务模块分类配置在不同的Asset文件中，比如当需要访问某个业务模块的UI时，先加载这个模块当前语言版本的本地化资源，然后再显示UI。
+
+    当然，除了使用Asset文件配置的方式，也可以使用XML等文本方式配置，将资源的加载路径配置在XML文件中，当语言改变时，图片或者声音的路径也会改变，通过视图脚本异步加载资源，然后替换资源。图片或者声音的本地化与资源的存储方式（在Resources中还是在AssetBundle中，是否是图集）和加载资源的方式有关，这里没办法支持一个满足所有应用需求的视图组件。我提供了一个从Resources中加载声音或者图片的组件，可以参考我的组件扩展更多的图片和声音的本地化方式。
 
     如果需要从AssetBundle中加载图片、声音等资源，或者图片使用了图集，那么则是要通过自定义本地化组件来支持这些资源的本地化。如下代码是使用我的Loxodon.Framework.Bundle插件加载音效的代码。
 
@@ -1004,12 +988,31 @@ zh-CN版本的application和module如下:
 
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
-        	<vector2-array name="button.position">
+          <vector2-array name="button.position">
             <item>(100,50)</item>
             <item>(-100,-50)</item>
           </vector2-array>
           <rect name="button.position2">(100,100,200,60)</rect>
         </resources>
+
+#### 数据加载器(IDataProvider)
+
+通过数据加载器加载本地化数据，在框架中我提供了一些默认的数据加载器，可以从Resources目录或者AssetBundle中根据前文中提到的目录规则来加载本地化数据。如果需要支持更多的数据格式，或者要定制文件查找规则，请参考我的代码实现自定义的数据加载器。
+
+    var localization = Localization.Current;
+    localization.CultureInfo = new CultureInfo("en-US"); //设置语言
+    //添加一个默认的XML数据加载器，从Resources/LocalizationTutorials 目录中加载本地化资源
+    //按（zh-CN|zh-TW|zh-HK) > zh > default 的规则加载文件，如果不满足要求可以自定义数据加载器
+    //文本资源不占用太多内存，默认加载当前语言的所有xml文件   
+    localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
+
+    //添加一个Asset数据的加载器，从Resources/LocalizationExamples 目录中加载名为login.asset的资源
+    //Asset类型的资源请在使用前加载，并且在不需要的时候释放它们
+    var provider = new DefaultLocalizationSourceDataProvider("LocalizationExamples","login.asset");
+    localization.AddDataProvider(provider);
+
+    //当数据不在被使用时，删除数据加载器，同时释放内存
+    localization.RemoveDataProvider(provider);
 
 
 #### 使用示例
@@ -2000,7 +2003,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
 #### Command Parameter
 
-命令类型（ICommand）的绑定支持自定义命令参数，使用Command Parameter可以为没有参数的UI事件添加一个自定义参数，如果UI事件本事有参数则会被覆盖。使用Command Parameter可以很方便的将多个Button的Click事件绑定到视图模型的同一个函数OnClick(int buttonNo)上。详情请参考下面的示例
+从事件到命令(ICommand)或方法的绑定支持自定义参数，使用Command Parameter可以为没有参数的UI事件添加一个自定义参数（如Button的Click事件），如果UI事件本身有参数则会被命令参数覆盖。使用Command Parameter可以很方便的将多个Button的Click事件绑定到视图模型的同一个函数OnClick(int buttonNo)上，请注意确保函数的参数类型和命令参数匹配，否则会导致错误。详情请参考下面的示例
 
 在示例中将一组Button按钮的Click事件绑定到视图模型的OnClick函数上，通过参数buttonNo可以知道当前按下了哪个按钮。
 

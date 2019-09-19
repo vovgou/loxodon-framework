@@ -28,7 +28,9 @@ using UnityEngine.UI;
 
 namespace Loxodon.Framework.Localizations
 {
-    [RequireComponent(typeof(Text))]
+    [AddComponentMenu("Loxodon/Localization/LocalizedText")]
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(Text))]    
     public class LocalizedText : AbstractLocalized<Text>
     {
         protected override void OnValueChanged(object sender, EventArgs e)

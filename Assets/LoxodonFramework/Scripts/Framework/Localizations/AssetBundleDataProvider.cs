@@ -56,7 +56,6 @@ namespace Loxodon.Framework.Localizations
 
         private string assetBundleUrl;
         private IDocumentParser parser;
-        private ICoroutineExecutor executor;
 
         public AssetBundleDataProvider(string assetBundleUrl, IDocumentParser parser)
         {
@@ -68,19 +67,18 @@ namespace Loxodon.Framework.Localizations
 
             this.assetBundleUrl = assetBundleUrl;
             this.parser = parser;
-            this.executor = new CoroutineExecutor();
         }
 
         public void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
         {
-            executor.RunOnCoroutine(DoLoad(cultureInfo, onCompleted));
+            Executors.RunOnCoroutine(DoLoad(cultureInfo, onCompleted));
         }
 
         protected virtual IEnumerator DoLoad(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
 
-#if UNITY_2018_1_OR_NEWER
+#if UNITY_2017_2_OR_NEWER
             using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl))
             {
                 www.SendWebRequest();
@@ -113,7 +111,7 @@ namespace Loxodon.Framework.Localizations
 
                     List<string> defaultPaths = assetNames.FindAll(p => p.Contains("/default/"));//eg:default
                     List<string> twoLetterISOpaths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.TwoLetterISOLanguageName)));//eg:zh  en
-                    List<string> paths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.Name)));//eg:zh-CN  en-US
+                    List<string> paths = cultureInfo.Name.Equals(cultureInfo.TwoLetterISOLanguageName) ? null : assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.Name)));//eg:zh-CN  en-US
 
                     FillData(dict, bundle, defaultPaths, cultureInfo);
                     FillData(dict, bundle, twoLetterISOpaths, cultureInfo);

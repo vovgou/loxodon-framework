@@ -24,10 +24,8 @@
 
 namespace Loxodon.Framework.Binding.Reflection
 {
-    public interface IProxyInvoker
+    public interface IProxyInvoker: IInvoker
     {
         IProxyMethodInfo ProxyMethodInfo { get; }
-
-        object Invoke(params object[] args);
     }
 }

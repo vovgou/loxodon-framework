@@ -37,11 +37,16 @@ namespace Loxodon.Framework.Tutorials
 
 		void Awake ()
 		{
-			CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
-			Localization.Current = Localization.Create (new DefaultDataProvider ("LocalizationTutorials", new XmlDocumentParser ()), cultureInfo);
-			this.localization = Localization.Current;
+            this.localization = Localization.Current;
+            this.localization.CultureInfo = Locale.GetCultureInfoByLanguage(SystemLanguage.English);
 
-			this.dropdown.onValueChanged.AddListener (OnValueChanged);
+            //Use files in xml format
+            this.localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
+
+            //Use files in asset format
+            //this.localization.AddDataProvider(new DefaultLocalizationSourceDataProvider("LocalizationTutorials", "LocalizationModule.asset"));
+
+            this.dropdown.onValueChanged.AddListener (OnValueChanged);
 		}
 
 		void OnValueChanged (int value)

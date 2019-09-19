@@ -33,6 +33,7 @@ namespace Loxodon.Framework.Localizations
     public class Locale
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(Locale));
+        private static readonly CultureInfo DEFAULT_CULTUREINFO = new CultureInfo("en");
 
         private static readonly Dictionary<SystemLanguage, CultureInfo> languages = new Dictionary<SystemLanguage, CultureInfo>()
         {
@@ -82,12 +83,12 @@ namespace Loxodon.Framework.Localizations
 
         public static CultureInfo GetCultureInfo()
         {
-            return GetCultureInfoByLanguage(Application.systemLanguage, new CultureInfo("en"));
+            return GetCultureInfoByLanguage(Application.systemLanguage, DEFAULT_CULTUREINFO);
         }
 
         public static CultureInfo GetCultureInfoByLanguage(SystemLanguage language)
         {
-            return GetCultureInfoByLanguage(language, new CultureInfo("en"));
+            return GetCultureInfoByLanguage(language, DEFAULT_CULTUREINFO);
         }
 
         public static CultureInfo GetCultureInfoByLanguage(SystemLanguage language, CultureInfo defaultValue)

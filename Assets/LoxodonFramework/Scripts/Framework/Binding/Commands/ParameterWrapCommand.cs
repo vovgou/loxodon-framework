@@ -34,6 +34,11 @@ namespace Loxodon.Framework.Binding.Commands
         private readonly object commandParameter;
         public ParameterWrapCommand(ICommand wrappedCommand, object commandParameter)
         {
+            if (wrappedCommand == null)
+                throw new ArgumentNullException("wrappedCommand");
+            if (commandParameter == null)
+                throw new ArgumentNullException("commandParameter");
+
             this.wrappedCommand = wrappedCommand;
             this.commandParameter = commandParameter;
         }

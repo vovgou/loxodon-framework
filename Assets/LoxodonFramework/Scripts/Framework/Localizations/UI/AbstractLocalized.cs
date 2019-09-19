@@ -29,6 +29,7 @@ using UnityEngine;
 
 namespace Loxodon.Framework.Localizations
 {
+    [DefaultExecutionOrder(100)]
     public abstract class AbstractLocalized<T> : MonoBehaviour where T : Component
     {
         private static readonly ILog log = LogManager.GetLogger("AbstractLocalized");
@@ -49,9 +50,10 @@ namespace Loxodon.Framework.Localizations
 
             Localization localization = Localization.Current;
             this.value = localization.Get<IObservableProperty>(key);
+
             if (this.value == null)
             {
-                if (log.IsErrorEnabled)
+                if (Application.isPlaying && log.IsErrorEnabled)
                     log.ErrorFormat("There is an invalid localization key \"{0}\" on the {1} object named \"{2}\".", key, typeof(T).Name, this.name);
                 return;
             }
@@ -75,7 +77,9 @@ namespace Loxodon.Framework.Localizations
 
         protected virtual void OnEnable()
         {
-            this.target = this.GetComponent<T>();
+            if (this.target == null)
+                this.target = this.GetComponent<T>();
+
             if (this.target == null)
                 return;
 
@@ -85,7 +89,10 @@ namespace Loxodon.Framework.Localizations
         protected virtual void OnDisable()
         {
             if (this.value != null)
+            {
                 this.value.ValueChanged -= OnValueChanged;
+                this.value = null;
+            }
         }
 
         protected abstract void OnValueChanged(object sender, EventArgs e);

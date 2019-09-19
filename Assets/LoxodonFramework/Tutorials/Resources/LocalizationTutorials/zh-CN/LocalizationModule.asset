@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80c2c8512039cc64abbec70611294b49, type: 3}
+  m_Name: LocalizationModule
+  m_EditorClassIdentifier: 
+  Source:
+    entries:
+    - key: app.name
+      type: 0
+      value:
+        dataValue: TG94b2RvbkZyYW1ld29yaw==
+        objectValue: {fileID: 0}
+    - key: databinding.tutorials.title
+      type: 0
+      value:
+        dataValue: 5pWw5o2u57uR5a6a56S65L6L
+        objectValue: {fileID: 0}
+    - key: databinding.tutorials.description
+      type: 0
+      value:
+        dataValue: 5b2T5YmN55qE55So5oi35ZCN5pivOnswfSzmraPlnKjovpPlhaXnmoTmmK86ezF9
+        objectValue: {fileID: 0}
+    - key: localization.tutorials.content
+      type: 0
+      value:
+        dataValue: 5Lq65piv5rS755qE77yM5Lmm5piv5q2755qE77yM5rS75Lq66K+75q275Lmm77yM5Y+v5Lul5oqK5Lmm6K+75rS744CC5q275Lmm6K+75rS75Lq677yM5Y+v5Lul5oqK5Lq66K+75q2744CC
+        objectValue: {fileID: 0}
+    - key: localization.tutorials.flag
+      type: 8
+      value:
+        dataValue: 
+        objectValue: {fileID: 21300000, guid: 154a3666b5e0d1c44a96dea5cb5fd234, type: 3}

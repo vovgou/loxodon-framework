@@ -33,13 +33,13 @@ namespace Loxodon.Framework.Localizations
 {
     public class Localization : ILocalization
     {
-        private const string DEFAULT_ROOT = "Localization";
+        //private const string DEFAULT_ROOT = "Localization";
         private static readonly object _lock = new object();
         private static Localization instance;
 
         private CultureInfo cultureInfo;
-        private List<IDataProvider> providers;
         private Dictionary<string, IObservableProperty> data = new Dictionary<string, IObservableProperty>();
+        private List<ProviderEntry> providers = new List<ProviderEntry>();
 
         public static Localization Current
         {
@@ -50,7 +50,7 @@ namespace Loxodon.Framework.Localizations
                     lock (_lock)
                     {
                         if (instance == null)
-                            instance = Create(new DefaultDataProvider(DEFAULT_ROOT, new XmlDocumentParser()));
+                            instance = Create(null);
                     }
                 }
                 return instance;
@@ -68,17 +68,18 @@ namespace Loxodon.Framework.Localizations
             return new Localization(provider, cultureInfo);
         }
 
+        protected Localization(CultureInfo cultureInfo) : this(null, cultureInfo)
+        {
+        }
+
         protected Localization(IDataProvider provider, CultureInfo cultureInfo)
         {
             this.cultureInfo = cultureInfo;
             if (this.cultureInfo == null)
                 this.cultureInfo = Locale.GetCultureInfo();
 
-            this.providers = new List<IDataProvider>();
             if (provider != null)
-                this.providers.Add(provider);
-
-            this.Load();
+                this.AddDataProvider(provider);
         }
 
         public virtual CultureInfo CultureInfo
@@ -104,12 +105,35 @@ namespace Loxodon.Framework.Localizations
             if (provider == null)
                 return;
 
-            if (this.providers.Contains(provider))
+            lock (_lock)
+            {
+                if (this.providers.Exists(e => e.Provider == provider))
+                    return;
+
+                var entry = new ProviderEntry(provider);
+                provider.Load(this.CultureInfo, dict => OnLoadCompleted(entry, dict));
+                this.providers.Add(entry);
+            }
+        }
+
+        public virtual void RemoveDataProvider(IDataProvider provider)
+        {
+            if (provider == null)
                 return;
 
-            this.providers.Add(provider);
-
-            provider.Load(this.CultureInfo, OnLoadCompleted);
+            lock (_lock)
+            {
+                for (int i = this.providers.Count - 1; i >= 0; i--)
+                {
+                    var entry = providers[i];
+                    if (entry.Provider == provider)
+                    {
+                        this.providers.RemoveAt(i);
+                        OnUnloadCompleted(entry.Keys);
+                        return;
+                    }
+                }
+            }
         }
 
         public virtual void Refresh()
@@ -122,33 +146,49 @@ namespace Loxodon.Framework.Localizations
             if (this.providers == null || this.providers.Count <= 0)
                 return;
 
-            foreach (IDataProvider provider in this.providers)
+            for (int i = 0; i < this.providers.Count; i++)
             {
                 try
                 {
-                    provider.Load(this.CultureInfo, OnLoadCompleted);
+                    var entry = providers[i];
+                    var provider = entry.Provider;
+                    provider.Load(this.CultureInfo, dict => OnLoadCompleted(entry, dict));
                 }
                 catch (Exception) { }
             }
         }
 
-        protected virtual void OnLoadCompleted(Dictionary<string, object> dict)
+        protected virtual void OnLoadCompleted(ProviderEntry entry, Dictionary<string, object> dict)
         {
             if (dict == null || dict.Count <= 0)
                 return;
 
+            var keys = entry.Keys;
+            keys.Clear();
+
             foreach (KeyValuePair<string, object> kv in dict)
             {
+                var key = kv.Key;
+                var value = kv.Value;
                 IObservableProperty property;
-                if (this.data.TryGetValue(kv.Key, out property))
+                keys.Add(key);
+                if (data.TryGetValue(key, out property))
                 {
-                    property.Value = kv.Value;
+                    property.Value = value;
                 }
                 else
                 {
-                    property = new ObservableProperty(kv.Value);
-                    this.data[kv.Key] = property;
+                    property = new ObservableProperty(value);
+                    data[key] = property;
                 }
+            }
+        }
+
+        protected virtual void OnUnloadCompleted(List<string> keys)
+        {
+            foreach (string key in keys)
+            {
+                data.Remove(key);
             }
         }
 
@@ -171,7 +211,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual bool ContainsKey(string key)
         {
-            return this.data.ContainsKey(key);
+            return data.ContainsKey(key);
         }
 
         /// <summary>
@@ -399,7 +439,7 @@ namespace Loxodon.Framework.Localizations
         public virtual T Get<T>(string key, T defaultValue)
         {
             IObservableProperty value;
-            if (this.data.TryGetValue(key, out value))
+            if (data.TryGetValue(key, out value))
             {
                 if (value is T)
                     return (T)value;
@@ -410,6 +450,18 @@ namespace Loxodon.Framework.Localizations
                 return (T)Convert.ChangeType(value.Value, typeof(T));
             }
             return defaultValue;
+        }
+
+        protected class ProviderEntry
+        {
+            public ProviderEntry(IDataProvider provider)
+            {
+                this.Provider = provider;
+                this.Keys = new List<string>();
+            }
+
+            public IDataProvider Provider { get; private set; }
+            public List<string> Keys { get; private set; }
         }
     }
 }

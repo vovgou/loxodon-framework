@@ -90,7 +90,7 @@ namespace Loxodon.Framework.Editors
                 }
 
                 EditorGUI.BeginChangeCheck();
-                var newIndex = EditorGUI.Popup(typeRect, GUIContent.none, index, contents.ToArray());
+                var newIndex = EditorGUI.Popup(typeRect, GUIContent.none, index, contents.ToArray(), EditorStyles.popup);
                 if (EditorGUI.EndChangeCheck())
                 {
                     if (component != null)

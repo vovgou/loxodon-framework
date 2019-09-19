@@ -27,6 +27,8 @@ using UnityEngine;
 
 namespace Loxodon.Framework.Localizations.UGUI
 {
+    [AddComponentMenu("Loxodon/Localization/LocalizedTextMesh")]
+    [DisallowMultipleComponent]
     [RequireComponent(typeof(TextMesh))]
     public class LocalizedTextMesh : AbstractLocalized<TextMesh>
     {
