@@ -42,7 +42,7 @@
     - [XML支持的数值类型](#xml支持的数值类型)
     - [生成C#脚本](#生成c脚本)
     - [本地化视图组件](#本地化视图组件)
-    - [数据加载器(IDataProvider)](#数据加载器idataprovider)
+    - [数据提供器(IDataProvider)](#数据提供器idataprovider)
     - [使用示例](#使用示例)
     - [支持CSV格式的本地化插件](#支持csv格式的本地化插件)
   - [配置文件（Properties文件）](#配置文件properties文件)
@@ -795,17 +795,16 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 精灵(Sprite)、纹理(Texture2D/Texture3D)、字体(Font)、音效(AudioClip)、视频(VideoClip)等属于UnityEngine.Object对象资源只能使用Asset文件格式或者本地化数据源脚本存储。其他可以文本化的资源推荐使用XML或者其他文本文件格式存储。
 
-- Asset文件格式(LocalizationSourceAsset)
+- 本地化数据源Asset文件格式(LocalizationSourceAsset)
 本地化数据源Asset文件格式如下图，可以配置多种类型的资源，每一个文件对应一种语言的资源，它的目录规则与XML方式完全一致，唯一不同是文件格式。
 图片、声音等文件都比较占用内存，请按业务模块拆分资源，同一个模块的配置在同一个Asset文件中，在需要使用之前加载到内存，在使用完之后从内存中卸载资源。
-创建的Asset资源文件的方式见下图。
-![](images/Localization_Asset.png)
-![](images/Localization_Asset2.png)
+![](images/LocalizationSource1.png)
+![](images/LocalizationSource2.png)
 
 - 本地化数据源脚本方式(LocalizationSourceBehaviour)
-通过本地化数据源脚本挂在GameObject对象上，可以直接存储在Prefab中或场景中，它无法按语言分别存储，所有支持语言的本地化资源都应该配置在同一个脚本文件中。LocalizationSourceBehaviour脚本中自带了DataProvider，当脚本运行会自动加载数据，当对象销毁时又会自动卸载数据。这种方式特别适合与UIView配合使用，当UIView创建时自动加载本地化数据，当UIView关闭时又会释放本地化数据。与Asset文件格式相比，它的缺点是所配置多个语言版本的数据都会加载到内存中，会占用更多的内存。
-![](images/Localization_Prefab1.png)
-![](images/Localization_Prefab2.png)
+通过本地化数据源脚本挂在GameObject对象上，可以直接存储在Prefab中或场景中，它无法按语言分别存储，所有支持语言的本地化资源都应该配置在同一个脚本文件中。LocalizationSourceBehaviour脚本中自带了DataProvider，当脚本运行会自动加载数据，当对象销毁时又会自动卸载数据。这种方式特别适合与UIView配合使用，当UIView创建时自动加载本地化数据，当UIView关闭时又会释放本地化数据。与Asset文件格式相比，它的优点是可以像一个Unity对象一样使用，拖入场景或者prefab中即可，不需要写脚本来管理它，它的缺点是所配置多个语言版本的数据都会加载到内存中，会占用更多的内存。
+![](images/LocalizationSource3.png)
+![](images/LocalizationSource4.png)
 
 - XML文件格式
 XML文件格式可以很方便的配置文本类型的数据，但是无法直接配置UnityEngine.Object对象的资源。如果要使用XML配置声音、图片、字体等资源，只能将声音、图片、字体等资源的文件路径配置在XML中，在使用时通过文件路径的改变动态加载这些资源。
@@ -919,13 +918,13 @@ XML 格式配置如下:
 
     ![](images/Localization_Text.png)
 
-- **图片、声音、视频、字体的本地化**
+- **图片、声音、视频、字体、材质的本地化**
 
-    图片、声音、视频、字体等资源的本地化推荐使用Asset文件配置（LocalizationSourceAsset），将不同语言版本的资源配置按业务模块分类配置在不同的Asset文件中，比如当需要访问某个业务模块的UI时，先加载这个模块当前语言版本的本地化资源，然后再显示UI。
+    图片、声音、视频、字体、材质资源的本地化推荐使用Asset文件配置（LocalizationSourceAsset），将不同语言版本的资源配置按业务模块分类配置在不同的Asset文件中，比如当需要访问某个业务模块的UI时，先加载这个模块当前语言版本的本地化资源，然后再显示UI。
 
-    当然，除了使用Asset文件配置的方式，也可以使用XML等文本方式配置，将资源的加载路径配置在XML文件中，当语言改变时，图片或者声音的路径也会改变，通过视图脚本异步加载资源，然后替换资源。图片或者声音的本地化与资源的存储方式（在Resources中还是在AssetBundle中，是否是图集）和加载资源的方式有关，这里没办法支持一个满足所有应用需求的视图组件。我提供了一个从Resources中加载声音或者图片的组件，可以参考我的组件扩展更多的图片和声音的本地化方式。
+    当然，除了使用Asset文件配置的方式，也可以使用XML等文本方式配置，将资源的加载路径配置在XML文件中，当语言改变时，图片或者声音的路径也会改变，通过视图脚本异步加载资源，然后替换资源，这种方式很灵活但是需要自己写代码来实现加载逻辑，图片、声音、字体等本地化资源可以放在Resources中或者AssetBundle中，也可以是精灵图集等，我无法写一个满足全部功能的脚本，只能提供了从Resources中加载声音或者图片的组件（如：LocalizedAudioSourceInResources.cs），可以参考我的组件实现更多方式。
 
-    如果需要从AssetBundle中加载图片、声音等资源，或者图片使用了图集，那么则是要通过自定义本地化组件来支持这些资源的本地化。如下代码是使用我的Loxodon.Framework.Bundle插件加载音效的代码。
+    如下示例是使用我的Loxodon.Framework.Bundle插件加载音效的代码。
 
         [RequireComponent(typeof(AudioSource))]
         public class LocalizedAudioSource : AbstractLocalized<AudioSource>
@@ -995,9 +994,9 @@ XML 格式配置如下:
           <rect name="button.position2">(100,100,200,60)</rect>
         </resources>
 
-#### 数据加载器(IDataProvider)
+#### 数据提供器(IDataProvider)
 
-通过数据加载器加载本地化数据，在框架中我提供了一些默认的数据加载器，可以从Resources目录或者AssetBundle中根据前文中提到的目录规则来加载本地化数据。如果需要支持更多的数据格式，或者要定制文件查找规则，请参考我的代码实现自定义的数据加载器。
+框架的本地化组件支持同时使用多种数据格式来配置本地化资源，他们有不同的文件格式，不同的目录结构，甚至有不同的文件查找规则，无论情况多么复杂，都可以通过数据提供器(IDataProvider)和文档解析器(IDocumentParser)来统一它们，通过数据提供器加载数据，通过文档解析器解析资源文件，在框架中我提供了一些默认的数据加载器，可以从Resources目录或者AssetBundle中根据前文中提到的目录规则来加载本地化数据。如果需要支持更多的数据格式，或者要定制文件查找规则和加载方式，请参考我的代码实现自定义的数据提供器。
 
     var localization = Localization.Current;
     localization.CultureInfo = new CultureInfo("en-US"); //设置语言
