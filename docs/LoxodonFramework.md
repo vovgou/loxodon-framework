@@ -1,3 +1,10 @@
+---
+puppeteer:
+    landscape: false
+    format: "A3"
+    timeout: 3000 # <= 特殊设置，意味着等待（waitFor） 3000 毫秒
+---
+
 ![](images/icon.png)
 # Loxodon Framework
 
@@ -2009,9 +2016,10 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
         var localization = Localization.Current;
 
-        //通过本地化key获得一个IObservableProperty属性，必须是IObservableProperty类型，否则切换语言不会更新
+        //通过本地化key获得一个IObservableProperty属性，
+        //必须是IObservableProperty类型，否则切换语言不会更新
         var value = localization.GetValue("databinding.tutorials.title"); //OK        
-        //var value = localization.Get<string>("databinding.tutorials.title"); //语言改变，不会触发UI更新
+        //var value = localization.Get<string>("databinding.tutorials.title"); //NO
         staticBindingSet.Bind(this.title).For(v => v.text).ToValue(value).OneWay();
 
 #### Command Parameter
