@@ -18,6 +18,7 @@ UPDATE NOTES
 ----------------------------------------
 version 1.9.0
 	Added localization of Sprite,Texture,AudioClip,VideoClip,Font,etc.
+	Fixed a bug that does not trigger a value change notification when an expression is bound to a static "IObservableProperty".
 
 version 1.8.10
 	Fixed a bug that WindowManager.Clear() cannot clear.

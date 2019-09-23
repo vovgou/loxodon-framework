@@ -58,12 +58,14 @@ namespace Loxodon.Framework.Examples
 			container.Register<IUIViewLocator>(new ResourcesViewLocator ());
 
 			/* Initialize the localization service */
-			//		CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
+			//CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
 			CultureInfo cultureInfo = Locale.GetCultureInfo();
-			Localization.Current = Localization.Create(new ResourcesDataProvider("LocalizationExamples", new XmlDocumentParser()), cultureInfo);
+            var localization = Localization.Current;
+            localization.CultureInfo = cultureInfo;
+            localization.AddDataProvider(new ResourcesDataProvider("LocalizationExamples", new XmlDocumentParser()));
 
 			/* register Localization */
-			container.Register<Localization>(Localization.Current);
+			container.Register<Localization>(localization);
 
 			/* register AccountRepository */
 			IAccountRepository accountRepository = new AccountRepository();

@@ -22,13 +22,19 @@
  * SOFTWARE.
  */
 
+using Loxodon.Framework.Observables;
+
 namespace Loxodon.Framework.Binding.Proxy.Sources.Text
-{   
+{
     public class LiteralSourceProxyFactory : TypedSourceProxyFactory<LiteralSourceDescription>
     {
         protected override bool TryCreateProxy(object source, LiteralSourceDescription description, out ISourceProxy proxy)
         {
-            proxy = new LiteralSourceProxy(description.Literal);
+            var value = description.Literal;
+            if (value != null && value is IObservableProperty)
+                proxy = new ObservableLiteralSourceProxy(value as IObservableProperty);
+            else
+                proxy = new LiteralSourceProxy(value);
             return true;
         }
     }

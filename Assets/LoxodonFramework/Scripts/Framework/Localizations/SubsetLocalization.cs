@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+using Loxodon.Framework.Observables;
 using System;
 using UnityEngine;
 
@@ -85,7 +86,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual string GetText(string key, string defaultValue)
         {
-            return this.Get<string>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -117,7 +118,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual bool GetBoolean(string key, bool defaultValue)
         {
-            return this.Get<bool>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -138,7 +139,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual int GetInt(string key, int defaultValue)
         {
-            return this.Get<int>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -159,7 +160,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual long GetLong(string key, long defaultValue)
         {
-            return this.Get<long>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -180,7 +181,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual double GetDouble(string key, double defaultValue)
         {
-            return this.Get<double>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -201,7 +202,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual float GetFloat(string key, float defaultValue)
         {
-            return this.Get<float>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -222,7 +223,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual Color GetColor(string key, Color defaultValue)
         {
-            return this.Get<Color>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -243,7 +244,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual Vector3 GetVector3(string key, Vector3 defaultValue)
         {
-            return this.Get<Vector3>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -253,7 +254,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual DateTime GetDateTime(string key)
         {
-            return this.Get<DateTime>(key, new DateTime(0));
+            return this.Get(key, new DateTime(0));
         }
 
         /// <summary>
@@ -264,7 +265,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual DateTime GetDateTime(string key, DateTime defaultValue)
         {
-            return this.Get<DateTime>(key, defaultValue);
+            return this.Get(key, defaultValue);
         }
 
         /// <summary>
@@ -275,7 +276,7 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual T Get<T>(string key)
         {
-            return this.Get<T>(key, default(T));
+            return this.Get(key, default(T));
         }
 
         /// <summary>
@@ -288,6 +289,16 @@ namespace Loxodon.Framework.Localizations
         public virtual T Get<T>(string key, T defaultValue)
         {
             return parent.Get(GetParentKey(key), defaultValue);
+        }
+
+        /// <summary>
+        /// Gets a IObservableProperty value based on a key, if the value is not found, a default value will be created.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public virtual IObservableProperty GetValue(string key)
+        {
+            return parent.GetValue(key);
         }
     }
 }

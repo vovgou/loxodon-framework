@@ -112,7 +112,10 @@ namespace Loxodon.Framework.Tutorials
             container.Register<IUIViewLocator>(new DefaultUIViewLocator());
 
             CultureInfo cultureInfo = Locale.GetCultureInfo();
-            Localization.Current = Localization.Create(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()), cultureInfo);
+            var localization = Localization.Current;
+            localization.CultureInfo = cultureInfo;
+            localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
+            container.Register(localization); 
 
             /* Initialize the dialog service */
             IDialogService dialogService = new DefaultDialogService();

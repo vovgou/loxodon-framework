@@ -42,6 +42,7 @@ namespace Loxodon.Framework.Editors
             if (list == null)
             {
                 list = new ReorderableList(property.serializedObject, property, true, true, true, true);
+                list.elementHeight = 22;
                 list.drawElementCallback = DrawElement;
                 list.drawHeaderCallback = DrawHeader;
                 list.onAddDropdownCallback = OnAddElement;
@@ -61,9 +62,7 @@ namespace Loxodon.Framework.Editors
             float height = base.GetPropertyHeight(property, label) + 60;
             var variables = property.FindPropertyRelative("variables");
             for (int i = 0; i < variables.arraySize; i++)
-            {
                 height += EditorGUI.GetPropertyHeight(variables.GetArrayElementAtIndex(i)) + VERTICAL_GAP;
-            }
             return height;
         }
 
@@ -105,15 +104,15 @@ namespace Loxodon.Framework.Editors
             var variable = variables.GetArrayElementAtIndex(index);
 
             float x = rect.x;
-            float y = rect.y;
+            float y = rect.y + 2;
             float width = rect.width - 40;
             float height = rect.height;
 
             Rect variableRect = new Rect(x, y, width, height);
             EditorGUI.PropertyField(variableRect, variable, GUIContent.none);
 
-            var buttonLeftRect = new Rect(variableRect.xMax + HORIZONTAL_GAP, y, 18, 18);
-            var buttonRightRect = new Rect(buttonLeftRect.xMax, y, 18, 18);
+            var buttonLeftRect = new Rect(variableRect.xMax + HORIZONTAL_GAP, y - 1, 18, 18);
+            var buttonRightRect = new Rect(buttonLeftRect.xMax, y - 1, 18, 18);
 
             if (GUI.Button(buttonLeftRect, new GUIContent("+"), EditorStyles.miniButtonLeft))
             {

@@ -2000,6 +2000,20 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
         //绑定标题到类Res的一个静态变量databinding_tutorials_title
         staticBindingSet.Bind(this.title).For(v => v.text).To(() => Res.databinding_tutorials_title).OneWay();
 
+- **本地化数据的绑定**
+
+    本地化数据绑定请使用静态绑定集ToValue()函数绑定，首先通过Localization.GetValue()获得IObservableProperty对象，这是一个可观察的属性，切换语言时会收到值改变的通知，然后通过ToValue函数绑定，具体见下面的示例。
+
+        //C#，创建一个静态类型的绑定集
+        BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();
+
+        var localization = Localization.Current;
+
+        //通过本地化key获得一个IObservableProperty属性，必须是IObservableProperty类型，否则切换语言不会更新
+        var value = localization.GetValue("databinding.tutorials.title"); //OK        
+        //var value = localization.Get<string>("databinding.tutorials.title"); //语言改变，不会触发UI更新
+        staticBindingSet.Bind(this.title).For(v => v.text).ToValue(value).OneWay();
+
 #### Command Parameter
 
 从事件到命令(ICommand)或方法的绑定支持自定义参数，使用Command Parameter可以为没有参数的UI事件添加一个自定义参数（如Button的Click事件），如果UI事件本身有参数则会被命令参数覆盖。使用Command Parameter可以很方便的将多个Button的Click事件绑定到视图模型的同一个函数OnClick(int buttonNo)上，请注意确保函数的参数类型和命令参数匹配，否则会导致错误。详情请参考下面的示例

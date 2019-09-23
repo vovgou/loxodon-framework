@@ -49,14 +49,14 @@ namespace Loxodon.Framework.Localizations
                 return;
 
             Localization localization = Localization.Current;
-            this.value = localization.Get<IObservableProperty>(key);
+            this.value = localization.GetValue(key);
 
-            if (this.value == null)
-            {
-                if (Application.isPlaying && log.IsErrorEnabled)
-                    log.ErrorFormat("There is an invalid localization key \"{0}\" on the {1} object named \"{2}\".", key, typeof(T).Name, this.name);
-                return;
-            }
+            //if (this.value == null)
+            //{
+            //    if (Application.isPlaying && log.IsErrorEnabled)
+            //        log.ErrorFormat("There is an invalid localization key \"{0}\" on the {1} object named \"{2}\".", key, typeof(T).Name, this.name);
+            //    return;
+            //}
 
             this.value.ValueChanged += OnValueChanged;
             this.OnValueChanged(this.value, EventArgs.Empty);

@@ -1004,7 +1004,7 @@ namespace Loxodon.Framework.Binding.Expressions
             visitor.values = new Scope(scope);
 
             var first = expr.Parameters.GetEnumerator();
-            var sencond = args.GetEnumerator();
+            var sencond = args != null ? args.GetEnumerator() : null;
             while (first.MoveNext())
             {
                 if (sencond.MoveNext())

@@ -179,10 +179,10 @@ namespace Loxodon.Framework.Tutorials
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
 
-
             CultureInfo cultureInfo = Locale.GetCultureInfo();
-            Localization.Current = Localization.Create(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()), cultureInfo);
-            this.localization = Localization.Current;
+            localization = Localization.Current;
+            localization.CultureInfo = cultureInfo;
+            localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
         }
 
         protected override void Start()

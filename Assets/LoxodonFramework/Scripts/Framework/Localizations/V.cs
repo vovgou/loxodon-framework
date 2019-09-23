@@ -64,18 +64,18 @@ namespace Loxodon.Framework.Localizations
         {
             get
             {
-                if (this.property == null)
+                if (this.property != null)
+                    return this.property;
+
+                lock (this)
                 {
-                    lock (this)
+                    if (this.property == null)
                     {
-                        if (this.property == null)
-                        {
-                            this.property = Localization.Current.Get<IObservableProperty>(key);
-                            this.property.ValueChanged += OnValueChanged;
-                        }
+                        this.property = Localization.Current.GetValue(key);
+                        this.property.ValueChanged += OnValueChanged;
                     }
+                    return this.property;
                 }
-                return this.property;
             }
         }
 

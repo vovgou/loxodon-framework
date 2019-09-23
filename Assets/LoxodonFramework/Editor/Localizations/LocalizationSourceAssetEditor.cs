@@ -47,6 +47,7 @@ namespace Loxodon.Framework.Editors
             var entries = source.FindPropertyRelative("entries");
 
             entryList = new ReorderableList(entries.serializedObject, entries, true, true, true, true);
+            entryList.elementHeight = 22;
             entryList.onAddCallback = OnAdd;
             entryList.onRemoveCallback = OnRemove;
             entryList.drawHeaderCallback = DrawHeader;
@@ -88,15 +89,15 @@ namespace Loxodon.Framework.Editors
             var entry = entries.GetArrayElementAtIndex(index);
 
             float x = rect.x;
-            float y = rect.y;
+            float y = rect.y + 2;
             float width = rect.width - 40;
             float height = rect.height;
 
             Rect entryRect = new Rect(x, y, width, height);
             DrawEntryField(entryRect, entry, index);
 
-            var buttonLeftRect = new Rect(entryRect.xMax + HORIZONTAL_GAP, y, 18, 18);
-            var buttonRightRect = new Rect(buttonLeftRect.xMax, y, 18, 18);
+            var buttonLeftRect = new Rect(entryRect.xMax + HORIZONTAL_GAP, y - 1, 18, 18);
+            var buttonRightRect = new Rect(buttonLeftRect.xMax, y - 1, 18, 18);
 
             if (GUI.Button(buttonLeftRect, new GUIContent("+"), EditorStyles.miniButtonLeft))
             {

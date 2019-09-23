@@ -288,7 +288,6 @@ namespace Loxodon.Framework.Binding.Builder
         public BindingBuilder<TTarget> ToValue(object value)
         {
             this.SetLiteral(value);
-            this.OneTime();
             return this;
         }
 
@@ -378,7 +377,6 @@ namespace Loxodon.Framework.Binding.Builder
         public BindingBuilder ToValue(object value)
         {
             this.SetLiteral(value);
-            this.OneTime();
             return this;
         }
 

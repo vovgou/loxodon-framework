@@ -33,7 +33,6 @@ namespace Loxodon.Framework.Localizations
 {
     public class Localization : ILocalization
     {
-        //private const string DEFAULT_ROOT = "Localization";
         private static readonly object _lock = new object();
         private static Localization instance;
 
@@ -45,27 +44,38 @@ namespace Loxodon.Framework.Localizations
         {
             get
             {
-                if (instance == null)
+                if (instance != null)
+                    return instance;
+
+                lock (_lock)
                 {
-                    lock (_lock)
-                    {
-                        if (instance == null)
-                            instance = Create(null);
-                    }
+                    if (instance == null)
+                        instance = new Localization();
+                    return instance;
                 }
-                return instance;
             }
             set { lock (_lock) { instance = value; } }
         }
 
+        [Obsolete("Please use \"Localization.Current\" instead of this method.")]
         public static Localization Create(IDataProvider provider)
         {
             return Create(provider, null);
         }
 
+        [Obsolete("Please use \"Localization.Current\" instead of this method.")]
         public static Localization Create(IDataProvider provider, CultureInfo cultureInfo)
         {
-            return new Localization(provider, cultureInfo);
+            var localization = Current;
+            if (cultureInfo != null)
+                localization.CultureInfo = cultureInfo;
+            if (provider != null)
+                localization.AddDataProvider(provider);
+            return localization;
+        }
+
+        protected Localization() : this(null, Locale.GetCultureInfo())
+        {
         }
 
         protected Localization(CultureInfo cultureInfo) : this(null, cultureInfo)
@@ -87,7 +97,7 @@ namespace Loxodon.Framework.Localizations
             get { return this.cultureInfo; }
             set
             {
-                if (this.cultureInfo != null && this.cultureInfo.Equals(value))
+                if (value == null || (this.cultureInfo != null && this.cultureInfo.Equals(value)))
                     return;
 
                 this.cultureInfo = value;
@@ -163,23 +173,26 @@ namespace Loxodon.Framework.Localizations
             if (dict == null || dict.Count <= 0)
                 return;
 
-            var keys = entry.Keys;
-            keys.Clear();
-
-            foreach (KeyValuePair<string, object> kv in dict)
+            lock (_lock)
             {
-                var key = kv.Key;
-                var value = kv.Value;
-                IObservableProperty property;
-                keys.Add(key);
-                if (data.TryGetValue(key, out property))
+                var keys = entry.Keys;
+                keys.Clear();
+
+                foreach (KeyValuePair<string, object> kv in dict)
                 {
-                    property.Value = value;
-                }
-                else
-                {
-                    property = new ObservableProperty(value);
-                    data[key] = property;
+                    var key = kv.Key;
+                    var value = kv.Value;
+                    IObservableProperty property;
+                    keys.Add(key);
+                    if (data.TryGetValue(key, out property))
+                    {
+                        property.Value = value;
+                    }
+                    else
+                    {
+                        property = new ObservableProperty(value);
+                        data[key] = property;
+                    }
                 }
             }
         }
@@ -188,6 +201,10 @@ namespace Loxodon.Framework.Localizations
         {
             foreach (string key in keys)
             {
+                IObservableProperty value;
+                if (data.TryGetValue(key, out value))
+                    value.Value = null;
+
                 data.Remove(key);
             }
         }
@@ -438,18 +455,53 @@ namespace Loxodon.Framework.Localizations
         /// <returns></returns>
         public virtual T Get<T>(string key, T defaultValue)
         {
+            if (typeof(IObservableProperty).IsAssignableFrom(typeof(T)))
+                return (T)GetValue(key);
+
             IObservableProperty value;
             if (data.TryGetValue(key, out value))
             {
-                if (value is T)
-                    return (T)value;
-
                 if (value.Value is T)
                     return (T)(value.Value);
 
                 return (T)Convert.ChangeType(value.Value, typeof(T));
             }
             return defaultValue;
+        }
+
+        /// <summary>
+        /// Gets a IObservableProperty value based on a key, if the value is not found, a default value will be created.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public virtual IObservableProperty GetValue(string key)
+        {
+            return GetValue(key, true);
+        }
+
+        /// <summary>
+        /// Gets a IObservableProperty value based on a key, if the value is not found, a default value will be created.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public virtual IObservableProperty GetValue(string key, bool isAutoCreated)
+        {
+            IObservableProperty value;
+            if (data.TryGetValue(key, out value))
+                return value;
+
+            if (!isAutoCreated)
+                return null;
+
+            lock (_lock)
+            {
+                if (data.TryGetValue(key, out value))
+                    return value;
+
+                value = new ObservableProperty();
+                data[key] = value;
+                return value;
+            }
         }
 
         protected class ProviderEntry

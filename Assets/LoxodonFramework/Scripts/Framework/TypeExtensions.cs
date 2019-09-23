@@ -137,9 +137,13 @@ namespace Loxodon.Framework
             {
                 if (!type.IsInstanceOfType(value))
                 {
-                    if (value is IObservableProperty && type.IsAssignableFrom((value as IObservableProperty).Type))
+                    if (value is IObservableProperty)
                     {
                         safeValue = (value as IObservableProperty).Value;
+                        if (!type.IsInstanceOfType(safeValue))
+                        {
+                            safeValue = ChangeType(safeValue, type);
+                        }
                     }
                     else if (type == typeof(string))
                     {

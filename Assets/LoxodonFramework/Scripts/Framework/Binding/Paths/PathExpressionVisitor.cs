@@ -269,27 +269,15 @@ namespace Loxodon.Framework.Binding.Paths
                     var field = me.Member as FieldInfo;
                     if (field != null)
                     {
-                        if (field.IsStatic)
-                        {
-                            path.Prepend(new MemberNode(field));
-                        }
-                        else
-                        {
-                            path.Prepend(new MemberNode(field));
-                        }
+                        //static or instance
+                        path.Prepend(new MemberNode(field));
                     }
 
                     var property = me.Member as PropertyInfo;
                     if (property != null)
                     {
-                        if (property.IsStatic())
-                        {
-                            path.Prepend(new MemberNode(property));
-                        }
-                        else
-                        {
-                            path.Prepend(new MemberNode(property));
-                        }
+                        //static or instance
+                        path.Prepend(new MemberNode(property));
                     }
 
                     current = me.Expression;

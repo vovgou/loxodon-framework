@@ -46,16 +46,14 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
             proxy = null;
             var expression = description.Expression;
             List<ISourceProxy> list = new List<ISourceProxy>();
-            if (!description.IsStatic)
+            List<Path> paths = this.pathFinder.FindPaths(expression);
+            foreach (Path path in paths)
             {
-                List<Path> paths = this.pathFinder.FindPaths(expression);
-                foreach (Path path in paths)
-                {
-                    ISourceProxy innerProxy = this.factory.CreateProxy(source, new ObjectSourceDescription() { Path = path });
-                    if (innerProxy != null)
-                        list.Add(innerProxy);
-                }
+                ISourceProxy innerProxy = this.factory.CreateProxy(source, new ObjectSourceDescription() { Path = path });
+                if (innerProxy != null)
+                    list.Add(innerProxy);
             }
+
 #if UNITY_IOS
             Func<object[], object> del = expression.DynamicCompile();
             proxy = new ExpressionSourceProxy(description.IsStatic ? null : source, del, description.ReturnType, list);
@@ -71,7 +69,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
                 }
                 else
                 {
-                    proxy = (ISourceProxy)Activator.CreateInstance(typeof(ExpressionSourceProxy<>).MakeGenericType(returnType), del);
+                    proxy = (ISourceProxy)Activator.CreateInstance(typeof(ExpressionSourceProxy<>).MakeGenericType(returnType), del, list);
                 }
             }
             catch (Exception)

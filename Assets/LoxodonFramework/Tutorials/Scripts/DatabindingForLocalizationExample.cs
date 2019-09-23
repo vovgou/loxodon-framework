@@ -22,17 +22,16 @@
  * SOFTWARE.
  */
 
-using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System.Globalization;
-
-using Loxodon.Framework.Localizations;
-using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Binding.Builder;
-using Loxodon.Framework.Binding.Contexts;
+using Loxodon.Framework.Contexts;
+using Loxodon.Framework.Localizations;
+using Loxodon.Framework.Observables;
 using Loxodon.Framework.ViewModels;
+using System.Collections.Generic;
+using System.Globalization;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Loxodon.Framework.Tutorials
 {
@@ -77,19 +76,22 @@ namespace Loxodon.Framework.Tutorials
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
 
-            CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage(SystemLanguage.English);
-            Localization.Current = Localization.Create(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()), cultureInfo);
             this.localization = Localization.Current;
+            CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage(SystemLanguage.English);
+            this.localization.CultureInfo = cultureInfo;
+            //this.localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
+            this.localization.AddDataProvider(new DefaultLocalizationSourceDataProvider("LocalizationTutorials", "LocalizationModule.asset"));
         }
 
         void Start()
         {
-            BindingSet<DatabindingForLocalizationExample, DatabindingForLocalizationViewModel> bindingSet = this.CreateBindingSet<DatabindingForLocalizationExample, DatabindingForLocalizationViewModel>(new DatabindingForLocalizationViewModel(this.localization));
+            BindingSet<DatabindingForLocalizationExample, DatabindingForLocalizationViewModel> bindingSet = this.CreateBindingSet(new DatabindingForLocalizationViewModel(this.localization));
             bindingSet.Bind(this.dropdown).For(v => v.onValueChanged).To<int>(vm => vm.OnValueChanged);
             bindingSet.Build();
 
-            BindingSet<DatabindingForLocalizationExample> staticBindingSet = this.CreateBindingSet<DatabindingForLocalizationExample>();
-            staticBindingSet.Bind(this.text).For(v => v.text).To(() => Res.localization_tutorials_content).OneWay();
+            BindingSet<DatabindingForLocalizationExample> staticBindingSet = this.CreateBindingSet();
+            //staticBindingSet.Bind(this.text).For(v => v.text).To(() => Res.localization_tutorials_content).OneWay();
+            staticBindingSet.Bind(this.text).For(v => v.text).ToValue(this.localization.GetValue("localization.tutorials.content")).OneWay();
             staticBindingSet.Build();
         }
     }

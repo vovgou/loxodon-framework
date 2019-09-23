@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+using Loxodon.Framework.Observables;
 using System;
 using UnityEngine;
 
@@ -204,5 +205,12 @@ namespace Loxodon.Framework.Localizations
         /// <param name="defaultValue"></param>
         /// <returns></returns>
         T Get<T>(string key, T defaultValue);
+
+        /// <summary>
+        /// Gets a IObservableProperty value based on a key, if the value is not found, a default value will be created.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        IObservableProperty GetValue(string key);
     }
 }

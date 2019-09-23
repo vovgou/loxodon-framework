@@ -67,6 +67,7 @@ namespace Loxodon.Framework.Editors
             }
 
             entryList = new ReorderableList(entriesProperty.serializedObject, entriesProperty, true, true, true, true);
+            entryList.elementHeight = 22;
             entryList.onAddCallback = OnAddEntry;
             entryList.onRemoveCallback = OnRemoveEntry;
             entryList.drawHeaderCallback = DrawEntryListHeader;
@@ -75,6 +76,7 @@ namespace Loxodon.Framework.Editors
             entryList.drawElementBackgroundCallback = DrawElementBackground;
 
             languageList = new ReorderableList(languagesProperty.serializedObject, languagesProperty, true, true, true, true);
+            languageList.elementHeight = 22;
             languageList.onAddCallback = OnAddLanguage;
             languageList.onRemoveCallback = OnRemoveLanguage;
             languageList.drawHeaderCallback = DrawLanguageListHeader;
@@ -147,15 +149,15 @@ namespace Loxodon.Framework.Editors
             var entry = entries.GetArrayElementAtIndex(index);
 
             float x = rect.x;
-            float y = rect.y;
+            float y = rect.y + 2;
             float width = rect.width - 40;
             float height = rect.height;
 
             Rect entryRect = new Rect(x, y, width, height);
             DrawEntryField(entryRect, entry, index);
 
-            var buttonLeftRect = new Rect(entryRect.xMax + HORIZONTAL_GAP, y, 18, 18);
-            var buttonRightRect = new Rect(buttonLeftRect.xMax, y, 18, 18);
+            var buttonLeftRect = new Rect(entryRect.xMax + HORIZONTAL_GAP, y - 1, 18, 18);
+            var buttonRightRect = new Rect(buttonLeftRect.xMax, y - 1, 18, 18);
 
             if (GUI.Button(buttonLeftRect, new GUIContent("+"), EditorStyles.miniButtonLeft))
             {
@@ -410,13 +412,13 @@ namespace Loxodon.Framework.Editors
             var language = Language.GetLanguage(code);
 
             float x = position.x;
-            float y = position.y;
+            float y = position.y + 2;
             float height = EditorGUIUtility.singleLineHeight;
             float width = position.width - HORIZONTAL_GAP * 2;
 
             Rect nameRect = new Rect(x, y, Mathf.Min(200, width * 0.4f), height);
             Rect defaultRect = new Rect(nameRect.xMax + HORIZONTAL_GAP, y, Mathf.Min(120, width * 0.2f), height);
-            Rect codeRect = new Rect(defaultRect.xMax + HORIZONTAL_GAP, y, position.xMax - defaultRect.xMax - HORIZONTAL_GAP, height);
+            Rect codeRect = new Rect(defaultRect.xMax + HORIZONTAL_GAP, y - 1, position.xMax - defaultRect.xMax - HORIZONTAL_GAP, height);
 
             var name = language.Name;
             if (!string.IsNullOrEmpty(language.Country))
