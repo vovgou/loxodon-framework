@@ -43,6 +43,7 @@
     - [生成C#脚本](#生成c脚本)
     - [本地化视图组件](#本地化视图组件)
     - [数据提供器(IDataProvider)](#数据提供器idataprovider)
+    - [获得设备的当前语言](#获得设备的当前语言)
     - [使用示例](#使用示例)
     - [支持CSV格式的本地化插件](#支持csv格式的本地化插件)
   - [配置文件（Properties文件）](#配置文件properties文件)
@@ -802,7 +803,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 ![](images/LocalizationSource2.png)
 
 - 本地化数据源脚本方式(LocalizationSourceBehaviour)
-通过本地化数据源脚本挂在GameObject对象上，可以直接存储在Prefab中或场景中，它无法按语言分别存储，所有支持语言的本地化资源都应该配置在同一个脚本文件中。LocalizationSourceBehaviour脚本中自带了DataProvider，当脚本运行会自动加载数据，当对象销毁时又会自动卸载数据。这种方式特别适合与UIView配合使用，当UIView创建时自动加载本地化数据，当UIView关闭时又会释放本地化数据。与Asset文件格式相比，它的优点是可以像一个Unity对象一样使用，拖入场景或者prefab中即可，不需要写脚本来管理它，它的缺点是所配置多个语言版本的数据都会加载到内存中，会占用更多的内存。
+通过本地化数据源脚本挂在GameObject对象上，可以直接存储在Prefab中或场景中，它无法按语言分别存储，所有支持语言的本地化资源都应该配置在同一个脚本文件中。LocalizationSourceBehaviour脚本中自带了DataProvider，当脚本运行会自动加载数据，当对象销毁时又会自动卸载数据。这种方式特别适合与UIView配合使用，当UIView创建时自动加载本地化数据，当UIView关闭时又会释放本地化数据。与Asset文件格式相比，它的优点是可以像一个Unity对象一样使用，拖入场景或者prefab中即可，不需要写脚本来管理它，它的缺点是所配置多个语言版本的数据都会加载到内存中，会占用更多的内存。[示例 Localization Source Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials/)
 ![](images/LocalizationSource3.png)
 ![](images/LocalizationSource4.png)
 
@@ -996,7 +997,9 @@ XML 格式配置如下:
 
 #### 数据提供器(IDataProvider)
 
-框架的本地化组件支持同时使用多种数据格式来配置本地化资源，他们有不同的文件格式，不同的目录结构，甚至有不同的文件查找规则，无论情况多么复杂，都可以通过数据提供器(IDataProvider)和文档解析器(IDocumentParser)来统一它们，通过数据提供器加载数据，通过文档解析器解析资源文件，在框架中我提供了一些默认的数据加载器，可以从Resources目录或者AssetBundle中根据前文中提到的目录规则来加载本地化数据。如果需要支持更多的数据格式，或者要定制文件查找规则和加载方式，请参考我的代码实现自定义的数据提供器。
+框架的本地化组件支持同时使用多种数据格式来配置本地化资源，它们有不同的文件格式，不同的目录结构，甚至有不同的文件查找规则，无论情况多么复杂，都可以通过数据提供器(IDataProvider)和文档解析器(IDocumentParser)来统一它们，通过数据提供器加载数据，通过文档解析器解析资源文件，在框架中我提供了一些默认的数据加载器，可以从Resources目录或者AssetBundle中根据前文中提到的目录规则来加载本地化数据。如果需要支持更多的数据格式，或者要定制文件查找规则和加载方式，请参考我的代码实现自定义的数据提供器。
+以下的代码是使用默认的数据提供器从Resources/LocalizationTutorials/（教程本地化资源的根目录，目录结构如下图）目录中加载xml和asset格式的文件，xml格式的文件使用DefaultDataProvider加载，它会加载当前语言的所有xml文件，文本文件占用较少的内存，不要释放它们。asset格式的文件使用DefaultLocalizationSourceDataProvider加载，它配置了具体的asset文件名称，它只会加载名字列表中的文件，asset文件中配置图片声音等多媒体资源，在使用完毕请删除DefaultLocalizationSourceDataProvider卸载资源。
+![](images/Localization_dir2.png)
 
     var localization = Localization.Current;
     localization.CultureInfo = new CultureInfo("en-US"); //设置语言
@@ -1007,12 +1010,16 @@ XML 格式配置如下:
 
     //添加一个Asset数据的加载器，从Resources/LocalizationExamples 目录中加载名为login.asset的资源
     //Asset类型的资源请在使用前加载，并且在不需要的时候释放它们
-    var provider = new DefaultLocalizationSourceDataProvider("LocalizationExamples","login.asset");
+    var provider = new DefaultLocalizationSourceDataProvider("LocalizationTutorials","LocalizationModule.asset");
     localization.AddDataProvider(provider);
 
     //当数据不在被使用时，删除数据加载器，同时释放内存
     localization.RemoveDataProvider(provider);
 
+#### 获得设备的当前语言
+
+在Unity3D较老的版本中，CultureInfo.CurrentCulture是无效的，无论在PC还是移动设备，都获得英文语言信息，所以我提供了Unity的SystemLanguage转CultureInfo的工具Locale，可以通过Locale.GetCultureInfo()来获得当前语言信息，通过Locale.CultureInfo GetCultureInfoByLanguage(SystemLanguage.Chinese)来获得中文的CultureInfo。
+在Unity 2018版本中，使用.net standard 2.0时，我在Android手机上测试，CultureInfo.CurrentCulture是有效的，所以使用2018版本开发的同学可以使用CultureInfo.CurrentCulture来获得当前系统的语言信息。
 
 #### 使用示例
 
@@ -1020,7 +1027,9 @@ XML 格式配置如下:
 
 下面的示例是如何在C#代码中使用本地化功能，通过生成的C#静态类R或者通过Localization类获得本地化字符串。
 
-    Localization localization = Localization.Current
+    var localization = Localization.Current;
+    localization.CultureInfo = CultureInfo.CurrentCulture; //设置语言,老版本用Locale.GetCultureInfo()
+    localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
 
     //通过Localization的成员方法调用
     string errorMessage = localization.GetText("login.validation.username.error", "Please enter a valid username.");
@@ -1031,6 +1040,10 @@ XML 格式配置如下:
     //获得本地化配置的子集，通过子集访问
     ILocalization localizationSubset = localization.Subset("login");
     errorMessage = localizationSubset.GetText("validation.username.error", "Please enter a valid username.");
+
+    //通过数据绑定使用，请使用localization.GetValue()获得ObservableProperty，支持值改变的通知
+    bindingSet.Bind(target).For(v=>v.text)
+        .ToValue(localization.GetValue("login.validation.username.error")).OneWay();
 
 
 配合UI组件使用本地化配置，下面我们模拟一个游戏中语言切换的使用场景，来了解本地化模块的用法。在下图中，红色线框中的英文通过本地化服务来加载和修改，它是通过挂在Text对象上的LocalizedText组件来实现中文和英文切换的。
@@ -1932,43 +1945,44 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
     属性和Field绑定很简单，直接见示例
 
-        //C#，单向绑定
-        bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).OneWay();
+      //C#，单向绑定
+      bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).OneWay();
 
-        //C#，双向绑定，双向绑定时视图对象必须支持视图改变的事件，如“onEndEdit”，必须在For函数中配置
-        bindingSet.Bind(this.usernameEdit).For(v => v.text, v => v.onEndEdit).To(vm => vm.Username).TwoWay();
+      //C#，双向绑定，双向绑定时视图对象必须支持视图改变的事件，如“onEndEdit”，必须在For函数中配置
+      bindingSet.Bind(this.usernameEdit).For(v => v.text, v => v.onEndEdit).To(vm => vm.Username).TwoWay();
 
-        //C#，非拉姆达表达式的方式
-        bindingSet.Bind (this.username).For ("text").To ("Account.Username").OneWay ();
+      //C#，非拉姆达表达式的方式
+      bindingSet.Bind (this.username).For ("text").To ("Account.Username").OneWay ();
 
-        --Lua，非拉姆达表达式参数的版本
-        bindingSet:Bind(self.username):For("text"):To("account.username"):OneWay()
-        bindingSet:Bind(self.errorMessage):For("text"):To("errors['errorMessage']"):OneWay()
+      --Lua，非拉姆达表达式参数的版本
+      bindingSet:Bind(self.username):For("text"):To("account.username"):OneWay()
+      bindingSet:Bind(self.errorMessage):For("text"):To("errors['errorMessage']"):OneWay()
 
 - **表达式绑定**
 
     表达式绑定只支持视图模型的一个或者多个属性，通过表达式转换为某个类型的值赋值到视图UI控件上，只能是OneTime或者OneWay的类型。表达式绑定函数，支持拉姆达表达式参数和string参数两种配置方式，C#代码只支持拉姆达表达式参数的方法，代码会自动分析表达式关注的视图模型的一个或者多个属性，自动监听这些属性的改变；Lua代码只支持使用string参数版本的方法，无法自动分析使用了视图模型的哪些属性，需要在参数中配置表达式所使用到的属性。
 
-        //C#代码，使用拉姆达表达式为参数的ToExpression方法，自动分析监听视图模型的Price属性
-        bindingSet.Bind(this.price).For(v => v.text).ToExpression(vm => string.Format("${0:0.00}", vm.Price)).OneWay();
+      //C#代码，使用拉姆达表达式为参数的ToExpression方法，自动分析监听视图模型的Price属性
+      bindingSet.Bind(this.price).For(v => v.text).ToExpression(vm => string.Format("${0:0.00}", vm.Price)).OneWay();
 
-        --Lua代码，使用string参数版本的ToExpression方法，需要手动配置price属性,如果表达式使用了vm的多个属性，则在"price"后继续配置
-        bindingSet:Bind(self.price):For("text"):ToExpression(function(vm)
-            return string.format(tostring("%0.2f"), vm.price)
-        end ,"price"):OneWay()
+      --Lua代码，使用string参数版本的ToExpression方法，需要手动配置price属性,如果表达式使用了vm的多个属性，
+      --则在"price"后继续配置其他属性
+      bindingSet:Bind(self.price):For("text"):ToExpression(function(vm)
+          return string.format(tostring("%0.2f"), vm.price)
+      end ,"price"):OneWay()
 
 - **方法绑定**
 
     方法绑定与属性绑定类似，也支持拉姆达表达式和字符串参数两个版本，方法绑定要确保控件的事件参数类型与视图模型被绑定方法的参数类型一致，否则可能导致绑定失败。
 
-        //C#，拉姆达表达式方式的绑定，Button.onClick 与视图模型的成员OnSubmit方法绑定
-        bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit);
+      //C#，拉姆达表达式方式的绑定，Button.onClick 与视图模型的成员OnSubmit方法绑定
+      bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit);
 
-        //C#，拉姆达表达式方式的绑定，如果方法带参数，请在To后面加上泛型约束
-        bindingSet.Bind(this.emailEdit).For(v => v.onValueChanged).To<string>(vm => vm.OnEmailValueChanged);
+      //C#，拉姆达表达式方式的绑定，如果方法带参数，请在To后面加上泛型约束
+      bindingSet.Bind(this.emailEdit).For(v => v.onValueChanged).To<string>(vm => vm.OnEmailValueChanged);
 
-        --Lua，通过字符串参数绑定，Button.onClick 与视图模型的成员submit方法绑定
-        bindingSet:Bind(self.submit):For("onClick"):To("submit"):OneWay()
+      --Lua，通过字符串参数绑定，Button.onClick 与视图模型的成员submit方法绑定
+      bindingSet:Bind(self.submit):For("onClick"):To("submit"):OneWay()
 
 
 - **命令和交互请求绑定**
@@ -1977,43 +1991,43 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
     交互请求(InteractionRequest)交互请求往往都和命令配对使用，命令响应UI的点击事件，处理点击逻辑，交互请求向控制层发生消息控制UI的创建、修改和销毁。
 
-        //C#，绑定控制层的OnOpenAlert函数到交互请求AlertDialogRequest上
-        bindingSet.Bind().For(v => this.OnOpenAlert).To(vm => vm.AlertDialogRequest);
+      //C#，绑定控制层的OnOpenAlert函数到交互请求AlertDialogRequest上
+      bindingSet.Bind().For(v => this.OnOpenAlert).To(vm => vm.AlertDialogRequest);
 
-        //绑定Button的onClick事件到OpenAlertDialog命令上
-        bindingSet.Bind(this.openAlert).For(v => v.onClick).To(vm => vm.OpenAlertDialog);
+      //绑定Button的onClick事件到OpenAlertDialog命令上
+      bindingSet.Bind(this.openAlert).For(v => v.onClick).To(vm => vm.OpenAlertDialog);
 
 - **集合的绑定**
 
     字典和列表的绑定跟属性/Field绑定基本差不多，见下面的代码
 
-        //C#，绑定一个Text.text属性到一个字典ObservableDictionary中key ="errorMessage" 对应的对象
-        bindingSet.Bind(this.errorMessage).For(v => v.text).To(vm => vm.Errors["errorMessage"]).OneWay();
+      //C#，绑定一个Text.text属性到一个字典ObservableDictionary中key ="errorMessage" 对应的对象
+      bindingSet.Bind(this.errorMessage).For(v => v.text).To(vm => vm.Errors["errorMessage"]).OneWay();
 
 - **静态类绑定**
 
     静态类绑定和视图模型绑定唯一区别就是，静态类绑定创建的是静态绑定集，静态绑定集不需要视图模型对象。
 
-        //C#，创建一个静态类的绑定集
-        BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();
+      //C#，创建一个静态类的绑定集
+      BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();
 
-        //绑定标题到类Res的一个静态变量databinding_tutorials_title
-        staticBindingSet.Bind(this.title).For(v => v.text).To(() => Res.databinding_tutorials_title).OneWay();
+      //绑定标题到类Res的一个静态变量databinding_tutorials_title
+      staticBindingSet.Bind(this.title).For(v => v.text).To(() => Res.databinding_tutorials_title).OneWay();
 
 - **本地化数据的绑定**
 
     本地化数据绑定请使用静态绑定集ToValue()函数绑定，首先通过Localization.GetValue()获得IObservableProperty对象，这是一个可观察的属性，切换语言时会收到值改变的通知，然后通过ToValue函数绑定，具体见下面的示例。
 
-        //C#，创建一个静态类型的绑定集
-        BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();
+      //C#，创建一个静态类型的绑定集
+      BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();
 
-        var localization = Localization.Current;
+      var localization = Localization.Current;
 
-        //通过本地化key获得一个IObservableProperty属性，
-        //必须是IObservableProperty类型，否则切换语言不会更新
-        var value = localization.GetValue("databinding.tutorials.title"); //OK        
-        //var value = localization.Get<string>("databinding.tutorials.title"); //NO
-        staticBindingSet.Bind(this.title).For(v => v.text).ToValue(value).OneWay();
+      //通过本地化key获得一个IObservableProperty属性，
+      //必须是IObservableProperty类型，否则切换语言不会更新
+      var value = localization.GetValue("databinding.tutorials.title"); //OK        
+      //var value = localization.Get<string>("databinding.tutorials.title"); //NO
+      staticBindingSet.Bind(this.title).For(v => v.text).ToValue(value).OneWay();
 
 #### Command Parameter
 
@@ -2357,65 +2371,65 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
     Window是一个UI界面视图的根容器(IUIViewGroup、IUIView)，同时也是一个控制器，它负责创建、销毁、显示、隐藏窗口视图，负责管理视图、视图模型的生命周期，负责创建子窗口、与子窗口交互等。
 
-        //C#，创建窗口
-        public class ExampleWindow : Window
-        {
-            public Text progressBarText;
-            public Slider progressBarSlider;
-            public Text tipText;
-            public Button button;
+      //C#，创建窗口
+      public class ExampleWindow : Window
+      {
+          public Text progressBarText;
+          public Slider progressBarSlider;
+          public Text tipText;
+          public Button button;
 
-            protected override void OnCreate(IBundle bundle)
-            {
-                BindingSet<ExampleWindow, ExampleViewModel> bindingSet;
-                bindingSet = this.CreateBindingSet(new ExampleViewModel());
+          protected override void OnCreate(IBundle bundle)
+          {
+              BindingSet<ExampleWindow, ExampleViewModel> bindingSet;
+              bindingSet = this.CreateBindingSet(new ExampleViewModel());
 
-                bindingSet.Bind(this.progressBarSlider).For("value", "onValueChanged").To("ProgressBar.Progress").TwoWay();
-                bindingSet.Bind(this.progressBarSlider.gameObject).For(v => v.activeSelf)
-                .To(vm => vm.ProgressBar.Enable).OneWay();
-                bindingSet.Bind(this.progressBarText).For(v => v.text)
-                .ToExpression(
-                    vm => string.Format("{0}%", Mathf.FloorToInt(vm.ProgressBar.Progress * 100f)))
-                .OneWay();
-                bindingSet.Bind(this.tipText).For(v => v.text).To(vm => vm.ProgressBar.Tip).OneWay();
-                bindingSet.Bind(this.button).For(v => v.onClick).To(vm => vm.Click).OneWay();
-                binding,bound to the onClick event and interactable property.
-                bindingSet.Build();
-            }
+              bindingSet.Bind(this.progressBarSlider).For("value", "onValueChanged").To("ProgressBar.Progress").TwoWay();
+              bindingSet.Bind(this.progressBarSlider.gameObject).For(v => v.activeSelf)
+              .To(vm => vm.ProgressBar.Enable).OneWay();
+              bindingSet.Bind(this.progressBarText).For(v => v.text)
+              .ToExpression(
+                  vm => string.Format("{0}%", Mathf.FloorToInt(vm.ProgressBar.Progress * 100f)))
+              .OneWay();
+              bindingSet.Bind(this.tipText).For(v => v.text).To(vm => vm.ProgressBar.Tip).OneWay();
+              bindingSet.Bind(this.button).For(v => v.onClick).To(vm => vm.Click).OneWay();
+              binding,bound to the onClick event and interactable property.
+              bindingSet.Build();
+          }
 
-            protected override void OnDismiss()
-            {
-            }
-        }
+          protected override void OnDismiss()
+          {
+          }
+      }
 
-        --Lua,创建窗口
-        require("framework.System")
+      --Lua,创建窗口
+      require("framework.System")
 
-        local ExampleViewModel = require("LuaUI.Startup.ExampleViewModel")
+      local ExampleViewModel = require("LuaUI.Startup.ExampleViewModel")
 
-        ---
-        --模块
-        --@module ExampleWindow
-        local M=class("ExampleWindow",target)
+      ---
+      --模块
+      --@module ExampleWindow
+      local M=class("ExampleWindow",target)
 
-        function M:onCreate(bundle)
-            self.viewModel = ExampleViewModel()
+      function M:onCreate(bundle)
+          self.viewModel = ExampleViewModel()
 
-            self:BindingContext().DataContext = self.viewModel
+          self:BindingContext().DataContext = self.viewModel
 
-            local bindingSet = self:CreateBindingSet()
+          local bindingSet = self:CreateBindingSet()
 
-            bindingSet:Bind(self.progressBarSlider):For("value", "onValueChanged"):To("progressBar.progress"):TwoWay()
-            bindingSet:Bind(self.progressBarSlider.gameObject):For("activeSelf"):To("progressBar.enable"):OneWay()
-            bindingSet:Bind(self.progressBarText):For("text"):ToExpression(
-                function(vm) return string.format("%0.2f%%",vm.progressBar.progress * 100) end,
-            "progressBar.progress"):OneWay()
-            bindingSet:Bind(self.tipText):For("text"):To("progressBar.tip"):OneWay()
-            bindingSet:Bind(self.button):For("onClick"):To("command"):OneWay()
-            bindingSet:Build()
-        end
+          bindingSet:Bind(self.progressBarSlider):For("value", "onValueChanged"):To("progressBar.progress"):TwoWay()
+          bindingSet:Bind(self.progressBarSlider.gameObject):For("activeSelf"):To("progressBar.enable"):OneWay()
+          bindingSet:Bind(self.progressBarText):For("text"):ToExpression(
+              function(vm) return string.format("%0.2f%%",vm.progressBar.progress * 100) end,
+          "progressBar.progress"):OneWay()
+          bindingSet:Bind(self.tipText):For("text"):To("progressBar.tip"):OneWay()
+          bindingSet:Bind(self.button):For("onClick"):To("command"):OneWay()
+          bindingSet:Build()
+      end
 
-        return M
+      return M
 
 - **窗口容器和窗口管理器(WindowContainer、IWindowManager)**
 
@@ -2425,13 +2439,13 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
     窗口容器既是一个窗口管理器，又是一个窗口，在窗口容器中可以添加、删除子窗口、管理子窗口，也可以像一个普通窗口一样显示、隐藏。拿我们的MMO游戏来说，一般会创建一个名为"Main"的主窗口容器和一个"Battle"的窗口容器，在主界面打开的所有窗口视图都会放入到Main容器中，但是当进入某个战斗副本时，会将Main容器隐藏，将"Battle"容器显示出来，战斗副本中所有UI窗口都会用Battle容器来管理，退出副本时，只需要关闭Battle容器，设置Main容器可见，就可以轻松恢复Main容器中窗口的层级关系。
 
-        //C#，创建一个MAIN容器，默认会在全局窗口管理器中创建
-        WindowContainer winContainer = WindowContainer.Create("MAIN");
-        IUIViewLocator locator = context.GetService<IUIViewLocator>();
+      //C#，创建一个MAIN容器，默认会在全局窗口管理器中创建
+      WindowContainer winContainer = WindowContainer.Create("MAIN");
+      IUIViewLocator locator = context.GetService<IUIViewLocator>();
 
-        //在MAIN容器中打开一个窗口
-        StartupWindow window = locator.LoadWindow<StartupWindow>(winContainer, "UI/Startup/Startup");
-        ITransition transition = window.Show()    
+      //在MAIN容器中打开一个窗口
+      StartupWindow window = locator.LoadWindow<StartupWindow>(winContainer, "UI/Startup/Startup");
+      ITransition transition = window.Show()    
 
 #### 交互请求(InteractionRequest)
 
