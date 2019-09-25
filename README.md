@@ -142,7 +142,7 @@ Create a view and view model of the progress bar.
     
     - Lua precompilation tool
     
-    ![](docs/images/LuaPrecompileWizard.png)
+    	![](docs/images/LuaPrecompileWizard.png)
  
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
     
