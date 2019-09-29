@@ -142,7 +142,7 @@ UWP(window10)
         
     - Lua 预编译工具
     
-    ![](docs/images/LuaPrecompileWizard.png)
+    	![](docs/images/LuaPrecompileWizard.png)
 
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
