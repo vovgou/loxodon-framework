@@ -1,3 +1,10 @@
+---
+puppeteer:
+    landscape: false
+    format: "A3"
+    timeout: 3000 # <= 特殊设置，意味着等待（waitFor） 3000 毫秒
+---
+
 ![](images/icon.png)
 # Loxodon Framework
 
@@ -35,6 +42,10 @@
     - [服务定位器(IServiceLocator)](#服务定位器iservicelocator)
     - [服务Bundle(IServiceBundle)](#服务bundleiservicebundle)
   - [应用配置（Preference）](#应用配置preference)
+  - [配置文件（Properties文件）](#配置文件properties文件)
+    - [支持的数值类型](#支持的数值类型)
+    - [数组分隔符](#数组分隔符)
+    - [配置文件示例](#配置文件示例)
   - [国际化和本地化](#国际化和本地化)
     - [目录结构](#目录结构)
     - [配置文件的格式](#配置文件的格式)
@@ -46,11 +57,8 @@
     - [获得设备的当前语言](#获得设备的当前语言)
     - [使用示例](#使用示例)
     - [支持CSV格式的本地化插件](#支持csv格式的本地化插件)
-  - [配置文件（Properties文件）](#配置文件properties文件)
-    - [支持的数值类型](#支持的数值类型)
-    - [数组分隔符](#数组分隔符)
-    - [配置文件示例](#配置文件示例)
   - [日志系统](#日志系统)
+  - [StreamingAssets目录文件读取（Android）](#streamingassets目录文件读取android)
   - [线程/协程异步结果和异步任务](#线程协程异步结果和异步任务)
     - [AsyncResult](#asyncresult)
     - [ProgressResult](#progressresult)
@@ -778,6 +786,99 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
+### 配置文件（Properties文件）
+
+在游戏或者应用开发中，配置文件是一个必不可少的东西，通过配置文件来管理游戏或者应用的配置参数，特别现在游戏开发要接入不同的平台，有众多的SDK配置参数，而且不同平台有不同的接入要求，有不同的升级更新策略，虽然这些配置我们也可以继承Unity3D的ScriptableObject类来创建一个配置类，但是因为接入平台多，参数不统一，随着需求的变化会导致频繁的修改这些配置类，为了避免这种情况，我这里采用传统的配置文件来配置这些参数，一个properties文件满足所有的配置需求。
+
+#### 支持的数值类型
+
+默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
+
+| 基本类型(Type) | 默认值(Default Value) | 描述(Description) |
+| :------| ------: | :------: |
+| string | "" | 字符串类型 |
+| boolean | false | 布尔值，flase或者true |
+| sbyte | 0 | 有符号的byte，-127-128 |
+| byte | 0 | 无符号byte，0-255 |
+| short | 0 | short类型 |
+| ushort | 0 | 无符号short类型 |
+| int | 0 | 整形 |
+| uint | 0 | 无符号整形 |
+| long | 0 | 长整形 |
+| ulong | 0 | 无符号长整型 |
+| char | ‘’ | 字符类型 |
+| float | 0 | 单精度浮点类型 |
+| double | 0 | 双精度浮点类型 |
+| datetime | 1970-01-01T00:00:00 | 时间类型 |
+| vector2 | (0,0) | Vector2类型,示例：(0,0) |
+| vector3 | (0,0,0) | Vector3类型，示例：(0,0,0) |
+| vector4 | (0,0,0) | Vector4类型，示例：(0,0,0,0)|
+| color | #000000 | Vector2类型，示例：#FF0000 |
+| rect | (0,0,0,0) | Rect类型，Rect(x,y,width,height) |
+| version | 1.0.0 | Version类型，示例：1.0.0 |
+
+#### 数组分隔符
+
+与CSV格式的本地化配置一样，数组使用半角逗号分隔，在半角的双引号、单引号、小括号()、中括号[]、大括号{}、尖括号<>之间的逗号会被忽略，如数组的字符串中有逗号，请使用双引号或者单引号将字符串引起来。
+
+#### 配置文件示例
+
+Properties文件格式如下，以key = value 的方式配置所有内容，以#开头的是注释文字，空行会被忽略：
+
+    #application config
+    application.app.version = 1.0.0
+    application.data.version = 1.0.0
+
+    #gateway     
+    application.config-group = local
+
+    #local
+    application.local.upgrade.url = http://test.your domain name.com/loxodon/framework/upgrade/check
+    application.local.username = loxodon.framework
+    application.local.password = loxodon.framework
+    application.local.gateway = 127.0.0.1:8000 , 192.168.0.30:8000
+
+    #develop
+    application.develop.upgrade.url = http://test.your domain name.com/loxodon/framework/upgrade/check
+    application.develop.username = loxodon.framework
+    application.develop.password = loxodon.framework
+    application.develop.gateway = 192.168.0.1:8000
+
+    #pre-release
+    application.pre-release.upgrade.url = http://pre.release.your domain name.com/loxodon/framework/upgrade/check
+    application.pre-release.username = loxodon.framework
+    application.pre-release.password = loxodon.framework
+    application.pre-release.gateway = 172.217.160.78:8000 , 172.217.160.79:8000 , 172.217.160.80:8000
+
+    #release
+    application.release.upgrade.url = http://release.your domain name.com/loxodon/framework/upgrade/check
+    application.release.username = loxodon.framework
+    application.release.password = loxodon.framework
+    application.release.gateway =  172.217.161.78:8000 , 172.217.161.79:8000 , 172.217.161.80:8000
+
+配置文件读取示例
+
+    //初始化配置文件
+    TextAsset text = Resources.Load<TextAsset>("application.properties");
+    IConfiguration conf = new PropertiesConfiguration(text.text);
+
+    //应用版本号
+    Version appVersion = conf.GetVersion("application.app.version");
+    //数据版本号
+    Version dataVersion = conf.GetVersion("application.data.version");
+
+    //当前配置的组名
+    string groupName = conf.GetString("application.config-group");
+
+    //根据前缀获 application.local 得配置的子集
+    IConfiguration currentGroupConf = conf.Subset("application." + groupName);
+
+    //通过子集获配置信息
+    string upgradeUrl = currentGroupConf.GetString("upgrade.url");
+    string username = currentGroupConf.GetString("username");
+    string password = currentGroupConf.GetString("password");
+    string[] gatewayArray = currentGroupConf.GetArray<string>("gateway");
+
 ### 国际化和本地化
 
 国际化和本地化是指软件、应用、游戏等使之能适应目标市场的语言、地区差异以及技术需要等。所以在游戏开发中，为适用不同的市场需求，本地化是必不可少的功能，我参考了Android的本地化设计思路，设计了本框架的本地化模块。本地化模块和前面提到的任何模块一样，它也是可以自定义的，可以自由扩展的，下面我就来介绍一下如何来使用本地化模块。
@@ -1166,101 +1267,6 @@ XML的配置文件和CSV的配置文件可以相互转换，但是对于数组�
 
 ![](images/xml2csv2.png)
 
-
-### 配置文件（Properties文件）
-
-在游戏或者应用开发中，配置文件是一个必不可少的东西，通过配置文件来管理游戏或者应用的配置参数，特别现在游戏开发要接入不同的平台，有众多的SDK配置参数，而且不同平台有不同的接入要求，有不同的升级更新策略，虽然这些配置我们也可以继承Unity3D的ScriptableObject类来创建一个配置类，但是因为接入平台多，参数不统一，随着需求的变化会导致频繁的修改这些配置类，为了避免这种情况，我这里采用传统的配置文件来配置这些参数，一个properties文件满足所有的配置需求。
-
-#### 支持的数值类型
-
-默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
-
-| 基本类型(Type) | 默认值(Default Value) | 描述(Description) |
-| :------| ------: | :------: |
-| string | "" | 字符串类型 |
-| boolean | false | 布尔值，flase或者true |
-| sbyte | 0 | 有符号的byte，-127-128 |
-| byte | 0 | 无符号byte，0-255 |
-| short | 0 | short类型 |
-| ushort | 0 | 无符号short类型 |
-| int | 0 | 整形 |
-| uint | 0 | 无符号整形 |
-| long | 0 | 长整形 |
-| ulong | 0 | 无符号长整型 |
-| char | ‘’ | 字符类型 |
-| float | 0 | 单精度浮点类型 |
-| double | 0 | 双精度浮点类型 |
-| datetime | 1970-01-01T00:00:00 | 时间类型 |
-| vector2 | (0,0) | Vector2类型,示例：(0,0) |
-| vector3 | (0,0,0) | Vector3类型，示例：(0,0,0) |
-| vector4 | (0,0,0) | Vector4类型，示例：(0,0,0,0)|
-| color | #000000 | Vector2类型，示例：#FF0000 |
-| rect | (0,0,0,0) | Rect类型，Rect(x,y,width,height) |
-| version | 1.0.0 | Version类型，示例：1.0.0 |
-
-#### 数组分隔符
-
-与CSV格式的本地化配置一样，数组使用半角逗号分隔，在半角的双引号、单引号、小括号()、中括号[]、大括号{}、尖括号<>之间的逗号会被忽略，如数组的字符串中有逗号，请使用双引号或者单引号将字符串引起来。
-
-#### 配置文件示例
-
-Properties文件格式如下，以key = value 的方式配置所有内容，以#开头的是注释文字，空行会被忽略：
-
-    #application config
-    application.app.version = 1.0.0
-    application.data.version = 1.0.0
-
-    #gateway     
-    application.config-group = local
-
-    #local
-    application.local.upgrade.url = http://test.your domain name.com/loxodon/framework/upgrade/check
-    application.local.username = loxodon.framework
-    application.local.password = loxodon.framework
-    application.local.gateway = 127.0.0.1:8000 , 192.168.0.30:8000
-
-    #develop
-    application.develop.upgrade.url = http://test.your domain name.com/loxodon/framework/upgrade/check
-    application.develop.username = loxodon.framework
-    application.develop.password = loxodon.framework
-    application.develop.gateway = 192.168.0.1:8000
-
-    #pre-release
-    application.pre-release.upgrade.url = http://pre.release.your domain name.com/loxodon/framework/upgrade/check
-    application.pre-release.username = loxodon.framework
-    application.pre-release.password = loxodon.framework
-    application.pre-release.gateway = 172.217.160.78:8000 , 172.217.160.79:8000 , 172.217.160.80:8000
-
-    #release
-    application.release.upgrade.url = http://release.your domain name.com/loxodon/framework/upgrade/check
-    application.release.username = loxodon.framework
-    application.release.password = loxodon.framework
-    application.release.gateway =  172.217.161.78:8000 , 172.217.161.79:8000 , 172.217.161.80:8000
-
-配置文件读取示例
-
-    //初始化配置文件
-    TextAsset text = Resources.Load<TextAsset>("application.properties");
-    IConfiguration conf = new PropertiesConfiguration(text.text);
-
-    //应用版本号
-    Version appVersion = conf.GetVersion("application.app.version");
-    //数据版本号
-    Version dataVersion = conf.GetVersion("application.data.version");
-
-    //当前配置的组名
-    string groupName = conf.GetString("application.config-group");
-
-    //根据前缀获 application.local 得配置的子集
-    IConfiguration currentGroupConf = conf.Subset("application." + groupName);
-
-    //通过子集获配置信息
-    string upgradeUrl = currentGroupConf.GetString("upgrade.url");
-    string username = currentGroupConf.GetString("username");
-    string password = currentGroupConf.GetString("password");
-    string[] gatewayArray = currentGroupConf.GetArray<string>("gateway");
-
-
 ### 日志系统
 
 框架提供了一个可分级的日志系统，它支持ALL、DEBUG、INFO、WARN、ERROR、FATAL等多个级别，在项目在开发阶段和发布上线可以使用不同的日志打印级别。
@@ -1283,6 +1289,9 @@ Properties文件格式如下，以key = value 的方式配置所有内容，以#
     //打印日志
     log.DebugFormat("My name is {0}",name)
 
+### StreamingAssets目录文件读取（Android）
+
+在Android平台上，StreamingAssets目录在apk压缩包中，所以无法通过C#文件系统的API直接访问。请使用我的 Loxodon.Framework.Utilities.FileUtil替换C#的File类读取文件，我提供了JNI调用java接口的方式访问，具体实现在FileUtil.Android.cs中，它的局限是只能读apk中的文件，无法读取obb文件中的资源。如果拆分了obb包，请使用FileUtil.Compression.cs 或者 FileUtil.IonicZip.cs 中的实现。FileUtil.Compression.cs 使用的是.net standard 2.0 中的自带的解压功能实现，需要Unity2018及以上版本。FileUtil.IonicZip.cs是使用IonicZip的压缩库实现，使用.net 3.5的库请使用这个版本，使用该版本需要自己找IonicZip.dll放入项目，并且在Unity项目中配置宏定义IONIC_ZIP。
 
 ### 线程/协程异步结果和异步任务
 

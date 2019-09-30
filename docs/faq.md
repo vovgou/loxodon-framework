@@ -12,3 +12,12 @@
 
 这应该是Unity的一个bug，如下图修改Build System为Gradle可以成功打包。
 ![](images/faq002.png)
+
+## Lua开发，按钮绑定到Command后，运行一段时间后失效了
+
+这是因为SimpleCommand或者RelayCommand使用了弱引用机制，Lua函数是通过XLua转为Action委托的，是一个匿名委托，注册到Command后，以弱引用存储，一段时间后，被GC回收了。所以请确保 keepStrongRef = true，使用强引用保存Lua函数，请看下面的代码，确保最后一个参数为true。
+
+	self.loginCommand = SimpleCommand(function() self:login() end,true)
+	self.cancelCommand = SimpleCommand(function() self.interactionFinished:Raise(nil) end,true)
+	
+
