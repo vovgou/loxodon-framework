@@ -17,9 +17,9 @@ MonoBehaviour:
       type: 8
       value:
         dataValue: 
-        objectValue: {fileID: 21300000, guid: c7b3c644d0a102947aedf2d8275fa9db, type: 3}
+        objectValue: {fileID: 0}
     - key: login.button.background2
       type: 8
       value:
         dataValue: 
-        objectValue: {fileID: 21300000, guid: bc6137d5fdb3bcd4c9c2f6a3658b72a0, type: 3}
+        objectValue: {fileID: 0}

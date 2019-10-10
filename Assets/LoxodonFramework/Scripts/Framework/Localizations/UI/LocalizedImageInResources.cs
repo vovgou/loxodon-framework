@@ -49,7 +49,7 @@ namespace Loxodon.Framework.Localizations
                 string path = (string)v;
                 this.StartCoroutine(DoLoad(path));
             }
-            else
+            else if (v != null)
             {
                 if (log.IsErrorEnabled)
                     log.ErrorFormat("There is an invalid localization value \"{0}\" on the GameObject named \"{1}\".", v, this.name);

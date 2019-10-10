@@ -190,11 +190,14 @@ namespace Loxodon.Framework.Views
         /// <returns></returns>
         public virtual IAsyncTask Activate(bool ignoreAnimation)
         {
-            if (!this.Visibility)
-                throw new InvalidOperationException("The window is not visible.");
-
             return new AsyncTask((promise) =>
             {
+                if(!this.Visibility)
+                {
+                    promise.SetException(new InvalidOperationException("The window is not visible."));
+                    return;
+                }
+
                 if (this.Activated)
                 {
                     promise.SetResult();
@@ -230,11 +233,14 @@ namespace Loxodon.Framework.Views
         /// <returns></returns>
         public virtual IAsyncTask Passivate(bool ignoreAnimation)
         {
-            if (!this.Visibility)
-                throw new InvalidOperationException("The window is not visible.");
-
             return new AsyncTask((promise) =>
             {
+                if (!this.Visibility)
+                {
+                    promise.SetException(new InvalidOperationException("The window is not visible."));
+                    return;
+                }
+
                 if (!this.Activated)
                 {
                     promise.SetResult();
@@ -331,7 +337,7 @@ namespace Loxodon.Framework.Views
                     promise.SetException(e);
 
                     if (log.IsWarnEnabled)
-                        log.Warn("The Window open failure!", e);
+                        log.WarnFormat("The window named \"{0}\" failed to open!Error:{1}", this.Name, e);
                 }
             }, true).Start(30);
         }
@@ -390,7 +396,7 @@ namespace Loxodon.Framework.Views
                     promise.SetException(e);
 
                     if (log.IsWarnEnabled)
-                        log.Warn("The Window hide failure!", e);
+                        log.WarnFormat("The window named \"{0}\" failed to hide!Error:{1}", this.Name, e);
                 }
             }, true).Start(30);
         }
@@ -416,18 +422,26 @@ namespace Loxodon.Framework.Views
 
         public virtual void DoDismiss()
         {
-            if (!this.dismissed)
+            try
             {
-                this.State = WindowState.DISSMISS_BEGIN;
-                this.dismissed = true;
-                this.OnDismiss();
-                this.RaiseOnDismissed();
-                this.WindowManager.Remove(this);
+                if (!this.dismissed)
+                {
+                    this.State = WindowState.DISSMISS_BEGIN;
+                    this.dismissed = true;
+                    this.OnDismiss();
+                    this.RaiseOnDismissed();
+                    this.WindowManager.Remove(this);
 
-                if (!this.IsDestroyed() && this.gameObject != null)
-                    GameObject.Destroy(this.gameObject);
-                this.State = WindowState.DISMISS_END;
-                this.dismissTransition = null;
+                    if (!this.IsDestroyed() && this.gameObject != null)
+                        GameObject.Destroy(this.gameObject);
+                    this.State = WindowState.DISMISS_END;
+                    this.dismissTransition = null;
+                }
+            }
+            catch (Exception e)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("The window named \"{0}\" failed to dismiss!Error:{1}", this.Name, e);
             }
         }
 

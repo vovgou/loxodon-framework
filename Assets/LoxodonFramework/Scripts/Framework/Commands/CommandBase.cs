@@ -37,7 +37,7 @@ namespace Loxodon.Framework.Commands
             remove { lock (_lock) { this.canExecuteChanged -= value; } }
         }
 
-        protected virtual void RaiseCanExecuteChanged()
+        public virtual void RaiseCanExecuteChanged()
         {
             var handler = this.canExecuteChanged;
             if (handler != null)

@@ -32,7 +32,7 @@ namespace Loxodon.Framework.Localizations
     [DefaultExecutionOrder(100)]
     public abstract class AbstractLocalized<T> : MonoBehaviour where T : Component
     {
-        private static readonly ILog log = LogManager.GetLogger("AbstractLocalized");
+        //private static readonly ILog log = LogManager.GetLogger("AbstractLocalized");
 
         [SerializeField]
         private string key;

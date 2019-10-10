@@ -428,7 +428,7 @@ namespace Loxodon.Framework.Binding.Reflection
             if (baseTypeInfo == null)
                 return null;
 
-            return baseTypeInfo.GetMethod(name, parameterTypes);
+            return baseTypeInfo.GetMethod(name, parameterTypes, flags);
         }
 
         protected IProxyEventInfo CreateProxyEventInfo(EventInfo eventInfo)

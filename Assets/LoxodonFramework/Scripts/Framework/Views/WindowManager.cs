@@ -122,7 +122,11 @@ namespace Loxodon.Framework.Views
         {
             for (int i = 0; i < this.windows.Count; i++)
             {
-                this.windows[i].Dismiss(true);
+                try
+                {
+                    this.windows[i].Dismiss(true);
+                }
+                catch (Exception) { }
             }
             this.windows.Clear();
         }

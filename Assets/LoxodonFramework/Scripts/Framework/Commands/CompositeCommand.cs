@@ -103,23 +103,20 @@ namespace Loxodon.Framework.Commands
             if (command == null)
                 throw new ArgumentNullException("command");
 
-            bool removed;
             lock (this.commands)
             {
-                removed = this.commands.Remove(command);
+                if (!this.commands.Remove(command))
+                    return;
             }
 
-            if (removed)
-            {
-                command.CanExecuteChanged -= this.onCanExecuteChangedHandler;
-                this.RaiseCanExecuteChanged();
+            command.CanExecuteChanged -= this.onCanExecuteChangedHandler;
+            this.RaiseCanExecuteChanged();
 
-                if (this.monitorCommandActivity)
-                {
-                    var activeAwareCommand = command as IActiveAware;
-                    if (activeAwareCommand != null)
-                        activeAwareCommand.IsActiveChanged -= this.OnIsActiveChanged;
-                }
+            if (this.monitorCommandActivity)
+            {
+                var activeAwareCommand = command as IActiveAware;
+                if (activeAwareCommand != null)
+                    activeAwareCommand.IsActiveChanged -= this.OnIsActiveChanged;
             }
         }
 
@@ -143,13 +140,14 @@ namespace Loxodon.Framework.Commands
         /// <returns><see langword="true" /> if all of the commands return <see langword="true" />; otherwise, <see langword="false" />.</returns>
         public override bool CanExecute(object parameter)
         {
-            bool executable = false;
-
             ICommand[] commandList;
             lock (this.commands)
             {
                 commandList = this.commands.ToArray();
             }
+
+            if (commandList.Length <= 0)
+                return false;
 
             foreach (ICommand command in commandList)
             {
@@ -158,11 +156,9 @@ namespace Loxodon.Framework.Commands
 
                 if (!command.CanExecute(parameter))
                     return false;
-
-                executable = true;
             }
 
-            return executable;
+            return true;
         }
 
         /// <summary>
@@ -207,14 +203,14 @@ namespace Loxodon.Framework.Commands
         /// property is <see langword="false" />; otherwise it always returns <see langword="true" />.</remarks>
         protected virtual bool ShouldExecute(ICommand command)
         {
+            if (!this.monitorCommandActivity)
+                return true;
+
             var activeAwareCommand = command as IActiveAware;
+            if (activeAwareCommand == null)
+                return true;
 
-            if (this.monitorCommandActivity && activeAwareCommand != null)
-            {
-                return activeAwareCommand.IsActive;
-            }
-
-            return true;
+            return activeAwareCommand.IsActive;
         }
 
         /// <summary>

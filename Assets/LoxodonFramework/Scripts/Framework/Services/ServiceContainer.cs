@@ -122,7 +122,7 @@ namespace Loxodon.Framework.Services
                         kv.Value.Dispose();
 
                     this.services.Clear();
-                    this.services = null;
+                    //this.services = null;
                 }
                 disposed = true;
             }

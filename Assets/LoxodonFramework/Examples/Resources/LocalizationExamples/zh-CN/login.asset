@@ -18,3 +18,8 @@ MonoBehaviour:
       value:
         dataValue: 
         objectValue: {fileID: 0}
+    - key: login.button.background2
+      type: 8
+      value:
+        dataValue: 
+        objectValue: {fileID: 0}

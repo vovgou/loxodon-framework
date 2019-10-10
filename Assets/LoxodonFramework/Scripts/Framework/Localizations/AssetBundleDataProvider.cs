@@ -78,7 +78,7 @@ namespace Loxodon.Framework.Localizations
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
 
-#if UNITY_2017_2_OR_NEWER
+#if UNITY_2018_1_OR_NEWER
             using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl))
             {
                 www.SendWebRequest();
