@@ -1,5 +1,5 @@
 ﻿  Loxodon Framework
-Version: 1.9.0
+Version: 1.9.2
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,9 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.9.2
+	Fixed bug with multithreading on webgl platform.
+
 version 1.9.1
 	Fixed a bug that Lua expressions have been destroyed when rebinding.
 

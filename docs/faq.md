@@ -21,3 +21,6 @@
 	self.cancelCommand = SimpleCommand(function() self.interactionFinished:Raise(nil) end,true)
 	
 
+## Lua开发，LuaPerfect无法断点调试
+
+请查看Lua脚本是否是通过TextAsset的方式设置在LuaBehaviour上的，请改为通过文件路径加载的方式，就可以断点调试了。
