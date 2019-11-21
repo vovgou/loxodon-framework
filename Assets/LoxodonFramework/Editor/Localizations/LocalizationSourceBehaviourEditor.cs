@@ -306,6 +306,12 @@ namespace Loxodon.Framework.Editors
             keyProperty.stringValue = string.Empty;
             typeProperty.enumValueIndex = (int)type;
 
+            if(this.languages.Count > valuesProperty.arraySize)
+            {
+                for(int i= valuesProperty.arraySize;i<this.languages.Count;i++)
+                    valuesProperty.InsertArrayElementAtIndex(i);
+            }
+
             for (int i = 0; i < valuesProperty.arraySize; i++)
             {
                 var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
