@@ -28,7 +28,7 @@ using Loxodon.Log;
 using System;
 using UnityEngine;
 
-namespace Loxodon.Sunstones.Net
+namespace Loxodon.Framework.Net
 {
     public class Progress<T> : IProgress<T>
     {
