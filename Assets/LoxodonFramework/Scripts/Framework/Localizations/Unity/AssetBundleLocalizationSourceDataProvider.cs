@@ -33,7 +33,7 @@ using UnityEngine.Networking;
 
 namespace Loxodon.Framework.Localizations
 {
-    public class AssetBundleLocalizationSourceDataProvider
+    public class AssetBundleLocalizationSourceDataProvider : IDataProvider
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(AssetBundleLocalizationSourceDataProvider));
 

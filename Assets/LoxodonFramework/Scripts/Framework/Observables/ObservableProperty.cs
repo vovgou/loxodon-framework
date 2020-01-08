@@ -27,11 +27,11 @@ using System;
 namespace Loxodon.Framework.Observables
 {
     [Serializable]
-    public class ObservableProperty : IObservableProperty
+    public class ObservablePropertyBase<T>
     {
         private readonly object _lock = new object();
         private EventHandler valueChanged;
-        private object _value;
+        protected T _value;
 
         public event EventHandler ValueChanged
         {
@@ -39,34 +39,64 @@ namespace Loxodon.Framework.Observables
             remove { lock (_lock) { this.valueChanged -= value; } }
         }
 
-        public ObservableProperty() : this(null)
+        public ObservablePropertyBase() : this(default(T))
         {
         }
-        public ObservableProperty(object value)
+
+        public ObservablePropertyBase(T value)
         {
             this._value = value;
         }
 
-        public virtual Type Type { get { return this._value != null ? this._value.GetType() : typeof(object); } }
-
-        public virtual object Value
-        {
-            get { return this._value; }
-            set
-            {
-                if (object.Equals(this._value, value))
-                    return;
-
-                this._value = value;
-                this.RaiseValueChanged();
-            }
-        }
+        public virtual Type Type { get { return typeof(T); } }
 
         protected void RaiseValueChanged()
         {
             var handler = this.valueChanged;
             if (handler != null)
                 handler(this, EventArgs.Empty);
+        }
+
+        protected virtual bool Equals(T x, T y)
+        {
+            if (x != null)
+            {
+                if (y != null)
+                    return x.Equals(y);
+                return false;
+            }
+
+            if (y != null)
+                return false;
+
+            return true;
+        }
+    }
+
+    [Serializable]
+    public class ObservableProperty : ObservablePropertyBase<object>, IObservableProperty
+    {
+        public ObservableProperty() : this(null)
+        {
+        }
+
+        public ObservableProperty(object value) : base(value)
+        {
+        }
+
+        public override Type Type { get { return this._value != null ? this._value.GetType() : typeof(object); } }
+
+        public virtual object Value
+        {
+            get { return this._value; }
+            set
+            {
+                if (this.Equals(this._value, value))
+                    return;
+
+                this._value = value;
+                this.RaiseValueChanged();
+            }
         }
 
         public override string ToString()
@@ -79,7 +109,8 @@ namespace Loxodon.Framework.Observables
         }
     }
 
-    public class ObservableProperty<T> : ObservableProperty, IObservableProperty<T>
+    [Serializable]
+    public class ObservableProperty<T> : ObservablePropertyBase<T>, IObservableProperty<T>
     {
         public ObservableProperty() : this(default(T))
         {
@@ -88,12 +119,32 @@ namespace Loxodon.Framework.Observables
         {
         }
 
-        public override Type Type { get { return typeof(T); } }
-
-        public new virtual T Value
+        public virtual T Value
         {
-            get { return (T)base.Value; }
-            set { base.Value = value; }
+            get { return this._value; }
+            set
+            {
+                if (this.Equals(this._value, value))
+                    return;
+
+                this._value = value;
+                this.RaiseValueChanged();
+            }
+        }
+
+        object IObservableProperty.Value
+        {
+            get { return this.Value; }
+            set { this.Value = (T)value; }
+        }
+
+        public override string ToString()
+        {
+            var v = this.Value;
+            if (v == null)
+                return "";
+
+            return v.ToString();
         }
 
         public static implicit operator T(ObservableProperty<T> data)
@@ -106,5 +157,4 @@ namespace Loxodon.Framework.Observables
             return new ObservableProperty<T>(data);
         }
     }
-
 }

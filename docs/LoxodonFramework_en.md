@@ -3,223 +3,227 @@
 
 *MVVM Framework for Unity3D(C# & XLua)*
 
-*开发者 Clark*
+*Developed by Clark*
+*Translation by tntdesign9*
 *Version 1.9.0*
+
+*This is just a preliminary translation file, it may have some problems, we need more help, welcome to join us.*
+*Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)*
 
 <div style="page-break-after: always;"></div>
 
-目录
+Table of Contents
 ---
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 <!-- code_chunk_output -->
 
-- [概述](#概述)
-- [下载](#下载)
-- [官方插件（可选）](#官方插件可选)
-- [Lua插件安装（可选）](#lua插件安装可选)
-  - [安装XLua](#安装xlua)
-  - [配置宏定义](#配置宏定义)
-  - [导入Lua插件](#导入lua插件)
-  - [查看示例](#查看示例)
-- [快速入门](#快速入门)
-  - [C# 示例](#c-示例)
-  - [Lua 示例](#lua-示例)
-- [功能介绍](#功能介绍)
-  - [上下文（Context）](#上下文context)
-    - [应用上下文（ApplicationContext）](#应用上下文applicationcontext)
-    - [玩家上下文（PlayerContext）](#玩家上下文playercontext)
-    - [其它上下文（Context）](#其它上下文context)
-  - [服务容器](#服务容器)
-    - [服务注册器(IServiceRegistry)](#服务注册器iserviceregistry)
-    - [服务定位器(IServiceLocator)](#服务定位器iservicelocator)
-    - [服务Bundle(IServiceBundle)](#服务bundleiservicebundle)
-  - [应用配置（Preference）](#应用配置preference)
-  - [配置文件（Properties文件）](#配置文件properties文件)
-    - [支持的数值类型](#支持的数值类型)
-    - [数组分隔符](#数组分隔符)
-    - [配置文件示例](#配置文件示例)
-  - [国际化和本地化](#国际化和本地化)
-    - [目录结构](#目录结构)
-    - [配置文件的格式](#配置文件的格式)
-    - [XML特殊字符](#xml特殊字符)
-    - [XML支持的数值类型](#xml支持的数值类型)
-    - [生成C#脚本](#生成c脚本)
-    - [本地化视图组件](#本地化视图组件)
-    - [数据提供器(IDataProvider)](#数据提供器idataprovider)
-    - [获得设备的当前语言](#获得设备的当前语言)
-    - [使用示例](#使用示例)
-    - [支持CSV格式的本地化插件](#支持csv格式的本地化插件)
-  - [日志系统](#日志系统)
-  - [StreamingAssets目录文件读取（Android）](#streamingassets目录文件读取android)
-  - [线程/协程异步结果和异步任务](#线程协程异步结果和异步任务)
+- [Overview](#overview)
+- [Download](#download)
+- [Official Plugin(optional)](#official-pluginoptional)
+- [Lua plugin installation (optional)](#lua-plugin-installation-optional)
+  - [Install XLua](#install-xlua)
+  - [Macro definition](#macro-definition)
+  - [Import Lua plugin](#import-lua-plugin)
+  - [View example](#view-example)
+- [Quick start](#quick-start)
+  - [C# example](#c-example)
+  - [Lua example](#lua-example)
+- [Features Introduction](#features-introduction)
+  - [Context](#context)
+    - [Application Context(ApplicationContext)](#application-contextapplicationcontext)
+    - [Player Context(PlayerContext)](#player-contextplayercontext)
+    - [Other Contexts](#other-contexts)
+  - [Service Container](#service-container)
+    - [Service Registrar(IServiceRegistry)](#service-registrariserviceregistry)
+    - [Service Locator(IServiceLocator)](#service-locatoriservicelocator)
+    - [Service Bundle(IServiceBundle)](#service-bundleiservicebundle)
+  - [Preference(Preference)](#preferencepreference)
+  - [Configuration(Properties File)](#configurationproperties-file)
+    - [Supported Numeric Types](#supported-numeric-types)
+    - [Array Delimiter](#array-delimiter)
+    - [Configuration File Example](#configuration-file-example)
+  - [Internationalization and localization](#internationalization-and-localization)
+    - [Directory Structure](#directory-structure)
+    - [Format of the localization file](#format-of-the-localization-file)
+    - [XML special characters](#xml-special-characters)
+    - [Numeric types supported by XML](#numeric-types-supported-by-xml)
+    - [Generate C# Code](#generate-c-code)
+    - [Localized view components](#localized-view-components)
+    - [Data provider(IDataProvider)](#data-provideridataprovider)
+    - [Get the device's current language](#get-the-devices-current-language)
+    - [Usage example](#usage-example)
+    - [Localization plugin supporting CSV format](#localization-plugin-supporting-csv-format)
+  - [Logging system](#logging-system)
+  - [StreamingAssets catalog file reading (Android)](#streamingassets-catalog-file-reading-android)
+  - [Thread/Coroutine asynchronous results and asynchronous tasks](#threadcoroutine-asynchronous-results-and-asynchronous-tasks)
     - [AsyncResult](#asyncresult)
     - [ProgressResult](#progressresult)
     - [AsyncTask](#asynctask)
     - [ProgressTask](#progresstask)
     - [CoroutineTask](#coroutinetask)
-  - [线程/协程执行器](#线程协程执行器)
-    - [执行器(Executors)](#执行器executors)
-    - [定时任务执行器(IScheduledExecutor)](#定时任务执行器ischeduledexecutor)
-    - [可拦截的迭代器(InterceptableEnumerator)](#可拦截的迭代器interceptableenumerator)
-  - [消息系统(Messenger)](#消息系统messenger)
-  - [可观察的对象(Observables)](#可观察的对象observables)
-  - [数据绑定(Databinding)](#数据绑定databinding)
-    - [数据绑定示例](#数据绑定示例)
-    - [绑定模式](#绑定模式)
-    - [类型转换器(IConverter)](#类型转换器iconverter)
-    - [绑定类型](#绑定类型)
+  - [Thread/Coroutine Executor](#threadcoroutine-executor)
+    - [Executors](#executors)
+    - [Scheduled Task Executor(IScheduledExecutor)](#scheduled-task-executorischeduledexecutor)
+    - [Interceptable Enumerator(InterceptableEnumerator)](#interceptable-enumeratorinterceptableenumerator)
+  - [Message System(Messenger)](#message-systemmessenger)
+  - [Observables](#observables)
+  - [Databinding](#databinding)
+    - [Data binding example](#data-binding-example)
+    - [Binding mode](#binding-mode)
+    - [Type converter(IConverter)](#type-convertericonverter)
+    - [Binding type](#binding-type)
     - [Command Parameter](#command-parameter)
     - [Scope Key](#scope-key)
-    - [绑定的生命周期](#绑定的生命周期)
-    - [注册属性和域的访问器](#注册属性和域的访问器)
-  - [UI框架](#ui框架)
-    - [动态变量集(Variables)](#动态变量集variables)
-    - [UI视图定位器(IUIViewLocator)](#ui视图定位器iuiviewlocator)
-    - [UI视图动画(Animations)](#ui视图动画animations)
-    - [UI控件](#ui控件)
-    - [视图、窗口和窗口管理器](#视图-窗口和窗口管理器)
-    - [交互请求(InteractionRequest)](#交互请求interactionrequest)
-    - [交互行为(InteractionAction)](#交互行为interactionaction)
-    - [集合与列表视图的绑定](#集合与列表视图的绑定)
-    - [数据绑定与异步加载精灵](#数据绑定与异步加载精灵)
+    - [Binding life cycle](#binding-life-cycle)
+    - [Accessors for properties and fields](#accessors-for-properties-and-fields)
+  - [UI framework](#ui-framework)
+    - [Variables](#variables)
+    - [UI view locator (IUIViewLocator)](#ui-view-locator-iuiviewlocator)
+    - [Animations](#animations)
+    - [UI controls](#ui-controls)
+    - [Views, windows, and window managers](#views-windows-and-window-managers)
+    - [Interaction Request](#interaction-request)
+    - [Interaction Action](#interaction-action)
+    - [Collection and list view binding](#collection-and-list-view-binding)
+    - [Data binding and asynchronous loading sprites](#data-binding-and-asynchronous-loading-sprites)
 - [Lua](#lua)
-  - [模块与继承](#模块与继承)
-  - [Lua的ObserableObject](#lua的obserableobject)
-  - [Lua中使用Unity的协程](#lua中使用unity的协程)
-  - [Lua中使用日志系统](#lua中使用日志系统)
-  - [Lua 预编译工具](#lua-预编译工具)
-    - [Lua加载器](#lua加载器)
-    - [示例](#示例)
-    - [扩展其他加密方式](#扩展其他加密方式)
-- [分层架构](#分层架构)
-  - [表现层(View)](#表现层view)
-  - [应用层(Service)](#应用层service)
-  - [领域层(Domain Model)](#领域层domain-model)
-  - [基础层(Infrastructure)](#基础层infrastructure)
-- [联系方式](#联系方式)
+  - [Modules and inheritance](#modules-and-inheritance)
+  - [Lua's ObserableObject](#luas-obserableobject)
+  - [Coroutines in Lua using Unity](#coroutines-in-lua-using-unity)
+  - [Using the logging system in Lua](#using-the-logging-system-in-lua)
+  - [Lua precompiled tools](#lua-precompiled-tools)
+    - [Lua loader](#lua-loader)
+    - [Example](#example)
+    - [Expand other encryption way](#expand-other-encryption-way)
+- [Layered architecture](#layered-architecture)
+  - [User Interface](#user-interface)
+  - [Application (Service)](#application-service)
+  - [Domain Model](#domain-model)
+  - [Infrastructure](#infrastructure)
+- [Contact information](#contact-information)
 
 <!-- /code_chunk_output -->
 <div style="page-break-after: always;"></div>
 
 
-## 概述
+## Overview
 
-**要求Unity 5.6.0或者更高版本**
+**Requires Unity 5.6.0 or higher**
 
-LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是专门为Unity3D游戏开发设计的，参考了WPF和Android的MVVM设计，它提供了视图和视图模型的数据绑定、本地化、一个简单的服务容器、配置文件组件、线程工具组件、应用上下文和玩家上下文，异步线程和协程的任务组件等基本组件，同时还提供了一个UI视图的框架。所有代码都基于面向对象面向接口的思路设计，几乎所有功能都可以自定义。而且在数据绑定部分进行了性能优化，在支持JIT的平台上使用的是委托的方式绑定，在不支持JIT的平台，默认使用的是反射，但是可以通过注入委托函数的方式来优化！
+LoxodonFramework is a lightweight MVVM (Model-View-ViewModel) framework. It is specially designed for Unity3D game development. It refers to the MVVM design of WPF and Android. It provides data binding and localization of views and view models , A simple service container, configuration file component, thread tool component, application context and player context, asynchronous thread and coroutine task components, and other basic components. It also provides a framework for UI views. All code is designed based on the idea of object-oriented and interface-oriented, and almost all functions can be customized. In addition, performance optimization has been performed in the data binding part. On the platform that supports JIT, the delegation method is used for binding. On the platforms that do not support JIT, reflection is used by default, but it can be optimized by injecting the delegate function!
 
-本框架使用C#语言开发，同时也支持使用XLua来开发，XLua插件是一个可选项，如果项目需要热更新，那么只要安装了XLua插件，则可以完全使用Lua来开发游戏。
+This framework is developed using C # language, and also supports XLua for development. XLua plugin is an option. If the project needs hot update, as long as the XLua plugin is installed, you can use Lua to develop the game completely.
 
-这个插件兼容 MacOSX,Windows,Linux,UWP,IOS and Android等等，并且完全开源。
+This plugin is compatible with MacOSX, Windows, Linux, UWP, IOS and Android, etc., and is completely open source.
 
-**已测试的平台：**  
+**Tested platforms：**  
 
 - **PC/Mac/Linux**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
 - **IOS**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
 - **Android**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
 - **UWP(window10)** (.Net4.x; .Net Standard 2.0; IL2CPP)  
 
-**关键特性**
+**Key features**
 
-- 支持多平台，高扩展性，面向接口开发;
-- 支持C#和Lua开发;
-- 支持线程和协程的异步结果和异步任务，采用Future/Promise设计模式;
-- 提供了多线程组件，线程切换组件和定时执行器;
-- 提供了一个消息系统，支持订阅和发布;
-- 提供可加密的配置文件，支持对象存取，可自定义类型转换器，扩展功能;
-- 提供了本地化支持，与Android的本地化类似，支持基本数据类型、数组、和U3D的一些值类型;
-- 支持全局上下文和玩家上下文;
-- 提供了一个服务容器，支持注册和注销服务;
-- 提供了AlertDialog、Loading、Toast等通用UI控件，支持自定义外观;
-- 提供了UI视图的控制和管理功能；
-- 提供数据绑定功能:
-    - Field绑定，只支持OneTime的模式，因无法支持改变通知;
-    - 属性绑定，支持TwoWay双向绑定，值修改自动通知;
-    - 普通字典、列表绑定，不支持改变通知;
-    - 支持C#事件绑定;
-    - 支持Unity3D的EventBase事件绑定;
-    - 支持静态类的属性和Field的绑定;
-    - 支持方法绑定（包括静态方法）;
-    - 支持命令绑定，通过命令绑定可以方便控制按钮的有效无效状态;
-    - 支持可观察属性、字典、列表的绑定，支持改变通知，视图模型修改自动更改UI显示;
-    - 支持表达式的绑定;
-    - 支持交互请求和交互行为的绑定;
-    - 支持类型转换器，可以将图片名称转换为图集中的Sprite;
-    - 可以自定义扩展更多的绑定类型;
+- Supports multiple platforms, high scalability, and interface-oriented development;
+- Support C # and Lua development;
+- Supports asynchronous results and asynchronous tasks of threads and coroutines, adopting Future/Promise design pattern;
+- Provides multi-threaded components, thread switching components and timed executors;
+- Provides a messaging system that supports subscription and publishing;
+- Provides encrypted configuration files, supports object access, custom type converters, and extended functions;
+- Provides localization support, similar to Android's localization, supporting basic data types, arrays, and some value types of U3D;
+- Support global context and player context;
+- Provide a service container to support registration and deregistration services;
+- Provides universal UI controls such as AlertDialog, Loading, Toast, and supports custom appearance;
+- Provides UI view control and management functions;
+- Provide data binding function:
+    - Field binding, only supports OneTime mode, as it cannot support change notification;
+    - Property binding, support TwoWay two-way binding, automatic notification of value modification;
+    - Common dictionary, list binding, does not support change notification;
+    - Support C # event binding;
+    - Support Unity3D's EventBase event binding;
+    - Support binding of static class properties and Field;
+    - Support method binding (including static methods);
+    - Supports command binding, which can conveniently control the effective and invalid state of the button through command binding;
+    - Supports binding of observable attributes, dictionaries, and lists, supports change notifications, and changes to the view model automatically change the UI display;
+    - Support expression binding;
+    - Supports binding of interactive requests and interactive behaviors;
+    - Support type converter, you can convert the picture name to Sprite in the atlas;
+    - You can customize and extend more binding types;
 
-## 下载
+## Download
 
-- [Unity3d官方商店下载](https://www.assetstore.unity3d.com/#!/content/77446)
-- [Github下载](https://github.com/cocowolf/loxodon-framework/releases)
+- [Unity3d official store download](https://www.assetstore.unity3d.com/#!/content/77446)
+- [Github download](https://github.com/cocowolf/loxodon-framework/releases)
 
-## 官方插件（可选）
+## Official Plugin(optional)
 
 - [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
 
-    支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
+    Support localization file format as csv file format, requires Unity2018.4 or later.
 
 - [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
 
-    Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。安装步骤详见下一章节或者查看[Loxodon.Framework.XLua的文档](https://github.com/cocowolf/loxodon-framework-xlua)    
+    Loxodon.Framework's XLua plugin, it is a lua MVVM framework that supports mixed programming of lua and c # or you can use lua completely to write your entire game. See the next chapter for installation steps or check the documentation of [Loxodon.Framework.XLua](https://github.com/cocowolf/loxodon-framework-xlua)   
 
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
-    Loxodon.Framework.Bundle 是AssetBundle加载和管理的工具，也是一个AssetBundle资源冗余分析工具。它能够自动管理AssetBundle之间复杂的依赖关系，它通过引用计数来维护AssetBundle之间的依赖。你既可以预加载一个AssetBundle，自己管理它的释放，也可以直接通过异步的资源加载函数直接加载资源，资源加载函数会自动去查找资源所在的AB包，自动加载AB，使用完后又会自动释放AB。 它还支持弱缓存，如果对象模板已经在缓存中，则不需要重新去打开AB。它支持多种加载方式，WWW加载，UnityWebRequest加载，File方式的加载等等（在Unity5.6以上版本，请不要使用WWW加载器，它会产生内存峰值）。它提供了一个AssetBundle的打包界面，支持加密AB包（只建议加密敏感资源，因为会影响性能）。同时它也绕开了Unity3D早期版本的一些bug，比如多个协程并发加载同一个资源，在android系统会出错。它的冗余分析是通过解包AssetBundle进行的，这比在编辑器模式下分析的冗余更准确。
+    Loxodon.Framework.Bundle is a tool for loading and managing AssetBundle, as well as an asset redundancy analysis tool for AssetBundle. It can automatically manage complex dependencies between AssetBundles, and it maintains dependencies between AssetBundles through reference counting. You can either pre-load an AssetBundle and manage its release yourself, or you can directly load the resource directly through the asynchronous resource loading function. The resource loading function will automatically find the AB package where the resource is located, automatically load AB, and automatically use it after use. Release AB. It also supports weak caching. If the object template is already in the cache, there is no need to reopen AB. It supports multiple loading methods, WWW loading, UnityWebRequest loading, File loading, etc. (on Unity 5.6 and above, please do not use WWW loader, it will produce memory spikes). It provides a package interface for AssetBundle and supports encrypted AB packages (only sensitive resources are recommended to be encrypted because it will affect performance). At the same time, it also bypasses some bugs in earlier versions of Unity3D, such as multiple coroutines loading the same resource concurrently, which will cause errors in the android system. Its redundancy analysis is performed by unpacking the AssetBundle, which is more accurate than analyzing the redundancy in editor mode.
 
     ![](images/bundle.jpg)
 
 - [Loxodon Framework Log4Net](http://u3d.as/Gmr)
 
-    支持使用Log4Net在Unity中打印日志的插件，支持在局域网中远程调试。
+    Plug-in for printing logs in Unity using Log4Net, and remote debugging in LAN.
 
     ![](images/log4net.jpg)
 
 
-## Lua插件安装（可选）
+## Lua plugin installation (optional)
 
-在本框架中，对于Lua语言的支持是通过插件扩展的方式来支持，它依赖腾讯的XLua项目和Loxodon.Framework.XLua插件，在项目的LoxodonFramework/Docs/XLua目录中可以找到Loxodon.Framework.XLua的插件，它是可选的，只有需要热更新并且使用Lua语言开发的项目才需要安装它。具体安装步骤如下，为避免出错，请严格按以下步骤安装。
+In this framework, the Lua language support is supported by plug-in extensions. It relies on Tencent's XLua project and the Loxodon.Framework.XLua plugin. You can find Loxodon.Framework.XLua in the project's LoxodonFramework / Docs / XLua directory. Plugin, it is optional and only needs to be installed for projects that need hot update and are developed in Lua language. The specific installation steps are as follows. To avoid errors, please strictly follow the steps below.
 
-### 安装XLua
-从Xlua的Github仓库下载最新版的XLua，可以使用源码版本Source code.zip或者xlua_v2.x.xx.zip版本（建议使用xlua_v2.x.xx.zip版本，避免和XLua示例类名冲突）。请将下载好的xlua解压缩，拷贝到当前项目中。
+### Install XLua
+Download the latest version of XLua from the Xlua Github repository, you can use the source code version Source code.zip or xlua_v2.x.xx.zip version (xlua_v2.x.xx.zip version is recommended to avoid conflicts with XLua example class names). Please unzip the downloaded xlua and copy it into the current project.
 
-**注意：XLua在Unity2018有兼容性问题，在编辑器模式下，请使用.Net3.5 或者 .Net4.x 不要使用.Net Standard2.0,否则会出错，如果想使用.Net Standard2.0 请参考xlua的FAQ解决兼容性问题。**
+**Note: XLua has compatibility issues in Unity2018. In editor mode, please use .Net3.5 or .Net4.x. Do not use .Net Standard2.0, otherwise errors will occur. If you want to use .Net Standard2.0, please refer to xlua The FAQ addresses compatibility issues.**
 
 [XLua FAQ](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/faq.md)
 
-[XLua下载](https://github.com/Tencent/xLua/releases "xlua")
+[XLua Download](https://github.com/Tencent/xLua/releases "xlua")
 
 ![](images/xlua_2.1.14.png)
 
-### 配置宏定义
-配置Unity3D项目Player Setting/Other Settings/Scripting Define Symbols，添加XLUA的宏定义，为避免将来切换平台时出错，最好将PC、Android、iOS等平台的都配上。
+### Macro definition
+Configure the Unity3D project Player Setting / Other Settings / Scripting Define Symbols, add XLUA macro definitions, in order to avoid errors when switching platforms in the future, it is best to match PC, Android, iOS and other platforms.
 
 ![](images/ScriptingDefineSymbols.png)
 
-### 导入Lua插件
-在LoxodonFramework/Docs/XLua/目录中，找到Loxodon.Framework.XLua.unitypackage文件，双击导入项目。
+### Import Lua plugin
+In the LoxodonFramework / Docs / XLua / directory, locate the Loxodon.Framework.XLua.unitypackage file and double-click the imported project.
 
-如果出现编译错误，请检查是否导入了XLua的Examples目录，这个目录下的InvokeLua.cs文件定义了PropertyChangedEventArgs类，因没有使用命名空间，会导致类名冲突，请删除XLua目录下的Examples文件夹或者给InvokeLua.cs文件中的PropertyChangedEventArgs类添加上命名空间。
+If there is a compilation error, please check whether the XLua Examples directory is imported. The InvokeLua.cs file in this directory defines the PropertyChangedEventArgs class. Because no namespace is used, class names will conflict. Please delete the Examples folder in the XLua directory or Add a namespace to the PropertyChangedEventArgs class in the InvokeLua.cs file.
 
-### 查看示例
-打开LoxodonFramework/Lua/Examples目录，查看示例。
+### View example
+Open the LoxodonFramework/Lua/Examples directory to see examples.
 
-## 快速入门
+## Quick start
 
-创建一个视图，左侧显示一个账号信息，右侧是一个表单，通过提交按钮可以修改左侧的账号信息，现在我们通过框架的视图和数据绑定功能来演示我们是如何做的。界面如下图：
+Create a view that displays an account information on the left and a form on the right. You can modify the account information on the left through the submit button. Now we will demonstrate how we do it through the frame view and data binding functions. The interface is as follows:
 
 ![](images/DatabindingExample_01.png)
 
-### C# 示例
+### C# example
 
-在一个UI视图的根对象上添加视图脚本组件DatabindingExample，并且将UI控件赋值到对应的属性上,这个示例中属性都是通过C#硬编码来定义的，当然你也可以使用动态的属性表VariableArray来动态定义属性，具体可以看Lua的例子，配置好属性后如下图所示。
+Add the viewscript component DatabindingExample to the root object of a UI view and assign the UI control to the corresponding property. In this example, the properties are defined by C # hard coding. Of course, you can also use the dynamic property table VariableArray to Dynamically define attributes. For details, see Lua's example. After the attributes are configured, the following figure is displayed.
 
 ![](images/DatabindingExample_03.png)
 
-下面请看代码，我们是如果来定义视图模型和视图脚本的，又是怎么样来绑定视图到视图模型的。
+Look at the code below. If we define the view model and the view script, how we bind the view to the view model.
 
     /// <summary>
-    /// 账号子视图模型
+    /// AccountViewModel
     /// </summary>
     public class AccountViewModel : ObservableObject
     {
@@ -268,7 +272,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
 
     /// <summary>
-    /// 数据绑定示例的视图模型
+    /// DatabindingViewModel
     /// </summary>
     public class DatabindingViewModel : ViewModelBase
     {
@@ -340,7 +344,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
 
     /// <summary>
-    /// 数据绑定示例视图
+    /// DatabindingExample
     /// </summary>
     public class DatabindingExample : UIView
     {
@@ -431,13 +435,13 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     }
 
 
-### Lua 示例
+### Lua example
 
-在Lua示例中，LuaBehaviour脚本是一个通用的脚本，它是由框架提供的，我们只需要编写绑定到这个脚本上的Lua脚本即可，如下图中的DatabindingExample.lua。在LuaBehaviour中，为确保通用性，所有的成员属性也是通过VariableArray属性表来动态定义的，如下图所示。
+In the Lua example, the LuaBehaviour script is a general-purpose script provided by the framework. We only need to write a Lua script bound to this script, as shown in DatabindingExample.lua in the figure below. In LuaBehaviour, to ensure commonality, all member attributes are also dynamically defined through the VariableArray attribute table, as shown in the following figure.
 
 ![](images/DatabindingExample_02.png)
 
-在Lua脚本DatabindingExample.lua中，上图所有的动态属性都被注册到Lua环境中，我们可以通过self对象来访问所有的属性，请看下面的代码。
+In the Lua script DatabindingExample.lua, all the dynamic properties in the above figure are registered in the Lua environment. We can access all the properties through the self object. Please see the following code.
 
     require("framework.System")
 
@@ -563,16 +567,17 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
     return M
 
-## 功能介绍
+## Features Introduction
 
-### 上下文（Context）
-在很多框架中，我们应该经常看到上下文这个概念，它可以说就是与当前代码运行相关的一个环境，你能在上下文中提供了当前运行需要的环境数据或者服务等。在这里，我根据游戏开发的特点，我提供了应用上下文（ApplicationContext）、玩家上下文（PlayerContext），同时也支持开发人员根据自己的需求来创建其他的上下文。
+### Context
 
-在上下文中，我创建了一个服务容器（有关服务容器的介绍请看下一章节）来存储与当前上下文相关的服务，同时创建了个字典来存储数据。通过上下文的Dispose()，可以释放所有在上下文容器中注册的服务。**但是需要注意的是，服务必须继承System.IDisposable接口，否则不能自动释放。**
+In many frameworks, we should often see the concept of context. It can be said that it is an environment related to the current code running. You can provide the environment data or services required by the current operation in the context. Here, according to the characteristics of game development, I provide the application context (ApplicationContext), player context (PlayerContext), and also support developers to create other contexts according to their own needs.
 
-#### 应用上下文（ApplicationContext）
+In the context, I created a service container (see the next chapter for an introduction to the service container) to store services related to the current context, and also created a dictionary to store data. Through Dispose () of the context, you can release all services registered in the context container. **However, it should be noted that the service must inherit the System.IDisposable interface, otherwise it cannot be released automatically.**
 
-应用上下文是一个全局的上下文，它是单例的，它主要存储全局共享的一些数据和服务。所有的基础服务，比如视图定位服务、资源加载服务，网络连接服务、本地化服务、配置文件服务、Json/Xml解析服务、数据绑定服务等等，这些在整个游戏中都可能使用到的基础服务都应该注册到应用上下文的服务容器当中，可以通过应用上下文来获得。
+#### Application Context(ApplicationContext)
+
+The application context is a global context, it is singleton, it mainly stores some data and services shared globally. All basic services, such as view positioning service, resource loading service, network connection service, localization service, configuration file service, Json / Xml parsing service, data binding service, etc. These are the basics that may be used throughout the game Services should be registered in the service container of the application context, which can be obtained through the application context.
 
     //获得全局的应用上下文
     ApplicationContext context = Context.GetApplicationContext();
@@ -600,11 +605,11 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     Localization localization = context.GetService<Localization>();
 
 
-#### 玩家上下文（PlayerContext）
+#### Player Context(PlayerContext)
 
-玩家上下文是只跟当前登录的游戏玩家相关的上下文，比如一个游戏玩家Clark登录游戏后，他在游戏中的基本信息和与之相关的服务，都应该存储在玩家上下文中。比如背包服务，它负责拉取和同步玩家的背包数据，缓存了玩家背包中的武器、装备、道具等等，它只与当前玩家有关，当玩家退出登录切换账号时，这些数据都应该被清理和释放。我们使用了玩家上下文来存储这些服务和数值时，只需要调用PlayerContext.Dispose()函数，就可以释放与当前玩家有关的所有数据和服务。
+The player context is only relevant to the currently logged-in game player. For example, after a game player Clark logs in to the game, his basic information in the game and related services should be stored in the player context. For example, the backpack service is responsible for pulling and synchronizing the player's backpack data, and caches the weapons, equipment, and props in the player's backpack. It is only relevant to the current player. When the player logs out and switches accounts, these data should be cleared And release. When we use the player context to store these services and values, we only need to call the PlayerContext.Dispose () function to release all data and services related to the current player.
 
-玩家上下文中默认继承了全局上下文的所有服务和属性，所以通过玩家上下文可以获取到所有在全局上下文中的服务和数据，当玩家上下文注册了与全局上下文中Key值相同的服务或者是属性时，它会在玩家上下文中存储，不会覆盖全局上下文中存储的数据，当通过Key访问时，优先返回玩家上下文中的数据，只有在玩家上下文中找不到时才会去全局上下文中查找。
+The player context inherits all the services and attributes of the global context by default, so all services and data in the global context can be obtained through the player context. When the player context registers the same service or attribute as the key value in the global context, It will be stored in the player context and will not overwrite the data stored in the global context. When accessed through the key, the data in the player context will be returned first. The global context will be searched only if it is not found in the player context.
 
     //为玩家clark创建一个玩家上下文
     PlayerContext playerContext = new PlayerContext("clark");
@@ -628,9 +633,9 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     playerContext.Dispose();
 
 
-#### 其它上下文（Context）
+#### Other Contexts
 
-一般来说，在很多游戏开发中，我们只需要全局上下文和玩家上下文就足以满足要求，但是在某些情况下，我们还需要一个上下文来存储环境数据，比如在MMO游戏中，进入某个特定玩法的副本，那么我就需要为这个副本创建一个专属的上下文，当副本中的战斗结束，退出副本时，则销毁这个副本上下文来释放资源。
+In general, in many game developments, we only need the global context and the player context to meet the requirements, but in some cases, we also need a context to store environmental data, such as in MMO games, enter a specific A copy of the gameplay, then I need to create an exclusive context for this copy. When the battle in the copy ends, when I exit the copy, I destroy this copy context to release resources.
 
     //创建一个上下文，参数container值为null，在Context内部会自动创建
     //参数contextBase值为playerContext，自动继承了playerContext中的服务和属性
@@ -642,14 +647,14 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     //注册一个战斗服务到容器中
     container.Register<IBattleService>(new BattleService());
 
-### 服务容器
-在项目开始时，我曾调研过很多C#的控制反转和依赖注入（IoC/DI）方面的开源项目，开始是想用Zenject来做为服务的容器使用，后来因为考虑到移动项目中，内存和CPU资源都相当宝贵，不想再引入一个这么大的库来消耗内存，也不想因为反射导致的性能损失，而且强制用户使用IoC/DI也不太合适，毕竟不是所有人都喜欢，所以我就自己设计了一个简单的服务容器，来满足服务注册、注销、读取这些最基本的功能。
+### Service Container
+At the beginning of the project, I researched a lot of open source projects in C # 's control inversion and dependency injection (IoC / DI). At first I wanted to use Zenject as a service container. Later, because of the consideration of memory in mobile projects, Both CPU and CPU resources are quite valuable. I don't want to introduce such a large library to consume memory, and I don't want the performance loss caused by reflection. It is also inappropriate to force users to use IoC / DI. After all, not everyone likes it. I designed a simple service container to meet the most basic functions of service registration, deregistration, and reading.
 
-**注意：所有注册的服务，只有继承System.IDisposable接口，实现了Dispose函数，才能在IServiceContainer.Dispose()时自动释放。**
+**Note: All registered services can be automatically released at IServiceContainer.Dispose () only if they inherit the System.IDisposable interface and implement the Dispose function.**
 
-#### 服务注册器(IServiceRegistry)
+#### Service Registrar(IServiceRegistry)
 
-服务注册负责注册和注销服务，它可以根据服务类型或者服务名称注册一个服务实例到容器中，也可以注册一个服务工厂到容器中，用户可以根据自己的需求来选择是否需要注册一个服务工厂，是创建一个单态的服务，还是每次都创建一个新的服务实例。
+Service registration is responsible for registering and unregistering services. It can register a service instance to the container according to the service type or name, or register a service factory to the container. Users can choose whether to register a service factory according to their needs. It is created For a singleton service, a new service instance is created every time.
 
     IServiceContainer container = ...
     IBinder binder = ...
@@ -664,9 +669,9 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     container.Register<IPathParser>("parser",pathParser);
     container.Register<IPathParser>("parser2",pathParser2);
 
-#### 服务定位器(IServiceLocator)  
+#### Service Locator(IServiceLocator)
 
-通过服务定位器可以获得服务，服务定位器可以根据服务名称或者类型来查询服务，当服务以类型的方式注册，则可以通过类型或者类型名来查找服务，当服务以特定的名称为Key注册，则只能通过服务名来查找服务。
+Services can be obtained through the service locator. The service locator can query the service according to the service name or type. When the service is registered by type, you can find the service by type or type name. When the service is registered with a specific name as the Key, You can only find services by service name.
 
     IServiceContainer container = ...
 
@@ -676,9 +681,9 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     //IPathParser在上段代码中以特定名称"parser"注册，则只能通过名称"parser"来查询服务
     IPathParser pathParser = container.Resolve("parser");
 
-#### 服务Bundle(IServiceBundle)
+#### Service Bundle(IServiceBundle)
 
-ServiceBundle的作用是将一组相关的服务打包注册和注销，比如我的数据绑定服务，就是通过ServiceBundle.Start()方法一次性注册所有数据绑定有关的服务，当服务不在需要时，又可以通过ServiceBundle.Stop()方法来注销整个模块的所有服务（见下面的代码）。这在某些时候非常有用，比如启动和停止一个模块的所有服务。
+The role of ServiceBundle is to register and unregister a group of related services. For example, my data binding service is to register all data binding related services at one time through the ServiceBundle.Start () method. When the service is no longer needed, you can Use the ServiceBundle.Stop () method to unregister all services of the entire module (see the code below). This can be useful at certain times, such as starting and stopping all services for a module.
 
     //初始化数据绑定模块，启动数据绑定服务,注册服务
     BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
@@ -688,12 +693,12 @@ ServiceBundle的作用是将一组相关的服务打包注册和注销，比如�
     bundle.Stop();
 
 
-### 应用配置（Preference）
-Perference可以说就是Unity3d的PlayerPrefs，只是我对PlayerPrefs的功能进行了扩展、补充和标准化。Perference除了可以存储boolean、int、 float、string等基本数据类型之外，还可以存储DateTime、Vector2、Vector3、Vector4、Color、Version，以及任何JsonUtility可以序列化的对象类型，甚至你可以自己自定义类型编码解码器（ITypeEncoder）来扩展任何你想存储的类型。Perference支持加密的方式存储数据，并且我实现了两种持久化的方式，第一种是将数据转换为string的方式存储在Unity3D的PlayerPrefs中。第二种是以二进制的方式存储在文件中，一般在项目测试时我都使用文件持久化的方式，因为我可以直接删除Application.persistentDataPath目录下的文件方便的删除配置。
+### Preference(Preference)
+Perference can be said to be Unity3d's PlayerPrefs, but I have extended, supplemented and standardized the functions of PlayerPrefs. In addition to storing basic data types such as boolean, int, float, and string, Perference can also store DateTime, Vector2, Vector3, Vector4, Color, Version, and any object type that JsonUtility can serialize. You can even customize the type yourself. Codec (ITypeEncoder) to extend any type you want to store. Perference supports encrypted data storage, and I have implemented two persistence methods. The first is to convert the data to a string and store it in Unity3D's PlayerPrefs. The second method is to store the files in binary mode. Generally, I use the file persistence method when testing the project, because I can directly delete the files in the Application.persistentDataPath directory to easily delete the configuration.
 
-Perference除了扩展以上功能外，我还扩展了配置的作用域，如同前文中的Context一样，同样包括全局的配置和玩家的配置，也同样支持某个局部模块的配置。全局配置可以用来存放当前资源更新的版本，最后登录的用户名等与应用相关的信息；玩家配置可以存在多个（如果在一台机器上有多个账户登录的话），可以存放具体某个玩家在本机的配置信息，如玩家在游戏中背景音乐、音效、画面质量、视距远近的设置等等。
+In addition to extending the above functions, Perference also extends the scope of configuration. Like Context in the previous article, it also includes global configuration and player configuration, and also supports the configuration of a local module. The global configuration can be used to store the current resource update version, the last logged-in user name and other application-related information; there can be multiple player configurations (if multiple accounts are logged in on one machine), and it can store a specific one The player's configuration information on the machine, such as the player's background music, sound effects, picture quality, distance and distance settings in the game, and so on.
 
-下面跟随我的代码，我们来了解它是如何使用的。
+Following my code, let's understand how it is used.
 
     //注册一个Preference的工厂，默认是PlayerPrefsPreferencesFactory工厂，只有使用File持久化才需要改为BinaryFilePreferencesFactory工厂
     Preferences.Register(new BinaryFilePreferencesFactory());
@@ -719,7 +724,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
     userPreferences.SetBool("Sound_Enable",true);
     userPreferences.Save();
 
-在Preferences中，我虽然已支持了很多种的数据类型，但是总有些特殊需求我是无法满足的，那么你通过ITypeEncoder来扩展自己的类型；并且如果你对配置数据的安全性是有要求的，那么你也可以使用自己的密码来加密数据。
+In Preferences, although I have supported many data types, but there are always special needs that I cannot meet, then you can extend your type through ITypeEncoder; and if you have requirements for the security of configuration data, Then you can also use your own password to encrypt the data.
 
     /// <summary>
     /// 自定义一个类型编码器
@@ -778,46 +783,46 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
     BinaryFilePreferencesFactory factory = new BinaryFilePreferencesFactory(serializer, encryptor);
     Preferences.Register(factory);
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-### 配置文件（Properties文件）
+### Configuration(Properties File)
 
-在游戏或者应用开发中，配置文件是一个必不可少的东西，通过配置文件来管理游戏或者应用的配置参数，特别现在游戏开发要接入不同的平台，有众多的SDK配置参数，而且不同平台有不同的接入要求，有不同的升级更新策略，虽然这些配置我们也可以继承Unity3D的ScriptableObject类来创建一个配置类，但是因为接入平台多，参数不统一，随着需求的变化会导致频繁的修改这些配置类，为了避免这种情况，我这里采用传统的配置文件来配置这些参数，一个properties文件满足所有的配置需求。
+In game or application development, the configuration file is an indispensable thing. The configuration file is used to manage the configuration parameters of the game or application. Especially now that game development needs to access different platforms, there are many SDK configuration parameters, and different platforms. There are different access requirements and different upgrade and update strategies. Although these configurations can also inherit the Unity3D ScriptableObject class to create a configuration class, but because there are many access platforms, the parameters are not uniform, which will cause frequent changes as requirements change Modify these configuration classes. To avoid this, I use traditional configuration files to configure these parameters. A properties file meets all configuration requirements.
 
-#### 支持的数值类型
+#### Supported Numeric Types
 
-默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
+All the following types and their array types are supported by default, and new data types can be supported through a custom type converter ITypeConverter.
 
-| 基本类型(Type) | 默认值(Default Value) | 描述(Description) |
+| Basic Type | Default Value | Description |
 | :------| ------: | :------: |
-| string | "" | 字符串类型 |
-| boolean | false | 布尔值，flase或者true |
-| sbyte | 0 | 有符号的byte，-127-128 |
-| byte | 0 | 无符号byte，0-255 |
-| short | 0 | short类型 |
-| ushort | 0 | 无符号short类型 |
-| int | 0 | 整型 |
-| uint | 0 | 无符号整型 |
-| long | 0 | 长整型 |
-| ulong | 0 | 无符号长整型 |
-| char | ‘’ | 字符类型 |
-| float | 0 | 单精度浮点类型 |
-| double | 0 | 双精度浮点类型 |
-| datetime | 1970-01-01T00:00:00 | 时间类型 |
-| vector2 | (0,0) | Vector2类型,示例：(0,0) |
-| vector3 | (0,0,0) | Vector3类型，示例：(0,0,0) |
-| vector4 | (0,0,0) | Vector4类型，示例：(0,0,0,0)|
-| color | #000000 | Color类型，示例：#FF0000 |
-| rect | (0,0,0,0) | Rect类型，示例：(x,y,width,height) |
-| version | 1.0.0 | Version类型，示例：1.0.0 |
+| string | "" | String type |
+| boolean | false | Boolean type，flase or true |
+| sbyte | 0 | Signed byte, -127-128 |
+| byte | 0 | Unsigned byte, 0-255 |
+| short | 0 | short type |
+| ushort | 0 | Unsigned short |
+| int | 0 | Integer type |
+| uint | 0 | Unsigned integer |
+| long | 0 | Long type |
+| ulong | 0 | Unsigned long |
+| char | ‘’ | Character type |
+| float | 0 | Float type |
+| double | 0 | Double type |
+| datetime | 1970-01-01T00:00:00 | Time type |
+| vector2 | (0,0) | Vector2 type,eg：(0,0) |
+| vector3 | (0,0,0) | Vector3 type,eg：(0,0,0) |
+| vector4 | (0,0,0) | Vector4 type,eg：(0,0,0,0)|
+| color | #000000 | Color type，eg：#FF0000 |
+| rect | (0,0,0,0) | Rect type，eg:(x,y,width,height) |
+| version | 1.0.0 | Version type，eg：1.0.0 |
 
-#### 数组分隔符
+#### Array Delimiter
 
-与CSV格式的本地化配置一样，数组使用半角逗号分隔，在半角的双引号、单引号、小括号()、中括号[]、大括号{}、尖括号<>之间的逗号会被忽略，如数组的字符串中有逗号，请使用双引号或者单引号将字符串引起来。
+As with the localized configuration in CSV format, the array is separated by commas, and commas between double quotes, single quotes, parentheses (), square brackets [], braces {}, and angle brackets <> are ignored If there are commas in the string of the array, please use double or single quotes to enclose the string.
 
-#### 配置文件示例
+#### Configuration File Example
 
-Properties文件格式如下，以key = value 的方式配置所有内容，以#开头的是注释文字，空行会被忽略：
+The properties file format is as follows, configure everything with key = value, the comment text that starts with #, blank lines are ignored:
 
     #application config
     application.app.version = 1.0.0
@@ -850,7 +855,7 @@ Properties文件格式如下，以key = value 的方式配置所有内容，以#
     application.release.password = loxodon.framework
     application.release.gateway =  172.217.161.78:8000 , 172.217.161.79:8000 , 172.217.161.80:8000
 
-配置文件读取示例
+Configuration file read example
 
     //初始化配置文件
     TextAsset text = Resources.Load<TextAsset>("application.properties");
@@ -873,39 +878,34 @@ Properties文件格式如下，以key = value 的方式配置所有内容，以#
     string password = currentGroupConf.GetString("password");
     string[] gatewayArray = currentGroupConf.GetArray<string>("gateway");
 
-### 国际化和本地化
+### Internationalization and localization
 
-国际化和本地化是指软件、应用、游戏等使之能适应目标市场的语言、地区差异以及技术需要等。所以在游戏开发中，为适用不同的市场需求，本地化是必不可少的功能，我参考了Android的本地化设计思路，设计了本框架的本地化模块。本地化模块和前面提到的任何模块一样，它也是可以自定义的，可以自由扩展的，下面我就来介绍一下如何来使用本地化模块。
+Internationalization and localization refer to software, applications, games, etc. that can be adapted to the language, regional differences, and technical needs of the target market. Therefore, in game development, in order to meet different market requirements, localization is an indispensable function. I referenced the Android localization design ideas and designed the localization module of this framework. The localization module is the same as any of the modules mentioned above. It can also be customized and can be extended freely. Let me introduce how to use the localization module.
 
-#### 目录结构
+#### Directory Structure
 
-本地化文件可以放在Resources目录下，通过Unity3D的Resources来访问，也可以放入AssetBundle中，通过AssetBundle来加载，甚至你可以放入任何其他地方，通过自定义的IDataProvider来读取。并且这些方式可以同时存在，后加载的覆盖先加载的。在本框架中，我提供了DefaultDataProvider和AssetBundleDataProvider两个数据提供器分别来加载Resources中和AssetBundle中的本地化数据文件。无论在Resources中还是在AssetBundle，其目录结构和加载规则是一致的。首先必须有一个本地化配置文件的根目录，如下图的LocalizationExamples目录，在根目录下创建各个语言的目录，比如 default、zh、zh-CN、zh-TW、zh-HK、en、en-US、en-CA、en-AU等等（具体可以参考System.Globalization.CultureInfo类的Name和TwoLetterISOLanguageName，如zh-CN是Name，zh是TwoLetterISOLanguageName）。在default目录中的配置必须是最完整的，它是默认语言配置，而且是必须的，而其他目录都是可选的。zh目录是中文目录，zh-CN是中国大陆的配置目录，zh-TW是台湾区的配置目录，zh-HK是中国香港的配置目录。从配置文件的优先级来说（zh-CN|zh-TW|zh-HK) > zh > default，优先级高的配置将覆盖优先级低的配置。
+Localized files can be placed in the Resources directory, accessed through Unity3D's Resources, or placed into AssetBundle, loaded through AssetBundle, or you can put it anywhere and read it through custom IDataProvider. And these methods can exist at the same time. In this framework, I provide two data providers, DefaultDataProvider and AssetBundleDataProvider, to load localized data files in Resources and AssetBundle, respectively. Whether in Resources or AssetBundle, its directory structure and loading rules are the same. First, there must be a root directory of the localization configuration file, as shown in the LocalizationExamples directory in the following figure. Create directories for each language under the root directory, such as default, zh, zh-CN, zh-TW, zh-HK, en, en-US , En-CA, en-AU, and so on (for details, refer to the Name of the System.Globalization.CultureInfo class and TwoLetterISOLanguageName, such as zh-CN is the Name and zh is the TwoLetterISOLanguageName). The configuration in the default directory must be the most complete, it is the default language configuration, and it is required, while other directories are optional. The zh directory is a Chinese directory, zh-CN is a configuration directory in mainland China, zh-TW is a configuration directory in Taiwan, and zh-HK is a configuration directory in Hong Kong, China. From the priority of the configuration file (zh-CN | zh-TW | zh-HK)> en> default, the configuration with higher priority will overwrite the configuration with lower priority.
 
-在每一个配置文件目录中，配置文件建议按业务模块分多个文件配置，不要所有的配置都写入一个文本文件中，如下图所示，所有全局的配置写入application.xml中，而其他的配置则按模块名称来命名配置文件。
+In each configuration file directory, the configuration file is recommended to be divided into multiple files according to the business module configuration. Do not write all the configurations in a text file, as shown in the following figure. The configuration is named after the module name.
 
 ![](images/Localization_dir.png)
 
-#### 配置文件的格式
+#### Format of the localization file
 
-配置文件默认支持XML、Asset文件（LocalizationSourceAsset）格式和本地化数据源脚本方式。如有必要也可以通过自定义IDocumentParser来支持其他的格式，如Json格式，csv文件格式，二进制格式，或者从SQLite中加载等。
+The localization file supports XML, Asset file (LocalizationSourceAsset) format and localized data source script by default. If necessary, you can also customize other IDocumentParser to support other formats, such as Json format, csv file format, binary format, or SQLite.
 
-精灵(Sprite)、纹理(Texture2D/Texture3D)、字体(Font)、音效(AudioClip)、视频(VideoClip)等属于UnityEngine.Object对象资源只能使用Asset文件格式或者本地化数据源脚本存储。其他可以文本化的资源推荐使用XML或者其他文本文件格式存储。
+Sprites, textures (Texture2D / Texture3D), fonts (Font), audio effects (AudioClip), video (VideoClip), etc. belong to UnityEngine.Object object resources can only be stored using the Asset file format or localized data source script storage. Other textual resources are recommended to be stored in XML or other text file formats.
 
-- 本地化数据源Asset文件格式(LocalizationSourceAsset)
-本地化数据源Asset文件格式如下图，可以配置多种类型的资源，每一个文件对应一种语言的资源，它的目录规则与XML方式完全一致，唯一不同是文件格式。
-图片、声音等文件都比较占用内存，请按业务模块拆分资源，同一个模块的配置在同一个Asset文件中，在需要使用之前加载到内存，在使用完之后从内存中卸载资源。
+- Localization SourceAsset File Format (LocalizationSourceAsset) The format of the Localization SourceAsset file is as shown below. You can configure multiple types of resources. Each file corresponds to a language resource. Its directory rules are completely the same as the XML method. The only difference is Is the file format. Files such as pictures and sounds take up more memory. Please split resources by business module. The configuration of the same module is in the same Asset file. Load it into memory before using it, and unload resources from memory after using it.
+
 ![](images/LocalizationSource1.png)
 ![](images/LocalizationSource2.png)
 
-- 本地化数据源脚本方式(LocalizationSourceBehaviour)
-通过本地化数据源脚本挂在GameObject对象上，可以直接存储在Prefab中或场景中，它无法按语言分别存储，所有支持语言的本地化资源都应该配置在同一个脚本文件中。LocalizationSourceBehaviour脚本中自带了DataProvider，当脚本运行会自动加载数据，当对象销毁时又会自动卸载数据。这种方式特别适合与UIView配合使用，当UIView创建时自动加载本地化数据，当UIView关闭时又会释放本地化数据。与Asset文件格式相比，它的优点是可以像一个Unity对象一样使用，拖入场景或者prefab中即可，不需要写脚本来管理它，它的缺点是所配置多个语言版本的数据都会加载到内存中，会占用更多的内存。[示例 Localization Source Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials/)
+- Localization SourceBehaviour The localization source source script is attached to the GameObject object and can be stored directly in Prefab or in the scene. It cannot be stored separately by language. All localized resources that support languages should be configured in the same In a script file. The LocalizationSourceBehaviour script comes with a DataProvider. When the script is run, the data is automatically loaded, and when the object is destroyed, the data is automatically unloaded. This method is particularly suitable for use with UIView. Localized data is automatically loaded when UIView is created, and localized data is released when UIView is closed. Compared with the Asset file format, it has the advantage that it can be used like a Unity object and can be dragged into the scene or prefab. There is no need to write a script to manage it. Its disadvantage is that data for multiple language versions will be loaded. Into memory, it will take up more memory. [Localization Source Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials/)
 ![](images/LocalizationSource3.png)
 ![](images/LocalizationSource4.png)
 
-- XML文件格式
-XML文件格式可以很方便的配置文本类型的数据，但是无法直接配置UnityEngine.Object对象的资源。如果要使用XML配置声音、图片、字体等资源，只能将声音、图片、字体等资源的文件路径配置在XML中，在使用时通过文件路径的改变动态加载这些资源。
-文本类型的本地化不会占用太多内存，建议在游戏启动时全部加载到内存中，并且不要释放它们。
-XML 格式配置如下:
+- XML file format The XML file format can easily configure text-type data, but it cannot directly configure the resources of the UnityEngine.Object object. If you want to use XML to configure resources such as sounds, pictures, and fonts, you can only configure the file paths of resources such as sounds, pictures, and fonts in XML, and dynamically load these resources by changing the file path when you use them. Text type localization does not take up much memory, it is recommended to load all into memory when the game starts, and do not release them. The XML format is configured as follows:
 
       <!-- application.xml -->
       <?xml version="1.0" encoding="utf-8"?>
@@ -941,15 +941,15 @@ XML 格式配置如下:
           <string name="login.input.password.prompt">Enter password...</string>
       </resources>
 
-#### XML特殊字符
+#### XML special characters
 
-在XML的名称、属性和本文内容中，"<"、">"、"&"等字符是不能直接使用的，如果在一个XML标记中出现这些字符，XML的解析会报错，如果我们使用的内容必须包括这些字符，有两种解决方式，第一是使用转义字符，如前文中的三个字符可以使用"&amp;lt;"、"&amp;gt;"、"&amp;amp;"来替换。第二种方式是使用&lt;![CDATA[]]&gt;标记将文本内容包起来，比如&lt;![CDATA[&lt;color=#FF0000&gt;This is a test.&lt;/color&gt;]]&gt;，它表示的文本内容是“&lt;color=#FF0000&gt;This is a test &lt;/color&gt;”。一般来说推荐使用&lt;![CDATA[]]&gt;标记。
+In the XML name, attributes, and content of this article, "<", ">", "&" and other characters cannot be used directly. If these characters appear in an XML tag, XML parsing will report an error. If we use The content must include these characters. There are two solutions. The first is to use escape characters. For example, the three characters in the preceding text can be replaced with "&amp;lt;", "&amp;gt;", and "&amp;amp;". The second way is to wrap the text content with tags &lt;![CDATA[]]&gt;, for example,&lt;![CDATA[&lt;color=#FF0000&gt;This is a test.&lt;/color&gt;]]&gt;, the text content it represents is "&lt;color=#FF0000&gt;This is a test &lt;/color&gt;". &lt;![CDATA[]]&gt; tags are generally recommended.
 
-**转义字符表**
+**Escape character table**
 
 ![](images/xml_special_chars.png)
 
-**转义字符或者&lt;![CDATA[]]&gt;示例**
+**Example**
 
     <?xml version="1.0" encoding="utf-8"?>
     <resources>
@@ -958,40 +958,39 @@ XML 格式配置如下:
     </resources>
 
 
-#### XML支持的数值类型
+#### Numeric types supported by XML
 
-默认支持以下所有类型和他们的数组类型，通过自定义类型转换器ITypeConverter，可以支持新的数据类型。
+All the following types and their array types are supported by default, and new data types can be supported through a custom type converter ITypeConverter.
 
-数组类型的表述方式是在基本类型后面添加"-array"的后缀，如前文中字符串数组类型：string-array，在&lt;string-array&gt;&lt;/string-array&gt;之间用&lt;item&gt;&lt;item&gt;添加数组元素。
+The array type is expressed by adding a "-array" suffix after the basic type, as in the previous string array type: string-array, using &lt;item&gt;&lt;item&gt; between &lt;string-array&gt;&lt;/string-array&gt; to add array elements.
 
-| 基本类型(Type) | 默认值(Default Value) | 描述(Description) |
+| Basic Type | Default Value | Description |
 | :------| ------: | :------: |
-| string | "" | 字符串类型 |
-| boolean | false | 布尔值，flase或者true |
-| sbyte | 0 | 有符号的byte，-127-128 |
-| byte | 0 | 无符号byte，0-255 |
-| short | 0 | short类型 |
-| ushort | 0 | 无符号short类型 |
-| int | 0 | 整型 |
-| uint | 0 | 无符号整型 |
-| long | 0 | 长整型 |
-| ulong | 0 | 无符号长整型 |
-| char | ‘’ | 字符类型 |
-| float | 0 | 单精度浮点类型 |
-| double | 0 | 双精度浮点类型 |
-| decimal | 0 | 数字类型 |
-| datetime | 1970-01-01T00:00:00 | 时间类型 |
-| vector2 | (0,0) | Vector2类型,示例：(0,0) |
-| vector3 | (0,0,0) | Vector3类型，示例：(0,0,0) |
-| vector4 | (0,0,0) | Vector4类型，示例：(0,0,0,0)|
-| color | #000000 | Color类型，示例：#FF0000 |
-| rect | (0,0,0,0) | Rect类型，示例：(x,y,width,height) |
+| string | "" | String type |
+| boolean | false | Boolean type，flase or true |
+| sbyte | 0 | Signed byte, -127-128 |
+| byte | 0 | Unsigned byte, 0-255 |
+| short | 0 | short type |
+| ushort | 0 | Unsigned short |
+| int | 0 | Integer type |
+| uint | 0 | Unsigned integer |
+| long | 0 | Long type |
+| ulong | 0 | Unsigned long |
+| char | ‘’ | Character type |
+| float | 0 | Float type |
+| double | 0 | Double type |
+| datetime | 1970-01-01T00:00:00 | Time type |
+| vector2 | (0,0) | Vector2 type,eg：(0,0) |
+| vector3 | (0,0,0) | Vector3 type,eg：(0,0,0) |
+| vector4 | (0,0,0) | Vector4 type,eg：(0,0,0,0)|
+| color | #000000 | Color type，eg：#FF0000 |
+| rect | (0,0,0,0) | Rect type，eg:(x,y,width,height) |
 
-#### 生成C#脚本
+#### Generate C# Code
 
-本地化配置的属性，类似Android配置一样，可以生成一个静态类来使用，如果是使用C#版本的MVVM，可以这么使用，这样增加了语言的编译校验机制，避免出错。如果是使用Lua编程，则不建议这么做，直接使用Localization类即可。
+The properties of the localized configuration, similar to the Android configuration, can be used to generate a static class. If you are using the C # version of MVVM, you can use it this way. This adds a language compilation check mechanism to avoid errors. If you are programming in Lua, this is not recommended. You can use the Localization class directly.
 
-在本地化配置的根目录右击，弹出代码生成菜单如下图，点击Localization Make，选择代码目录和文件名，生成C#静态类。
+Right-click on the root directory of the localization configuration, and pop up the code generation menu as shown below. Click Localization Make, select the code directory and file name, and generate a C # static class.
 
 ![](images/Localization_Make.png)
 
@@ -1006,21 +1005,21 @@ XML 格式配置如下:
         public readonly static V<string> login_exception_tip = new V<string>("login.exception.tip");
     }
 
-#### 本地化视图组件
+#### Localized view components
 
-- **文字的本地化**
+- **Localization of text**
 
-    支持在UnityEngine.UI.Text或者UnityEngine.TextMesh对象上挂一个脚本，配置本地化字符串的key，就可以自动支持多语言的切换，如果仅仅只是显示文本，不会随业务逻辑改变，支持使用这种方式配置。当然也可以通过数据绑定的方式来更新Text或者TextMesh的文字，在ViewModel中修改文字，则视图中的文字跟着改变。
+    Supports hanging a script on UnityEngine.UI.Text or UnityEngine.TextMesh object, and configuring the key of the localized string, it can automatically support multi-language switching. If it is just displaying text, it will not change with business logic. Support the use of this Way to configure. Of course, you can also update the text of Text or TextMesh through data binding. If you modify the text in the ViewModel, the text in the view changes accordingly.
 
     ![](images/Localization_Text.png)
 
-- **图片、声音、视频、字体、材质的本地化**
+- **Localization of images, sounds, videos, fonts, materials**
 
-    图片、声音、视频、字体、材质资源的本地化推荐使用Asset文件配置（LocalizationSourceAsset），将不同语言版本的资源配置按业务模块分类配置在不同的Asset文件中，比如当需要访问某个业务模块的UI时，先加载这个模块当前语言版本的本地化资源，然后再显示UI。
+    The localization of image, sound, video, font, and material resources is recommended to use Asset file configuration (LocalizationSourceAsset). The resource configuration of different language versions is classified by business module and configured in different Asset files. For example, when you need to access a business module, For UI, load the localized resources of the current language version of this module before displaying the UI.
 
-    当然，除了使用Asset文件配置的方式，也可以使用XML等文本方式配置，将资源的加载路径配置在XML文件中，当语言改变时，图片或者声音的路径也会改变，通过视图脚本异步加载资源，然后替换资源，这种方式很灵活但是需要自己写代码来实现加载逻辑，图片、声音、字体等本地化资源可以放在Resources中或者AssetBundle中，也可以是精灵图集等，我无法写一个满足全部功能的脚本，只能提供了从Resources中加载声音或者图片的组件（如：LocalizedAudioSourceInResources.cs），可以参考我的组件实现更多方式。
+    Of course, in addition to using the Asset file configuration method, you can also use XML and other text methods to configure the resource loading path in the XML file. When the language changes, the path of the picture or sound will also change, and the resource is loaded asynchronously through the view script , And then replace the resource. This method is very flexible, but you need to write your own code to implement the loading logic. Localized resources such as pictures, sounds, fonts can be placed in Resources or AssetBundle, or sprite atlas, etc. The script that meets all functions can only provide components that load sounds or pictures from Resources (such as: LocalizedAudioSourceInResources.cs). You can refer to my component for more ways.
 
-    如下示例是使用我的Loxodon.Framework.Bundle插件加载音效的代码。
+    The following example is the code for loading sound effects using my Loxodon.Framework.Bundle plugin.
 
         [RequireComponent(typeof(AudioSource))]
         public class LocalizedAudioSource : AbstractLocalized<AudioSource>
@@ -1046,15 +1045,15 @@ XML 格式配置如下:
             }
         }
 
-    下图是使用LocalizedAudioSourceInResources从Resources中加载音效的示例。
+    The following figure is an example of loading sound effects from Resources using LocalizedAudioSourceInResources.
 
     ![](images/Localization_Audio.png)
 
-- **UI尺寸大小、颜色的本地化**
+- **UI size and color localization**
 
-    本地化组件支持Rect、Color、Vector2-4等类型，除了图片、声音、文字的本地化之外，UI视图的尺寸大小、位置、颜色等也可以本地化。特别是UI尺寸的本地化，可以更好的适配不同语言文字长度不一致的需求。
+    The localization component supports types such as Rect, Color, and Vector2-4. In addition to the localization of pictures, sounds, and text, the size, position, and color of the UI view can also be localized. In particular, the localization of UI size can better adapt to the inconsistent requirements of different language text lengths.
 
-    关于RectTransform的设置与锚点位置有关，以下代码仅仅是一个示例，请根据自己的实际情况修改。
+    The setting of RectTransform is related to the anchor point position. The following code is just an example. Please modify it according to your actual situation.
 
         public class LocalizedRectTransform : AbstractLocalized<RectTransform>
         {
@@ -1079,7 +1078,7 @@ XML 格式配置如下:
             }
         }
 
-    本地化配置如下：
+    The localization configuration is as follows:
 
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
@@ -1090,10 +1089,9 @@ XML 格式配置如下:
           <rect name="button.position2">(100,100,200,60)</rect>
         </resources>
 
-#### 数据提供器(IDataProvider)
+#### Data provider(IDataProvider)
 
-框架的本地化组件支持同时使用多种数据格式来配置本地化资源，它们有不同的文件格式，不同的目录结构，甚至有不同的文件查找规则，无论情况多么复杂，都可以通过数据提供器(IDataProvider)和文档解析器(IDocumentParser)来统一它们，通过数据提供器加载数据，通过文档解析器解析资源文件，在框架中我提供了一些默认的数据加载器，可以从Resources目录或者AssetBundle中根据前文中提到的目录规则来加载本地化数据。如果需要支持更多的数据格式，或者要定制文件查找规则和加载方式，请参考我的代码实现自定义的数据提供器。
-以下的代码是使用默认的数据提供器从Resources/LocalizationTutorials/（教程本地化资源的根目录，目录结构如下图）目录中加载xml和asset格式的文件，xml格式的文件使用DefaultDataProvider加载，它会加载当前语言的所有xml文件，文本文件占用较少的内存，不要释放它们。asset格式的文件使用DefaultLocalizationSourceDataProvider加载，它配置了具体的asset文件名称，它只会加载名字列表中的文件，asset文件中配置图片声音等多媒体资源，在使用完毕请删除DefaultLocalizationSourceDataProvider卸载资源。
+The localization component of the framework supports the use of multiple data formats to configure localized resources. They have different file formats, different directory structures, and even different file search rules. No matter how complicated the situation is, you can use the data provider ( IDataProvider) and document parser (IDocumentParser) to unify them, load data through the data provider, and parse resource files through the document parser. In the framework, I provide some default data loaders, which can be based on The directory rules mentioned in the article load localized data. If you need to support more data formats, or to customize file search rules and loading methods, please refer to my code to implement a custom data provider. The following code uses the default data provider to load the files in xml and asset format from the Resources / LocalizationTutorials / (the root directory of the tutorial localization resources, the directory structure is as shown in the figure below). All xml files and text files of the current language take up less memory, do not release them. The asset format file is loaded using the DefaultLocalizationSourceDataProvider. It is configured with a specific asset file name. It only loads files in the name list, and configures multimedia resources such as pictures and sounds in the asset file. After use, delete the DefaultLocalizationSourceDataProvider to uninstall the resources. 
 ![](images/Localization_dir2.png)
 
     var localization = Localization.Current;
@@ -1111,16 +1109,15 @@ XML 格式配置如下:
     //当数据不在被使用时，删除数据加载器，同时释放内存
     localization.RemoveDataProvider(provider);
 
-#### 获得设备的当前语言
+#### Get the device's current language
 
-在Unity3D较老的版本中，CultureInfo.CurrentCulture是无效的，无论在PC还是移动设备，都获得英文语言信息，所以我提供了Unity的SystemLanguage转CultureInfo的工具Locale，可以通过Locale.GetCultureInfo()来获得当前语言信息，通过Locale.CultureInfo GetCultureInfoByLanguage(SystemLanguage.Chinese)来获得中文的CultureInfo。
-在Unity 2018版本中，使用.net standard 2.0时，我在Android手机上测试，CultureInfo.CurrentCulture是有效的，所以使用2018版本开发的同学可以使用CultureInfo.CurrentCulture来获得当前系统的语言信息。
+In the older version of Unity3D, CultureInfo.CurrentCulture is invalid. The English language information is obtained no matter on the PC or mobile device. So I provide the Locale tool for Unity SystemLanguage to CultureInfo, which can be obtained through Locale.GetCultureInfo () The current language information is obtained through Locale.CultureInfo GetCultureInfoByLanguage (SystemLanguage.Chinese). In the Unity 2018 version, when using the .net standard 2.0, I tested it on an Android phone. CultureInfo.CurrentCulture is valid, so students who use the 2018 version can use CultureInfo.CurrentCulture to get the language information of the current system.
 
-#### 使用示例
+#### Usage example
 
-前文介绍了本地化组件的一些功能，这里通过示例，我们来了解本地化组件的使用。
+The previous article introduced some functions of localized components. Here we use examples to understand the use of localized components.
 
-下面的示例是如何在C#代码中使用本地化功能，通过生成的C#静态类R或者通过Localization类获得本地化字符串。
+The following example is how to use the localization function in C # code, get the localized string through the generated C# static class R or through the Localization class.
 
     var localization = Localization.Current;
     localization.CultureInfo = CultureInfo.CurrentCulture; //设置语言,老版本用Locale.GetCultureInfo()
@@ -1141,7 +1138,7 @@ XML 格式配置如下:
         .ToValue(localization.GetValue("login.validation.username.error")).OneWay();
 
 
-配合UI组件使用本地化配置，下面我们模拟一个游戏中语言切换的使用场景，来了解本地化模块的用法。在下图中，红色线框中的英文通过本地化服务来加载和修改，它是通过挂在Text对象上的LocalizedText组件来实现中文和英文切换的。
+Using localized configuration with UI components, let's simulate a scenario of language switching in a game to understand the use of localized modules. In the figure below, the English in the red wireframe is loaded and modified through the localization service. It uses the LocalizedText component hanging on the Text object to switch between Chinese and English.
 
 ![](images/Localization_Example.png)
 
@@ -1190,7 +1187,7 @@ XML 格式配置如下:
         }
     }
 
-本地化文件配置如下
+The localization file configuration is as follows:
 
     <!-- 英文版 -->
     <?xml version="1.0" encoding="utf-8"?>
@@ -1212,35 +1209,34 @@ XML 格式配置如下:
     </resources>
 
 
-更多的示例请查看教程 [Localization Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Localization Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-#### 支持CSV格式的本地化插件
+#### Localization plugin supporting CSV format
 
-如果习惯使用Excel的朋友可以下载我的CSV插件，它支持读取CSV文件格式的本地化配置，但是要求Unity版本在2018以上，支持.net 4.x或者.net standard 2.0。
+If you are accustomed to using Excel, you can download my CSV plug-in, which supports reading the localized configuration of the CSV file format, but requires that the Unity version is above 2018 and supports .net 4.x or .net standard 2.0.
 
-下载地址：[Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv/releases)
+Download：[Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv/releases)
 
-**配置文件格式如下**
+**The configuration file format is as follows**
 
-- key：配置文件的key，不能为空，此列必须存在。
-- type：配置文件值的类型，此列必须存在。如：字符串类型 string ，整形数组 int-array
-- description:描述，可以为空，并且此列可以省略
-- default：默认值，最好不要为空,如果此列不存在，则会使用值的第一列作为默认列
-- zh:中文配置，zh取值自CultureInfo.TwoLetterISOLanguageName，如果字段为空则使用默认配置
-- zh-CN：中国，简体中文配置,zh-CN取值自CultureInfo.Name，如果字段为空，则使用zh的配置
+- key：The key of the configuration file. It cannot be empty. This column must exist.
+- type：The type of profile value. This column must exist. For example: string type string, integer array int-array
+- description:description, can be empty, and this column can be omitted
+- default：the default value, it is best not to be empty, if this column does not exist, the first column of the value will be used as the default column
+- zh:Chinese configuration, the value of zh is taken from CultureInfo.TwoLetterISOLanguageName, if the field is empty, the default configuration is used
+- zh-CN：China, Simplified Chinese configuration, zh-CN takes value from CultureInfo.Name, if the field is empty, the configuration of zh is used
 
-以上只有key列和type列是必须存在的，其他可以根据实际情况添加或者省略。
+Only the key column and the type column must exist. Others can be added or omitted according to the actual situation.
 
-**关于值的本地化查询规则是根据System.Globalization.CultureInfo类的TwoLetterISOLanguageName和Name字段来查询的。
-优先按CultureInfo.Name查询，如果不存在则使用CultureInfo.TwoLetterISOLanguageName查询，最后才会使用默认值，比如下图中，如果当前语言是zh-CN的话，优先使用zh-CN的配置，如果不存在zh-CN的列或者zh-CN配置为空，则使用zh列的配置，如果zh列不存在或者字段为空则使用默认列的配置。**
+**The localization query rules for values are queried based on the TwoLetterISOLanguageName and Name fields of the System.Globalization.CultureInfo class. Query by CultureInfo.Name first. If it does not exist, use CultureInfo.TwoLetterISOLanguageName to query, then the default value will be used. For example, if the current language is zh-CN, the configuration of zh-CN will be used first. If the -CN column or zh-CN configuration is empty, the configuration of the zh column is used. If the zh column does not exist or the field is empty, the configuration of the default column is used.**
 
 ![](images/csv.png)
 
-**支持类型和数组的表示**
+**Support for type and array representation**
 
-CSV配置同样支持上一节中XML配置所支持的所有基本数据类型，唯一不同的是CSV文件中使用逗号分隔符来支持数组类型，如下表所示。
+The CSV configuration also supports all the basic data types supported by the XML configuration in the previous section. The only difference is that the CSV file uses a comma separator to support the array type, as shown in the following table.
 
-**注意：数组使用半角逗号分隔，在半角的双引号、单引号、小括号()、中括号[]、大括号{}、尖括号<>之间的逗号会被忽略，如数组的字符串中有逗号，请使用双引号或者单引号将字符串引起来,否则在数组分隔时会出错**
+**Note: Arrays are separated by commas, and commas between double quotes, single quotes, brackets (), brackets [], braces {}, and angle brackets <> are ignored, as in the array string There are commas, please use double or single quotes to enclose the string, otherwise an error will occur when the array is separated**
 
 | key | type | us-EN |
 | :------| ------: | :------: |
@@ -1249,25 +1245,25 @@ CSV配置同样支持上一节中XML配置所支持的所有基本数据类型�
 | positions | vector3-array | (0,1,1.2),(2,2,0),(1.3,0.5,5) |
 | colors | color-array | #FF0000,#00FF00 |
 
-**XML和CSV的相互转换**
+**XML and CSV conversion**
 
-XML的配置文件和CSV的配置文件可以相互转换，但是对于数组类型的配置需要注意，在CSV中是使用","分割的，而在XML中是<item>标识分割的，在<item></item>之间如果包含了","转换为csv文件格式时可能出错。
+The XML configuration file and the CSV configuration file can be converted to each other, but you need to pay attention to the configuration of the array type. In the CSV, "," is used for division, and in XML, it is used to identify the division. "There may be an error converting to csv file format.
 
-选择XML配置文件的根目录，右键选择Loxodon/Xml To Csv 命令，会自动将目录下的所有xml文件转换为csv格式的文件，XML中不同语言版本会合并到同一个csv文件中。同样，CSV文件也可以转换为XML文件，如果CSV文件中包含多个语言的配置版本，会被拆分成多个XML文件。
+Select the root directory of the XML configuration file, right-click and select the Loxodon / Xml To Csv command, all xml files in the directory will be automatically converted into csv format files, and different language versions in XML will be combined into the same csv file. Similarly, the CSV file can also be converted into an XML file. If the CSV file contains configuration versions in multiple languages, it will be split into multiple XML files.
 
 ![](images/xml2csv.png)
 
-生成csv文件如下
+Generate csv file as follows
 
 ![](images/xml2csv2.png)
 
-### 日志系统
+### Logging system
 
-框架提供了一个可分级的日志系统，它支持ALL、DEBUG、INFO、WARN、ERROR、FATAL等多个级别，在项目在开发阶段和发布上线可以使用不同的日志打印级别。
+The framework provides a scalable logging system, which supports ALL, DEBUG, INFO, WARN, ERROR, FATAL and other levels. Different levels of log printing can be used during the development phase and release of the project.
 
-日志系统我提供了一个Unity3D的Debug版本的实现，它基本满足了一般的开发和调试需求，但是如果需要更强的日志功能，比如打印日志到文件系统，移动终端通过局域网将日志打印到电脑等，可以下载我的日志插件[Loxodon.Framework.Log4Net](https://assetstore.unity.com/packages/tools/utilities/loxodon-framework-log4net-79440)，它是一个用Log4Net实现的插件，功能非常强大。
+Logging system I provide a debug version of Unity3D, which basically meets general development and debugging needs, but if more powerful logging functions are needed, such as printing logs to a file system, mobile terminals printing logs to a computer via a LAN, etc. You can download my log plugin [Loxodon.Framework.Log4Net](https://assetstore.unity.com/packages/tools/utilities/loxodon-framework-log4net-79440), which is a plugin implemented with Log4Net, which is very powerful.
 
-默认日志系统的使用示例
+Example of using the default logging system
 
     //设置默认日志系统的日志级别，默认日志工厂自动初始化
     LogManager.Default.Level = Level.DEBUG
@@ -1283,17 +1279,17 @@ XML的配置文件和CSV的配置文件可以相互转换，但是对于数组�
     //打印日志
     log.DebugFormat("My name is {0}",name)
 
-### StreamingAssets目录文件读取（Android）
+### StreamingAssets catalog file reading (Android)
 
-在Android平台上，StreamingAssets目录在apk压缩包中，所以无法通过C#文件系统的API直接访问。请使用我的 Loxodon.Framework.Utilities.FileUtil替换C#的File类读取文件，我提供了JNI调用java接口的方式访问，具体实现在FileUtil.Android.cs中，它的局限是只能读apk中的文件，无法读取obb文件中的资源。如果拆分了obb包，请使用FileUtil.Compression.cs 或者 FileUtil.IonicZip.cs 中的实现。FileUtil.Compression.cs 使用的是.net standard 2.0 中的自带的解压功能实现，需要Unity2018及以上版本。FileUtil.IonicZip.cs是使用IonicZip的压缩库实现，使用.net 3.5的库请使用这个版本，使用该版本需要自己找IonicZip.dll放入项目，并且在Unity项目中配置宏定义IONIC_ZIP。
+On the Android platform, the StreamingAssets directory is in the apk compressed package, so it cannot be accessed directly through the API of the C # file system. Please use my Loxodon.Framework.Utilities.FileUtil to replace the C # File class to read the file. I provide JNI to call the java interface to access it. The specific implementation is in FileUtil.Android.cs. File, unable to read resources in obb file. If the obb package is split, use the implementation in FileUtil.Compression.cs or FileUtil.IonicZip.cs. FileUtil.Compression.cs uses the native decompression function in .net standard 2.0 to implement. It needs Unity2018 and above. FileUtil.IonicZip.cs is implemented using IonicZip's compression library. Please use this version of the .net 3.5 library. To use this version, you need to find IonicZip.dll in your project and configure the macro definition IONIC_ZIP in the Unity project.
 
-### 线程/协程异步结果和异步任务
+### Thread/Coroutine asynchronous results and asynchronous tasks
 
-为了方便协程和线程的异步调用，我根据Future/Promise的设计模式，设计一组异步结果、异步任务，在使用时我们可以通过同步的方式来获得任务的执行结果，也可以通过回调的方式来获得任务的结果，跟随下面的示例，我们来了解异步结果的使用。
+In order to facilitate the asynchronous calling of coroutines and threads, I designed a set of asynchronous results and asynchronous tasks according to the design pattern of Future / Promise. When using them, we can obtain the task execution results in a synchronous manner or through a callback. To get the results of the task, following the example below, let's understand the use of asynchronous results.
 
 #### AsyncResult
 
-利用AsyncResult，我们来创建一个可以取消的协程任务，并分别通过同步阻塞的方式和回调的方式来获得执行结果。
+Using AsyncResult, let's create a coroutine task that can be canceled, and obtain the execution result by synchronous blocking and callback respectively.
 
     public class AsyncResultExample : MonoBehaviour
     {
@@ -1367,7 +1363,7 @@ XML的配置文件和CSV的配置文件可以相互转换，但是对于数组�
 
 #### ProgressResult
 
-ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面我来看示例。
+The ProgressResult is similar to the AsyncResult function, except that the task progress is increased. Let me take an example.
 
     /// <summary>
     /// 任务进度
@@ -1444,7 +1440,7 @@ ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面�
 
 #### AsyncTask
 
-异步任务是对一个线程任务或者一个协程任务的封装，将一个迭代器IEnumerator传入AsyncTask可以创建一个协程任务，或者将一个委托函数传入，可以创建一个后台线程执行的任务。根据任务执行过程，将一个任务拆分成执行前、执行成功后/执行失败后、执行结束几个阶段，在每一个阶段中都可以通过一个委托回调来注册自己的代码块。下面的示例中，我们来看看怎么创建一个协程任务。
+An asynchronous task is an encapsulation of a thread task or a coroutine task. Passing an iterator IEnumerator to AsyncTask can create a coroutine task, or passing a delegate function to create a task that a background thread executes. According to the task execution process, a task is divided into several stages before execution, after execution is successful / after execution fails, and execution ends. In each stage, you can register your own code block through a delegate callback. In the following example, let's see how to create a coroutine task.
 
     public class AsyncTaskExample : MonoBehaviour
     {
@@ -1494,7 +1490,7 @@ ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面�
 
 #### ProgressTask
 
-ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样ProgressTask既可以创建一个协程任务，也可以创建一个后台线程的任务。
+ProgressTask is similar to AsyncTask in that it only increases the task progress. Similarly, ProgressTask can create a coroutine task or a background thread task.
 
     public class ProgressTaskExample : MonoBehaviour
     {
@@ -1571,7 +1567,7 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
 
 #### CoroutineTask
 
-在C# 4.0之前需要执行一个复杂的异步操作时，一般都使用线程池技术来执行一个任务。在C# 4.0中引人了Task（System.Threading.Tasks.Task）机制，它提供了更为方便和简洁的API，为保持Unity3D协程异步任务和线程异步任务Task用法一致，我实现了CoroutineTask类，它的API基本上和Task是一致的，唯一的区别就是它执行的是协程异步任务，它的所有任务都是在主线程中执行。
+Before C # 4.0, you needed to perform a complex asynchronous operation, generally using thread pool technology to perform a task. Introduced the Task (System.Threading.Tasks.Task) mechanism in C # 4.0, which provides a more convenient and concise API. In order to keep Unity3D coroutine asynchronous tasks and thread asynchronous tasks Task consistent, I implemented the CoroutineTask class Its API is basically the same as Task. The only difference is that it executes coroutine asynchronous tasks, and all its tasks are executed in the main thread.
 
     public class CoroutineTaskExample : MonoBehaviour
     {
@@ -1619,12 +1615,13 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
 
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-### 线程/协程执行器
-在Unity3d逻辑脚本的开发中，是不支持多线程的，所有的UnityEngine.Object对象，都只能在主线程中访问和修改，但是在游戏开发过程中，我们很难避免会使用到多线程编程，比如通过Socket连接从网络上接受数据，通过多线程下载资源，一些纯计CPU计算的逻辑切入到后台线程去运算等等。这里就会面临一个线程切换的问题。所以在Loxodon.Framework框架中，我设计了一个线程和协程的执行器配合前文中的任务结果来使用，它能够很方便的将任务切换到主线程执行，也能很方便的开启一个后台线程任务。
+### Thread/Coroutine Executor
 
-#### 执行器(Executors)
+In the development of Unity3d logic scripts, multi-threading is not supported. All UnityEngine.Object objects can only be accessed and modified in the main thread. However, during game development, it is difficult to avoid using multi-threaded programming. For example, it accepts data from the network through a Socket connection, downloads resources through multiple threads, and some pure CPU calculation logic is switched to a background thread to perform operations. There will be a problem of thread switching. So in the Loxodon.Framework framework, I designed a thread and coroutine executor to be used with the task results in the previous article. It can easily switch the task to the main thread for execution, and it can also easily start a background thread task.
+
+#### Executors
 
     public class ExecutorExample : MonoBehaviour
     {
@@ -1668,9 +1665,9 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
         }
     }
 
-#### 定时任务执行器(IScheduledExecutor)
+#### Scheduled Task Executor(IScheduledExecutor)
 
-在本框架中提供了一个线程的定时任务执行器(ThreadScheduledExecutor)和一个Unity3D协程的定时任务执行器(CoroutineScheduledExecutor),下面我们以线程的定时任务执行器为例，来介绍它的用法。
+In this framework, a threaded timed task executor (ThreadScheduledExecutor) and a Unity3D coroutine timed task executor (CoroutineScheduledExecutor) are provided. Below we take the threaded timed task executor as an example to introduce its usage.
 
     //创建并启动一个线程的定时任务执行器
     var scheduled = new ThreadScheduledExecutor();
@@ -1683,11 +1680,11 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
     }, 1000, 2000);
 
 
-#### 可拦截的迭代器(InterceptableEnumerator)
+#### Interceptable Enumerator(InterceptableEnumerator)
 
-在Unity3D的协程中，如果发生异常，是无法捕获到异常的，try catch不允许跨yield使用，finally也不能确保代码块在协程异常结束时还能被执行，所以很多时候无法知道一个协程是否正常执行结束，出现错误也不方便查找原因，根据Unity3D协程其本质是一个迭代器的原理，我设计了一个可以在协程执行过程中注入代码块，捕获异常的可拦截迭代器。使用InterceptableEnumerator对原迭代器进行包装，就可以捕获到协程代码执行异常，并且无论协程是否正常结束，都可在协程退出前插入一个代码块，确保这个代码块一定会在协程结束时执行。在我的Executors中，我就是利用InterceptableEnumerator来确保任务正常结束的，无论协程执行成功或者异常我都能通过注册的Finally语句块来设置AsyncResult的结果，确保AsyncResult.IsDone等于true，不会造成任务卡死。
+In Unity3D coroutines, if an exception occurs, it is impossible to catch the exception. Try catch is not allowed to use across yield, finally cannot ensure that the code block can still be executed when the coroutine ends abnormally, so it is often impossible to know a coroutine. It is not convenient to find the cause if the program execution ends normally. According to the principle that the Unity3D coroutine is an iterator, I designed a interceptable iterator that can inject code blocks during the execution of the coroutine and catch exceptions. Using InterceptableEnumerator to wrap the original iterator, you can capture the execution exception of the coroutine code, and no matter whether the coroutine ends normally, you can insert a code block before the coroutine exits, ensuring that this code block will definitely be at the end of the coroutine. carried out. In my Executors, I use the InterceptableEnumerator to ensure that the task ends normally. No matter whether the coroutine is executed successfully or abnormally, I can set the result of the AsyncResult by registering the Finally block. Ensure that AsyncResult.IsDone is equal to true, which will not cause the task Stuck.
 
-InterceptableEnumerator支持条件语句块，可以在外部插入一个条件语句块，控制协程逻辑或中止协程。异常语句块，可以捕获到协程异常，Finally语句块，确保协程结束一定会调用这个语句块。下面我们来看看示例。
+InterceptableEnumerator supports conditional statement blocks. You can insert a conditional statement block outside to control the coroutine logic or abort the coroutine. Exception statement block, you can catch coroutine exceptions, Finally statement block, to ensure that the end of the coroutine will call this statement block. Let's take a look at an example.
 
     /// <summary>
     /// 这是一个迭代器的包装函数
@@ -1727,11 +1724,11 @@ InterceptableEnumerator支持条件语句块，可以在外部插入一个条件
         return enumerator;
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-### 消息系统(Messenger)
+### Message System(Messenger)
 
-Messenger用于应用模块间的通讯，它提供了消息订阅和发布的功能。Messenger支持按消息类型订阅和发布消息，也支持按channel来订阅和发布消息。
+Messenger is used for communication between application modules. It provides the function of message subscription and publishing. Messenger supports subscribing and publishing messages by message type, and subscribing and publishing messages by channel.
 
     public class MessengerExample : MonoBehaviour
     {
@@ -1779,13 +1776,13 @@ Messenger用于应用模块间的通讯，它提供了消息订阅和发布的�
         }
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-### 可观察的对象(Observables)
+### Observables
 
-ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数据绑定中是必不可少的，它们分别实现了INotifyPropertyChanged和INotifyCollectionChanged接口，当对象的属性改变或者集合中Item变化时，我们能通过监听PropertyChanged和CollectionChanged事件可以收到属性改变和集合改变的通知，在数据绑定功能中，只有实现了这两个接口的对象在属性或者集合变化时，会自动通知UI视图改变，否则只能在初始绑定时给UI控件赋值一次，绑定之后改变视图模型的数值，无法通知UI控件修改。
+ObservableObject, ObservableList, ObservableDictionary are indispensable in the data binding of the MVVM framework. They respectively implement the INotifyPropertyChanged and INotifyCollectionChanged interfaces. When the property of an object changes or the item in the collection changes, we can monitor the PropertyChanged and CollectionChanged events. Received notifications of property changes and collection changes. In the data binding function, only objects that implement these two interfaces will automatically notify the UI view of changes when the properties or collections change. Otherwise, you can only give the UI the initial binding. The control is assigned once, and the value of the view model is changed after binding, and the UI control cannot be notified of the change.
 
-下面我们看看ObservableDictionary的使用示例，当我们需要创建一个自定义的ListView控件时，我们需要了解其原理。
+Let's take a look at the usage example of ObservableDictionary. When we need to create a custom ListView control, we need to understand its principle.
 
     public class ObservableDictionaryExample : MonoBehaviour
     {
@@ -1857,13 +1854,13 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
         }
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-### 数据绑定(Databinding)
+### Databinding
 
-数据绑定是MVVM的关键技术，它用于将视图与视图模型进行绑定连接，视图和视图模型的连接可以是双向的，也可以是单向的，视图模型数据的改变可以通过数据绑定功能自动通知视图改变，同样视图的改变也可以通知视图模型数值进行改变。除了数值的连接外，数据绑定还可以支持事件、方法、命令的绑定。数据绑定在框架中是以一个服务模块的方式存在，它由很多的功能组件组成，如数据绑定上下文、类型转换器、表达式解析器、路径解析器、对象和方法代理、属性和Field的访问器等。数据绑定服务是可选的，只有在使用到框架的视图模块，且使用MVVM的方式来开发UI时，它是必要的。当然你也可以不使用本框架的视图模块，而仅仅使用数据绑定服务。
+Data binding is the key technology of MVVM. It is used to bind and connect the view with the view model. The connection between the view and the view model can be two-way or one-way. The data of the view model can be changed through data binding. The function automatically notifies the view change, and the same view change can also notify the view model value to change. In addition to the connection of values, data binding can also support the binding of events, methods, and commands. Data binding exists in the framework as a service module. It consists of many functional components, such as data binding context, type converters, expression parsers, path parsers, object and method agents, properties, and fields. Visitor, etc. The data binding service is optional. It is necessary only when the framework's view module is used and the UI is developed using MVVM. Of course, you can not use the view module of this framework, but only use the data binding service.
 
-数据绑定服务是一个基础组件，我们可以在游戏初始化脚本中启动数据绑定服务，并且将所有的组件注册到全局上下文的服务容器中。如果有朋友想使用第三方的IoC组件，如Autofac、Zenject等，那么需要参考BindingServiceBundle的代码，将OnStart函数中初始化的所有类用其他的容器来创建。
+The data binding service is a basic component. We can start the data binding service in the game initialization script and register all the components in the service container of the global context. If a friend wants to use third-party IoC components, such as Autofac, Zenject, etc., then they need to refer to the code of the BindingServiceBundle and create all the classes initialized in the OnStart function with other containers.
 
     //获得全局上下文
     ApplicationContext context = Context.GetApplicationContext();
@@ -1872,7 +1869,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
     BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
     bindingService.Start();
 
-如果安装了Lua插件，使用Lua编写游戏时，数据绑定服务初始化如下，LuaBindingServiceBundle中增加了有关对Lua对象支持的组件。
+If the Lua plugin is installed, when writing a game in Lua, the data binding service is initialized as follows. LuaBindingServiceBundle adds components that support Lua objects.
 
     //获得全局上下文
     ApplicationContext context = Context.GetApplicationContext();
@@ -1881,7 +1878,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
     LuaBindingServiceBundle bundle = new LuaBindingServiceBundle(context.GetContainer());
     bundle.Start();
 
-#### 数据绑定示例
+#### Data binding example
 
     //创建一个数据绑定集合，泛型参数DatabindingExample是视图，AccountViewModel是视图模型
     BindingSet<DatabindingExample, AccountViewModel> bindingSet;
@@ -1898,27 +1895,27 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
     bindingSet.Build();
 
-#### 绑定模式
+#### Binding mode
 
 - **OneWay**(View <-- ViewModel)
 
-    单向绑定，只能视图模型修改视图中UI控件的值，ViewModel必须继承了INotifyPropertyChanged接口，并且属性值变化时会触发PropertyChanged事件，否则效果与OneTime一致，只有初始化绑定赋值一次。如Field则只能首次有效。
+    One-way binding, only the view model can modify the value of the UI control in the view. The ViewModel must inherit the INotifyPropertyChanged interface, and the PropertyChanged event will be triggered when the property value changes. Otherwise, the effect is consistent with OneTime, and only the initialization binding is assigned once. For example, Field is only valid for the first time.
 
 - **TwoWay**(View <--> ViewModel)
 
-    双向绑定，视图控件修改，会自动修改视图模型，视图模型修改会自动修改视图控件。ViewModel必须支持PropertyChanged事件，UI控件必须支持onEndEdit事件，并且绑定了onEndEdit事件。
+    Two-way binding, view control modification will automatically modify the view model, and view model modification will automatically modify the view control. The ViewModel must support the PropertyChanged event, and the UI control must support the onEndEdit event and be bound to the onEndEdit event.
 
 - **OneTime**(View <-- ViewModel)
 
-    只赋值一次，只有在绑定关系初始化的时候将ViewModel的值赋值到视图控件上。
+    It is only assigned once, and the value of the ViewModel is assigned to the view control only when the binding relationship is initialized.
 
 - **OneWayToSource**(View --> ViewModel)
 
-    单向绑定，方向与OneWay相反，只能视图UI控件赋值到视图模型的属性。
+    One-way binding, the opposite direction to OneWay, can only assign view UI controls to properties of the view model.
 
-#### 类型转换器(IConverter)
+#### Type converter(IConverter)
 
-通常情况下，基本数据类型，当视图控件的字段类型与视图模型字段类型不一致时会自动转换，除非是无法自动转换的情况下才需要自定义类型转换器来支持。但是通过视图模型中保存的图片路径、图片名称或者图集精灵的名称，来修改视图控件上的图片或者图集精灵时，则必须通过类型转换器来转换。
+In general, basic data types are automatically converted when the field type of the view control is inconsistent with the field type of the view model, unless a custom type converter is required to support it. However, when you modify the picture or atlas on the view control through the picture path, picture name, or atlas name saved in the view model, you must use a type converter to convert it.
 
     //加载一个精灵图集
     Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
@@ -1940,13 +1937,13 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
     //通过视图模型Icon，修改精灵名称，通过spriteConverter转换为对应的Sprite，赋值到图片的sprite属性上。
     bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();
 
-请查看示例 [ListView And Sprite Databinding Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [ListView And Sprite Databinding Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-#### 绑定类型
+#### Binding type
 
-- **属性和Field绑定**
+- **Property and Field Binding**
 
-    属性和Field绑定很简单，直接见示例
+    Property and Field binding is very simple, see the example directly
 
       //C#，单向绑定
       bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).OneWay();
@@ -1961,9 +1958,9 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
       bindingSet:Bind(self.username):For("text"):To("account.username"):OneWay()
       bindingSet:Bind(self.errorMessage):For("text"):To("errors['errorMessage']"):OneWay()
 
-- **表达式绑定**
+- **Expression binding**
 
-    表达式绑定只支持视图模型的一个或者多个属性，通过表达式转换为某个类型的值赋值到视图UI控件上，只能是OneTime或者OneWay的类型。表达式绑定函数，支持拉姆达表达式参数和string参数两种配置方式，C#代码只支持拉姆达表达式参数的方法，代码会自动分析表达式关注的视图模型的一个或者多个属性，自动监听这些属性的改变；Lua代码只支持使用string参数版本的方法，无法自动分析使用了视图模型的哪些属性，需要在参数中配置表达式所使用到的属性。
+    Expression binding only supports one or more properties of the view model. Values converted to a certain type by expressions are assigned to view UI controls, which can only be of the type OneTime or OneWay. An expression binding function supports two configuration modes of lambda expression parameters and string parameters. C # code only supports the method of lambda expression parameters. The code will automatically analyze one or more attributes of the view model that the expression is concerned with. Automatically listen for changes in these attributes; Lua code only supports the method using the string parameter version. It cannot automatically analyze which attributes of the view model are used. You need to configure the attributes used by the expression in the parameters.
 
       //C#代码，使用拉姆达表达式为参数的ToExpression方法，自动分析监听视图模型的Price属性
       bindingSet.Bind(this.price).For(v => v.text).ToExpression(vm => string.Format("${0:0.00}", vm.Price)).OneWay();
@@ -1974,9 +1971,9 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
           return string.format(tostring("%0.2f"), vm.price)
       end ,"price"):OneWay()
 
-- **方法绑定**
+- **Method binding**
 
-    方法绑定与属性绑定类似，也支持拉姆达表达式和字符串参数两个版本，方法绑定要确保控件的事件参数类型与视图模型被绑定方法的参数类型一致，否则可能导致绑定失败。
+    Method binding is similar to property binding. It also supports two versions of lambda expressions and string parameters. Method binding must ensure that the event parameter type of the control is the same as the parameter type of the bound method of the view model.
 
       //C#，拉姆达表达式方式的绑定，Button.onClick 与视图模型的成员OnSubmit方法绑定
       bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit);
@@ -1988,11 +1985,11 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
       bindingSet:Bind(self.submit):For("onClick"):To("submit"):OneWay()
 
 
-- **命令和交互请求绑定**
+- **Command and interactive request binding**
 
-    命令是对视图模型方法的一个包装，一般UI按钮onClick的绑定，既可以绑定到视图模型的一个方法，也可以绑定到视图模型的一个命令。但是建议绑定到命令上，命令不但可以响应按钮的点击事件，还能控制按钮的可点击状态，可以在按钮按下后立即使按钮置灰，在按钮事件响应完成后，重新恢复按钮状态。
+    A command is a wrapper for a view model method. The binding of a general UI button onClick can be either a method of the view model or a command of the view model. However, it is recommended to bind to the command. The command can not only respond to the click event of the button, but also control the clickable state of the button. The button can be grayed out immediately after the button is pressed, and the button state can be restored after the button event response is completed.
 
-    交互请求(InteractionRequest)交互请求往往都和命令配对使用，命令响应UI的点击事件，处理点击逻辑，交互请求向控制层发生消息控制UI的创建、修改和销毁。
+    Interaction Request (InteractionRequest) Interaction requests are often paired with commands. Commands respond to UI click events, handle click logic, and interact with requests to the control layer to control the creation, modification, and destruction of UI messages.
 
       //C#，绑定控制层的OnOpenAlert函数到交互请求AlertDialogRequest上
       bindingSet.Bind().For(v => this.OnOpenAlert).To(vm => vm.AlertDialogRequest);
@@ -2000,16 +1997,16 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
       //绑定Button的onClick事件到OpenAlertDialog命令上
       bindingSet.Bind(this.openAlert).For(v => v.onClick).To(vm => vm.OpenAlertDialog);
 
-- **集合的绑定**
+- **Collection binding**
 
-    字典和列表的绑定跟属性/Field绑定基本差不多，见下面的代码
+    The dictionary and list binding is basically the same as the property/field binding, see the following code
 
       //C#，绑定一个Text.text属性到一个字典ObservableDictionary中key ="errorMessage" 对应的对象
       bindingSet.Bind(this.errorMessage).For(v => v.text).To(vm => vm.Errors["errorMessage"]).OneWay();
 
-- **静态类绑定**
+- **Static class binding**
 
-    静态类绑定和视图模型绑定唯一区别就是，静态类绑定创建的是静态绑定集，静态绑定集不需要视图模型对象。
+    The only difference between static class binding and view model binding is that static class binding creates a static binding set. The static binding set does not require a view model object.
 
       //C#，创建一个静态类的绑定集
       BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();
@@ -2017,9 +2014,9 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
       //绑定标题到类Res的一个静态变量databinding_tutorials_title
       staticBindingSet.Bind(this.title).For(v => v.text).To(() => Res.databinding_tutorials_title).OneWay();
 
-- **本地化数据的绑定**
+- **Localized data binding**
 
-    本地化数据绑定请使用静态绑定集ToValue()函数绑定，首先通过Localization.GetValue()获得IObservableProperty对象，这是一个可观察的属性，切换语言时会收到值改变的通知，然后通过ToValue函数绑定，具体见下面的示例。
+    For localized data binding, please use the static binding set ToValue () function binding. First, obtain the IObservableProperty object through Localization.GetValue (). This is an observable property. When the language is switched, you will receive a notification of the value change. ToValue function binding, see the example below.
 
       //C#，创建一个静态类型的绑定集
       BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();
@@ -2034,9 +2031,9 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
 #### Command Parameter
 
-从事件到命令(ICommand)或方法的绑定支持自定义参数，使用Command Parameter可以为没有参数的UI事件添加一个自定义参数（如Button的Click事件），如果UI事件本身有参数则会被命令参数覆盖。使用Command Parameter可以很方便的将多个Button的Click事件绑定到视图模型的同一个函数OnClick(int buttonNo)上，请注意确保函数的参数类型和命令参数匹配，否则会导致错误。详情请参考下面的示例
+Binding from event to command (ICommand) or method supports custom parameters. Use Command Parameter to add a custom parameter to a UI event without parameters (such as the Click event of a Button). If the UI event itself has parameters, it will be commanded Parameter override. Use Command Parameter to easily bind the Click events of multiple Buttons to the same function OnClick (int buttonNo) of the view model. Please ensure that the parameter type of the function matches the command parameter, otherwise it will cause an error. Please refer to the example below for details.
 
-在示例中将一组Button按钮的Click事件绑定到视图模型的OnClick函数上，通过参数buttonNo可以知道当前按下了哪个按钮。
+In the example, the Click event of a group of Button buttons is bound to the OnClick function of the view model. You can know which button is currently pressed by the parameter buttonNo.
 
     public class ButtonGroupViewModel : ViewModelBase
     {
@@ -2100,7 +2097,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
 #### Scope Key
 
-在某些视图中，可能需要动态创建绑定关系，动态的移除绑定关系，这里我们提供了一种可以批量的移除绑定关系的方式，那就是Scope Key。
+In some views, you may need to dynamically create binding relationships and dynamically remove binding relationships. Here we provide a way to remove binding relationships in batches, which is Scope Key.
 
     //C#,
     string scopeKey = "editKey";
@@ -2111,13 +2108,13 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
     this.ClearBindings(scopeKey); //or this.BindingContext().Clear(scopeKey)
 
 
-#### 绑定的生命周期
+#### Binding life cycle
 
-一般来说数据绑定都在视图创建函数中来初始化，通过BindingSet来配置视图控件和视图模型之间的绑定关系，当调用BindingSet的Build函数时，Binder会创建BindingSet中所有的绑定关系对，被创建的绑定对会保存在当前视图的BindingContext中。BindingContext在首次调用时自动创建，同时自动生成了一个BindingContextLifecycle脚本，挂在当前视图对象上，由它来控制BindingContext的生命周期，当视图销毁时，BindingContext会随之销毁，存放在BindingContext中的绑定关系对也会随之销毁。
+Generally, the data binding is initialized in the view creation function. The binding relationship between the view control and the view model is configured through the BindingSet. When the Build function of the BindingSet is called, Binder creates all the binding relationship pairs in the BindingSet. The created binding pair will be saved in the BindingContext of the current view. The BindingContext is automatically created when it is first called, and a BindingContextLifecycle script is automatically generated. It is hung on the current view object, which controls the life cycle of the BindingContext. When the view is destroyed, the BindingContext is destroyed along with it. The bindings stored in the BindingContext Relationships will also be destroyed.
 
-#### 注册属性和域的访问器
+#### Accessors for properties and fields
 
-在IOS平台不允许JIT编译，不允许动态生成代码，数据绑定功能访问对象的属性、域和方法时无法像其他平台一样通过动态生成委托来访问，只能通过反射来访问，众所周知反射的效率是很差的，所以我提供了静态注入访问器的功能来绕过反射。默认情况下，我已经创建了UGUI和Unity引擎的部分类的属性访问器，参考我的代码，你也可以将视图模型类的常用属性的访问器注册到类型代理中。
+In the IOS platform, JIT compilation is not allowed, and dynamic code generation is not allowed. When data binding functions access object properties, fields, and methods, they cannot be accessed through dynamic generation delegation like other platforms. They can only be accessed through reflection. The efficiency of reflection is well known. It's bad, so I provide the ability to statically inject accessors to bypass reflection. By default, I have created property accessors for some classes of the UGUI and Unity engines. With reference to my code, you can also register the accessors of common properties of the view model class to the type proxy.
 
     public class UnityProxyRegister
     {
@@ -2223,11 +2220,11 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
         }
     }
 
-### UI框架
+### UI framework
 
-#### 动态变量集(Variables)
+#### Variables
 
-在UI的开发过程中，视图脚本往往需要访问、控制UI界面上的UI控件，通常来说，我们要么通过Transform.Find来查找，要么在View脚本中定义一个属性，在编辑UI界面时将控件拖放到这个属性上。第一种方式效率不高，第二种方式新增、删除都要重新改脚本属性，不是那么灵活。 在这里，我提供了第三中方式，VariableArray，这是一个动态的变量集，可以方便的新增和删除，又可以像一个成员属性一样使用。而且它不但支持所有的基本数据类型，还支持Unity组件类型、值类型。
+During the development of the UI, the view script often needs to access and control the UI controls on the UI interface. Generally speaking, we must either use Transform.Find to find it, or define a property in the View script, and control the control when editing the UI interface. Drag and drop onto this property. The first method is not efficient, and the second method adds and deletes the script properties again, which is not so flexible. Here, I provide the third method, VariableArray, which is a dynamic variable set that can be easily added and deleted, and can be used like a member property. And it not only supports all basic data types, but also supports Unity component types and value types.
 
 ![](images/Variable_UI.png)
 
@@ -2243,9 +2240,9 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
     printf("email:%s",self.email.text)
 
 
-#### UI视图定位器(IUIViewLocator)
+#### UI view locator (IUIViewLocator)
 
-UI视图定位器是一个查询和加载UI视图的服务，它提供了同步和异步加载UI视图的服务。根据项目的不同，可以自定义实现它的功能，你可以从Resources中加载视图，也可以从一个AssetBundle中加载视图，或者两者都支持。
+The UI view locator is a service for querying and loading UI views. It provides services for loading UI views synchronously and asynchronously. Depending on the project, you can customize its functionality. You can load views from Resources, you can also load views from an AssetBundle, or both.
 
     //C#，创建一个默认的视图定位器，它支持从Resources中加载视图，如果要从AssetBundle中加载，需要自己实现
     IUIViewLocator locator = new DefaultUIViewLocator()
@@ -2254,15 +2251,15 @@ UI视图定位器是一个查询和加载UI视图的服务，它提供了同步�
     var window = locator.LoadWindow<LoadingWindow>("UI/Loading");
     window.Show();
 
-#### UI视图动画(Animations)
+#### Animations
 
-根据一个UI视图打开、关闭、获得焦点、失去焦点的过程，视图动画可以分为入场动画、出场动画、激活动画、钝化动画。继承UIAnimation或者IAnimation，使用DoTween、iTween等，可以创建自己满意的UI动画。
+According to the process of opening, closing, gaining focus, and losing focus of a UI view, the view animation can be divided into admission animation, exit animation, activation animation, and passivation animation. Inherit UIAnimation or IAnimation, use DoTween, iTween, etc., you can create your own UI animation.
 
-在框架中UIView支持入场动画和出场动画，当打开一个视图或者隐藏一个视图时会可以播放动画。而Window除了支持入场动画和出场动画，还支持激活动画和钝化动画，并且自动控制播放，当一个Window获得焦点时播放激活动画，当失去焦点是播放钝化动画。
+UIView supports entry and exit animations in the framework. The animation can be played when a view is opened or a view is hidden. In addition to supporting entry and exit animations, Window also supports activation and passivation animations, and automatically controls playback. When a window gains focus, it plays an activation animation, and when it loses focus, it plays a passivation animation.
 
-如下所示，在Examples中，我创建了一个渐隐渐显的动画，将他们挂在一个Window视图上，并设置为入场动画和出场动画，当窗口打开时逐渐显现，当窗口关闭时慢慢消失。
+As shown below, in Examples, I created a fade-out animation, hung them on a Window view, and set it as an entrance animation and an exit animation, which gradually appear when the window opens, and slowly when the window closes. Slowly disappear.
 
-自定义一个C#的渐隐渐显动画
+Customize a C# fade-in animation
 
 ![](images/Animations_Alpha.png)
 
@@ -2314,7 +2311,7 @@ UI视图定位器是一个查询和加载UI视图的服务，它提供了同步�
         }
     }
 
-使用DoTween自定义一个Lua的动画
+Using DoTween to customize a Lua animation
 
 ![](images/Animations_Alpha_Lua.png)
 
@@ -2334,11 +2331,11 @@ UI视图定位器是一个查询和加载UI视图的服务，它提供了同步�
 
     return M
 
-#### UI控件
+#### UI controls
 
-UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍然无法满足我们的要求，比如我们需要一个性能优越的ListView，这时候我们就需要自定义自己的UI控件。在本框架中，我提供了一些常用的UI控件，比如AlertDialog、Loading、Toast等，在Examples/Resources/UI目录下，你能找到默认的视图界面，参考这些界面可以重新定义界面外观，修改静态类的ViewName属性可以重新制定视图的加载路径。
+Although UGUI provides us with a rich UI control library, at some time, it still cannot meet our requirements. For example, we need a ListView with superior performance. At this time, we need to customize our own UI controls. In this framework, I provide some common UI controls, such as AlertDialog, Loading, Toast, etc. In the Examples / Resources / UI directory, you can find the default view interface. Refer to these interfaces to redefine the interface appearance and modify the static The ViewName property of the class can be used to reformulate the loading path of the view.
 
-下面以AlertDialog为例来介绍它们的用法
+The following uses AlertDialog as an example to introduce their usage.
 
 ![](images/AlertDialog.png)
 
@@ -2352,27 +2349,27 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
         Debug.LogFormat("Result:{0}",result);
     });
 
-#### 视图、窗口和窗口管理器
+#### Views, windows, and window managers
 
-- **视图(IView/IUIView)**
+- **IView/IUIView**
 
-    视图通俗的讲就是展现给用户所看到的UI界面、图像、动画等。在本框架中，根据游戏视图层的特点，将其分成两大类，场景视图和UI视图。UI视图对应的是IUIView接口，而场景视图对应的是IView接口。    
+    Views are popularly presented to the UI interface, images, animations, etc. that the user sees. In this framework, according to the characteristics of the game view layer, it is divided into two categories, scene views and UI views. The UI view corresponds to the IUIView interface, and the scene view corresponds to the IView interface.   
 
-- **视图组(IViewGroup/IUIViewGroup)**
+- **IViewGroup/IUIViewGroup**
 
-    视图组是一个视图的集合，也可以说是视图容器，它有多个视图组成，在视图组中可以添加、删除子视图。同时视图组本身也是一个视图，它同样可以做为其他视图组的子视图。
+    A view group is a collection of views. It can also be said as a view container. It consists of multiple views. You can add and delete subviews in a view group. At the same time, the view group itself is a view, and it can also be used as a subview of other view groups.
 
-    在UI开发中，我们经常会发现一个UI界面可以划分很多的区域，比如Top栏，左边栏，右边栏，Bottom栏，内容区域等等，并且有些部分在多个UI界面之间是可以共享使用的。根据这些特点，我就可以将不同的区域分别做成不同的视图，在最后界面显示时，通过视图组装配成完整的视图，这样既有助于提高代码的重复利用，又大大降低了代码的耦合性和复杂性。**重点说一下，我们可以用这种设计思路来设计游戏的新手引导系统，只有界面需要显示引导时，才将引导界面动态插入到当前的界面中。新手引导的逻辑与正常游戏逻辑完全分离，避免造成引导逻辑和游戏逻辑的高度耦合。**
+    In UI development, we often find that a UI interface can be divided into many areas, such as the Top bar, the left bar, the right bar, the Bottom bar, the content area, etc., and some parts can be shared between multiple UI interfaces. of. Based on these characteristics, I can make different areas into different views. When the final interface is displayed, the view group is assembled into a complete view. This not only helps to improve the reuse of the code, but also greatly reduces the code. Coupling and complexity. **The important point is that we can use this design idea to design the novice guidance system for the game. Only when the interface needs to display guidance, the guidance interface is dynamically inserted into the current interface. The novice guidance logic is completely separated from the normal game logic to avoid a high degree of coupling between the guidance logic and the game logic.**
 
-    同样，在游戏场景视图中，我们也可以将复杂视图拆分成大大小小的视图组和子视图，并且在游戏过程中，动态的添加和删除子视图。比如一个游戏角色，就是场景中的一个子视图，当角色进入视野时添加视图，当从视野消失时，删除视图。
+    Similarly, in the game scene view, we can also split complex views into large and small view groups and subviews, and dynamically add and delete subviews during the game. For example, a game character is a subview in the scene. When the character enters the field of view, the view is added, and when it disappears from the field of view, the view is deleted.
 
-    以王者荣耀日常活动界面为例，可以拆分为顶菜单栏、左侧菜单栏和内容区域，菜单栏视图可以复用，每次只需要改变内容区域的视图即可。
+    Taking the King Glory daily activity interface as an example, it can be split into a top menu bar, a left menu bar, and a content area. The menu bar view can be reused. You only need to change the view of the content area each time.
 
     ![](images/View_Example.png)
 
-- **窗口(IWindow)**
+- **IWindow**
 
-    Window是一个UI界面视图的根容器(IUIViewGroup、IUIView)，同时也是一个控制器，它负责创建、销毁、显示、隐藏窗口视图，负责管理视图、视图模型的生命周期，负责创建子窗口、与子窗口交互等。
+    Window is the root container of a UI interface view (IUIViewGroup, IUIView). It is also a controller. It is responsible for creating, destroying, displaying, and hiding window views. It is responsible for managing the life cycle of views and view models. Window interaction, etc.
 
       //C#，创建窗口
       public class ExampleWindow : Window
@@ -2434,13 +2431,13 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
       return M
 
-- **窗口容器和窗口管理器(WindowContainer、IWindowManager)**
+- **Window container and window manager**
 
-    窗口管理器是一个管理窗口的容器，游戏启动时首先需要创建一个全局的窗口管理器GlobalWindowManager，将它挂在最外层的根Canvas上（见下图），在这个根Canvas下创建编辑其他的窗口视图。
+    The window manager is a container for managing windows. When the game starts, you need to create a global window manager, GlobalWindowManager, and hang it on the outer root Canvas (see the figure below). Create and edit other root Canvas under this root Canvas Window view.
 
     ![](images/WindowManager.png)
 
-    窗口容器既是一个窗口管理器，又是一个窗口，在窗口容器中可以添加、删除子窗口、管理子窗口，也可以像一个普通窗口一样显示、隐藏。拿我们的MMO游戏来说，一般会创建一个名为"Main"的主窗口容器和一个"Battle"的窗口容器，在主界面打开的所有窗口视图都会放入到Main容器中，但是当进入某个战斗副本时，会将Main容器隐藏，将"Battle"容器显示出来，战斗副本中所有UI窗口都会用Battle容器来管理，退出副本时，只需要关闭Battle容器，设置Main容器可见，就可以轻松恢复Main容器中窗口的层级关系。
+    The window container is both a window manager and a window. In the window container, you can add and delete child windows, manage child windows, and also display and hide like a normal window. Take our MMO game. Generally, a main window container named "Main" and a "Battle" window container are created. All window views opened in the main interface will be placed in the Main container, but when you enter a certain When there are two battle copies, the Main container will be hidden and the "Battle" container will be displayed. All UI windows in the battle copy will be managed by the Battle container. When exiting the copy, you only need to close the Battle container and set the Main container to be visible. Restores the hierarchical relationship of windows in the Main container.
 
       //C#，创建一个MAIN容器，默认会在全局窗口管理器中创建
       WindowContainer winContainer = WindowContainer.Create("MAIN");
@@ -2450,17 +2447,17 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
       StartupWindow window = locator.LoadWindow<StartupWindow>(winContainer, "UI/Startup/Startup");
       ITransition transition = window.Show()    
 
-- **窗口类型**
+- **Window type**
 
-  窗口类型分为四种类型，全屏窗口（FULL），弹出窗口（POPUP），对话框窗口（DIALOG），进度条窗口（PROGRESS）。不同的窗口类型，在窗口打开和被遮挡时会有不同的表现。弹出窗口在被其他窗口覆盖时，会自动关闭。对话框窗口和进度窗口有最高的优先级，它会显示在最顶层，并且只允许打开一个，当有对话窗或者进度窗口显示时，如果打开其他窗口，其他窗口不会显示，只有当对话框或者进度窗关闭时才会显示出来，如果同时打开多个对话窗，对话窗口会排队处理，只有关闭前一个才会显示下一个。
+  The window types are divided into four types, full-screen windows (FULL), pop-up windows (POPUP), dialog windows (DIALOG), and progress bar windows (PROGRESS). Different window types will behave differently when the window is opened and blocked. Pop-up windows will automatically close when they are covered by other windows. The dialog window and progress window have the highest priority. It will be displayed at the top level and only one can be opened. When a dialog window or progress window is displayed, if other windows are opened, other windows will not be displayed. Or the progress window will be displayed when it is closed. If multiple dialog windows are opened at the same time, the dialog windows will be queued for processing, and the next one will be displayed only when the previous one is closed.
 
   ![](images/WindowType.png)  
 
-#### 交互请求(InteractionRequest)
+#### Interaction Request
 
-交互请求(InteractionRequest)在MVVM框架的使用中，我认为是最难理解，最复杂和最绕的地方，而且在网上很多的MVVM示例中，也没有讲到这部分，为什么我们需要交互请求呢？交互请求解决了什么问题？引入交互请求主要目的是为了视图模型(ViewModel)和视图(View)解耦，**在视图模型中，我们不应该创建、引用和直接控制视图，因为那是控制层的工作，不应该是视图模型层的工作，视图层可以依赖视图模型层，但是反之则不允许，切记**。在一个按钮(Button)的点击事件中，往往会触发视图的创建或者销毁，而在MVVM中，按钮点击事件一般都会绑定到视图模型层的一个命令（ICommand）上，即绑定到视图模型的一个成员方法上，在这个方法中往往除了视图无关的逻辑外，还包含了控制视图的创建、打开、销毁的逻辑，前文中提到，这些逻辑会造成对视图层引用和依赖，这是不允许的，所以我们就引入了交互请求(InteractionRequest)的概念，通过交互请求，将视图控制的逻辑发回到控制层中处理（在本框架中就是View、Window脚本，它们既是视图层又是控制层，见前面章节中MVVM架构图）。
+InteractionRequest (InteractionRequest) is the most difficult to understand, the most complicated and the most winding place in the use of the MVVM framework, and it is not mentioned in many MVVM examples on the Internet. Why do we need interactive requests? What problem does the interactive request solve? The main purpose of introducing interactive requests is to decouple the view model (ViewModel) and the view (View). In the view model, we should not create, reference and directly control the view, because that is the work of the control layer, and it should not be the view model layer. Work, the view layer can depend on the view model layer, but the opposite is not allowed, remember . In the click event of a button, the creation or destruction of the view is often triggered. In MVVM, the button click event is usually bound to a command (ICommand) in the view model layer, that is, bound to the view model. In a member method, in addition to view-independent logic, this method also contains logic that controls the creation, opening, and destruction of views. As mentioned earlier, these logics will cause references and dependencies on the view layer. This is It is not allowed, so we have introduced the concept of InteractionRequest. Through the interaction request, the view control logic is sent back to the control layer for processing (in this framework, View and Window scripts, which are both the view layer and the Control layer, see MVVM architecture diagram in previous chapter).
 
-请看下面的代码示例，使用交互请求来打开一个警告对话窗，同时在对话窗关闭时，收到用户选择的结果。
+Take a look at the following code example, using an interactive request to open a warning dialog window, and receive the result selected by the user when the dialog window is closed.
 
     public class InteractionExampleViewModel : ViewModelBase
     {
@@ -2565,11 +2562,11 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
         }
     }
 
-请查看示例 [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-#### 交互行为(InteractionAction)
+#### Interaction Action
 
-InteractionAction配合InteractionRequest配对使用，由交互请求发起交互申请，由交互行为来完成交互的任务，它是对上一节中视图方法绑定到交互请求的一个扩展，通常来说使用方法绑定交互请求就可以了，但是针对一些通用的功能，比如请求开启或者关闭一个Loading窗可以用InteractionAction来实现，以方便代码重用，在不同的视图中，只需要创建一个LoadingInteractionAction实例就可以完成Loading窗的开启功能。下面请看开启Loading的示例
+InteractionAction is used in conjunction with InteractionRequest. An interaction request is initiated by an interaction request. The interaction task is used to complete the interaction task. It is an extension of the view method binding to the interaction request in the previous section. Generally speaking, using method binding to an interaction request Yes, but for some common functions, such as requesting to open or close a Loading window, you can use InteractionAction to facilitate code reuse. In different views, you only need to create a LoadingInteractionAction instance to complete the opening function of the Loading window. See the example below to enable Loading
 
     //在ViewModel中创建一个交互请求
     this.loadingRequest = new InteractionRequest<VisibilityNotification>();
@@ -2588,17 +2585,17 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
     //绑定InteractionAction到InteractionRequest
     bindingSet.Bind().For(v => v.loadingInteractionAction).To(vm => vm.LoadingRequest);
 
-请查看示例 [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-#### 集合与列表视图的绑定
-在Unity3D游戏开发中，我们经常要使用到UGUI的ScrollRect控件，比如我们要展示一个装备列表，或者一个背包中的所有物品。那么我们可以使用数据绑定功能来自动更新列表中的内容吗，比如添加、删除、修改一个装备集合中的数据，装备列表视图会自动更新界面内容吗？ 答案是肯定的，使用ObservableList或者ObservableDictionary集合来存储装备信息，通过数据绑定集合到一个视图脚本上，就可以自动的更新装备列表的内容，只是这里的视图脚本需要我们自己实现，因为每个项目列表视图并不是标准化的，我无法提供一个通用的脚本来提供集合的绑定。
+#### Collection and list view binding
 
-下面的示例中我创建了一个ListView的视图脚本，使用它来动态更新一个装备列表的视图。
+In Unity3D game development, we often need to use UGUI's ScrollRect control. For example, we want to display a list of equipment, or all the items in a backpack. So can we use the data binding function to automatically update the content in the list, such as adding, deleting, and modifying data in a gear set, will the gear list view automatically update the interface content? The answer is yes. Use the ObservableList or ObservableDictionary collection to store equipment information. Through the data binding collection to a view script, you can automatically update the content of the equipment list, but the view script here needs to be implemented by ourselves because each item List views are not standardized, and I cannot provide a universal script to provide bindings to collections.
+
+In the following example, I created a ListView view script and used it to dynamically update the view of an equipment list.
 
 ![](images/Tutorials_ListView.png)
 
-
-首先我们创建一个ListView控件，通过这个控件来监听装备集合ObservableDictionary的改变，当集合中内容变化时，自动更新UGUI视图，向装备列表中添加、删除装备。
+First we create a ListView control, and use this control to listen for changes in the ObservableDictionary of the equipment collection. When the content in the collection changes, the UGUI view is automatically updated, and equipment is added to and removed from the equipment list.
 
     public class ListView : UIView
     {
@@ -2741,7 +2738,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         }
     }
 
-然后创建一个装备列表的Item视图ListItemView，它负责将Item视图上的UGUI控件和装备的视图模型绑定，当装备的视图模型改变时，自动更新Item视图的内容。
+Then create an Item view ListItemView of the equipment list, which is responsible for binding the UGUI control on the Item view to the equipment's view model, and automatically update the content of the Item view when the equipment's view model changes.
 
     public class ListItemView : UIView
     {
@@ -2763,7 +2760,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
     }
 
 
-最后是ListView控件和ListItemView的视图模型代码如下。
+Finally, the view model code for the ListView control and ListItemView is as follows.
 
     public class ListViewViewModel : ViewModelBase
     {
@@ -2937,16 +2934,17 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         }
     }
 
-请查看示例 [ListView And Sprite Databinding Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [ListView And Sprite Databinding Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
-#### 数据绑定与异步加载精灵
-在前文的示例中，我有使用到精灵的绑定，只是它是提前加载到内存中的。在这里我将讲讲如何通过数据绑定来异步加载一个精灵。与上一节中集合绑定类似，通过一个视图脚本就可以轻松实现精灵的异步加载。下面我们来看示例。
+#### Data binding and asynchronous loading sprites
 
-点击图中的"Change Icon"按钮改变图标，图标的加载为异步加载的方式，有一个加载动画。
+In the previous example, I had a binding to a sprite, but it was loaded into memory ahead of time. Here I will talk about how to load a sprite asynchronously through data binding. Similar to collection binding in the previous section, asynchronous loading of sprites can be easily achieved with a view script. Let's look at an example.
+
+Click the "Change Icon" button in the figure to change the icon. The loading of the icon is asynchronous, and there is a loading animation.
 
 ![](images/Tutorials_SpriteUI.png)
 
-首先，我们实现一个精灵异步加载器，将它挂在需要异步加载精灵图片的Image控件上。
+First, we implement a sprite asynchronous loader and hang it on the Image control that needs to load sprite images asynchronously.
 
 ![](images/Tutorials_Sprite.png)
 
@@ -3014,7 +3012,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         }
     }
 
-然后创建示例界面的视图和视图模型代码如下
+Then create the view and view model code of the sample interface as follows.
 
     public class SpriteViewModel : ViewModelBase
     {
@@ -3062,14 +3060,15 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         }
     }
 
-请查看示例 [Databinding for Asynchronous Loading Sprites Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Databinding for Asynchronous Loading Sprites Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ## Lua
 
-### 模块与继承
-利用lua的原表继承，在lua开发中模拟了类(模块)和继承的概念，通过System模块的class函数，可以定义模块、继承模块，继承C#类，扩展C#实例，以面向对象的思路编写lua代码。
+### Modules and inheritance
 
-通过下面的代码示例，我们来看看如何定义模块和继承模块
+Using Lua's original table inheritance, the concepts of classes (modules) and inheritance are simulated in Lua development. Through the class function of the System module, you can define modules, inherit modules, inherit C # classes, extend C # instances, and write with object-oriented thinking. lua code.
+
+With the following code example, let's see how to define modules and inherit modules.
 
     -- 定义一个名为 Animal 的基类
     local Animal = class("Animal")
@@ -3098,9 +3097,9 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         self.age = 5
     end
 
-Lua除了可以继承模块，也可以继承C#的类，当然也包括静态类。要在lua继承一个非静态的C#类，那么这个类必须要能通过new关键字来实例化，或者提供了别的实例化函数。比如MonoBehaviour脚本类，无法通过new关键字来实例化，是无法在lua中继承的。在class函数中，第一个参数是类名，第二个参数必须是C#类或者是C#类的实例化函数。我们可以在Lua脚本中重写父类的函数，也可以在Lua中调用父类的函数，看如下代码。
+In addition to Lua, modules can also inherit C # classes, and of course static classes. To inherit a non-static C # class in Lua, this class must be able to be instantiated by the new keyword or provide other instantiation functions. For example, the MonoBehaviour script class cannot be instantiated by the new keyword and cannot be inherited in Lua. In the class function, the first parameter is the class name, and the second parameter must be a C # class or an instantiated function of the C # class. We can rewrite the function of the parent class in Lua script, or call the function of the parent class in Lua, see the following code.
 
-**注意：调用父类函数必须使用模块名调用，不要使用self调用**
+**Note: The function of the parent class must be called using the module name, not self**
 
     M.base(self).Get(self,name,cascade) --正确
 
@@ -3108,7 +3107,7 @@ Lua除了可以继承模块，也可以继承C#的类，当然也包括静态类
 
     M.base(self):Get(name,cascade) --错误
 
-Lua继承C#类Loxodon.Framework.Contexts.Context，新增GetName()函数，重写Context.Get(string name,bool cascade)函数。
+Lua inherits C # class Loxodon.Framework.Contexts.Context, adds GetName () function, and overrides Context.Get (string name, bool cascade) function.
 
     -- 定义一个继承C#类Context的模块，推荐模块的变量名默认都使用M
     local M = class("LuaContext",CS.Loxodon.Framework.Contexts.Context)
@@ -3132,11 +3131,11 @@ Lua继承C#类Loxodon.Framework.Contexts.Context，新增GetName()函数，重�
 
     return M
 
-MonoBehaviour脚本无法被继承，但是它的实例可以被lua扩展，使用class函数，我们可以为它添加新的属性和方法，与C#类继承不同，class第二个参数是一个C#类的实例。请看lua示例中，C#脚本LuaLauncher的扩展代码。
+A MonoBehaviour script cannot be inherited, but its instance can be extended by Lua. Using the class function, we can add new properties and methods to it. Unlike C # class inheritance, the second parameter of class is an instance of a C # class. Look at the Lua example, the C # script LuaLauncher extension code.
 
-"target"对象是在C#脚本LuaLauncher中，在初始化lua脚本环境时将自己的实例注入到lua环境的，在本框架所有的扩展脚本中，统一使用"target"的变量名,请在游戏逻辑开发中遵循这一规则。
+The "target" object is in the C # script LuaLauncher. When initializing the lua script environment, it injects its own instance into the lua environment. In all extension scripts of this framework, the "target" variable name is used uniformly. Follow this rule.
 
-C#代码，LuaLauncher脚本中初始化lua执行环境的部分。
+C# code, part of LuaLauncher script to initialize lua execution environment.
 
     var luaEnv = LuaEnvironment.LuaEnv;
     scriptEnv = luaEnv.NewTable();
@@ -3169,7 +3168,7 @@ C#代码，LuaLauncher脚本中初始化lua执行环境的部分。
     onStart = metatable.Get<Action<MonoBehaviour>>("start");
     onDestroy = metatable.Get<Action<MonoBehaviour>>("destroy");
 
-通过lua扩展LuaLauncher脚本的功能，awake、enable、disable、start、destroy函数都可以在lua中实现，在C#中调用。
+Extend LuaLauncher script function through lua, awake, enable, disable, start, destroy functions can all be implemented in lua and called in C #.
 
     require("framework.System")
 
@@ -3210,8 +3209,9 @@ C#代码，LuaLauncher脚本中初始化lua执行环境的部分。
 
     return M
 
-### Lua的ObserableObject
-Lua的Table要满足MVVM数据绑定的要求，在属性改变时能够触发属性修改的通知，那么就必须继承ObserableObject对象。它与C#的ObserableObject功能类似，只是为了适应Lua开发，用Lua语言重新实现的一个版本。在Lua中定义的视图模型和子视图模型，都必须继承这个类。下面请看示例
+### Lua's ObserableObject
+
+To meet the requirements of MVVM data binding, Lua's Table can trigger the notification of property modification when the property changes, then it must inherit ObserableObject. It is similar to the ObserableObject function of C #, but it is a version reimplemented in Lua language to adapt to Lua development. The view model and subview model defined in Lua must inherit this class. See example below.
 
     require("framework.System")
 
@@ -3240,10 +3240,11 @@ Lua的Table要满足MVVM数据绑定的要求，在属性改变时能够触发�
 
     return M
 
-### Lua中使用Unity的协程
-XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.cs_generator()。通过这个函数的可以将一个lua方法包装成一个C#的IEnumerator，然后在C#中放入协程执行。
+### Coroutines in Lua using Unity
 
-下面的doLoad函数模拟了一个加载任务，执行了一个从1到50的循环，利用lua协程的yield方法，每个次循环睡眠0.1秒。
+XLua provides us with a function util.cs_generator () that creates an iterator (IEnumerator) in lua. Through this function, a lua method can be wrapped into a C # IEnumerator, and then a coroutine is executed in C#.
+
+The following doLoad function simulates a loading task, executes a loop from 1 to 50, uses the lua coroutine yield method, and sleeps for 0.1 seconds each time.
 
     ---
     -- 模拟一个加载任务
@@ -3268,14 +3269,14 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
         print("task end")
     end
 
-使用XLua的函数util.cs_generator将doLoad包装成IEnumerator放入Executors.RunOnCoroutineNoReturn中执行。
+Use XLua's function util.cs_generator to wrap doLoad into an IEnumerator and execute it in Executors.RunOnCoroutineNoReturn.
 
     local Executors = require("framework.Executors")
 
     local result = ProgressResult(true)
     Executors.RunOnCoroutineNoReturn(util.cs_generator(function() self:doLoad(result) end))
 
-在Lua中，继承C#的Executors类，扩展了两个函数RunLuaOnCoroutine和RunLuaOnCoroutineNoReturn，通过它们可以将Lua函数自动包装成一个IEnumerator放入Unity3D的协程中执行。
+In Lua, the C # Executors class is extended, and two functions RunLuaOnCoroutine and RunLuaOnCoroutineNoReturn are extended. Through them, Lua functions can be automatically wrapped into an IEnumerator and executed in the coroutine of Unity3D.
 
     local Executors = require("framework.Executors")
 
@@ -3287,7 +3288,7 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
     --Executors.RunLuaOnCoroutineNoReturn(self.doLoad,self,result)
     return result
 
-以闭包的方式定义、执行一个协程函数。
+Define and execute a coroutine function as a closure.
 
     --执行一个协程并且返回一个IAsyncResult。传入一个过期时间duration（单位秒），执行duration秒后协程退出
 	return Executors.RunLuaOnCoroutine(function(duration)
@@ -3298,10 +3299,11 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
 			end
 		end,duration)
 
-关于Lua协程更多的信息，请看framework.Executors和示例 LoxodonFramework/Lua/Examples/Coroutine Tutorials
+For more information about Lua coroutines, see framework.Executors and examples LoxodonFramework/Lua/Examples/Coroutine Tutorials.
 
-### Lua中使用日志系统
-框架提供了一个Lua版本的日志系统，底层仍然是使用Loxodon.Log.ILog来提供服务，但是在Lua中对函数重新封装。它支持DEBUG、INFO、WARN、ERROR、FATAL多个级别，可以在代码或者配置文件中（如果使用log4net）设置日志打印的级别。同时它还支持显示日志所在的文件路径和行号，方便代码调试。
+### Using the logging system in Lua
+
+The framework provides a Lua version of the logging system. The underlying layer still uses Loxodon.Log.ILog to provide services, but functions are repackaged in Lua. It supports multiple levels of DEBUG, INFO, WARN, ERROR, and FATAL. The level of log printing can be set in the code or configuration file (if log4net is used). At the same time, it also supports displaying the file path and line number of the log, which is convenient for code debugging.
 
     --如果使用默认的日志工厂，可以如下设置日志打印的级别
     --如果使用log4net，请在log4net配置文件中设置日志打印的级别
@@ -3314,39 +3316,38 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
     logger:debug("This is a test.")
     logger:info("This is a test.")
 
-### Lua 预编译工具
+### Lua precompiled tools
 
-使用Lua预编译工具可以将Lua脚本预编译为字节码文件，并且可以选择是否加密该文件。Lua官方的luac命令编译的字节码分64位和32位，如果想编译64位和32位兼容的字节码，请参考XLua的官方文件，有关通用字节码编译的部分[《通用字节码》](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/compatible_bytecode.md)。
+Lua precompilation tools can be used to precompile Lua scripts into bytecode files, and you can choose whether to encrypt the file. Lua official luac command compiled byte code points 64 and 32, if you want to compile 64-bit and 32-bit compatible bytecode, please refer XLua official documents, relating to common bytecode compiler part ["universal bytes Code"](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/compatible_bytecode.md).
 
 ![](images/LuaPrecompileWizard.png)
 
+- Bin:luac command path. If you want to compile 64-bit, 32-bit, or compatible bytecode, select the corresponding luac command.
+- Output：The directory where the compiled bytecode files are stored. You can select one of the directories under Assets and package them into an AssetBundle, or you can select a directory under StreamingAssets and load it directly from the StreamingAssets folder. The extension of pre-compiled bytecode files can be ".luac" or ".bytes", or other extensions can be customized.
+- Src：the root directory of lua source code, supports multiple source code directories. The source code file extension must be ".lua" or ".lua.txt".
+- Encryption：Encryption function, which supports AES encryption by default, or you can extend the new encryption method yourself. The panel of the encryption part is dynamic, and the new encryption method is extended, and it will be automatically displayed in the interface of the tool.
+- Apply：Save settings
+- Precompile：Precompile Lua scripts
 
-- Bin:luac命令的路径，如果要编译64位或者32位或者两者相兼容的字节码，请选择对应的luac命令。
-- Output：编译后的字节码文件的存储目录。可以选择Assets下面的某个目录，统一打包为一个AssetBundle，也可以选择StreamingAssets下的某个目录，直接从StreamingAssets文件夹中加载。预编译后的字节码文件的扩展名可以选择".luac"或者".bytes"，也可以自定义其他的扩展名。
-- Src：lua源代码的根目录，支持多个源代码目录。源代码文件扩展名必须是".lua"或者".lua.txt"。
-- Encryption：加密功能，默认支持AES加密方式，也可以自己扩展新的加密方式，加密部分的面板是动态的，扩展了新的加密方式，会自动显示在工具的界面中。
-- Apply：保存设置
-- Precompile：预编译Lua脚本
+#### Lua loader
 
-#### Lua加载器
+- FileLoader
 
-- FileLoader 文件加载
+    File loader, supports loading Lua scripts or Lua bytecode files from local folders, and also supports loading files from Android apk or obb, so if your lua source code or bytecode files are stored in the StreamingAssets folder , Can also load correctly on the Android platform.
 
-    文件加载器，支持从本地文件夹加载Lua脚本或者Lua字节码文件，同时也支持从Android的apk或者obb中加载文件，所以如果你的lua源代码或者字节码文件存放在StreamingAssets文件夹中，在Android平台也能够正确加载。
+- AssetBundleLoader
 
-- AssetBundleLoader 加载器
+    Support loading lua scripts or bytecodes from AssetBundle. Generally speaking, it is recommended to put all lua bytecodes in the same AssetBundle, load them into memory when the game starts, configure AssetBundleLoader loader, and load from this AssetBundle first lua code.
 
-    支持从AssetBundle中加载lua脚本或者字节码，一般来说建议将所有的lua字节码都放在同一个AssetBundle中，在游戏启动时加载到内存，配置AssetBundleLoader加载器，优先从这个AssetBundle中加载lua代码。
+- DecodableLoader
 
-- DecodableLoader 可解码的加载器
+    Decodeable loader, which works with file loader or AssetBundle loader to decrypt binary data.
 
-    可解码的加载器，它配合文件加载器或者AssetBundle加载器一起使用，对二进制数据进行解密。
+#### Example
 
-#### 示例
+In the following example, in Editor mode, a Lua file with the extension ".lua.txt" or ".lua" is loaded from the "Assets/LuaScripts/" directory via FileLoader. In the real machine mode, load the lua bytecode file from the Application.persistentDataPath + "/LuaScripts/" directory through FileLoader. If it is not found, search the Application.streamingAssetsPath + "/LuaScripts/" directory and use the DecodableLoader loader to decrypt it.
 
-在下面的示例中，在Editor模式，通过FileLoader从Assets/LuaScripts/目录中加载扩展名为".lua.txt"或者".lua"的lua文件。在真机模式，则通过FileLoader从Application.persistentDataPath + "/LuaScripts/"目录加载lua字节码文件，如果没有找到则搜索Application.streamingAssetsPath + "/LuaScripts/"目录，并且使用DecodableLoader加载器进行解密。
-
-**在LuaEnv中可以添加多个加载器，后加入的加载器优先级高于先加入的加载器。**
+**Multiple loaders can be added in LuaEnv. Loaders added later take precedence over those added first.**
 
     var luaEnv = LuaEnvironment.LuaEnv;
 
@@ -3367,13 +3368,13 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
         luaEnv.AddLoader(new DecodableLoader(loader2, decryptor));
     #endif
 
-#### 扩展其他加密方式
+#### Expand other encryption way
 
-继承Loxodon.Framework.Security.Cryptography.IDecryptor和Loxodon.Framework.Security.Cryptography.IEncryptor接口创建加密解密器，具体实现可以参考RijndaelCryptograph类的源代码。
+Inherit the Loxodon.Framework.Security.Cryptography.IDecryptor and Loxodon.Framework.Security.Cryptography.IEncryptor interfaces to create a cryptographic decryptor. For specific implementation, refer to the source code of the RijndaelCryptograph class.
 
-继承Loxodon.Framework.XLua.Editors.EncryptorFactory类可以为新的加密器创建一个工厂类，将加密需要的参数作为类的成员变量定义在类中，并标识字段为可序列化，即添加"SerializeField"属性。，这样预编译工具可以自动搜索到这个类，并为它创建一个编辑界面。具体实现请参考RijndaelCryptographFactory类。
+Extending the Loxodon.Framework.XLua.Editors.EncryptorFactory class can create a factory class for the new encryptor, define the parameters required for encryption as class member variables in the class, and identify the field as serializable, that is, add "SerializeField" Attributes. So that the pre-compilation tool can automatically search for this class and create an editing interface for it. For specific implementation, please refer to the RijndaelCryptographFactory class.
 
-比如添加如下代码，则可以在编辑界面看到如图中所示的界面
+For example, if you add the following code, you can see the interface as shown in the editing interface.
 
     public class ExampleCryptographFactory : EncryptorFactory
     {
@@ -3393,80 +3394,80 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
 
 ![](images/LuaPrecompileWizard2.png)
 
-## 分层架构
+## Layered architecture
 
-通常来说，为了降低项目开发中的复杂程度，将复杂的业务分解，分而治之，会采用分类、分层的解决的方式。从垂直方向来分，一个复杂的项目可以由多个子系统组成，一个子系统又可以由多个业务模块组成。从水平方向来分，按三层架构可以分为表现层、领域层和基础层，按四层架构可以分为表现层、应用层、领域层和基础层。一般来说要根据自己项目具体情况和复杂程度来选择。有关这方面的知识可以在网上查找有关文章或书籍，如果对DDD编程有兴趣的同学可以了解了解《领域驱动设计(DDD编程)》方面的知识，在这里不做过多阐述，这里只是结合我的MVVM框架，简单讲解一下一个游戏客户端项目应该如何分层。
+Generally speaking, in order to reduce the complexity of project development, the complex business is decomposed, divided and conquered, and a classification and layered solution will be adopted. Divided from the vertical direction, a complex project can be composed of multiple subsystems, and a subsystem can be composed of multiple business modules. From the horizontal direction, the three-tier architecture can be divided into the presentation layer, the domain layer, and the base layer, and the four-tier architecture can be divided into the presentation layer, the application layer, the domain layer, and the base layer. Generally speaking, you should choose according to the specific situation and complexity of your project. You can find related articles or books on the Internet. If you are interested in DDD programming, you can learn about the knowledge of "Domain Driven Design (DDD Programming)". I won't go into too much detail here, but I just combine it MVVM framework, briefly explain how a game client project should be layered.
 
-**请参考我的项目示例 Examples 的目录结构**
+**Please refer to the directory structure of my project examples**
 
-### 表现层(View)
+### User Interface
 
-表现层是负责向用户展示信息和接收用户输入的层。结合MVVM框架，可以分为视图层/控制层（类似Android的Activity类，视图和控制合并在一个类中）、视图模型层。
+The presentation layer is the layer responsible for presenting information to the user and receiving user input. Combined with the MVVM framework, it can be divided into view layer / control layer (similar to Android's Activity class, view and control are combined in one class), and view model layer.
 
-- View层
+- View
 
-  视图层一般包括窗口、视图脚本、UI控件、动画脚本、视图资源，以及其他的一些视图层辅助工具，比如视图定位器等。具体可以根据自己的项目情况来抽象和规划。
+  The view layer generally includes windows, view scripts, UI controls, animation scripts, view resources, and other view layer auxiliary tools, such as view locators. Specifically, you can abstract and plan according to your own project situation.
 
-  - 窗口/视图(Window、UIView等)
+  - Window/UIView
 
-    窗口和视图脚本控制所有视图的生命周期，比如子视图、子窗口的创建、销毁都应该写在这一层代码中。如果界面打开和关闭的逻辑是由ViewModel层中的函数来触发，那么请使用IDialogService或者交换请求发送事件到视图脚本中来执行。
+    oWindow and view scripts control the life cycle of all views, such as the creation and destruction of subviews and subwindows should be written in this layer of code. If the logic of opening and closing the interface is triggered by functions in the ViewModel layer, then use IDialogService or exchange requests to send events to the view script for execution.
 
-  - UI控件(UGUI控件或者自定义控件)
+  - UI controls (UGUI controls or custom controls)
 
-    UI控件层，自定义的UI控件都应该写在这一层，并且强烈建议UI功能控件化，比如列表、对话框、进度条、Grid、Menu等等都应该写成通用的UI控件。
+    oUI control layer, custom UI controls should be written in this layer, and it is strongly recommended that UI functions be controlled, such as lists, dialog boxes, progress bars, Grid, Menu, etc. should be written as universal UI controls.
 
-  - 动画脚本(Animation)
+  - Animation
 
-    UI动画层，比如可以使用DoTween写成各种窗口动画或者界面动画，直接挂在UI的GameObject上使用，可以参考我的示例来写，如果是Window动画，请继承我的UIAnimation或者使用GenericUIAnimation来实现。
+    oUI animation layer, for example, you can use DoTween to write various window animations or interface animations, and directly hang them on the UI GameObject. You can refer to my example to write. If it is a window animation, please inherit my UIAnimation or use GenericUIAnimation to implement.
 
-  - 视图定位器(IUIViewLocator)
+  - View locator(IUIViewLocator)
 
-    视图定位器，通过视图定位器从Resources中或者从AssetBundle中来加载视图模板。当然你可以可以参考我的UI视图定位器来写自己的3D视图定位器。
+    oView locator, which uses the view locator to load view templates from Resources or from AssetBundle. Of course, you can refer to my UI view locator to write your own 3D view locator.
 
-  - 交互行为(InterationAction)
+  - Interation Action
 
-    交互行为，这是为了窗口和视图创建代码复用抽象出来的概念，将某些经常使用的界面创建代码封装为交互行为。
+    oInteraction behavior. This is an abstraction for window and view creation code reuse. It encapsulates some frequently used interface creation code as interaction behavior.
 
-- ViewModel层
-  - 视图模型(ViewModel)
+- ViewModel
+  - ViewModel
 
-    视图模型层包含所有的视图模型和子视图模型，Window和View的视图模型一般来说是一对一配对的，一个窗口必须有一个视图模型，一个窗口下的子视图，一般应该也有对应的子视图模型。但是纯粹的模型对象封装的子视图模型，比如UserInfoVM，可以是多个视图共享使用，并且当UserInfoVM属性改变，与其绑定的多个界面都会同时改变。
+    The view model layer contains all the view models and subview models. Generally, the view models of Window and View are paired one by one. A window must have a view model, and the subviews under a window should generally have corresponding subviews. model. However, pure view object-encapsulated subview models, such as UserInfoVM, can be shared by multiple views, and when the UserInfoVM property changes, multiple interfaces bound to it will change at the same time.
 
-    视图模型不允许依赖视图层的对象，但是视图层可以依赖视图模型，所以视图对视图模型的依赖是单向的。视图模型通过交互请求或者IDialogService创建或者销毁视图。
+    The view model is not allowed to depend on the objects of the view layer, but the view layer can depend on the view model, so the dependence of the view on the view model is one-way. The view model creates or destroys the view through an interactive request or IDialogService.
 
-    视图模型直接调用应用层Service来处理业务，视图模型可以注册事件到应用层的Service中，监听模型对象数据的改变。比如角色信息改变，那么角色服务应该触发角色信息改变的事件，视图模型层收到事件时更新角色信息视图模型对象中的值，触发所有UI界面的改变。
+    oThe view model directly calls the application layer Service to process the business. The view model can register events to the application layer Service to listen to changes in model object data. For example, if the role information changes, then the role service should trigger an event where the role information changes. When the view model layer receives the event, it updates the values in the role information view model object to trigger all UI interface changes.
 
-  - 视图模型定位器(IViewModelLocator)
+  - View model locator (IViewModelLocator)
 
-    视图模型定位器，通过它来管理被共享使用的子视图模型，或者通过它来保存窗口视图模型（比如窗口关闭但是视图模型不销毁，下次打开窗口时，可以通过它来恢复窗口状态）。这一层不是必须的，可以不要它，也可以使用别的方案替代它。
+    View model locator, which is used to manage the shared sub-view model, or to save the window view model (such as the window is closed but the view model is not destroyed, the next time you open the window, you can use it to restore the window state). This layer is not necessary, it can be omitted or replaced with another solution.
 
-### 应用层(Service)
+### Application (Service)
 
-应用层主要用来表达用户用例，协调不同领域对象之间的行为。如果采用DDD充血模型的设计思路，它只是很薄的一层，它作为表现层和领域层的桥梁存在，通过应用服务为表现层提供服务。如果采用传统的贫血模型的设计思路，它应该包含所有的业务逻辑的处理，在使用框架的同学中对DDD编程了解的不多，所以这里我建议采用传统的贫血模型的设计思路开发游戏。在我的项目示例中，它对应的是Services层。
+The application layer is mainly used to express user use cases and coordinate the behavior between objects in different domains. If the design concept of the DDD congestion model is adopted, it is only a very thin layer. It exists as a bridge between the presentation layer and the domain layer, and provides services for the presentation layer through application services. If the design idea of the traditional anemia model is adopted, it should include all the business logic processing. I don't know much about DDD programming among the students who use the framework, so here I recommend the design idea of the traditional anemia model to develop the game. In my project example, it corresponds to the Services layer.
 
-比如一个游戏项目可能包括角色服务、背包服务、装备服务、技能服务、聊天服务、道具服务等等，通过这些服务来管理角色信息、背包中的道具、用户的装备、用户学会的技能、聊天信息、聊天室信息等等。服务缓存这些信息，并且通过Load或者服务器推送来保证它们与服务器同步，当有消息更新时，触发事件，通知视图模型层更新。比如主界面上的各种红点（提示有新消息的那个状态）就可以通过各个服务的事件和视图模型上的红点状态来设计。
+For example, a game project may include character services, backpack services, equipment services, skill services, chat services, item services, and so on. These services are used to manage character information, items in the backpack, user equipment, user learned skills, chat information , Chat room information, and more. The service caches this information and ensures that they are synchronized with the server through Load or server push. When there is a message update, an event is triggered to notify the view model layer to update. For example, various red dots on the main interface (the state that prompts a new message) can be designed through the events of each service and the red dot status on the view model.
 
-### 领域层(Domain Model)
+### Domain Model
 
-领域层是负责业务逻辑表达、处理的层，是整个业务的核心。如果按DDD编程，领域层一般包含实体、值对象、领域服务、聚合、聚合根、仓储、工厂等概念，因为涉及的概念众多并且持久化需要配合CQRS + ES 模式，而且掌握起来有相当门槛，所以如果你对DDD不是非常了解，这里我并不推荐完全按DDD编程的思路来设计你的代码，而是采用贫血模型的思路，下面我只针对贫血模型要使用到的部分概念来作一个简单介绍。
+The domain layer is responsible for the expression and processing of business logic and is the core of the entire business. If you program according to DDD, the domain layer generally includes concepts such as entities, value objects, domain services, aggregation, aggregation roots, storage, and factories, because the concepts involved are numerous and persistence needs to be compatible with the CQRS + ES model, and there are considerable thresholds to master. So if you are not very familiar with DDD, I don't recommend designing your code completely according to the DDD programming idea, but adopt the idea of the anemia model. Below, I will only make a simple idea of some concepts to be used in the anemia model. Introduction.
 
-- 实体(Entity)
+- Entity
 
-  实体必须有唯一标识，比如游戏中的账号、角色、技能、装备、道具等对象，都属于实体对象。
+  Entities must have unique identifiers, such as objects such as account numbers, characters, skills, equipment, and props in the game, which are all entity objects.
 
-- 值对象(Value Object)
+- Value Object
 
-  值对象它用于描述领域的某个方面本身没有概念标识的对象，值对象和实体不同，它没有唯一标识，并且它的属性是不可变的，比如游戏的一些配表信息等。
+  The value object is used to describe an object in a certain aspect of the domain that does not have a conceptual identifier. The value object is different from the entity. It has no unique identifier and its attributes are immutable, such as some game table information.
 
-- 仓储(Repository)
+- Repository
 
-  仓储层负责实体对象的增删改查等功能，通过仓储层，你可以读取数据或者持久化数据。可以将数据保存在本地Json、xml中，也可以保存在SQLite中，或者通过网络保存在服务器中。
+  The warehousing layer is responsible for functions such as adding, deleting, modifying, and checking the entity objects. Through the warehousing layer, you can read data or persist data. The data can be saved in local Json, xml, SQLite, or on the server through the network.
 
-### 基础层(Infrastructure)
+### Infrastructure
 
-基础层包含框架、数据库访问组件、网络组件、Log组件、Protobuf组件、公共的辅助类和方法。
+The base layer contains the framework, database access components, network components, Log components, Protobuf components, public helper classes and methods.
 
-## 联系方式
-邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
-网站: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)  
-QQ群: 622321589 [![](images/qq_group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)
+## Contact information
+Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
+Website: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)  
+QQ group: 622321589 [![](images/qq_group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)

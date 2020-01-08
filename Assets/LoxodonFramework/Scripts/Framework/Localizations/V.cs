@@ -81,8 +81,25 @@ namespace Loxodon.Framework.Localizations
 
         public T Value
         {
-            get { return (T)this.Property.Value; }
-            set { this.Property.Value = value; }
+            get
+            {
+                var p = this.Property as IObservableProperty<T>;
+                if (p != null)
+                    return p.Value;
+
+                return (T)this.Property.Value;
+            }
+            set
+            {
+                var p = this.Property as IObservableProperty<T>;
+                if (p != null)
+                {
+                    p.Value = value;
+                    return;
+                }
+
+                this.Property.Value = value;
+            }
         }
 
         object IObservableProperty.Value

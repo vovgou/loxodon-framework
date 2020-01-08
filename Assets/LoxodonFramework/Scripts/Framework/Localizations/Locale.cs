@@ -83,7 +83,11 @@ namespace Loxodon.Framework.Localizations
 
         public static CultureInfo GetCultureInfo()
         {
+#if UNITY_2018_1_OR_NEWER
+            return CultureInfo.CurrentUICulture;
+#else
             return GetCultureInfoByLanguage(Application.systemLanguage, DEFAULT_CULTUREINFO);
+#endif
         }
 
         public static CultureInfo GetCultureInfoByLanguage(SystemLanguage language)

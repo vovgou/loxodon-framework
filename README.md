@@ -26,10 +26,10 @@ IOS
 Android  
 UWP(window10)
 
-## Chinese manual
+## English manual
 
-- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
-- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
+- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework_en.md)
+- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework_en.pdf)
 
 ## Downloads  
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)

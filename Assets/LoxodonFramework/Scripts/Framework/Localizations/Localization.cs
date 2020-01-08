@@ -33,12 +33,14 @@ namespace Loxodon.Framework.Localizations
 {
     public class Localization : ILocalization
     {
-        private static readonly object _lock = new object();
+        private static readonly object _instanceLock = new object();
         private static Localization instance;
 
+        private readonly object _lock = new object();
         private CultureInfo cultureInfo;
         private Dictionary<string, IObservableProperty> data = new Dictionary<string, IObservableProperty>();
         private List<ProviderEntry> providers = new List<ProviderEntry>();
+        private EventHandler cultureInfoChanged;
 
         public static Localization Current
         {
@@ -47,14 +49,14 @@ namespace Loxodon.Framework.Localizations
                 if (instance != null)
                     return instance;
 
-                lock (_lock)
+                lock (_instanceLock)
                 {
                     if (instance == null)
                         instance = new Localization();
                     return instance;
                 }
             }
-            set { lock (_lock) { instance = value; } }
+            set { lock (_instanceLock) { instance = value; } }
         }
 
         [Obsolete("Please use \"Localization.Current\" instead of this method.")]
@@ -74,11 +76,7 @@ namespace Loxodon.Framework.Localizations
             return localization;
         }
 
-        protected Localization() : this(null, Locale.GetCultureInfo())
-        {
-        }
-
-        protected Localization(CultureInfo cultureInfo) : this(null, cultureInfo)
+        protected Localization() : this(null, null)
         {
         }
 
@@ -90,6 +88,12 @@ namespace Loxodon.Framework.Localizations
 
             if (provider != null)
                 this.AddDataProvider(provider);
+        }
+
+        public event EventHandler CultureInfoChanged
+        {
+            add { lock (_lock) { this.cultureInfoChanged += value; } }
+            remove { lock (_lock) { this.cultureInfoChanged -= value; } }
         }
 
         public virtual CultureInfo CultureInfo
@@ -105,8 +109,20 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
+        protected void RaiseCultureInfoChanged()
+        {
+            try
+            {
+                var handler = this.cultureInfoChanged;
+                if (handler != null)
+                    handler(this, EventArgs.Empty);
+            }
+            catch (Exception) { }
+        }
+
         protected virtual void OnCultureInfoChanged()
         {
+            RaiseCultureInfoChanged();
             this.Load();
         }
 
@@ -182,19 +198,133 @@ namespace Loxodon.Framework.Localizations
                 {
                     var key = kv.Key;
                     var value = kv.Value;
-                    IObservableProperty property;
                     keys.Add(key);
-                    if (data.TryGetValue(key, out property))
-                    {
-                        property.Value = value;
-                    }
-                    else
-                    {
-                        property = new ObservableProperty(value);
-                        data[key] = property;
-                    }
+                    AddValue(key, value);
                 }
             }
+        }
+
+        protected virtual void AddValue(string key, object value)
+        {
+            IObservableProperty property;
+            if (!data.TryGetValue(key, out property))
+            {
+                Type valueType = value != null ? value.GetType() : typeof(object);
+#if NETFX_CORE
+                TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(valueType);
+#else
+                TypeCode typeCode = Type.GetTypeCode(valueType);
+#endif
+                switch (typeCode)
+                {
+                    case TypeCode.Boolean:
+                        {
+                            property = new ObservableProperty<bool>();
+                            break;
+                        }
+                    case TypeCode.Byte:
+                        {
+                            property = new ObservableProperty<byte>();
+                            break;
+                        }
+                    case TypeCode.Char:
+                        {
+                            property = new ObservableProperty<char>();
+                            break;
+                        }
+                    case TypeCode.DateTime:
+                        {
+                            property = new ObservableProperty<DateTime>();
+                            break;
+                        }
+                    case TypeCode.Decimal:
+                        {
+                            property = new ObservableProperty<Decimal>();
+                            break;
+                        }
+                    case TypeCode.Double:
+                        {
+                            property = new ObservableProperty<Double>();
+                            break;
+                        }
+                    case TypeCode.Int16:
+                        {
+                            property = new ObservableProperty<short>();
+                            break;
+                        }
+                    case TypeCode.Int32:
+                        {
+                            property = new ObservableProperty<int>();
+                            break;
+                        }
+                    case TypeCode.Int64:
+                        {
+                            property = new ObservableProperty<long>();
+                            break;
+                        }
+                    case TypeCode.SByte:
+                        {
+                            property = new ObservableProperty<sbyte>();
+                            break;
+                        }
+                    case TypeCode.Single:
+                        {
+                            property = new ObservableProperty<float>();
+                            break;
+                        }
+                    case TypeCode.String:
+                        {
+                            property = new ObservableProperty<string>();
+                            break;
+                        }
+                    case TypeCode.UInt16:
+                        {
+                            property = new ObservableProperty<UInt16>();
+                            break;
+                        }
+                    case TypeCode.UInt32:
+                        {
+                            property = new ObservableProperty<UInt32>();
+                            break;
+                        }
+                    case TypeCode.UInt64:
+                        {
+                            property = new ObservableProperty<UInt64>();
+                            break;
+                        }
+                    case TypeCode.Object:
+                        {
+                            if (valueType.Equals(typeof(Vector2)))
+                            {
+                                property = new ObservableProperty<Vector2>();
+                            }
+                            else if (valueType.Equals(typeof(Vector3)))
+                            {
+                                property = new ObservableProperty<Vector3>();
+                            }
+                            else if (valueType.Equals(typeof(Vector4)))
+                            {
+                                property = new ObservableProperty<Vector4>();
+                            }
+                            else if (valueType.Equals(typeof(Color)))
+                            {
+                                property = new ObservableProperty<Color>();
+                            }
+                            else
+                            {
+                                property = new ObservableProperty();
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            property = new ObservableProperty();
+                            break;
+                        }
+                }
+                data[key] = property;
+            }
+            property.Value = value;
         }
 
         protected virtual void OnUnloadCompleted(List<string> keys)
@@ -461,6 +591,10 @@ namespace Loxodon.Framework.Localizations
             IObservableProperty value;
             if (data.TryGetValue(key, out value))
             {
+                var p = value as IObservableProperty<T>;
+                if (p != null)
+                    return p.Value;
+
                 if (value.Value is T)
                     return (T)(value.Value);
 

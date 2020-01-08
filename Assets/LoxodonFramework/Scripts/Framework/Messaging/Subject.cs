@@ -52,19 +52,25 @@ namespace Loxodon.Framework.Messaging
 
         public void Publish(T message)
         {
+            Action<T>[] array = null;
             lock (_lock)
             {
                 if (actions.Count <= 0)
                     return;
 
-                foreach (Action<T> action in this.actions)
+                array = this.actions.ToArray();
+            }
+
+            if (array == null || array.Length <= 0)
+                return;
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                try
                 {
-                    try
-                    {
-                        action(message);
-                    }
-                    catch (Exception) { }
+                    array[i](message);
                 }
+                catch (Exception) { }
             }
         }
 

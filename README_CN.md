@@ -28,7 +28,7 @@ UWP(window10)
 ## 中文文档
 
 - [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
-- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/Assets/LoxodonFramework/Docs/LoxodonFramework.pdf)
+- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.pdf)
 - [常见问题解答 FAQ](https://github.com/cocowolf/loxodon-framework/blob/master/docs/faq.md)
 
 ## 下载  

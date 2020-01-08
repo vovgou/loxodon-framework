@@ -435,6 +435,8 @@ namespace Loxodon.Framework.Execution
         {
 #if NETFX_CORE
             Task.Factory.StartNew(action);
+#elif UNITY_WEBGL
+            throw new NotSupportedException("Multithreading is not supported on the WebGL platform.");
 #elif UNITY_EDITOR
             ThreadPool.QueueUserWorkItem((state) =>
             {
