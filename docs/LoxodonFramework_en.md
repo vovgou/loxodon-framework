@@ -1,10 +1,17 @@
+---
+puppeteer:
+    landscape: false
+    format: "A3"
+    timeout: 3000 # <= 特殊设置，意味着等待（waitFor） 3000 毫秒
+---
+
 ![](images/icon.png)
 # Loxodon Framework
 
 *MVVM Framework for Unity3D(C# & XLua)*
 
 *Developed by Clark*
-*Translation by tntdesign9*
+*Translation by Tien Nguyen*
 *Version 1.9.0*
 
 *This is just a preliminary translation file, it may have some problems, we need more help, welcome to join us.*
