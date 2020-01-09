@@ -1,10 +1,3 @@
----
-puppeteer:
-    landscape: false
-    format: "A3"
-    timeout: 3000 # <= 特殊设置，意味着等待（waitFor） 3000 毫秒
----
-
 ![](images/icon.png)
 # Loxodon Framework
 
