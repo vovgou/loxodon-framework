@@ -133,7 +133,7 @@ UWP(window10)
         {            
             //TODO:Add unzip code here.
             
-            progressBar.value = (i/(float)30);            
+            progressBar.Value = (i/(float)30);            
             yield return null;
         }
                 
