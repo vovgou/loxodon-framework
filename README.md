@@ -71,6 +71,8 @@ UWP(window10)
 
 Create a view and view model of the progress bar.
 
+![](docs/images/progress.png)
+
     public class ProgressBarViewModel : ViewModelBase
     {
         private string tip;
@@ -118,6 +120,24 @@ Create a view and view model of the progress bar.
 
             bindingSet.Build();
         }
+    }
+    
+
+    IEnumerator Unzip(ProgressBarViewModel progressBar)
+    {
+        progressBar.Tip = "Unziping";
+        progressBar.Enabled = true;//Display the progress bar
+        
+        for(int i=0;i<30;i++)
+        {            
+            //TODO:Add unzip code here.
+            
+            progressBar.value = (i/(float)30);            
+            yield return null;
+        }
+                
+        progressBar.Enabled = false;//Hide the progress bar
+        progressBar.Tip = "";        
     }
 	
 ## Plugins

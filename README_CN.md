@@ -72,6 +72,8 @@ UWP(window10)
 
 创建一个进度条的视图和视图模型，并将视图中的UI控件和视图模型绑定，修改视图模型ProgressBarViewModel中的属性，视图UI界面将会自动改变。
 
+![](docs/images/progress.png)
+
     public class ProgressBarViewModel : ViewModelBase
     {
         private string tip;
@@ -119,6 +121,24 @@ UWP(window10)
 
             bindingSet.Build();
         }
+    }
+    
+
+    IEnumerator Unzip(ProgressBarViewModel progressBar)
+    {
+        progressBar.Tip = "Unziping";
+        progressBar.Enabled = true;//Display the progress bar
+        
+        for(int i=0;i<30;i++)
+        {            
+            //TODO:Add unzip code here.
+            
+            progressBar.value = (i/(float)30);            
+            yield return null;
+        }
+                
+        progressBar.Enabled = false;//Hide the progress bar
+        progressBar.Tip = "";        
     }
 	
 ## 插件与集成（可选）
