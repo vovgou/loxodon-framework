@@ -16,6 +16,9 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.9.4
+	Added the object pool.
+
 version 1.9.2
 	Fixed bug with multithreading on webgl platform.
 
