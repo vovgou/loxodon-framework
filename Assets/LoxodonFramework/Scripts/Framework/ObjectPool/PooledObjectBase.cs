@@ -22,9 +22,7 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.ObjectPool;
-
-namespace Loxodon.Framework.Pools
+namespace Loxodon.Framework.ObjectPool
 {
     public abstract class PooledObjectBase<T> : IPooledObject where T : PooledObjectBase<T>
     {
