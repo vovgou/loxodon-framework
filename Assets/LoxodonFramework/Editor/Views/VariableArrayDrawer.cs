@@ -33,7 +33,7 @@ namespace Loxodon.Framework.Editors
     public class VariableArrayDrawer : PropertyDrawer
     {
         private const float HORIZONTAL_GAP = 5;
-        private const float VERTICAL_GAP = 5;
+        private const float VERTICAL_GAP = 6;
 
         private ReorderableList list;
 
