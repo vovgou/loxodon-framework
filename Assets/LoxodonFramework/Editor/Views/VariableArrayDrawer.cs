@@ -42,7 +42,7 @@ namespace Loxodon.Framework.Editors
             if (list == null)
             {
                 list = new ReorderableList(property.serializedObject, property, true, true, true, true);
-                list.elementHeight = 22;
+                list.elementHeight = 21;
                 list.drawElementCallback = DrawElement;
                 list.drawHeaderCallback = DrawHeader;
                 list.onAddDropdownCallback = OnAddElement;
