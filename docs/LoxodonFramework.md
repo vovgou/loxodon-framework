@@ -1,10 +1,11 @@
+
 ![](images/icon.png)
 # Loxodon Framework
 
 *MVVM Framework for Unity3D(C# & XLua)*
 
 *开发者 Clark*
-*Version 1.9.0*
+*Version 1.9.4*
 
 <div style="page-break-after: always;"></div>
 
@@ -3094,18 +3095,21 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
     -- Cat类的构造函数
     function Cat:ctor()
         -- 重载了构造函数，会覆盖父类构造函数，通过如下显示的调用父类构造函数
-        Cat.base(self).ctor(self)
+        Cat.super.ctor(self)
         self.age = 5
     end
 
-Lua除了可以继承模块，也可以继承C#的类，当然也包括静态类。要在lua继承一个非静态的C#类，那么这个类必须要能通过new关键字来实例化，或者提供了别的实例化函数。比如MonoBehaviour脚本类，无法通过new关键字来实例化，是无法在lua中继承的。在class函数中，第一个参数是类名，第二个参数必须是C#类或者是C#类的实例化函数。我们可以在Lua脚本中重写父类的函数，也可以在Lua中调用父类的函数，看如下代码。
+Lua除了可以继承模块，也可以继承C#的类，当然也包括静态类。要在lua继承一个非静态的C#类，那么这个类必须要能通过new关键字来实例化，或者提供了别的实例化函数。比如MonoBehaviour脚本类，无法通过new关键字来实例化，是无法在lua中继承的。在class函数中，第一个参数是类名，第二个参数必须是C#类或者是C#类的实例化函数。我们可以在Lua脚本中重写父类的函数，也可以在Lua中调用父类的函数，可以使用M.super 或者M.base(self) 获得父类，调用父类的函数，推荐使用M.super 访问父类函数，看如下代码。
 
 **注意：调用父类函数必须使用模块名调用，不要使用self调用**
 
+    M.super.Get(self,name,cascade) --正确
     M.base(self).Get(self,name,cascade) --正确
 
+    self.super.Get(self,name,cascade) --错误
     self:base().Get(self,name,cascade) --错误
 
+    M.super:Get(name,cascade) --错误
     M.base(self):Get(name,cascade) --错误
 
 Lua继承C#类Loxodon.Framework.Contexts.Context，新增GetName()函数，重写Context.Get(string name,bool cascade)函数。
@@ -3123,7 +3127,7 @@ Lua继承C#类Loxodon.Framework.Contexts.Context，新增GetName()函数，重�
     -- 重写父类的函数，调用父类的函数
     function M:Get(name,cascade)    
         -- 调用父类的函数
-        local ret = M.base(self).Get(self,name,cascade)
+        local ret = M.super.Get(self,name,cascade)
         if ret then return ret end
 
         --代码省略

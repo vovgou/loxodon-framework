@@ -1,9 +1,3 @@
----
-puppeteer:
-    landscape: false
-    format: "A3"
-    timeout: 3000 # <= 特殊设置，意味着等待（waitFor） 3000 毫秒
----
 
 ![](images/icon.png)
 # Loxodon Framework
@@ -12,7 +6,7 @@ puppeteer:
 
 *Developed by Clark*
 *Translation by Tien Nguyen*
-*Version 1.9.0*
+*Version 1.9.4*
 
 *This is just a preliminary translation file, it may have some problems, we need more help, welcome to join us.*
 *Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)*
@@ -3100,7 +3094,7 @@ With the following code example, let's see how to define modules and inherit mod
     -- Cat类的构造函数
     function Cat:ctor()
         -- 重载了构造函数，会覆盖父类构造函数，通过如下显示的调用父类构造函数
-        Cat.base(self).ctor(self)
+        Cat.super.ctor(self)
         self.age = 5
     end
 
@@ -3108,11 +3102,11 @@ In addition to Lua, modules can also inherit C # classes, and of course static c
 
 **Note: The function of the parent class must be called using the module name, not self**
 
-    M.base(self).Get(self,name,cascade) --正确
+    M.super.Get(self,name,cascade) --正确
 
-    self:base().Get(self,name,cascade) --错误
+    self.super.Get(self,name,cascade) --错误
 
-    M.base(self):Get(name,cascade) --错误
+    M.super:Get(name,cascade) --错误
 
 Lua inherits C # class Loxodon.Framework.Contexts.Context, adds GetName () function, and overrides Context.Get (string name, bool cascade) function.
 
@@ -3129,7 +3123,7 @@ Lua inherits C # class Loxodon.Framework.Contexts.Context, adds GetName () funct
     -- 重写父类的函数，调用父类的函数
     function M:Get(name,cascade)    
         -- 调用父类的函数
-        local ret = M.base(self).Get(self,name,cascade)
+        local ret = M.super.Get(self,name,cascade)
         if ret then return ret end
 
         --代码省略
