@@ -40,7 +40,7 @@ namespace Loxodon.Framework.Localizations
         protected string[] filenames;
         protected string assetBundleUrl;
 
-        public AssetBundleLocalizationSourceDataProvider(string assetBundleUrl,params string[] filenames)
+        public AssetBundleLocalizationSourceDataProvider(string assetBundleUrl, params string[] filenames)
         {
             if (string.IsNullOrEmpty(assetBundleUrl))
                 throw new ArgumentNullException("assetBundleUrl");

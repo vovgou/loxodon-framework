@@ -36,7 +36,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         {
             if (target != null)
             {
-                this.target = new WeakReference(target, true);
+                this.target = new WeakReference(target, false);
                 this.targetName = target.ToString();
             }
         }
