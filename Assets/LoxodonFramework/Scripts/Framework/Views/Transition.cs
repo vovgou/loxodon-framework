@@ -37,6 +37,7 @@ namespace Loxodon.Framework.Views
         private Window window;
         private bool done = false;
         private bool animationDisabled = false;
+        private int layer = 0;
 
         private bool running = false;
 
@@ -98,6 +99,12 @@ namespace Loxodon.Framework.Views
         {
             get { return this.animationDisabled; }
             protected set { this.animationDisabled = value; }
+        }
+
+        public virtual int Layer
+        {
+            get { return this.layer; }
+            protected set { this.layer = value; }
         }
 
         protected void StateChanged(object sender, WindowStateEventArgs e)
@@ -171,6 +178,20 @@ namespace Loxodon.Framework.Views
             }
 
             this.animationDisabled = disabled;
+            return this;
+        }
+
+        public ITransition AtLayer(int layer)
+        {
+            if (this.running)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("The transition is running.sets the layer failed.");
+
+                return this;
+            }
+
+            this.layer = layer;
             return this;
         }
 

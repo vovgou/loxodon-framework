@@ -1,5 +1,5 @@
 ﻿  Loxodon Framework
-Version: 1.9.4
+Version: 1.9.6
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,9 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.9.6
+	Added AtLayer method to ITransition, which supports opening a new window in the background.
+
 version 1.9.4
 	Added the object pool.
 

@@ -50,6 +50,13 @@ namespace Loxodon.Framework.Views
         ITransition DisableAnimation(bool disabled);
 
         /// <summary>
+        /// Sets the layer of the window in the window manager. 0 is the topmost layer.
+        /// </summary>
+        /// <param name="layer"></param>
+        /// <returns></returns>
+        ITransition AtLayer(int layer);
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="callback"></param>
