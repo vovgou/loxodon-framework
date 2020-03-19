@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.Binding.Commands;
 using Loxodon.Framework.Binding.Converters;
 using Loxodon.Framework.Binding.Proxy;
 using Loxodon.Framework.Binding.Reflection;

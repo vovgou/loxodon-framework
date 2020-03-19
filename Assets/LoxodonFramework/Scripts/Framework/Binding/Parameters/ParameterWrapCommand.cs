@@ -25,7 +25,7 @@
 using Loxodon.Framework.Commands;
 using System;
 
-namespace Loxodon.Framework.Binding.Commands
+namespace Loxodon.Framework.Binding.Parameters
 {
     public class ParameterWrapCommand : ICommand
     {
