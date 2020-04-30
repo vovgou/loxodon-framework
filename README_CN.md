@@ -3,7 +3,7 @@
 # Loxodon Framework
 
 [![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/cocowolf/loxodon-framework/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v1.9.4-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
+[![release](https://img.shields.io/badge/release-v1.9.7-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
 
 [(English)](README.md)
 
@@ -216,14 +216,19 @@ UWP(window10)
 
 ## 介绍
 - 窗口视图示例 
+
   ![](docs/images/Window.png) 
 - 本地化示例 
+
   ![](docs/images/Localization.png) 
 - 数据绑定示例 
+
   ![](docs/images/Databinding.png) 
 - 变量 示例 
+
   ![](docs/images/Variable.png) 
 - 列表视图绑定 
+
   ![](docs/images/ListView.png) 
 
 ## 联系方式
