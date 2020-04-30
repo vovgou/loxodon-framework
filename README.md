@@ -3,7 +3,7 @@
 # Loxodon Framework
 
 [![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/cocowolf/loxodon-framework/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v1.9.4-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
+[![release](https://img.shields.io/badge/release-v1.9.7-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
 
 [(中文版)](README_CN.md)
 
@@ -212,14 +212,19 @@ Create a view and view model of the progress bar.
 
 ## Introduction
 - Window View 
+
   ![](docs/images/Window.png) 
 - Localization 
+
   ![](docs/images/Localization.png) 
 - Databinding 
+
   ![](docs/images/Databinding.png) 
 - Variable Example 
+
   ![](docs/images/Variable.png) 
 - ListView Binding 
+
   ![](docs/images/ListView.png) 
 
 ## Contact Us
