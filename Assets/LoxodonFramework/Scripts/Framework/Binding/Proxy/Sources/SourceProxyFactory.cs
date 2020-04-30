@@ -36,14 +36,21 @@ namespace Loxodon.Framework.Binding.Proxy.Sources
 
         public ISourceProxy CreateProxy(object source, SourceDescription description)
         {
-            if (!description.IsStatic && source == null)
-                return new EmptSourceProxy(description);
+            try
+            {
+                if (!description.IsStatic && source == null)
+                    return new EmptSourceProxy(description);
 
-            ISourceProxy proxy = null;
-            if (TryCreateProxy(source, description, out proxy))
-                return proxy;
+                ISourceProxy proxy = null;
+                if (TryCreateProxy(source, description, out proxy))
+                    return proxy;
 
-            throw new BindingException("Unable to bind: \"{0}\"", description.ToString());
+                throw new NotSupportedException("Not found available proxy factory.");
+            }
+            catch (Exception e)
+            {
+                throw new ProxyException(e, "An exception occurred while creating a proxy for the \"{0}\".", description.ToString());
+            }
         }
 
         protected virtual bool TryCreateProxy(object source, SourceDescription description, out ISourceProxy proxy)
@@ -51,20 +58,28 @@ namespace Loxodon.Framework.Binding.Proxy.Sources
             proxy = null;
             foreach (PriorityFactoryPair pair in this.factories)
             {
+                var factory = pair.factory;
+                if (factory == null)
+                    continue;
+
                 try
                 {
-                    var factory = pair.factory;
-                    if (factory == null)
-                        continue;
-
                     proxy = factory.CreateProxy(source, description);
                     if (proxy != null)
                         return true;
                 }
+                catch (MissingMemberException e)
+                {
+                    throw e;
+                }
+                catch (NullReferenceException e)
+                {
+                    throw e;
+                }
                 catch (Exception e)
                 {
                     if (log.IsWarnEnabled)
-                        log.WarnFormat("Unable to bind: \"{0}\";exception:{1}", description.ToString(), e);
+                        log.WarnFormat("An exception occurred when using the \"{0}\" factory to create a proxy for the \"{1}\";exception:{2}", factory.GetType().Name, description.ToString(), e);
                 }
             }
 

@@ -1,11 +1,10 @@
-
 ![](images/icon.png)
 # Loxodon Framework
 
 *MVVM Framework for Unity3D(C# & XLua)*
 
 *开发者 Clark*
-*Version 1.9.4*
+*Version 1.9.7*
 
 <div style="page-break-after: always;"></div>
 
@@ -47,6 +46,7 @@
     - [XML支持的数值类型](#xml支持的数值类型)
     - [生成C#脚本](#生成c脚本)
     - [本地化视图组件](#本地化视图组件)
+    - [本地化数据绑定器(LocalizedDataBinder)](#本地化数据绑定器localizeddatabinder)
     - [数据提供器(IDataProvider)](#数据提供器idataprovider)
     - [获得设备的当前语言](#获得设备的当前语言)
     - [使用示例](#使用示例)
@@ -1090,6 +1090,15 @@ XML 格式配置如下:
           </vector2-array>
           <rect name="button.position2">(100,100,200,60)</rect>
         </resources>
+
+#### 本地化数据绑定器(LocalizedDataBinder)
+使用本地化数据绑定器可以对Text、TextMesh、Image、RawImage、SpriteRenderer、AudioSource、VideoPlayer等等的属性和本地化数据进行批量的绑定，它使用数据绑定服务来工作的，在使用它之前必须初始化数据绑定服务。在有上述UI控件的游戏节点上添加LocalizedDataBinder脚本，就可以对控件的属性进行绑定。具体绑定方式如下图，For参数选择需要绑定的属性，To参数填写本地化数据配表中的Key值。
+
+![](images/LocalizedDataBinder.png)
+
+下图是本地化资源，它是通过Localization Source的方式配置的，当然，你也可以使用XML或者CSV的文件格式配置。
+![](images/LocalizationData.png)
+
 
 #### 数据提供器(IDataProvider)
 

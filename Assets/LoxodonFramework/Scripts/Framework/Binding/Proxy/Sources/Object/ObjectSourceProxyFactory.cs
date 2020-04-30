@@ -30,7 +30,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 {
     public class ObjectSourceProxyFactory : TypedSourceProxyFactory<ObjectSourceDescription>, INodeProxyFactory, INodeProxyFactoryRegister
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(ObjectSourceProxyFactory));
+        //private static readonly ILog log = LogManager.GetLogger(typeof(ObjectSourceProxyFactory));
 
         private List<PriorityFactoryPair> factories = new List<PriorityFactoryPair>();
 
@@ -39,11 +39,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             proxy = null;
             var path = description.Path;
             if (path.Count <= 0)
-            {
-                if (log.IsWarnEnabled)
-                    log.Warn("Unable to bind: an empty path node list!.");
-                return false;
-            }
+                throw new ProxyException("The path nodes of the ObjectSourceDescription \"{0}\" is empty.", description.ToString());
 
             PathToken token = path.AsPathToken();
 

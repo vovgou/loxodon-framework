@@ -38,3 +38,18 @@ MonoBehaviour:
       value:
         dataValue: 
         objectValue: {fileID: 21300000, guid: 154a3666b5e0d1c44a96dea5cb5fd234, type: 3}
+    - key: localization.tutorials.content.color
+      type: 4
+      value:
+        dataValue: AACAPwAAAAAAAAAAAACAPw==
+        objectValue: {fileID: 0}
+    - key: localization.tutorials.content.fontStyle
+      type: 2
+      value:
+        dataValue: AgAAAA==
+        objectValue: {fileID: 0}
+    - key: localization.tutorials.content.fontSize
+      type: 2
+      value:
+        dataValue: KAAAAA==
+        objectValue: {fileID: 0}

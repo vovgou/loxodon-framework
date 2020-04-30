@@ -1,5 +1,5 @@
 ﻿  Loxodon Framework
-Version: 1.9.6
+Version: 1.9.7
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,10 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.9.7
+	Added more detailed binding exception information.
+	Added LocalizedDataBinder
+
 version 1.9.6
 	Added AtLayer method to ITransition, which supports opening a new window in the background.
 

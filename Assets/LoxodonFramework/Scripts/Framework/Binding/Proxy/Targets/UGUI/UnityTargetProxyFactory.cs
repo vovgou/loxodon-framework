@@ -45,21 +45,25 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 memberInfo = type.GetMember(description.TargetName, BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (memberInfo == null)
-                return null;
+                throw new MissingMemberException(type.Type.FullName, description.TargetName);
 
             UnityEventBase updateTrigger = null;
             if (!string.IsNullOrEmpty(description.UpdateTrigger))
             {
-                var updateTriggerPropertyInfo = type.GetProperty(description.UpdateTrigger);
+                IProxyPropertyInfo updateTriggerPropertyInfo = type.GetProperty(description.UpdateTrigger);
+                IProxyFieldInfo updateTriggerFieldInfo = updateTriggerPropertyInfo == null ? type.GetField(description.UpdateTrigger) : null;
                 if (updateTriggerPropertyInfo != null)
                     updateTrigger = updateTriggerPropertyInfo.GetValue(target) as UnityEventBase;
 
-                if (updateTriggerPropertyInfo == null)
-                {
-                    var updateTriggerFieldInfo = type.GetField(description.UpdateTrigger);
-                    if (updateTriggerFieldInfo != null)
-                        updateTrigger = updateTriggerFieldInfo.GetValue(target) as UnityEventBase;
-                }
+                if (updateTriggerFieldInfo != null)
+                    updateTrigger = updateTriggerFieldInfo.GetValue(target) as UnityEventBase;
+
+                if (updateTriggerPropertyInfo == null && updateTriggerFieldInfo == null)
+                    throw new MissingMemberException(type.Type.FullName, description.UpdateTrigger);
+
+                //Other Property Type
+                if (updateTrigger == null) /* by UniversalTargetProxyFactory */
+                    return null;
             }
 
             var propertyInfo = memberInfo as IProxyPropertyInfo;

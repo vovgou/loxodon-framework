@@ -25,6 +25,7 @@
 using Loxodon.Framework.Binding.Reflection;
 using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.Observables;
+using System;
 using System.Reflection;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
@@ -39,7 +40,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 memberInfo = type.GetMember(description.TargetName, BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (memberInfo == null)
-                return null;
+                throw new MissingMemberException(type.Type.FullName, description.TargetName);
 
             var propertyInfo = memberInfo as IProxyPropertyInfo;
             if (propertyInfo != null)
@@ -49,7 +50,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 {
                     object observableValue = propertyInfo.GetValue(target);
                     if (observableValue == null)
-                        return null;
+                        throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", propertyInfo.Name, propertyInfo.DeclaringType.Name));
 
                     return new ObservableTargetProxy(target, (IObservableProperty)observableValue);
                 }
@@ -74,7 +75,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 {
                     object observableValue = fieldInfo.GetValue(target);
                     if (observableValue == null)
-                        return null;
+                        throw new NullReferenceException(string.Format("The \"{0}\" field is null in class \"{1}\".", fieldInfo.Name, fieldInfo.DeclaringType.Name));
 
                     return new ObservableTargetProxy(target, (IObservableProperty)observableValue);
                 }

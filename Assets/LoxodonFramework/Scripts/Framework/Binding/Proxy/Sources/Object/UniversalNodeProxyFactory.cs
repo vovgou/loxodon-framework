@@ -53,9 +53,12 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             IProxyType proxyType = source.GetType().AsProxy();
             if (node is IndexedNode)
             {
+                if (!(source is ICollection))
+                    throw new ProxyException("Type \"{0}\" is not a collection and cannot be accessed by index \"{1}\".", proxyType.Type.Name, node.ToString());
+
                 var itemInfo = proxyType.GetItem();
                 if (itemInfo == null)
-                    return null;
+                    throw new MissingMemberException(proxyType.Type.FullName, "Item");
 
                 var intIndexedNode = node as IntegerIndexedNode;
                 if (intIndexedNode != null)
@@ -77,7 +80,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 memberInfo = source.GetType().FindFirstMemberInfo(memberNode.Name);
 
             if (memberInfo == null || memberInfo.IsStatic())
-                return null;
+                throw new MissingMemberException(proxyType.Type.FullName, memberNode.Name);
 
             var propertyInfo = memberInfo as PropertyInfo;
             if (propertyInfo != null)
@@ -156,7 +159,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 memberInfo = type.FindFirstMemberInfo(memberNode.Name, BindingFlags.Public | BindingFlags.Static);
 
             if (memberInfo == null)
-                return null;
+                throw new MissingMemberException(type.FullName, memberNode.Name);
 
             var propertyInfo = memberInfo as PropertyInfo;
             if (propertyInfo != null)
@@ -167,7 +170,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 {
                     object observableValue = proxyPropertyInfo.GetValue(null);
                     if (observableValue == null)
-                        throw new ArgumentNullException();
+                        throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", propertyInfo.Name, type.Name));
 
                     return new ObservableNodeProxy((IObservableProperty)observableValue);
                 }
@@ -175,7 +178,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 {
                     object request = proxyPropertyInfo.GetValue(null);
                     if (request == null)
-                        throw new ArgumentNullException();
+                        throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", propertyInfo.Name, type.Name));
 
                     return new InteractionNodeProxy((IInteractionRequest)request);
                 }
@@ -194,7 +197,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 {
                     object observableValue = proxyFieldInfo.GetValue(null);
                     if (observableValue == null)
-                        throw new ArgumentNullException();
+                        throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", fieldInfo.Name, type.Name));
 
                     return new ObservableNodeProxy((IObservableProperty)observableValue);
                 }
@@ -202,7 +205,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 {
                     object request = proxyFieldInfo.GetValue(null);
                     if (request == null)
-                        throw new ArgumentNullException();
+                        throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", fieldInfo.Name, type.Name));
 
                     return new InteractionNodeProxy((IInteractionRequest)request);
                 }

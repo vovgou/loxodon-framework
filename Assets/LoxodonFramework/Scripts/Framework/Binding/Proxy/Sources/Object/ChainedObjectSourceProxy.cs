@@ -129,9 +129,9 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 {
                     var memberNode = node as MemberNode;
                     string typeName = source != null ? source.GetType().Name : memberNode.Type.Name;
-                    throw new Exception(string.Format("Not found the member named '{0}' in the '{1}' type", memberNode.Name, typeName));
+                    throw new ProxyException("Not found the member named '{0}' in the class '{1}'.", memberNode.Name, typeName);
                 }
-                throw new Exception("proxy is null.");
+                throw new ProxyException("Failed to create proxy for \"{0}\".Not found available proxy factory.", token.ToString());
             }
 
             ProxyEntry entry = new ProxyEntry(proxy, token);

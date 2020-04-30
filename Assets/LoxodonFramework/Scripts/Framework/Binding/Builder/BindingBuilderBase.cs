@@ -217,6 +217,10 @@ namespace Loxodon.Framework.Binding.Builder
                 this.context.Add(this.target, this.description, this.scopeKey);
                 this.builded = true;
             }
+            catch(BindingException e)
+            {
+                throw e;
+            }
             catch (Exception e)
             {
                 throw new BindingException(e, "An exception occurred while building the data binding for {0}.", this.description.ToString());

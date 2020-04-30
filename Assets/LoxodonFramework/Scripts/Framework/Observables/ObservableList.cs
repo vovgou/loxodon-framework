@@ -185,6 +185,37 @@ namespace Loxodon.Framework.Observables
             MoveItem(oldIndex, newIndex);
         }
 
+        public void AddRange(IEnumerable<T> collection)
+        {
+            if (items.IsReadOnly)
+                throw new NotSupportedException("ReadOnlyCollection");
+
+            int index = items.Count;
+            InsertItem(index, collection);
+        }
+
+        public void InsertRange(int index, IEnumerable<T> collection)
+        {
+            if (items.IsReadOnly)
+                throw new NotSupportedException("ReadOnlyCollection");
+
+            if (index < 0 || index > items.Count)
+                throw new ArgumentOutOfRangeException(string.Format("ArgumentOutOfRangeException:{0}", index));
+
+            InsertItem(index, collection);
+        }
+
+        public void RemoveRange(int index, int count)
+        {
+            if (items.IsReadOnly)
+                throw new NotSupportedException("ReadOnlyCollection");
+
+            if (index < 0 || index >= items.Count)
+                throw new ArgumentOutOfRangeException(string.Format("ArgumentOutOfRangeException:{0}", index));
+
+            RemoveItem(index, count);
+        }
+
         bool ICollection<T>.IsReadOnly
         {
             get { return items.IsReadOnly; }
@@ -391,6 +422,19 @@ namespace Loxodon.Framework.Observables
             OnCollectionChanged(NotifyCollectionChangedAction.Remove, removedItem, index);
         }
 
+        protected virtual void RemoveItem(int index, int count)
+        {
+            CheckReentrancy();
+
+            List<T> list = items as List<T>;
+            List<T> changedItems = list.GetRange(index, count);
+            list.RemoveRange(index, count);
+
+            OnPropertyChanged(CountEventArgs);
+            OnPropertyChanged(IndexerEventArgs);
+            OnCollectionChanged(NotifyCollectionChangedAction.Remove, changedItems, index);
+        }
+
         protected virtual void InsertItem(int index, T item)
         {
             CheckReentrancy();
@@ -400,6 +444,17 @@ namespace Loxodon.Framework.Observables
             OnPropertyChanged(CountEventArgs);
             OnPropertyChanged(IndexerEventArgs);
             OnCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
+        }
+
+        protected virtual void InsertItem(int index, IEnumerable<T> collection)
+        {
+            CheckReentrancy();
+
+            (items as List<T>).InsertRange(index, collection);
+
+            OnPropertyChanged(CountEventArgs);
+            OnPropertyChanged(IndexerEventArgs);
+            OnCollectionChanged(NotifyCollectionChangedAction.Add, ToList(collection), index);
         }
 
         protected virtual void SetItem(int index, T item)
@@ -461,6 +516,16 @@ namespace Loxodon.Framework.Observables
             }
         }
 
+        private IList ToList(IEnumerable<T> collection)
+        {
+            if (collection is IList)
+                return (IList)collection;
+
+            List<T> list = new List<T>();
+            list.AddRange(collection);
+            return list;
+        }
+
         private static bool IsCompatibleObject(object value)
         {
             return ((value is T) || (value == null && default(T) == null));
@@ -470,6 +535,12 @@ namespace Loxodon.Framework.Observables
         {
             if (this.collectionChanged != null)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item, index));
+        }
+
+        private void OnCollectionChanged(NotifyCollectionChangedAction action, IList changedItems, int index)
+        {
+            if (this.collectionChanged != null)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, changedItems, index));
         }
 
         private void OnCollectionChanged(NotifyCollectionChangedAction action, object item, int index, int oldIndex)
