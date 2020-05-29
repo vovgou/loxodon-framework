@@ -49,6 +49,16 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
             List<Path> paths = this.pathFinder.FindPaths(expression);
             foreach (Path path in paths)
             {
+                if (!path.IsStatic)
+                {
+                    if (source == null)
+                        continue;//ignore the path
+
+                    MemberNode memberNode = path[0] as MemberNode;
+                    if (memberNode != null && memberNode.MemberInfo != null && !memberNode.MemberInfo.DeclaringType.IsAssignableFrom(source.GetType()))
+                        continue;//ignore the path
+                }
+
                 ISourceProxy innerProxy = this.factory.CreateProxy(source, new ObjectSourceDescription() { Path = path });
                 if (innerProxy != null)
                     list.Add(innerProxy);

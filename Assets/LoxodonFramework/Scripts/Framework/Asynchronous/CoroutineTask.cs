@@ -44,7 +44,7 @@ namespace Loxodon.Framework.Asynchronous
     {
         private static IEnumerator DoDelay(float secondsDelay)
         {
-            yield return new WaitForSeconds(secondsDelay);
+            yield return new WaitForSecondsRealtime(secondsDelay);
         }
 
         /// <summary>

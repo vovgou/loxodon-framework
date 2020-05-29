@@ -404,6 +404,12 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
+        public BindingBuilder CommandParameter(object parameter)
+        {
+            this.SetCommandParameter(parameter);
+            return this;
+        }
+
         public BindingBuilder WithConversion(string converterName)
         {
             var converter = this.ConverterByName(converterName);

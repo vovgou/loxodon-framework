@@ -45,6 +45,10 @@ namespace Loxodon.Framework.Net.Http
             this.tmpFileInfo = new FileInfo(this.fileInfo.FullName + ".tmp");
             if (this.tmpFileInfo.Exists)
                 tmpFileInfo.Delete();
+
+            if (!tmpFileInfo.Directory.Exists)
+                tmpFileInfo.Directory.Create();
+
             this.fileStream = tmpFileInfo.Create();
         }
 
@@ -71,7 +75,10 @@ namespace Loxodon.Framework.Net.Http
         protected override void CompleteContent()
         {
             if (fileStream != null)
+            {
                 fileStream.Dispose();
+                fileStream = null;
+            }
 
             if (fileInfo.Exists)
                 fileInfo.Delete();
@@ -82,6 +89,15 @@ namespace Loxodon.Framework.Net.Http
         protected override void ReceiveContentLength(int contentLength)
         {
             this.totalSize = contentLength;
+        }
+
+        ~DownloadFileHandler()
+        {
+            if (fileStream != null)
+            {
+                fileStream.Dispose();
+                fileStream = null;
+            }
         }
     }
 }

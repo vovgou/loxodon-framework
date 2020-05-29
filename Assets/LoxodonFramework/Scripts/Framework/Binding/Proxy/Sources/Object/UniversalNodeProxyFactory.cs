@@ -76,6 +76,9 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 return null;
 
             var memberInfo = memberNode.MemberInfo;
+            if (memberInfo!=null && !memberInfo.DeclaringType.IsAssignableFrom(source.GetType()))
+                return null;
+
             if (memberInfo == null)
                 memberInfo = source.GetType().FindFirstMemberInfo(memberNode.Name);
 

@@ -1,3 +1,4 @@
+
 ![](images/icon.png)
 # Loxodon Framework
 
@@ -38,6 +39,8 @@
   - [配置文件（Properties文件）](#配置文件properties文件)
     - [支持的数值类型](#支持的数值类型)
     - [数组分隔符](#数组分隔符)
+    - [配置文件的组合](#配置文件的组合)
+    - [配置文件的子集](#配置文件的子集)
     - [配置文件示例](#配置文件示例)
   - [国际化和本地化](#国际化和本地化)
     - [目录结构](#目录结构)
@@ -783,7 +786,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 ### 配置文件（Properties文件）
 
-在游戏或者应用开发中，配置文件是一个必不可少的东西，通过配置文件来管理游戏或者应用的配置参数，特别现在游戏开发要接入不同的平台，有众多的SDK配置参数，而且不同平台有不同的接入要求，有不同的升级更新策略，虽然这些配置我们也可以继承Unity3D的ScriptableObject类来创建一个配置类，但是因为接入平台多，参数不统一，随着需求的变化会导致频繁的修改这些配置类，为了避免这种情况，我这里采用传统的配置文件来配置这些参数，一个properties文件满足所有的配置需求。
+在游戏或者应用开发中，配置文件是一个必不可少的东西，通过Properties配置文件来管理游戏或者应用的配置参数，特别现在游戏开发要接入不同的平台，有众多的SDK配置参数，而且不同平台有不同的接入要求，有不同的升级更新策略，需要配置不同的参数，虽然这些配置我们也可以继承Unity3D的ScriptableObject类来创建一个配置类，但是因为接入平台多，参数不统一，随着需求的变化会导致频繁的修改这些配置类，为了避免这种情况，我这里采用传统的Properties配置文件来配置这些参数，一个Properties文件可以满足所有的配置需求。
 
 #### 支持的数值类型
 
@@ -816,9 +819,39 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
 
 与CSV格式的本地化配置一样，数组使用半角逗号分隔，在半角的双引号、单引号、小括号()、中括号[]、大括号{}、尖括号<>之间的逗号会被忽略，如数组的字符串中有逗号，请使用双引号或者单引号将字符串引起来。
 
+#### 配置文件的组合
+
+配置文件支持组合功能，可以将多个配置文件组合成一个配置文件使用。如果你是在开发一个需要发布到多个平台的游戏，并且不同平台之间配置的参数是有差异的，那么你可以有一个默认的配置文件application.properties.txt，在默认配置文件中配置所有需要的参数，然后为Android平台增加"application.android.properties.txt"文件，为ios平台增加"application.ios.properties.txt"文件，在这些文件中，您只需要配置需要修改的项，无需修改的项可以不配置，直接使用默认配置文件中的配置。使用示例如下，先加载配置配置，添加到组合配置文件中，然后加载当前平台的配置到组合配置中，使用时会优先查找平台配置，然后查找默认配置。
+
+**注意：组合配置中如果加入了多个配置文件，后加入的配置优先级越高。**
+
+    /* 创建一个组合配置. */
+    CompositeConfiguration configuration = new CompositeConfiguration();
+
+    /* 加载默认配置文件. */
+    string defaultText = FileUtil.ReadAllText(Application.streamingAssetsPath + "/application.properties.txt");
+    configuration.AddConfiguration(new PropertiesConfiguration(defaultText));
+
+    #if UNITY_EDITOR
+      string text = FileUtil.ReadAllText(Application.streamingAssetsPath + "/application.editor.properties.txt");
+    #elif UNITY_ANDROID
+      string text = FileUtil.ReadAllText(Application.streamingAssetsPath + "/application.android.properties.txt");
+    #elif UNIYT_IOS
+      string text = FileUtil.ReadAllText(Application.streamingAssetsPath + "/application.ios.properties.txt");
+    #endif
+
+    /* 加载当前平台的配置文件. */
+    configuration.AddConfiguration(new PropertiesConfiguration(text));
+    /* 注册配置文件到容器中 */
+    container.Register<IConfiguration>(configuration);
+
+#### 配置文件的子集
+
+除了组合配置功能之外，配置文件还支持配置文件子集的功能，使用时请按功能模块规划好配置文件的Key，以点号分割配置文件的key，这样只要通过一个key的前缀，就可以创建一个配置文件子集。具体使用方式请看下面的示例。
+
 #### 配置文件示例
 
-Properties文件格式如下，以key = value 的方式配置所有内容，以#开头的是注释文字，空行会被忽略：
+Properties文件格式如下，以key = value 的方式配置所有内容，key可以用点号分割，以#开头的是注释文字，空行会被忽略。下文中，我为升级模块配置了四个组，本地组local、开发组develop，预发布组pre-release，发布组release，以及application.config-group = local，也就是说应用可以根据application.config-group的值来读取当前有效的组，这里设置的是local组有效。使用前缀"application.local"可以获得本地组的配置子集,localConfig = config.Subset("application.local")。
 
     #application config
     application.app.version = 1.0.0
@@ -862,13 +895,13 @@ Properties文件格式如下，以key = value 的方式配置所有内容，以#
     //数据版本号
     Version dataVersion = conf.GetVersion("application.data.version");
 
-    //当前配置的组名
+    //当前有效配置组的组名，使用这个组名做为前缀可以获得一个子配置文件
     string groupName = conf.GetString("application.config-group");
 
-    //根据前缀获 application.local 得配置的子集
+    //根据Key值的前缀 "application.local" 获得配置的子集
     IConfiguration currentGroupConf = conf.Subset("application." + groupName);
 
-    //通过子集获配置信息
+    //通过子集获配置信息，注意key要省略前缀
     string upgradeUrl = currentGroupConf.GetString("upgrade.url");
     string username = currentGroupConf.GetString("username");
     string password = currentGroupConf.GetString("password");

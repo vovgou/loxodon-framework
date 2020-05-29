@@ -347,7 +347,6 @@ namespace Loxodon.Framework.Views
             GetTransitionExecutor().Execute(transition);
             return transition.OnStateChanged((w, state) =>
                 {
-                    Debug.LogFormat("Hide Window:{0} State:{1}", w.Name, state);
                     /* Control the layer of the window */
                     if (state == WindowState.INVISIBLE)
                         this.MoveToLast(w);
@@ -360,7 +359,6 @@ namespace Loxodon.Framework.Views
             GetTransitionExecutor().Execute(transition);
             return transition.OnStateChanged((w, state) =>
                 {
-                    Debug.LogFormat("Dismiss Window:{0} State:{1}", w.Name, state);
                     /* Control the layer of the window */
                     if (state == WindowState.INVISIBLE)
                         this.MoveToLast(w);

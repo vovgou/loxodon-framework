@@ -1,5 +1,5 @@
 ﻿  Loxodon Framework
-Version: 1.9.7
+Version: 1.9.8
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,9 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.9.8
+	Fixed the bug that failed to create temporary file in the DownloadFileHandler.
+
 version 1.9.7
 	Added more detailed binding exception information.
 	Added LocalizedDataBinder
