@@ -104,7 +104,7 @@ UWP(window10)
         }
     }
 	
-	public class ProgressBarView : UIView
+    public class ProgressBarView : UIView
     {
         public GameObject progressBar;
         public Text progressTip;
@@ -195,7 +195,10 @@ UWP(window10)
 - [lua-protobuf](https://github.com/starwing/lua-protobuf)
 
     lua版本的protobuf解码项目，支持protobuf 3，使用lua开发的同学可以使用这个来解码，推荐。
+    
+- [Flatbuffers](https://github.com/google/flatbuffers)
 
+    FlatBuffers是继Protobuf之后，谷歌的另外一个开源的、跨平台的、高效的序列化工具库。它专门为游戏开发或其他性能敏感的应用程序需求而创建。它提供了包括C、C++、C#、java、lua、go、python等等语言的支持，建议大家游戏开发可以选择它作为序列化工具库。
     
 ## 教程和示例
 
