@@ -24,3 +24,18 @@
 ## Lua开发，LuaPerfect无法断点调试
 
 请查看Lua脚本是否是通过TextAsset的方式设置在LuaBehaviour上的，请改为通过文件路径加载的方式，就可以断点调试了。
+
+## Android平台分包OBB文件后，无法读取StreamingAssets文件夹中内容
+
+在Unity2019.3以后版本，默认情况下没有开启FileUtil.Compression.cs脚本，请给Unity项目添加宏定义"CSHARP_ZIP"，并且在项目的Assets目录下添加csc.rsp文件，导入System.IO.Compression.dll和System.IO.Compression.FileSystem.dll两个动态库，并且重启Unity3D应用程序。
+
+csc.rsp 内容如下：
+
+    -r:System.IO.Compression.dll
+    -r:System.IO.Compression.FileSystem.dll
+    
+CSHARP_ZIP宏定义
+
+![](images/faq003.png)
+
+

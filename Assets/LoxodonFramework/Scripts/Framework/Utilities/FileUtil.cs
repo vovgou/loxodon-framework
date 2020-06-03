@@ -27,11 +27,13 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Loxodon.Log;
 
 namespace Loxodon.Framework.Utilities
 {
     public static class FileUtil
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(FileUtil));
         private static List<IZipAccessor> list = new List<IZipAccessor>();
 
         public static void Register(IZipAccessor zipAccessor)
@@ -128,6 +130,11 @@ namespace Loxodon.Framework.Utilities
                 if (zipAccessor.Support(path))
                     return zipAccessor.OpenRead(path);
             }
+
+#if UNITY_ANDROID
+            if (path.IndexOf(".obb", StringComparison.OrdinalIgnoreCase) > 0 && log.IsWarnEnabled)
+                log.Warn("Unable to read the content in the \".obb\" file, please click the link for help, and enable access to the OBB file. https://github.com/cocowolf/loxodon-framework/blob/master/docs/faq.md");
+#endif
 
             throw new NotSupportedException(path);
         }
