@@ -178,6 +178,22 @@ UWP(window10)
 
     ![](docs/images/log4net.jpg)
     
+- [Loxodon Framework Obfuscation](https://github.com/cocowolf/loxodon-framework/releases)
+   
+    数据类型内存混淆插件，支持ObfuscatedByte，ObfuscatedShort，ObfuscatedInt,ObfuscatedLong,ObfuscatedFloat,ObfuscatedDouble类型，防止内存修改器修改游戏数值，支持数值类型的所有运算符，与byte、short、int、long、float、double类型之间可以自动转换，使用时替换对应的数值类型即可。
+    
+    **注意：要求Unity2018以上版本，请开启"Allow unsafe Code"**
+    
+    ![](docs/images/obfuscation_unsafe.png)
+    
+    **使用示例：**
+    
+       ObfuscatedInt  length = 200;
+       ObfuscatedFloat scale = 20.5f;
+       int offset = 30;
+
+       float value = (length * scale) + offset;
+    
 - [Json.Net.Aot](https://github.com/Daddoon/Json.NET.Aot)
 
     这是Json.Net的一个分支，支持Unity3D，支持.net standard 2.0，如果你的Unity是2018及以上版本，推荐使用这个。
