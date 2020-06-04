@@ -181,6 +181,8 @@ UWP(window10)
 - [Loxodon Framework Obfuscation](https://github.com/cocowolf/loxodon-framework/releases)
    
     数据类型内存混淆插件，支持ObfuscatedByte，ObfuscatedShort，ObfuscatedInt,ObfuscatedLong,ObfuscatedFloat,ObfuscatedDouble类型，防止内存修改器修改游戏数值，支持数值类型的所有运算符，与byte、short、int、long、float、double类型之间可以自动转换，使用时替换对应的数值类型即可。
+    Float和Double类型混淆时转为int和long类型进行与或运算，确保不会丢失精度，类型转换时使用unsafe代码，兼顾转换性能。
+    
     
     **注意：要求Unity2018以上版本，请开启"Allow unsafe Code"**
     
