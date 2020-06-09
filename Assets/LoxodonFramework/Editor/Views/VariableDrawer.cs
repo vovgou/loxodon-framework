@@ -66,6 +66,9 @@ namespace Loxodon.Framework.Editors
                     GameObject go = component.gameObject;
                     foreach (var c in go.GetComponents<Component>())
                     {
+                        if (c == null)
+                            continue;
+
                         if (!types.Contains(c.GetType()))
                             types.Add(c.GetType());
                     }

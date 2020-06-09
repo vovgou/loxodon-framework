@@ -1,5 +1,5 @@
 ﻿  Loxodon Framework
-Version: 1.9.8
+Version: 1.9.9
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,9 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.9.9
+	Added support for FairyGUI, please use macro "FAIRY_GUI" to enable this feature.
+
 version 1.9.8
 	Fixed the bug that failed to create temporary file in the DownloadFileHandler.
 

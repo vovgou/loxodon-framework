@@ -24,7 +24,6 @@
 
 using System;
 using System.Linq.Expressions;
-using UnityEngine.Events;
 
 using Loxodon.Log;
 using Loxodon.Framework.Binding.Contexts;
@@ -71,7 +70,7 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
-        public BindingBuilder<TTarget, TSource> For<TResult>(Expression<Func<TTarget, TResult>> memberExpression, Expression<Func<TTarget, UnityEventBase>> updateTriggerExpression)
+        public BindingBuilder<TTarget, TSource> For<TResult,TEvent>(Expression<Func<TTarget, TResult>> memberExpression, Expression<Func<TTarget, TEvent>> updateTriggerExpression)
         {
             string targetName = this.PathParser.ParseMemberName(memberExpression);
             string updateTrigger = this.PathParser.ParseMemberName(updateTriggerExpression);
@@ -224,7 +223,7 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
-        public BindingBuilder<TTarget> For<TResult>(Expression<Func<TTarget, TResult>> memberExpression, Expression<Func<TTarget, UnityEventBase>> updateTriggerExpression)
+        public BindingBuilder<TTarget> For<TResult,TEvent>(Expression<Func<TTarget, TResult>> memberExpression, Expression<Func<TTarget, TEvent>> updateTriggerExpression)
         {
             string targetName = this.PathParser.ParseMemberName(memberExpression);
             string updateTrigger = this.PathParser.ParseMemberName(updateTriggerExpression);

@@ -152,7 +152,6 @@ namespace Loxodon.Framework.Editors
             string typeFullname = typeNameProperty.stringValue;
             string propertyName = propertyNameProperty.stringValue;
 
-            string[] typeNames = typeMetas.Select(meta => meta.Type.Name).ToArray();
             TypeMeta typeMeta = typeMetas.Find(meta => meta.Type.FullName.Equals(typeFullname));
 
             string[] members = typeMeta != null ? typeMeta.Members.ToArray() : new string[] { propertyName };

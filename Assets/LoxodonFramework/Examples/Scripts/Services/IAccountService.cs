@@ -22,18 +22,34 @@
  * SOFTWARE.
  */
 
-using UnityEngine;
-using System.Collections;
 using Loxodon.Framework.Asynchronous;
+using System;
 
 namespace Loxodon.Framework.Examples
 {
-	public interface IAccountService
-	{
-		IAsyncResult<Account> Register (Account account);
+    public class LoginEventArgs : EventArgs
+    {
+        public LoginEventArgs(bool succeed, Account account)
+        {
+            this.IsSucceed = succeed;
+            this.Account = account;
+        }
 
-		IAsyncResult<Account> Login (string username, string password);
+        public bool IsSucceed { get; private set; }
 
-		IAsyncResult<Account> GetAccount (string username);
-	}
+        public Account Account { get; private set; }
+    }
+
+    public interface IAccountService
+    {
+        event EventHandler<LoginEventArgs> LoginFinished;
+
+        IAsyncResult<Account> Register(Account account);
+
+        IAsyncResult<Account> Update(Account account);
+
+        IAsyncResult<Account> Login(string username, string password);
+
+        IAsyncResult<Account> GetAccount(string username);
+    }
 }

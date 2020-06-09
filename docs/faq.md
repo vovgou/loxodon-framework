@@ -38,4 +38,6 @@ CSHARP_ZIP宏定义
 
 ![](images/faq003.png)
 
+## 开启FairyGUI的支持
 
+通过配置宏"FAIRY_GUI"开启FairyGUI的支持。
