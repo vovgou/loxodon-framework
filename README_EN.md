@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/cocowolf/loxodon-framework/blob/master/LICENSE)
 [![release](https://img.shields.io/badge/release-v1.9.8-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
 
-[(中文版)](README_CN.md)
+[(中文版)](README.md)
 
 **MVVM Framework for Unity3D(C# & XLua)**
 
