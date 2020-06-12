@@ -1136,7 +1136,7 @@ XML 格式配置如下:
 #### 数据提供器(IDataProvider)
 
 框架的本地化组件支持同时使用多种数据格式来配置本地化资源，它们有不同的文件格式，不同的目录结构，甚至有不同的文件查找规则，无论情况多么复杂，都可以通过数据提供器(IDataProvider)和文档解析器(IDocumentParser)来统一它们，通过数据提供器加载数据，通过文档解析器解析资源文件，在框架中我提供了一些默认的数据加载器，可以从Resources目录或者AssetBundle中根据前文中提到的目录规则来加载本地化数据。如果需要支持更多的数据格式，或者要定制文件查找规则和加载方式，请参考我的代码实现自定义的数据提供器。
-以下的代码是使用默认的数据提供器从Resources/LocalizationTutorials/（教程本地化资源的根目录，目录结构如下图）目录中加载xml和asset格式的文件，xml格式的文件使用DefaultDataProvider加载，它会加载当前语言的所有xml文件，文本文件占用较少的内存，不要释放它们。asset格式的文件使用DefaultLocalizationSourceDataProvider加载，它配置了具体的asset文件名称，它只会加载名字列表中的文件，asset文件中配置图片声音等多媒体资源，在使用完毕请删除DefaultLocalizationSourceDataProvider卸载资源。
+以下的代码是使用默认的数据提供器从Resources/LocalizationTutorials/（教程本地化资源的根目录，目录结构如下图）目录中加载xml和asset格式的文件，xml格式的文件使用DefaultDataProvider加载，它会加载目录中当前语言的所有xml文件，文本文件占用较少的内存，不需要释放它们。asset格式的文件使用DefaultLocalizationSourceDataProvider加载，它的构造函数需要提供具体的asset文件名列表，它只会加载名字列表中的文件，asset文件中配置图片声音等多媒体资源，会占用较多的内存，在使用完毕请从Localization中删除DefaultLocalizationSourceDataProvider来卸载本地化资源。
 ![](images/Localization_dir2.png)
 
     var localization = Localization.Current;
@@ -1146,7 +1146,7 @@ XML 格式配置如下:
     //文本资源不占用太多内存，默认加载当前语言的所有xml文件   
     localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
 
-    //添加一个Asset数据的加载器，从Resources/LocalizationExamples 目录中加载名为login.asset的资源
+    //添加一个Asset数据的加载器，从Resources/LocalizationExamples 目录中加载文件名为LocalizationModule.asset的资源
     //Asset类型的资源请在使用前加载，并且在不需要的时候释放它们
     var provider = new DefaultLocalizationSourceDataProvider("LocalizationTutorials","LocalizationModule.asset");
     localization.AddDataProvider(provider);
