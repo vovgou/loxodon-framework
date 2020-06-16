@@ -18,6 +18,8 @@ UPDATE NOTES
 ----------------------------------------
 version 1.9.9
 	Added support for FairyGUI, please use macro "FAIRY_GUI" to enable this feature.
+	Added async and await feature for unity's coroutines,CustomYieldInstruction,YieldInstruction,AsyncOperation,IAsyncResult,IAsyncResult<T>,etc.
+	Added the feature of Task to Unity's coroutine.
 
 version 1.9.8
 	Fixed the bug that failed to create temporary file in the DownloadFileHandler.

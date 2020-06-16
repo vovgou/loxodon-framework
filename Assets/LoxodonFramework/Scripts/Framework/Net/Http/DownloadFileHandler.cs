@@ -86,9 +86,13 @@ namespace Loxodon.Framework.Net.Http
             tmpFileInfo.MoveTo(fileInfo.FullName);
         }
 
+#if UNITY_2019_3_OR_NEWER
+        protected override void ReceiveContentLengthHeader(ulong contentLength)
+#else
         protected override void ReceiveContentLength(int contentLength)
+#endif
         {
-            this.totalSize = contentLength;
+            this.totalSize = (int)contentLength;
         }
 
         ~DownloadFileHandler()

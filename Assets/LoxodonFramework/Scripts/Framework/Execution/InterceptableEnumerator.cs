@@ -86,7 +86,7 @@ namespace Loxodon.Framework.Execution
                 if (this.current is Coroutine && log.IsWarnEnabled)
                     log.Warn("The Enumerator's results contains the 'UnityEngine.Coroutine' type,If occurs an exception,it can't be catched.It is recommended to use 'yield return routine',rather than 'yield return StartCoroutine(routine)'.");
 
-                return hasNext;
+                return true;
             }
             catch (Exception e)
             {

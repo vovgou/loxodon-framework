@@ -1,11 +1,10 @@
-
 ![](images/icon.png)
 # Loxodon Framework
 
 *MVVM Framework for Unity3D(C# & XLua)*
 
 *开发者 Clark*
-*Version 1.9.7*
+*Version 1.9.9*
 
 <div style="page-break-after: always;"></div>
 
@@ -62,6 +61,8 @@
     - [AsyncTask](#asynctask)
     - [ProgressTask](#progresstask)
     - [CoroutineTask](#coroutinetask)
+    - [async & await](#async-await)
+    - [Task转Unity协程](#task转unity协程)
   - [线程/协程执行器](#线程协程执行器)
     - [执行器(Executors)](#执行器executors)
     - [定时任务执行器(IScheduledExecutor)](#定时任务执行器ischeduledexecutor)
@@ -1663,6 +1664,75 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
     }
 
 更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+
+#### async & await
+
+Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以使用C#的新特性async和await。框架为IEnumerator、YieldInstruction、CustomYieldInstruction、AsyncOperation、IAsyncResult、IAsyncResult<T>等等扩展了GetAwaiter()函数，以支持async-await特性。同时增加WaitForMainThread和WaitForBackgroundThread类用来切换代码片段的工作线程。请看下面的示例
+
+    using Loxodon.Framework.Asynchronous;//扩展函数GetAwaiter()所在命名空间
+    using System.Threading;
+    using System.Threading.Tasks;
+    public class AsyncAndAwaitSwitchThreadsExample : MonoBehaviour
+    {
+        async void Start()
+        {
+            //Unity Thread
+            Debug.LogFormat("1. ThreadID:{0}",Thread.CurrentThread.ManagedThreadId);
+
+            await new WaitForBackgroundThread();
+
+            //Background Thread
+            Debug.LogFormat("2.After the WaitForBackgroundThread.ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
+
+            await new WaitForMainThread();
+
+            //Unity Thread
+            Debug.LogFormat("3.After the WaitForMainThread.ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
+
+            await Task.Delay(3000).ConfigureAwait(false);
+
+            //Background Thread
+            Debug.LogFormat("4.After the Task.Delay.ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
+
+            await new WaitForSeconds(1f);
+
+            //Unity Thread
+            Debug.LogFormat("5.After the WaitForSeconds.ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
+        }
+    }
+
+更多的示例请查看教程 [Async & Await Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+
+#### Task转Unity协程
+
+框架为Task扩展了AsCoroutine()函数，支持Task转为Unity的协程，请看示例。
+
+    using Loxodon.Framework.Asynchronous;//扩展函数AsCoroutine()所在命名空间
+    public class TaskToCoroutineExample : MonoBehaviour
+    {
+        IEnumerator Start()
+        {
+            Task task = Task.Run(() =>
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    try
+                    {
+                        Thread.Sleep(200);
+                    }
+                    catch (Exception) { }
+
+                    Debug.LogFormat("Task ThreadId:{0}", Thread.CurrentThread.ManagedThreadId);
+                }
+            });
+
+            yield return task.AsCoroutine();
+            Debug.LogFormat("Task End,Current Thread ID:{0}", Thread.CurrentThread.ManagedThreadId);
+
+            yield return Task.Delay(1000).AsCoroutine();
+            Debug.LogFormat("Delay End");
+        }
+    }
 
 ### 线程/协程执行器
 在Unity3d逻辑脚本的开发中，是不支持多线程的，所有的UnityEngine.Object对象，都只能在主线程中访问和修改，但是在游戏开发过程中，我们很难避免会使用到多线程编程，比如通过Socket连接从网络上接受数据，通过多线程下载资源，一些纯计CPU计算的逻辑切入到后台线程去运算等等。这里就会面临一个线程切换的问题。所以在Loxodon.Framework框架中，我设计了一个线程和协程的执行器配合前文中的任务结果来使用，它能够很方便的将任务切换到主线程执行，也能很方便的开启一个后台线程任务。
