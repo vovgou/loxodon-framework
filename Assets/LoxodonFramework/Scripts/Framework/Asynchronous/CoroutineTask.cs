@@ -420,6 +420,17 @@ namespace Loxodon.Framework.Asynchronous
         {
             return this.asyncResult.WaitForDone();
         }
+#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
+        public virtual CoroutineAwaiter GetAwaiter()
+        {
+            CoroutineAwaiter awaiter = new CoroutineAwaiter();
+            this.asyncResult.Callbackable().OnCallback(ar =>
+            {
+                awaiter.SetResult(ar.Exception);
+            });
+            return awaiter;
+        }
+#endif
 
         protected bool IsExecutable(IAsyncResult ar, CoroutineTaskContinuationOptions continuationOptions)
         {
@@ -929,5 +940,16 @@ namespace Loxodon.Framework.Asynchronous
                 this.asyncResult.SetException(e);
             }
         }
+#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
+        public override CoroutineAwaiter GetAwaiter()
+        {
+            CoroutineAwaiter<TResult> awaiter = new CoroutineAwaiter<TResult>();
+            this.asyncResult.Callbackable().OnCallback(ar =>
+            {
+                awaiter.SetResult(ar.Result, ar.Exception);
+            });
+            return awaiter;
+        }
+#endif
     }
 }

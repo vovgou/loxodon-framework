@@ -172,13 +172,13 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
     Loxodon.Framework.Bundle 是AssetBundle加载和管理的工具，也是一个AssetBundle资源冗余分析工具。它能够自动管理AssetBundle之间复杂的依赖关系，它通过引用计数来维护AssetBundle之间的依赖。你既可以预加载一个AssetBundle，自己管理它的释放，也可以直接通过异步的资源加载函数直接加载资源，资源加载函数会自动去查找资源所在的AB包，自动加载AB，使用完后又会自动释放AB。 它还支持弱缓存，如果对象模板已经在缓存中，则不需要重新去打开AB。它支持多种加载方式，WWW加载，UnityWebRequest加载，File方式的加载等等（在Unity5.6以上版本，请不要使用WWW加载器，它会产生内存峰值）。它提供了一个AssetBundle的打包界面，支持加密AB包（只建议加密敏感资源，因为会影响性能）。同时它也绕开了Unity3D早期版本的一些bug，比如多个协程并发加载同一个资源，在android系统会出错。它的冗余分析是通过解包AssetBundle进行的，这比在编辑器模式下分析的冗余更准确。
 
-    ![](images/bundle.jpg)
+    ![](images/bundle.png)
 
 - [Loxodon Framework Log4Net](http://u3d.as/Gmr)
 
     支持使用Log4Net在Unity中打印日志的插件，支持在局域网中远程调试。
 
-    ![](images/log4net.jpg)
+    ![](images/log4net.png)
 
 
 ## Lua插件安装（可选）
@@ -1667,7 +1667,65 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
 
 #### async & await
 
-Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以使用C#的新特性async和await。框架为IEnumerator、YieldInstruction、CustomYieldInstruction、AsyncOperation、IAsyncResult、IAsyncResult<T>等等扩展了GetAwaiter()函数，以支持async-await特性。同时增加WaitForMainThread和WaitForBackgroundThread类用来切换代码片段的工作线程。请看下面的示例
+Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以使用C#的新特性async和await。框架为IEnumerator、YieldInstruction、CustomYieldInstruction、AsyncOperation、IAsyncResult、CoroutineTask等等扩展了GetAwaiter()函数，以支持async-await特性。同时增加WaitForMainThread和WaitForBackgroundThread类用来切换代码片段的工作线程。
+
+示例一，async和await使用方式
+
+    public class AsyncAndAwaitExample : MonoBehaviour
+    {
+        async void Start()
+        {
+            await new WaitForSeconds(2f);
+            Debug.Log("WaitForSeconds  End");
+
+            await Task.Delay(1000);
+            Debug.Log("Delay  End");
+
+            UnityWebRequest www = UnityWebRequest.Get("http://www.baidu.com");
+            await www.SendWebRequest();
+            Debug.Log(www.downloadHandler.text);
+
+            int result = await Calculate();
+            Debug.LogFormat("Calculate Result = {0} Calculate Task End", result);
+
+            await new WaitForSecondsRealtime(1f);
+            Debug.Log("WaitForSecondsRealtime  End");
+
+            await DoTask(5);
+            Debug.Log("DoTask End");
+        }
+
+        IAsyncResult<int> Calculate()
+        {
+            return Executors.RunAsync<int>(() =>
+            {
+                Debug.LogFormat("Calculate Task ThreadId:{0}", Thread.CurrentThread.ManagedThreadId);
+                int total = 0;
+                for (int i = 0; i < 20; i++)
+                {
+                    total += i;
+                    try
+                    {
+                        Thread.Sleep(100);
+                    }
+                    catch (Exception) { }
+                }
+                return total;
+            });
+        }
+
+        IEnumerator DoTask(int n)
+        {
+            yield return new WaitForSeconds(1f);
+
+            for (int i = 0; i < n; i++)
+            {
+                yield return null;
+            }
+        }
+    }
+
+示例二，在函数中，主线程和后台线程的可以通过WaitForBackgroundThread和WaitForMainThread切换，不同的代码片段可以执行在不同的线程中。
 
     using Loxodon.Framework.Asynchronous;//扩展函数GetAwaiter()所在命名空间
     using System.Threading;

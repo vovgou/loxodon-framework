@@ -1,4 +1,3 @@
-
 ![](images/icon.png)
 # Loxodon Framework
 
@@ -172,13 +171,13 @@ This plugin is compatible with MacOSX, Windows, Linux, UWP, IOS and Android, etc
 
     Loxodon.Framework.Bundle is a tool for loading and managing AssetBundle, as well as an asset redundancy analysis tool for AssetBundle. It can automatically manage complex dependencies between AssetBundles, and it maintains dependencies between AssetBundles through reference counting. You can either pre-load an AssetBundle and manage its release yourself, or you can directly load the resource directly through the asynchronous resource loading function. The resource loading function will automatically find the AB package where the resource is located, automatically load AB, and automatically use it after use. Release AB. It also supports weak caching. If the object template is already in the cache, there is no need to reopen AB. It supports multiple loading methods, WWW loading, UnityWebRequest loading, File loading, etc. (on Unity 5.6 and above, please do not use WWW loader, it will produce memory spikes). It provides a package interface for AssetBundle and supports encrypted AB packages (only sensitive resources are recommended to be encrypted because it will affect performance). At the same time, it also bypasses some bugs in earlier versions of Unity3D, such as multiple coroutines loading the same resource concurrently, which will cause errors in the android system. Its redundancy analysis is performed by unpacking the AssetBundle, which is more accurate than analyzing the redundancy in editor mode.
 
-    ![](images/bundle.jpg)
+    ![](images/bundle.png)
 
 - [Loxodon Framework Log4Net](http://u3d.as/Gmr)
 
     Plug-in for printing logs in Unity using Log4Net, and remote debugging in LAN.
 
-    ![](images/log4net.jpg)
+    ![](images/log4net.png)
 
 
 ## Lua plugin installation (optional)
