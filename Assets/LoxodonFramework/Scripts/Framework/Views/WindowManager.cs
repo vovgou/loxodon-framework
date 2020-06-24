@@ -214,7 +214,7 @@ namespace Loxodon.Framework.Views
 
         protected virtual void MoveToFirst(IWindow window)
         {
-            this.MoveToIndex(window, 0);            
+            this.MoveToIndex(window, 0);
         }
 
         protected virtual void MoveToIndex(IWindow window, int index)
@@ -222,9 +222,9 @@ namespace Loxodon.Framework.Views
             if (window == null)
                 throw new ArgumentNullException("window");
 
+            int oldIndex = this.IndexOf(window);
             try
             {
-                int oldIndex = this.IndexOf(window);
                 if (oldIndex < 0 || oldIndex == index)
                     return;
 
@@ -236,10 +236,31 @@ namespace Loxodon.Framework.Views
                 var view = window as UIView;
                 if (view != null && view.Transform != null)
                 {
-                    int maxIndex = this.windows.Count - 1;
-                    view.Transform.SetSiblingIndex(maxIndex - index);
+                    if (index == 0)
+                    {
+                        view.Transform.SetAsLastSibling();
+                    }
+                    else
+                    {
+                        IWindow preWindow = this.windows[index - 1];
+                        int preWindowPosition = GetChildIndex((preWindow as UIView).Transform);
+                        int currWindowPosition = oldIndex >= index ? preWindowPosition - 1 : preWindowPosition;
+                        view.Transform.SetSiblingIndex(currWindowPosition);
+                    }
                 }
             }
+        }
+
+        protected virtual int GetChildIndex(Transform child)
+        {
+            Transform transform = this.transform;
+            int count = transform.childCount;
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (transform.GetChild(i).Equals(child))
+                    return i;
+            }
+            return -1;
         }
 
         public virtual IEnumerator<IWindow> Visibles()
@@ -331,14 +352,14 @@ namespace Loxodon.Framework.Views
             ShowTransition transition = new ShowTransition(this, (Window)window);
             GetTransitionExecutor().Execute(transition);
             return transition.OnStateChanged((w, state) =>
-                {
-                    /* Control the layer of the window */
-                    if (state == WindowState.VISIBLE)
-                        this.MoveToIndex(w, transition.Layer);
+            {
+                /* Control the layer of the window */
+                if (state == WindowState.VISIBLE)
+                    this.MoveToIndex(w, transition.Layer);
 
-                    //if (state == WindowState.INVISIBLE)
-                    //    this.MoveToLast(w);
-                });
+                //if (state == WindowState.INVISIBLE)
+                //    this.MoveToLast(w);
+            });
         }
 
         public ITransition Hide(IWindow window)
@@ -346,11 +367,11 @@ namespace Loxodon.Framework.Views
             HideTransition transition = new HideTransition(this, (Window)window, false);
             GetTransitionExecutor().Execute(transition);
             return transition.OnStateChanged((w, state) =>
-                {
-                    /* Control the layer of the window */
-                    if (state == WindowState.INVISIBLE)
-                        this.MoveToLast(w);
-                });
+            {
+                /* Control the layer of the window */
+                if (state == WindowState.INVISIBLE)
+                    this.MoveToLast(w);
+            });
         }
 
         public ITransition Dismiss(IWindow window)
@@ -358,11 +379,11 @@ namespace Loxodon.Framework.Views
             HideTransition transition = new HideTransition(this, (Window)window, true);
             GetTransitionExecutor().Execute(transition);
             return transition.OnStateChanged((w, state) =>
-                {
-                    /* Control the layer of the window */
-                    if (state == WindowState.INVISIBLE)
-                        this.MoveToLast(w);
-                });
+            {
+                /* Control the layer of the window */
+                if (state == WindowState.INVISIBLE)
+                    this.MoveToLast(w);
+            });
         }
 
         class InternalVisibleEnumerator : IEnumerator<IWindow>
