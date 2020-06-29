@@ -63,7 +63,7 @@ UWP(window10)
 ## 注意：  
 - LoxodonFramework 支持 .Net2.0 和 .Net2.0 Subset  
 - LoxodonFramework 支持 .Net4.x 和 .Net Standard2.0  
-- LoxodonFramework 支持 Mono2x 和 IL2CPP  
+- LoxodonFramework 支持 Mono 和 IL2CPP  
 - IOS平台需要配置 AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampolines=8192"   
 
     现在这个配置不是必要的，在早期的Unity3D版本，在IOS平台上，不配置它们可能导致游戏崩溃。
