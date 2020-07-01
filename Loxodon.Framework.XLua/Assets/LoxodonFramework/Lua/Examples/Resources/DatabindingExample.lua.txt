@@ -1,0 +1,157 @@
+---
+-- MIT License
+--
+-- Copyright (c) 2018 Clark Yang
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy of 
+-- this software and associated documentation files (the "Software"), to deal in 
+-- the Software without restriction, including without limitation the rights to 
+-- use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+-- of the Software, and to permit persons to whom the Software is furnished to do so, 
+-- subject to the following conditions:
+--
+-- The above copyright notice and this permission notice shall be included in all 
+-- copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+-- SOFTWARE.
+---
+
+require("framework.System")
+
+local Context = CS.Loxodon.Framework.Contexts.Context
+local LuaBindingServiceBundle = CS.Loxodon.Framework.Binding.LuaBindingServiceBundle
+local ObservableObject = require("framework.ObservableObject")
+local ObservableDictionary = require("framework.ObservableDictionary")
+local Locale = CS.Loxodon.Framework.Localizations.Locale
+local Localization = CS.Loxodon.Framework.Localizations.Localization
+local DefaultDataProvider = CS.Loxodon.Framework.Localizations.DefaultDataProvider
+local XmlDocumentParser = CS.Loxodon.Framework.Localizations.XmlDocumentParser
+
+---
+--创建一个Account子视图模型
+--@module Account
+local Account = class("Account",ObservableObject)
+
+function Account:ctor(t)
+	--执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
+	Account.base(self).ctor(self,t)
+	
+	if not (t and type(t)=="table") then
+		self.id = 0
+		self.username = ""
+		self.Password = ""
+		self.email = ""
+		self.birthday = os.time({year =1970, month = 00, day =00, hour =00, min =00, sec = 00})
+		self.address = ""
+	end
+end
+
+---
+--创建一个数据绑定示例的视图模型
+--@module DatabindingViewModel
+local DatabindingViewModel = class("DatabindingViewModel",ObservableObject)
+
+function DatabindingViewModel:ctor(t)
+	--执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
+	DatabindingViewModel.base(self).ctor(self,t)
+	
+	if not (t and type(t)=="table") then
+		self.account = Account()
+		self.remember = false
+		self.username = ""
+		self.email = ""
+		self.errors = ObservableDictionary()
+	end
+	
+end
+
+function DatabindingViewModel:submit()
+	if #self.username < 1 then
+		--注意C#字典类型的使用方式，通过set_Item或者get_Item 访问
+		self.errors:set_Item("errorMessage","Please enter a valid username.")
+		return
+	end
+	
+	if #self.email < 1 then
+		--注意C#字典类型的使用方式，通过set_Item或者get_Item 访问
+		self.errors:set_Item("errorMessage","Please enter a valid email.")
+		return
+	end
+	
+	self.errors:Clear()
+	
+	self.account.username = self.username
+	self.account.email = self.email
+	self.account.remember = self.remember
+end
+
+---
+--创建一个数据绑定视图,扩展DatabindingExample.cs 对象，这里的target是从C#脚本传过来的
+--@module DatabindingExample
+local M = class("DatabindingExample",target)
+
+function M:awake()
+	local context = Context.GetApplicationContext()
+	local container = context:GetContainer()
+
+	--初始化本地化资源
+	local cultureInfo = Locale.GetCultureInfo()
+    local localization = Localization.Current
+	localization.CultureInfo = cultureInfo
+	localization:AddDataProvider(DefaultDataProvider("LocalizationTutorials", XmlDocumentParser()))
+
+	--初始化Lua的数据绑定服务，一般建议在游戏的C#启动脚本创建
+	local bundle = LuaBindingServiceBundle(container)
+	bundle:Start();
+end
+
+function M:start()
+	--初始化Account子视图模型
+	local account = Account({
+			id = 1,
+			username = "test",
+			password = "test",
+			email = "yangpc.china@gmail.com",
+			birthday = os.time({year =2000, month = 03, day =03, hour =00, min =00, sec = 00}),
+			address = "beijing",
+			remember = true
+		})
+	
+	--初始化视图模型
+	self.viewModel = DatabindingViewModel({
+			account = account,
+			username = "",
+			email = "",
+			remember = true,
+			errors = ObservableDictionary()
+		})
+	
+	self:BindingContext().DataContext = self.viewModel
+	
+	--进行数据绑定
+	local bindingSet = self:CreateBindingSet();
+	
+	bindingSet:Bind(self.username):For("text"):To("account.username"):OneWay()
+	bindingSet:Bind(self.password):For("text"):To("account.password"):OneWay()
+	bindingSet:Bind(self.email):For("text"):To("account.email"):OneWay()
+	bindingSet:Bind(self.remember):For("text"):To("account.remember"):OneWay()
+	bindingSet:Bind(self.birthday):For("text"):ToExpression(function(vm)
+			return os.date("%Y-%m-%d",vm.account.birthday)
+		end ,"account.birthday"):OneWay()
+	bindingSet:Bind(self.address):For("text"):To("account.address"):OneWay()
+	bindingSet:Bind(self.errorMessage):For("text"):To("errors['errorMessage']"):OneWay()	
+	bindingSet:Bind(self.usernameInput):For("text","onEndEdit"):To("username"):TwoWay()
+	bindingSet:Bind(self.emailInput):For("text","onEndEdit"):To("email"):TwoWay()
+	bindingSet:Bind(self.rememberInput):For("isOn","onValueChanged"):To("remember"):TwoWay()
+	bindingSet:Bind(self.submit):For("onClick"):To("submit"):OneWay()
+	
+	bindingSet:Build()
+end
+
+return M

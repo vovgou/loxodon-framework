@@ -1,3 +1,6 @@
-/Library
-/Temp
-/obj
+Library
+obj
+Temp
+.vs
+*.csproj
+*.sln
