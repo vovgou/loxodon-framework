@@ -28,8 +28,8 @@ UWP(window10)
 
 ## English manual
 
-- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework_en.md)
-- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework_en.pdf)
+- [HTML](https://github.com/cocowolf/loxodon-framework/blob/v1.9.x/docs/LoxodonFramework_en.md)
+- [PDF](https://github.com/cocowolf/loxodon-framework/blob/v1.9.x/docs/LoxodonFramework_en.pdf)
 
 ## Downloads  
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
@@ -141,11 +141,11 @@ Create a view and view model of the progress bar.
     }
 
 ## Plugins
-- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
+- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework.LocalizationsForCsv)
 
     It supports localization files in csv format, requires Unity2018.4 or higher.
 
-- [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
+- [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework.XLua)
 
     It supports making games with lua scripts.
 
@@ -197,8 +197,8 @@ Create a view and view model of the progress bar.
 
 ## Tutorials and Examples
 
-- [Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
-- [Examples](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
+- [Tutorials](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework/Assets/LoxodonFramework/Tutorials)
+- [Examples](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework/Assets/LoxodonFramework/Examples)
 
  ![](docs/images/Launcher.gif)
 

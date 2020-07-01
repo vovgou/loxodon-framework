@@ -27,9 +27,9 @@ UWP(window10)
 
 ## 中文文档
 
-- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
-- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.pdf)
-- [常见问题解答 FAQ](https://github.com/cocowolf/loxodon-framework/blob/master/docs/faq.md)
+- [HTML](https://github.com/cocowolf/loxodon-framework/blob/v1.9.x/docs/LoxodonFramework.md)
+- [PDF](https://github.com/cocowolf/loxodon-framework/blob/v1.9.x/docs/LoxodonFramework.pdf)
+- [常见问题解答 FAQ](https://github.com/cocowolf/loxodon-framework/blob/v1.9.x/docs/faq.md)
 
 ## 下载  
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
@@ -144,11 +144,11 @@ UWP(window10)
     }
 
 ## 插件与集成（可选）
-- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
+- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework.LocalizationsForCsv)
 
     支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
 
-- [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
+- [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework.XLua)
 
     Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。
 
@@ -224,8 +224,8 @@ UWP(window10)
 
 ## 教程和示例
 
-- [教程](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
-- [示例](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
+- [教程](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework/Assets/LoxodonFramework/Tutorials)
+- [示例](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework/Assets/LoxodonFramework/Examples)
 
 
  ![](docs/images/Launcher.gif)
