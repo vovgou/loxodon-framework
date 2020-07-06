@@ -27,13 +27,13 @@ UWP(window10)
 
 ## 中文文档
 
-- [HTML](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md)
-- [PDF](https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.pdf)
-- [常见问题解答 FAQ](https://github.com/cocowolf/loxodon-framework/blob/master/docs/faq.md)
+- [HTML](https://github.com/vovgou/loxodon-framework/blob/master/docs/LoxodonFramework.md)
+- [PDF](https://github.com/vovgou/loxodon-framework/blob/master/docs/LoxodonFramework.pdf)
+- [常见问题解答 FAQ](https://github.com/vovgou/loxodon-framework/blob/master/docs/faq.md)
 
 ## 下载  
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
-- [Releases](https://github.com/cocowolf/loxodon-framework/releases)
+- [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 ## 关键功能：
 - MVVM框架，支持UGUI和FairyGUI;
@@ -144,11 +144,11 @@ UWP(window10)
     }
 
 ## 插件与集成（可选）
-- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework-localization-for-csv)
 
     支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
 
-- [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
+- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework-xlua)
 
     Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。
 
@@ -178,7 +178,7 @@ UWP(window10)
 
     ![](docs/images/log4net.png)
 
-- [Loxodon Framework Obfuscation](https://github.com/cocowolf/loxodon-framework/releases)
+- [Loxodon Framework Obfuscation](https://github.com/vovgou/loxodon-framework/releases)
 
     数据类型内存混淆插件，支持ObfuscatedByte，ObfuscatedShort，ObfuscatedInt,ObfuscatedLong,ObfuscatedFloat,ObfuscatedDouble类型，防止内存修改器修改游戏数值，支持数值类型的所有运算符，与byte、short、int、long、float、double类型之间可以自动转换，使用时替换对应的数值类型即可。
     Float和Double类型混淆时转为int和long类型进行与或运算，确保不会丢失精度，类型转换时使用unsafe代码，兼顾转换性能。
@@ -224,8 +224,8 @@ UWP(window10)
 
 ## 教程和示例
 
-- [教程](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
-- [示例](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
+- [教程](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+- [示例](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
 
 
  ![](docs/images/Launcher.gif)
@@ -258,5 +258,5 @@ UWP(window10)
 
 ## 联系方式
 邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
-网站: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)  
+网站: [https://vovgou.github.io/loxodon-framework/](https://vovgou.github.io/loxodon-framework/)  
 QQ群: 622321589 [![](https://pub.idqqimg.com/wpa/images/group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)
