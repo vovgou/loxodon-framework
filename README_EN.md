@@ -2,8 +2,8 @@
 
 # Loxodon Framework
 
-[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/cocowolf/loxodon-framework/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v1.9.9-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
+[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/v1.9.x/LICENSE)
+[![release](https://img.shields.io/badge/release-v1.9.9-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
 
 [(中文版)](README.md)
 
@@ -28,12 +28,12 @@ UWP(window10)
 
 ## English manual
 
-- [HTML](https://github.com/cocowolf/loxodon-framework/blob/v1.9.x/docs/LoxodonFramework_en.md)
-- [PDF](https://github.com/cocowolf/loxodon-framework/blob/v1.9.x/docs/LoxodonFramework_en.pdf)
+- [HTML](https://github.com/vovgou/loxodon-framework/blob/v1.9.x/docs/LoxodonFramework_en.md)
+- [PDF](https://github.com/vovgou/loxodon-framework/blob/v1.9.x/docs/LoxodonFramework_en.pdf)
 
 ## Downloads  
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
-- [Releases](https://github.com/cocowolf/loxodon-framework/releases)
+- [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 ## Key Features:
 - MVVM Framework;
@@ -141,11 +141,11 @@ Create a view and view model of the progress bar.
     }
 
 ## Plugins
-- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework.LocalizationsForCsv)
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework/tree/v1.9.x/Loxodon.Framework.LocalizationsForCsv)
 
     It supports localization files in csv format, requires Unity2018.4 or higher.
 
-- [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework.XLua)
+- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework/tree/v1.9.x/Loxodon.Framework.XLua)
 
     It supports making games with lua scripts.
 
@@ -197,8 +197,8 @@ Create a view and view model of the progress bar.
 
 ## Tutorials and Examples
 
-- [Tutorials](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework/Assets/LoxodonFramework/Tutorials)
-- [Examples](https://github.com/cocowolf/loxodon-framework/tree/v1.9.x/Loxodon.Framework/Assets/LoxodonFramework/Examples)
+- [Tutorials](https://github.com/vovgou/loxodon-framework/tree/v1.9.x/Loxodon.Framework/Assets/LoxodonFramework/Tutorials)
+- [Examples](https://github.com/vovgou/loxodon-framework/tree/v1.9.x/Loxodon.Framework/Assets/LoxodonFramework/Examples)
 
  ![](docs/images/Launcher.gif)
 
@@ -229,5 +229,5 @@ Create a view and view model of the progress bar.
 
 ## Contact Us
 Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
-Website: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)  
+Website: [https://vovgou.github.io/loxodon-framework/](https://vovgou.github.io/loxodon-framework/)  
 QQ Group: 622321589 [![](https://pub.idqqimg.com/wpa/images/group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)
