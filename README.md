@@ -2,8 +2,8 @@
 
 # Loxodon Framework
 
-[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/cocowolf/loxodon-framework/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v1.9.9-blue.png)](https://github.com/cocowolf/loxodon-framework/releases)
+[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE)
+[![release](https://img.shields.io/badge/release-v1.9.9-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
 
 [(English)](README_EN.md)
 
