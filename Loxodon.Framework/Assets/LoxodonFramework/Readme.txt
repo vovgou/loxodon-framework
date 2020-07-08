@@ -1,5 +1,5 @@
 ﻿  Loxodon Framework
-Version: 1.9.9
+Version: 1.9.11
 © 2016, Clark Yang
 =======================================
 

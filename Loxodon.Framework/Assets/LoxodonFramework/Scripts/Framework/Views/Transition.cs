@@ -24,9 +24,9 @@
 
 using System;
 using System.Collections;
-
 using Loxodon.Log;
 using Loxodon.Framework.Execution;
+using Loxodon.Framework.Asynchronous;
 
 namespace Loxodon.Framework.Views
 {
@@ -34,10 +34,11 @@ namespace Loxodon.Framework.Views
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(Transition));
 
-        private Window window;
+        private IManageable window;
         private bool done = false;
         private bool animationDisabled = false;
         private int layer = 0;
+        private Func<IWindow, IWindow, ActionType> overlayPolicy;
 
         private bool running = false;
 
@@ -47,7 +48,7 @@ namespace Loxodon.Framework.Views
         private Action<IWindow, WindowState> onStateChanged;
         private Action onFinish;
 
-        public Transition(Window window)
+        public Transition(IManageable window)
         {
             this.window = window;
         }
@@ -78,7 +79,7 @@ namespace Loxodon.Framework.Views
                 this.window.StateChanged -= StateChanged;
         }
 
-        public virtual Window Window
+        public virtual IManageable Window
         {
             get { return this.window; }
             set { this.window = value; }
@@ -105,6 +106,12 @@ namespace Loxodon.Framework.Views
         {
             get { return this.layer; }
             protected set { this.layer = value; }
+        }
+
+        public virtual Func<IWindow, IWindow, ActionType> OverlayPolicy
+        {
+            get { return this.overlayPolicy; }
+            protected set { this.overlayPolicy = value; }
         }
 
         protected void StateChanged(object sender, WindowStateEventArgs e)
@@ -167,6 +174,15 @@ namespace Loxodon.Framework.Views
             this.Unbind();
         }
 
+#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
+        public CoroutineAwaiter GetAwaiter()
+        {
+            CoroutineAwaiter awaiter = new CoroutineAwaiter();
+            this.OnFinish(() => { awaiter.SetResult(null); });
+            return awaiter;
+        }
+#endif
+
         public ITransition DisableAnimation(bool disabled)
         {
             if (this.running)
@@ -192,6 +208,20 @@ namespace Loxodon.Framework.Views
             }
 
             this.layer = layer;
+            return this;
+        }
+
+        public ITransition Overlay(Func<IWindow, IWindow, ActionType> policy)
+        {
+            if (this.running)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("The transition is running.sets the policy failed.");
+
+                return this;
+            }
+
+            this.OverlayPolicy = policy;
             return this;
         }
 
@@ -225,11 +255,9 @@ namespace Loxodon.Framework.Views
 
         public ITransition OnFinish(Action callback)
         {
-            if (this.running)
+            if (this.done)
             {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("The transition is running.OnFinish failed.");
-
+                callback();
                 return this;
             }
 

@@ -167,7 +167,7 @@ namespace Loxodon.Framework.Views
                 return;
 
             this.windows.Add(window);
-            this.AddView(window as UIView);
+            this.AddChild(GetTransform(window));
         }
 
         public virtual bool Remove(IWindow window)
@@ -175,7 +175,7 @@ namespace Loxodon.Framework.Views
             if (window == null)
                 throw new ArgumentNullException("window");
 
-            this.RemoveView(window as UIView);
+            this.RemoveChild(GetTransform(window));
             return this.windows.Remove(window);
         }
 
@@ -185,7 +185,7 @@ namespace Loxodon.Framework.Views
                 throw new IndexOutOfRangeException();
 
             var window = this.windows[index];
-            this.RemoveView(window as UIView);
+            this.RemoveChild(GetTransform(window));
             this.windows.RemoveAt(index);
             return window;
         }
@@ -206,9 +206,9 @@ namespace Loxodon.Framework.Views
             }
             finally
             {
-                var view = window as UIView;
-                if (view != null && view.Transform != null)
-                    view.Transform.SetAsFirstSibling();
+                Transform transform = GetTransform(window);
+                if (transform != null)
+                    transform.SetAsFirstSibling();
             }
         }
 
@@ -222,9 +222,9 @@ namespace Loxodon.Framework.Views
             if (window == null)
                 throw new ArgumentNullException("window");
 
+            int oldIndex = this.IndexOf(window);
             try
             {
-                int oldIndex = this.IndexOf(window);
                 if (oldIndex < 0 || oldIndex == index)
                     return;
 
@@ -233,11 +233,20 @@ namespace Loxodon.Framework.Views
             }
             finally
             {
-                var view = window as UIView;
-                if (view != null && view.Transform != null)
+                Transform transform = GetTransform(window);
+                if (transform != null)
                 {
-                    int maxIndex = this.windows.Count - 1;
-                    view.Transform.SetSiblingIndex(maxIndex - index);
+                    if (index == 0)
+                    {
+                        transform.SetAsLastSibling();
+                    }
+                    else
+                    {
+                        IWindow preWindow = this.windows[index - 1];
+                        int preWindowPosition = GetChildIndex(GetTransform(preWindow));
+                        int currWindowPosition = oldIndex >= index ? preWindowPosition - 1 : preWindowPosition;
+                        transform.SetSiblingIndex(currWindowPosition);
+                    }
                 }
             }
         }
@@ -300,35 +309,50 @@ namespace Loxodon.Framework.Views
             return list;
         }
 
-        protected virtual void AddView(IUIView view, bool worldPositionStays = false)
+        protected virtual Transform GetTransform(IWindow window)
         {
-            if (view == null)
-                return;
-
-            Transform t = view.Transform;
-            if (t == null || this.transform.Equals(t.parent))
-                return;
-
-            view.Owner.layer = this.gameObject.layer;
-            t.SetParent(this.transform, worldPositionStays);
-            t.SetAsFirstSibling();
+            if (window == null)
+                return null;
+            if (window is UIView)
+                return (window as UIView).Transform;
+            if (window is Component)
+                return (window as Component).transform;
+            return null;
         }
 
-        protected virtual void RemoveView(IUIView view, bool worldPositionStays = false)
+        protected virtual int GetChildIndex(Transform child)
         {
-            if (view == null)
+            Transform transform = this.transform;
+            int count = transform.childCount;
+            for (int i = count - 1; i >= 0; i--)
+            {
+                if (transform.GetChild(i).Equals(child))
+                    return i;
+            }
+            return -1;
+        }
+
+        protected virtual void AddChild(Transform child, bool worldPositionStays = false)
+        {
+            if (child == null || this.transform.Equals(child.parent))
                 return;
 
-            Transform t = view.Transform;
-            if (t == null || !this.transform.Equals(t.parent))
+            child.gameObject.layer = this.gameObject.layer;
+            child.SetParent(this.transform, worldPositionStays);
+            child.SetAsFirstSibling();
+        }
+
+        protected virtual void RemoveChild(Transform child, bool worldPositionStays = false)
+        {
+            if (child == null || !this.transform.Equals(child.parent))
                 return;
 
-            t.SetParent(null, worldPositionStays);
+            child.SetParent(null, worldPositionStays);
         }
 
         public ITransition Show(IWindow window)
         {
-            ShowTransition transition = new ShowTransition(this, (Window)window);
+            ShowTransition transition = new ShowTransition(this, (IManageable)window);
             GetTransitionExecutor().Execute(transition);
             return transition.OnStateChanged((w, state) =>
                 {
@@ -343,7 +367,7 @@ namespace Loxodon.Framework.Views
 
         public ITransition Hide(IWindow window)
         {
-            HideTransition transition = new HideTransition(this, (Window)window, false);
+            HideTransition transition = new HideTransition(this, (IManageable)window, false);
             GetTransitionExecutor().Execute(transition);
             return transition.OnStateChanged((w, state) =>
                 {
@@ -355,7 +379,7 @@ namespace Loxodon.Framework.Views
 
         public ITransition Dismiss(IWindow window)
         {
-            HideTransition transition = new HideTransition(this, (Window)window, true);
+            HideTransition transition = new HideTransition(this, (IManageable)window, true);
             GetTransitionExecutor().Execute(transition);
             return transition.OnStateChanged((w, state) =>
                 {
@@ -412,17 +436,10 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public enum ActionType
-        {
-            None,
-            Hide,
-            Dismiss
-        }
-
         class ShowTransition : Transition
         {
             private WindowManager manager;
-            public ShowTransition(WindowManager manager, Window window) : base(window)
+            public ShowTransition(WindowManager manager, IManageable window) : base(window)
             {
                 this.manager = manager;
             }
@@ -440,7 +457,7 @@ namespace Loxodon.Framework.Views
 
             protected override IEnumerator DoTransition()
             {
-                Window current = this.Window;
+                IManageable current = this.Window;
                 int layer = (this.Layer < 0 || current.WindowType == WindowType.DIALOG || current.WindowType == WindowType.PROGRESS) ? 0 : this.Layer;
                 if (layer > 0)
                 {
@@ -450,7 +467,7 @@ namespace Loxodon.Framework.Views
                 }
                 this.Layer = layer;
 
-                Window previous = (Window)this.manager.GetVisibleWindow(layer);// this.manager.Current as Window;
+                IManageable previous = (IManageable)this.manager.GetVisibleWindow(layer);
                 if (previous != null)
                 {
                     //Passivate the previous window
@@ -460,7 +477,10 @@ namespace Loxodon.Framework.Views
                         yield return passivate.WaitForDone();
                     }
 
-                    ActionType actionType = this.Overlay(previous, current);
+                    Func<IWindow, IWindow, ActionType> policy = this.OverlayPolicy;
+                    if (policy == null)
+                        policy = this.Overlay;
+                    ActionType actionType = policy(previous, current);
                     switch (actionType)
                     {
                         case ActionType.Hide:
@@ -495,7 +515,7 @@ namespace Loxodon.Framework.Views
         {
             private WindowManager manager;
             private bool dismiss;
-            public HideTransition(WindowManager manager, Window window, bool dismiss) : base(window)
+            public HideTransition(WindowManager manager, IManageable window, bool dismiss) : base(window)
             {
                 this.dismiss = dismiss;
                 this.manager = manager;
@@ -503,7 +523,7 @@ namespace Loxodon.Framework.Views
 
             protected override IEnumerator DoTransition()
             {
-                Window current = this.Window;
+                IManageable current = this.Window;
                 if (this.manager.IndexOf(current) == 0)
                 {
                     if (current.Activated)
@@ -598,7 +618,7 @@ namespace Loxodon.Framework.Views
                             var current = manager.Current;
                             if (manager.Activated && current != null && !current.Activated && !this.transitions.Exists((e) => e.Window.WindowManager.Equals(manager)))
                             {
-                                IAsyncTask activate = (current as Window).Activate(transition.AnimationDisabled).Start();
+                                IAsyncTask activate = (current as IManageable).Activate(transition.AnimationDisabled).Start();
                                 yield return activate.WaitForDone();
                             }
                         }

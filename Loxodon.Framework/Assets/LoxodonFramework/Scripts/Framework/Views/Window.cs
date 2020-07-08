@@ -31,7 +31,7 @@ using Loxodon.Framework.Asynchronous;
 namespace Loxodon.Framework.Views
 {
     [DisallowMultipleComponent]
-    public abstract class Window : WindowView, IWindow
+    public abstract class Window : WindowView, IWindow, IManageable
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(Window));
 
@@ -192,7 +192,7 @@ namespace Loxodon.Framework.Views
         {
             return new AsyncTask((promise) =>
             {
-                if(!this.Visibility)
+                if (!this.Visibility)
                 {
                     promise.SetException(new InvalidOperationException("The window is not visible."));
                     return;

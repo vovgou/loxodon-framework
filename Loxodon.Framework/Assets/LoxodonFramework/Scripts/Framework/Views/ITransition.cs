@@ -22,10 +22,18 @@
  * SOFTWARE.
  */
 
+using Loxodon.Framework.Asynchronous;
 using System;
 
 namespace Loxodon.Framework.Views
 {
+    public enum ActionType
+    {
+        None,
+        Hide,
+        Dismiss
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -42,6 +50,14 @@ namespace Loxodon.Framework.Views
         /// </summary>
         object WaitForDone();
 
+#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        CoroutineAwaiter GetAwaiter();
+#endif
+
         /// <summary>
         /// Disable animation
         /// </summary>
@@ -50,11 +66,32 @@ namespace Loxodon.Framework.Views
         ITransition DisableAnimation(bool disabled);
 
         /// <summary>
-        /// Sets the layer of the window in the window manager. 0 is the topmost layer.
+        /// Sets the layer of the window in the window manager, 0 is the top layer.
+        /// This method is only valid when showing a window.
         /// </summary>
         /// <param name="layer"></param>
         /// <returns></returns>
         ITransition AtLayer(int layer);
+
+        /// <summary>
+        /// Sets a processing policy. When a window is covered, hide it, dismiss it or do nothing.
+        /// This method is only valid when showing a window.
+        /// </summary>
+        /// <example>
+        /// This is an example, the default processing policy is as follows:
+        /// <code>
+        /// (previous,current) => {
+        ///     if (previous == null || previous.WindowType == WindowType.FULL)
+        ///         return ActionType.None;
+        ///     if (previous.WindowType == WindowType.POPUP)    
+        ///         return ActionType.Dismiss;
+        ///     return ActionType.None;
+        /// }
+        /// </code>
+        /// </example>
+        /// <param name="policy"></param>
+        /// <returns></returns>
+        ITransition Overlay(Func<IWindow, IWindow, ActionType> policy);
 
         /// <summary>
         /// 

@@ -51,6 +51,9 @@ namespace Loxodon.Framework.Asynchronous
         {
             lock (_lock)
             {
+                if (done)
+                    return;
+
                 this.exception = exception;
                 this.done = true;
                 if (this.continuation != null)
@@ -100,6 +103,9 @@ namespace Loxodon.Framework.Asynchronous
         {
             lock (_lock)
             {
+                if (done)
+                    return;
+
                 this.result = result;
                 this.exception = exception;
                 this.done = true;
@@ -107,7 +113,6 @@ namespace Loxodon.Framework.Asynchronous
                     this.continuation();
             }
         }
-
     }
 }
 #endif

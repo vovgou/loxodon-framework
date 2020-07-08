@@ -132,6 +132,11 @@ namespace Loxodon.Framework.Views
         bool Activated { get; }
 
         /// <summary>
+        /// The WindowManager of the window.
+        /// </summary>
+        IWindowManager WindowManager { get; set; }
+
+        /// <summary>
         /// window type.
         /// </summary>
         WindowType WindowType { get; set; }
