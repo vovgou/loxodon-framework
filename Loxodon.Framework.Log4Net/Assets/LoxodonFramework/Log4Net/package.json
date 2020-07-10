@@ -1,0 +1,32 @@
+{
+  "name": "com.vovgou.loxodon-framework-log4net",
+  "displayName": "Loxodon Framework Log4Net",
+  "version": "2.0.0",
+  "unity": "2019.3",
+  "description": "LoxodonFramework is a lightweight MVVM(Model-View-ViewModel) framework built specifically to target Unity3D. Databinding and localization are supported.It has a very flexible extensibility.It makes your game development faster and easier.\n\nFor tutorials,examples and support,please see the project.You can also discuss the project in the Unity Forums.\n\nThe plugin is compatible with MacOSX,Windows,Linux,UWP,IOS and Android,and provides all the source code of the project.",
+  "license": "MIT",
+  "keywords": [
+    "Loxodon",
+    "Framework",
+    "Databinding",
+    "Localization",
+    "MVVM",
+    "UI",
+    "UGUI",
+    "FairyGUI",
+    "UIElements",
+    "XLua",
+    "Lua",
+    "log4net"
+  ],
+  "author": {
+    "name": "Clark Yang",
+    "email": "yangpc.china@gmail.com",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+  "category": "GUI",
+  "relatedPackages": {},
+  "dependencies": {
+    "com.vovgou.loxodon-framework": "2.0.0-preview"
+  }
+}
