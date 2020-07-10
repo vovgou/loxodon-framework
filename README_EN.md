@@ -26,14 +26,40 @@ IOS
 Android  
 UWP(window10)
 
+## Installation
+
+### Install via OpenUPM (recommended)
+
+[OpenUPM](https://openupm.com/) can automatically manage dependencies, it is recommended to use it to install the framework.
+
+Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not installed please install them first.
+
+    # Install openupm-cli,please ignore if it is already installed.
+    npm install -g openupm-cli 
+    
+    #Go to the root directory of your project
+    cd F:/workspace/New Unity Project
+    
+    #Install loxodon-framework
+    openupm add com.vovgou.loxodon-framework
+
+### Install via git URL
+
+After Unity 2019.3.4f1 that support path query parameter of git package. You can add https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework#2.0.0-preview to Package Manager
+
+![](docs/images/install_via_git.png)
+
+### Install via *.unitypackage file
+
+Download [Loxodon.Framework2.x.x.unitypackage](https://github.com/vovgou/loxodon-framework/releases) and import it into your project.
+
+- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [Releases](https://github.com/vovgou/loxodon-framework/releases)
+
 ## English manual
 
 - [HTML](https://github.com/vovgou/loxodon-framework/blob/master/docs/LoxodonFramework_en.md)
 - [PDF](https://github.com/vovgou/loxodon-framework/blob/master/docs/LoxodonFramework_en.pdf)
-
-## Downloads  
-- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
-- [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 ## Key Features:
 - MVVM Framework;

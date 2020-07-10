@@ -25,15 +25,45 @@ IOS
 Android  
 UWP(window10)
 
+## 安装
+
+自Loxodon.Framework 2.0版本开始，保留了原有的 *.unitypackage包发布方式，同时添加了UPM发布方式，此版本要求Unity 2019.3.4及以上版本，框架的目录结构进行了一些调整，以符合UPM格式要求。
+
+**升级注意：从1.x.x版本升级到2.0版本前，请先删除老版本的所有文件，按如下安装步骤安装新版本，2.0版本微调了IUIViewLocator接口，其他接口基本保持不变，如升级到2.0，可能需要调整IUIViewLocator接口的实现代码。2.0版本的教程和示例代码默认不会自动导入，如需要请手动导入到项目中**
+
+### 使用 OpenUPM 安装(推荐)
+
+[OpenUPM](https://openupm.com/) 是一个开源的UPM包仓库，它支持发布第三方的UPM包，它能够自动管理包的依赖关系，推荐使用它安装本框架.
+
+通过openupm命令安装包,要求[nodejs](https://nodejs.org/en/download/) and openupm-cli客户端的支持，如果没有安装请先安装nodejs和open-cli。
+
+    # 使用npm命令安装openupm-cli，如果已经安装请忽略.
+    npm install -g openupm-cli 
+    
+    #切换当前目录到项目的根目录
+    cd F:/workspace/New Unity Project
+    
+    #安装 loxodon-framework
+    openupm add com.vovgou.loxodon-framework
+
+### 通过git URL安装
+
+Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework#2.0.0-preview 地址到UPM管理器，耐性等待一段时间，下载完成后即安装成功。
+
+![](docs/images/install_via_git.png)
+
+### 通过 *.unitypackage 文件安装
+
+从以下地址下载 [Loxodon.Framework2.x.x.unitypackage](https://github.com/vovgou/loxodon-framework/releases) 后,导入到你的项目中即完成安装.
+
+- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [Releases](https://github.com/vovgou/loxodon-framework/releases)
+
 ## 中文文档
 
 - [HTML](https://github.com/vovgou/loxodon-framework/blob/master/docs/LoxodonFramework.md)
 - [PDF](https://github.com/vovgou/loxodon-framework/blob/master/docs/LoxodonFramework.pdf)
 - [常见问题解答 FAQ](https://github.com/vovgou/loxodon-framework/blob/master/docs/faq.md)
-
-## 下载  
-- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
-- [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 ## 关键功能：
 - MVVM框架，支持UGUI和FairyGUI;
