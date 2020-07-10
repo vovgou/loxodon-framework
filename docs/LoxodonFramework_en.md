@@ -1,3 +1,11 @@
+<!--
+---
+puppeteer:
+    landscape: false
+    format: "A3"
+    timeout: 3000 # <= 特殊设置，意味着等待（waitFor） 3000 毫秒
+---
+-->
 ![](images/icon.png)
 # Loxodon Framework
 
@@ -109,7 +117,7 @@ Table of Contents
 
 ## Overview
 
-**Requires Unity 5.6.0 or higher**
+**Requires Unity 2019.3 or higher**
 
 LoxodonFramework is a lightweight MVVM (Model-View-ViewModel) framework. It is specially designed for Unity3D game development. It refers to the MVVM design of WPF and Android. It provides data binding and localization of views and view models , A simple service container, configuration file component, thread tool component, application context and player context, asynchronous thread and coroutine task components, and other basic components. It also provides a framework for UI views. All code is designed based on the idea of object-oriented and interface-oriented, and almost all functions can be customized. In addition, performance optimization has been performed in the data binding part. On the platform that supports JIT, the delegation method is used for binding. On the platforms that do not support JIT, reflection is used by default, but it can be optimized by injecting the delegate function!
 
@@ -155,17 +163,17 @@ This plugin is compatible with MacOSX, Windows, Linux, UWP, IOS and Android, etc
 ## Download
 
 - [Unity3d official store download](https://www.assetstore.unity3d.com/#!/content/77446)
-- [Github download](https://github.com/cocowolf/loxodon-framework/releases)
+- [Github download](https://github.com/vovgou/loxodon-framework/releases)
 
 ## Official Plugin(optional)
 
-- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework-localization-for-csv)
 
     Support localization file format as csv file format, requires Unity2018.4 or later.
 
-- [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
+- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework-xlua)
 
-    Loxodon.Framework's XLua plugin, it is a lua MVVM framework that supports mixed programming of lua and c # or you can use lua completely to write your entire game. See the next chapter for installation steps or check the documentation of [Loxodon.Framework.XLua](https://github.com/cocowolf/loxodon-framework-xlua)   
+    Loxodon.Framework's XLua plugin, it is a lua MVVM framework that supports mixed programming of lua and c # or you can use lua completely to write your entire game. See the next chapter for installation steps or check the documentation of [Loxodon.Framework.XLua](https://github.com/vovgou/loxodon-framework-xlua)   
 
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
@@ -783,7 +791,7 @@ In Preferences, although I have supported many data types, but there are always 
     BinaryFilePreferencesFactory factory = new BinaryFilePreferencesFactory(serializer, encryptor);
     Preferences.Register(factory);
 
-For more examples, see the [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ### Configuration(Properties File)
 
@@ -901,7 +909,7 @@ Sprites, textures (Texture2D / Texture3D), fonts (Font), audio effects (AudioCli
 ![](images/LocalizationSource1.png)
 ![](images/LocalizationSource2.png)
 
-- Localization SourceBehaviour The localization source source script is attached to the GameObject object and can be stored directly in Prefab or in the scene. It cannot be stored separately by language. All localized resources that support languages should be configured in the same In a script file. The LocalizationSourceBehaviour script comes with a DataProvider. When the script is run, the data is automatically loaded, and when the object is destroyed, the data is automatically unloaded. This method is particularly suitable for use with UIView. Localized data is automatically loaded when UIView is created, and localized data is released when UIView is closed. Compared with the Asset file format, it has the advantage that it can be used like a Unity object and can be dragged into the scene or prefab. There is no need to write a script to manage it. Its disadvantage is that data for multiple language versions will be loaded. Into memory, it will take up more memory. [Localization Source Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials/)
+- Localization SourceBehaviour The localization source source script is attached to the GameObject object and can be stored directly in Prefab or in the scene. It cannot be stored separately by language. All localized resources that support languages should be configured in the same In a script file. The LocalizationSourceBehaviour script comes with a DataProvider. When the script is run, the data is automatically loaded, and when the object is destroyed, the data is automatically unloaded. This method is particularly suitable for use with UIView. Localized data is automatically loaded when UIView is created, and localized data is released when UIView is closed. Compared with the Asset file format, it has the advantage that it can be used like a Unity object and can be dragged into the scene or prefab. There is no need to write a script to manage it. Its disadvantage is that data for multiple language versions will be loaded. Into memory, it will take up more memory. [Localization Source Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials/)
 ![](images/LocalizationSource3.png)
 ![](images/LocalizationSource4.png)
 
@@ -1209,13 +1217,13 @@ The localization file configuration is as follows:
     </resources>
 
 
-For more examples, see the [Localization Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Localization Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### Localization plugin supporting CSV format
 
 If you are accustomed to using Excel, you can download my CSV plug-in, which supports reading the localized configuration of the CSV file format, but requires that the Unity version is above 2018 and supports .net 4.x or .net standard 2.0.
 
-Download：[Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv/releases)
+Download：[Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework-localization-for-csv/releases)
 
 **The configuration file format is as follows**
 
@@ -1615,7 +1623,7 @@ Before C # 4.0, you needed to perform a complex asynchronous operation, generall
 
     }
 
-For more examples, see the [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ### Thread/Coroutine Executor
 
@@ -1724,7 +1732,7 @@ InterceptableEnumerator supports conditional statement blocks. You can insert a 
         return enumerator;
     }
 
-For more examples, see the [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ### Message System(Messenger)
 
@@ -1776,7 +1784,7 @@ Messenger is used for communication between application modules. It provides the
         }
     }
 
-For more examples, see the [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ### Observables
 
@@ -1854,7 +1862,7 @@ Let's take a look at the usage example of ObservableDictionary. When we need to 
         }
     }
 
-For more examples, see the [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ### Databinding
 
@@ -1937,7 +1945,7 @@ In general, basic data types are automatically converted when the field type of 
     //通过视图模型Icon，修改精灵名称，通过spriteConverter转换为对应的Sprite，赋值到图片的sprite属性上。
     bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();
 
-For more examples, see the [ListView And Sprite Databinding Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [ListView And Sprite Databinding Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### Binding type
 
@@ -2562,7 +2570,7 @@ Take a look at the following code example, using an interactive request to open 
         }
     }
 
-For more examples, see the [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Interaction Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### Interaction Action
 
@@ -2585,7 +2593,7 @@ InteractionAction is used in conjunction with InteractionRequest. An interaction
     //绑定InteractionAction到InteractionRequest
     bindingSet.Bind().For(v => v.loadingInteractionAction).To(vm => vm.LoadingRequest);
 
-For more examples, see the [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Interaction Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### Collection and list view binding
 
@@ -2934,7 +2942,7 @@ Finally, the view model code for the ListView control and ListItemView is as fol
         }
     }
 
-For more examples, see the [ListView And Sprite Databinding Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [ListView And Sprite Databinding Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### Data binding and asynchronous loading sprites
 
@@ -3060,7 +3068,7 @@ Then create the view and view model code of the sample interface as follows.
         }
     }
 
-For more examples, see the [Databinding for Asynchronous Loading Sprites Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the [Databinding for Asynchronous Loading Sprites Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ## Lua
 
@@ -3469,5 +3477,5 @@ The base layer contains the framework, database access components, network compo
 
 ## Contact information
 Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
-Website: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)  
+Website: [https://vovgou.github.io/loxodon-framework/](https://vovgou.github.io/loxodon-framework/)  
 QQ group: 622321589 [![](images/qq_group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)

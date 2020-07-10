@@ -3,7 +3,7 @@
 # Loxodon Framework
 
 [![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v1.9.9-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
+[![release](https://img.shields.io/badge/release-v2.0.0-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
 
 [(English)](README_EN.md)
 
@@ -11,7 +11,7 @@
 
 *开发者 Clark*
 
-要求Unity 5.6.0或者更高版本
+要求Unity 2019.3 或者更高版本
 
 LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是专门为Unity3D游戏开发设计的，参考了WPF和Android的MVVM设计，它提供了视图和视图模型的数据绑定、本地化、一个简单的对象容器、配置文件组件、线程工具组件、应用上下文和玩家上下文，异步线程和协程的任务组件等基本组件，同时还提供了一个UI视图的框架。所有代码都基于面向对象面向接口的思路设计，几乎所有功能都可以自定义。而且在数据绑定部分进行了性能优化，在支持JIT的平台上使用的是委托的方式绑定，在不支持JIT的平台，默认使用的是反射，但是可以通过注入委托函数的方式来优化，它支持绑定到UGUI和FairyGUI控件，同时也很容易扩展对其他UI的支持。
 

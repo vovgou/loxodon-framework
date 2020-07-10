@@ -3,7 +3,7 @@
 # Loxodon Framework
 
 [![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v1.9.9-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
+[![release](https://img.shields.io/badge/release-v2.0.0-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
 
 [(中文版)](README.md)
 
@@ -11,7 +11,7 @@
 
 *Developed by Clark*
 
-Requires Unity 5.6.0 or higher.
+Requires Unity 2019.3 or higher.
 
 LoxodonFramework is a lightweight MVVM(Model-View-ViewModel) framework built specifically to target Unity3D.
 Databinding and localization are supported.It has a very flexible extensibility.It makes your game development faster and easier.

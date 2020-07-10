@@ -2,17 +2,17 @@
 
 # Loxodon Framework XLua
 
-[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/cocowolf/loxodon-framework-xlua/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v1.1.4-blue.png)](https://github.com/cocowolf/loxodon-framework-xlua/releases)
+[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE)
+[![release](https://img.shields.io/badge/release-v1.1.4-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
 
 
-**要求Unity 5.6.0或者更高版本**
+**要求Unity 2019.3 或者更高版本**
 
 Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。
 
 ## 要求 ##
 
-[Loxodon Framework](https://github.com/cocowolf/loxodon-framework)
+[Loxodon Framework](https://github.com/vovgou/loxodon-framework)
 
 本项目作为Loxodon.Framework插件，必须在Loxodon.Framework环境下使用，请在安装使用前先安装Loxodon.Framework框架。
 
@@ -121,5 +121,5 @@ Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua�
 
 ## 联系方式
 邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
-网站: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)  
+网站: [https://vovgou.github.io/loxodon-framework/](https://vovgou.github.io/loxodon-framework/)  
 QQ群: 622321589 [![](https://pub.idqqimg.com/wpa/images/group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)

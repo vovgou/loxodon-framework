@@ -1,0 +1,18 @@
+{
+    "name": "Loxodon.Framework.Editor",
+    "references": [
+        "GUID:b5a18e24b06d5f04e90936c0f91d7d88",
+        "GUID:e353924064f468f48b732b2ec0d3e62a"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

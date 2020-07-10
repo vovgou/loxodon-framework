@@ -1,10 +1,18 @@
+<!--
+---
+puppeteer:
+    landscape: false
+    format: "A3"
+    timeout: 3000 # <= 特殊设置，意味着等待（waitFor） 3000 毫秒
+---
+-->
 ![](images/icon.png)
 # Loxodon Framework
 
 *MVVM Framework for Unity3D(C# & XLua)*
 
 *开发者 Clark*
-*Version 1.9.9*
+*Version 2.0.0*
 
 <div style="page-break-after: always;"></div>
 
@@ -110,7 +118,7 @@
 
 ## 概述
 
-**要求Unity 5.6.0或者更高版本**
+**要求Unity 2019.3 或者更高版本**
 
 LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是专门为Unity3D游戏开发设计的，参考了WPF和Android的MVVM设计，它提供了视图和视图模型的数据绑定、本地化、一个简单的服务容器、配置文件组件、线程工具组件、应用上下文和玩家上下文，异步线程和协程的任务组件等基本组件，同时还提供了一个UI视图的框架。所有代码都基于面向对象面向接口的思路设计，几乎所有功能都可以自定义。而且在数据绑定部分进行了性能优化，在支持JIT的平台上使用的是委托的方式绑定，在不支持JIT的平台，默认使用的是反射，但是可以通过注入委托函数的方式来优化！
 
@@ -156,17 +164,17 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 ## 下载
 
 - [Unity3d官方商店下载](https://www.assetstore.unity3d.com/#!/content/77446)
-- [Github下载](https://github.com/cocowolf/loxodon-framework/releases)
+- [Github下载](https://github.com/vovgou/loxodon-framework/releases)
 
 ## 官方插件（可选）
 
-- [Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv)
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework-localization-for-csv)
 
     支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
 
-- [Loxodon Framework XLua](https://github.com/cocowolf/loxodon-framework-xlua)
+- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework-xlua)
 
-    Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。安装步骤详见下一章节或者查看[Loxodon.Framework.XLua的文档](https://github.com/cocowolf/loxodon-framework-xlua)    
+    Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。安装步骤详见下一章节或者查看[Loxodon.Framework.XLua的文档](https://github.com/vovgou/loxodon-framework-xlua)    
 
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
@@ -783,7 +791,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
     BinaryFilePreferencesFactory factory = new BinaryFilePreferencesFactory(serializer, encryptor);
     Preferences.Register(factory);
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ### 配置文件（Properties文件）
 
@@ -933,7 +941,7 @@ Properties文件格式如下，以key = value 的方式配置所有内容，key�
 ![](images/LocalizationSource2.png)
 
 - 本地化数据源脚本方式(LocalizationSourceBehaviour)
-通过本地化数据源脚本挂在GameObject对象上，可以直接存储在Prefab中或场景中，它无法按语言分别存储，所有支持语言的本地化资源都应该配置在同一个脚本文件中。LocalizationSourceBehaviour脚本中自带了DataProvider，当脚本运行会自动加载数据，当对象销毁时又会自动卸载数据。这种方式特别适合与UIView配合使用，当UIView创建时自动加载本地化数据，当UIView关闭时又会释放本地化数据。与Asset文件格式相比，它的优点是可以像一个Unity对象一样使用，拖入场景或者prefab中即可，不需要写脚本来管理它，它的缺点是所配置多个语言版本的数据都会加载到内存中，会占用更多的内存。[示例 Localization Source Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials/)
+通过本地化数据源脚本挂在GameObject对象上，可以直接存储在Prefab中或场景中，它无法按语言分别存储，所有支持语言的本地化资源都应该配置在同一个脚本文件中。LocalizationSourceBehaviour脚本中自带了DataProvider，当脚本运行会自动加载数据，当对象销毁时又会自动卸载数据。这种方式特别适合与UIView配合使用，当UIView创建时自动加载本地化数据，当UIView关闭时又会释放本地化数据。与Asset文件格式相比，它的优点是可以像一个Unity对象一样使用，拖入场景或者prefab中即可，不需要写脚本来管理它，它的缺点是所配置多个语言版本的数据都会加载到内存中，会占用更多的内存。[示例 Localization Source Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials/)
 ![](images/LocalizationSource3.png)
 ![](images/LocalizationSource4.png)
 
@@ -1256,13 +1264,13 @@ XML 格式配置如下:
     </resources>
 
 
-更多的示例请查看教程 [Localization Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 [Localization Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### 支持CSV格式的本地化插件
 
 如果习惯使用Excel的朋友可以下载我的CSV插件，它支持读取CSV文件格式的本地化配置，但是要求Unity版本在2018以上，支持.net 4.x或者.net standard 2.0。
 
-下载地址：[Loxodon Framework Localization For CSV](https://github.com/cocowolf/loxodon-framework-localization-for-csv/releases)
+下载地址：[Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework-localization-for-csv/releases)
 
 **配置文件格式如下**
 
@@ -1663,7 +1671,7 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
 
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### async & await
 
@@ -1759,7 +1767,7 @@ Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以�
         }
     }
 
-更多的示例请查看教程 [Async & Await Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 [Async & Await Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### Task转Unity协程
 
@@ -1898,7 +1906,7 @@ InterceptableEnumerator支持条件语句块，可以在外部插入一个条件
         return enumerator;
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ### 消息系统(Messenger)
 
@@ -1950,7 +1958,7 @@ Messenger用于应用模块间的通讯，它提供了消息订阅和发布的�
         }
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ### 可观察的对象(Observables)
 
@@ -2028,7 +2036,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
         }
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ### 数据绑定(Databinding)
 
@@ -2111,7 +2119,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
     //通过视图模型Icon，修改精灵名称，通过spriteConverter转换为对应的Sprite，赋值到图片的sprite属性上。
     bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();
 
-请查看示例 [ListView And Sprite Databinding Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+请查看示例 [ListView And Sprite Databinding Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### 绑定类型
 
@@ -2736,7 +2744,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
         }
     }
 
-请查看示例 [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+请查看示例 [Interaction Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### 交互行为(InteractionAction)
 
@@ -2759,7 +2767,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
     //绑定InteractionAction到InteractionRequest
     bindingSet.Bind().For(v => v.loadingInteractionAction).To(vm => vm.LoadingRequest);
 
-请查看示例 [Interaction Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+请查看示例 [Interaction Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### 集合与列表视图的绑定
 在Unity3D游戏开发中，我们经常要使用到UGUI的ScrollRect控件，比如我们要展示一个装备列表，或者一个背包中的所有物品。那么我们可以使用数据绑定功能来自动更新列表中的内容吗，比如添加、删除、修改一个装备集合中的数据，装备列表视图会自动更新界面内容吗？ 答案是肯定的，使用ObservableList或者ObservableDictionary集合来存储装备信息，通过数据绑定集合到一个视图脚本上，就可以自动的更新装备列表的内容，只是这里的视图脚本需要我们自己实现，因为每个项目列表视图并不是标准化的，我无法提供一个通用的脚本来提供集合的绑定。
@@ -3108,7 +3116,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         }
     }
 
-请查看示例 [ListView And Sprite Databinding Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+请查看示例 [ListView And Sprite Databinding Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 #### 数据绑定与异步加载精灵
 在前文的示例中，我有使用到精灵的绑定，只是它是提前加载到内存中的。在这里我将讲讲如何通过数据绑定来异步加载一个精灵。与上一节中集合绑定类似，通过一个视图脚本就可以轻松实现精灵的异步加载。下面我们来看示例。
@@ -3233,7 +3241,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         }
     }
 
-请查看示例 [Databinding for Asynchronous Loading Sprites Tutorials](https://github.com/cocowolf/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+请查看示例 [Databinding for Asynchronous Loading Sprites Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
 
 ## Lua
 
@@ -3642,5 +3650,5 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
 
 ## 联系方式
 邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
-网站: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)  
+网站: [https://vovgou.github.io/loxodon-framework/](https://vovgou.github.io/loxodon-framework/)  
 QQ群: 622321589 [![](images/qq_group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)
