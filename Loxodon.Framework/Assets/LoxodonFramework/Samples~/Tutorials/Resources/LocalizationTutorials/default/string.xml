@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app.name">LoxodonFramework</string>
+	<string name="databinding.tutorials.title">Databinding Examples</string>
+  <string name="databinding.tutorials.description">The current username is {0},and the username being entered is {1}</string>
+	<string name="localization.tutorials.content">People's living, the book is dead, the living dead reading, can take the book to read. dead books read living, people reading can be put to death.</string>
+  <color name="localization.tutorials.content.color">#00FF00FF</color>
+  <int name="localization.tutorials.content.fontStyle">1</int>
+  <int name="localization.tutorials.content.fontSize">30</int>
+</resources>

@@ -42,6 +42,31 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
     #Install loxodon-framework
     openupm add com.vovgou.loxodon-framework-log4net
 
+### Install via Packages/manifest.json
+
+Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-log4net" in the "dependencies" node.
+
+Installing the framework in this way does not require nodejs and openm-cli.
+
+    {
+      "dependencies": {
+        ...
+        "com.unity.modules.xr": "1.0.0",
+        "com.vovgou.loxodon-framework-log4net": "2.0.0-preview"
+      },
+      "scopedRegistries": [
+        {
+          "name": "package.openupm.com",
+          "url": "https://package.openupm.com",
+          "scopes": [
+            "com.vovgou.loxodon-framework",
+            "com.vovgou.loxodon-framework-log4net",
+            "com.openupm"
+          ]
+        }
+      ]
+    }
+
 ### Install via git URL
 
 After Unity 2019.3.4f1 that support path query parameter of git package. You can add https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework#2.0.0-preview to Package Manager

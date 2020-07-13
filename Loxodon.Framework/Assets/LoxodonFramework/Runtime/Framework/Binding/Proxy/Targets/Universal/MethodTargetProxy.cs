@@ -37,7 +37,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if (!methodInfo.ReturnType.Equals(typeof(void)))
                 throw new ArgumentException("methodInfo");
 
-            this.invoker = new WeakProxyInvoker(new WeakReference(target, true), methodInfo);
+            this.invoker = new WeakProxyInvoker(new WeakReference(target, false), methodInfo);
         }
 
         public override BindingMode DefaultMode { get { return BindingMode.OneWayToSource; } }

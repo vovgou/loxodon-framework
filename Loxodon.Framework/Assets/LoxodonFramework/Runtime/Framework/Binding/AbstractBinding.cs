@@ -37,7 +37,7 @@ namespace Loxodon.Framework.Binding
         public AbstractBinding(IBindingContext bindingContext, object dataContext, object target)
         {
             this.bindingContext = bindingContext;
-            this.target = new WeakReference(target, true);
+            this.target = new WeakReference(target, false);
             this.dataContext = dataContext;
         }
 

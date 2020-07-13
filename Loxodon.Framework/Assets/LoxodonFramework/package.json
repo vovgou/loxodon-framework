@@ -1,8 +1,8 @@
 {
   "name": "com.vovgou.loxodon-framework",
   "displayName": "Loxodon Framework",
-  "version": "2.0.0-preview",
-  "unity": "2019.3",
+  "version": "2.0.0-preview.2",
+  "unity": "2018.4",
   "description": "LoxodonFramework is a lightweight MVVM(Model-View-ViewModel) framework built specifically to target Unity3D. Databinding and localization are supported.It has a very flexible extensibility.It makes your game development faster and easier.\n\nFor tutorials,examples and support,please see the project.You can also discuss the project in the Unity Forums.\n\nThe plugin is compatible with MacOSX,Windows,Linux,UWP,IOS and Android,and provides all the source code of the project.",
   "license": "MIT",
   "keywords": [
@@ -27,5 +27,17 @@
   "relatedPackages": {},
   "publishConfig": {
     "registry": "https://package.openupm.com"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Examples",
+      "description": "Examples",
+      "path": "Samples~/Examples"
+    },
+    {
+      "displayName": "Tutorials",
+      "description": "Tutorials",
+      "path": "Samples~/Tutorials"
+    }
+  ]
 }

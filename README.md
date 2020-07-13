@@ -31,6 +31,8 @@ UWP(window10)
 
 **升级注意：从1.x.x版本升级到2.0版本前，请先删除老版本的所有文件，按如下安装步骤安装新版本，2.0版本微调了IUIViewLocator接口，其他接口基本保持不变，如升级到2.0，可能需要调整IUIViewLocator接口的实现代码。2.0版本的教程和示例代码默认不会自动导入，如需要请手动导入到项目中**
 
+**安装注意：在中国区下载的Unity版本屏蔽了第三方仓库，会导致UPM包安装失败，咨询了Unity中国相关人员说是马上会放开，如果UPM方式安装失败请使用*.unitypackage文件安装或者使用非中国区的Unity版本**
+
 ### 使用 OpenUPM 安装(推荐)
 
 [OpenUPM](https://openupm.com/) 是一个开源的UPM包仓库，它支持发布第三方的UPM包，它能够自动管理包的依赖关系，推荐使用它安装本框架.
@@ -45,6 +47,29 @@ UWP(window10)
     
     #安装 loxodon-framework
     openupm add com.vovgou.loxodon-framework
+    
+### 修改Packages/manifest.json文件安装
+
+通过修改manifest.json文件安装，不需要安装nodejs和openupm-cli客户端。在Unity项目根目录下找到Packages/manifest.json文件，在文件的scopedRegistries（没有可以自己添加）节点下添加第三方仓库package.openupm.com的配置，同时在dependencies节点下添加com.vovgou.loxodon-framework的配置，保存后切换到Unity窗口即可完成安装。
+
+    {
+      "dependencies": {
+        ...
+        "com.unity.modules.xr": "1.0.0",
+        "com.vovgou.loxodon-framework": "2.0.0-preview"
+      },
+      "scopedRegistries": [
+        {
+          "name": "package.openupm.com",
+          "url": "https://package.openupm.com",
+          "scopes": [
+            "com.vovgou.loxodon-framework",
+            "com.openupm"
+          ]
+        }
+      ]
+    }
+
 
 ### 通过git URL安装
 

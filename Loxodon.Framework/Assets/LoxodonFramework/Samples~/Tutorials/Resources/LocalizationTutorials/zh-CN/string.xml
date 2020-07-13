@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app.name">LoxodonFramework</string>
+	<string name="databinding.tutorials.title">数据绑定示例</string>
+  <string name="databinding.tutorials.description">当前的用户名是:{0},正在输入的是:{1}</string>
+	<string name="localization.tutorials.content">人是活的，书是死的，活人读死书，可以把书读活。死书读活人，可以把人读死。</string>
+  <color name="localization.tutorials.content.color">#FF0000FF</color>
+  <int name="localization.tutorials.content.fontStyle">2</int>
+  <int name="localization.tutorials.content.fontSize">40</int>
+</resources>
