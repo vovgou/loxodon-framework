@@ -37,7 +37,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if (!methodInfo.ReturnType.Equals(typeof(void)))
                 throw new ArgumentException("methodInfo");
 
-            this.invoker = new WeakProxyInvoker(new WeakReference(target, true), methodInfo);
+            this.invoker = new WeakProxyInvoker(new WeakReference(target, false), methodInfo);//IL2CPP does not support resurrection for weak references. Pass the trackResurrection with a value of false.
         }
 
         public override BindingMode DefaultMode { get { return BindingMode.OneWayToSource; } }

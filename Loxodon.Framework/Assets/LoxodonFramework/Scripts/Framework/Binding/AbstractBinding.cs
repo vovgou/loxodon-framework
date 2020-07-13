@@ -37,7 +37,7 @@ namespace Loxodon.Framework.Binding
         public AbstractBinding(IBindingContext bindingContext, object dataContext, object target)
         {
             this.bindingContext = bindingContext;
-            this.target = new WeakReference(target, true);
+            this.target = new WeakReference(target, false);//IL2CPP does not support resurrection for weak references. Pass the trackResurrection with a value of false.
             this.dataContext = dataContext;
         }
 

@@ -1,5 +1,5 @@
 ﻿  Loxodon Framework
-Version: 1.9.11
+Version: 1.9.12
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,9 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.9.12
+	Fixed a bug that IL2CPP does not support resurrection for weak references.
+
 version 1.9.9
 	Added support for FairyGUI, please use macro "FAIRY_GUI" to enable this feature.
 	Added async and await feature for unity's coroutines,CustomYieldInstruction,YieldInstruction,AsyncOperation,IAsyncResult,IAsyncResult<T>,etc.
