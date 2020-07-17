@@ -36,7 +36,7 @@ WebGL
 
 **从1.x.x版本升级到2.0版本前，请先删除老版本的所有文件，按下面的安装步骤安装新版本。2.0版本的教程和示例代码默认不会自动导入，如需要请手动导入到项目中。**
 
-** Loxodon.Framework.XLua和Loxodon.Framework.Bundle因为依赖问题仍然使用传统方式发布。 **
+**Loxodon.Framework.XLua和Loxodon.Framework.Bundle因为依赖问题仍然使用传统方式发布。 **
 
 **不兼容的改变：**
 - **修改了IUIViewLocator接口以及实现，如果继承了此接口的自定义实现需要调整。**
