@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.Execution;
+using Loxodon.Framework.Asynchronous;
 using Loxodon.Log;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -40,37 +40,35 @@ namespace Loxodon.Framework.Localizations
 
         private string assetBundleUrl;
         private IDocumentParser parser;
-        private ICoroutineExecutor executor;
+
+        public AssetBundleCsvDataProvider(string assetBundleUrl) : this(assetBundleUrl, new CsvDocumentParser())
+        {
+        }
 
         public AssetBundleCsvDataProvider(string assetBundleUrl, IDocumentParser parser)
         {
             if (string.IsNullOrEmpty(assetBundleUrl))
                 throw new ArgumentNullException("assetBundleUrl");
-
-            if (parser == null)
-                throw new ArgumentNullException("parser");
-
+            this.parser = parser ?? throw new ArgumentNullException("parser");
             this.assetBundleUrl = assetBundleUrl;
-            this.parser = parser;
-            this.executor = new CoroutineExecutor();
         }
 
-        public void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onLoadCompleted)
-        {
-            executor.RunOnCoroutine(DoLoad(cultureInfo, onLoadCompleted));
-        }
-
-        protected virtual IEnumerator DoLoad(CultureInfo cultureInfo, Action<Dictionary<string, object>> onLoadCompleted)
+        public async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
             using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl))
             {
-                www.SendWebRequest();
-                while (!www.isDone)
-                    yield return null;
+                await www.SendWebRequest();
 
                 DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
                 AssetBundle bundle = handler.assetBundle;
+                if (bundle == null)
+                {
+                    if (log.IsWarnEnabled)
+                        log.WarnFormat("Failed to load Assetbundle from \"{0}\".", this.assetBundleUrl);
+                    return dict;
+                }
+
                 try
                 {
                     TextAsset[] texts = bundle.LoadAllAssets<TextAsset>();
@@ -84,11 +82,9 @@ namespace Loxodon.Framework.Localizations
                             bundle.Unload(true);
                     }
                     catch (Exception) { }
-
-                    if (onLoadCompleted != null)
-                        onLoadCompleted(dict);
                 }
             }
+            return dict;
         }
 
         private void FillData(Dictionary<string, object> dict, TextAsset[] texts, CultureInfo cultureInfo)

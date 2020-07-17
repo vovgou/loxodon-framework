@@ -29,6 +29,7 @@ using UnityEngine;
 
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Views;
+using Loxodon.Framework.Execution;
 
 namespace Loxodon.Framework.Examples
 {
@@ -108,13 +109,14 @@ namespace Loxodon.Framework.Examples
             return view;
         }
 
-        public override IProgressTask<float, T> LoadViewAsync<T>(string name)
+        public override IProgressResult<float, T> LoadViewAsync<T>(string name)
         {
-            ProgressTask<float, T> task = new ProgressTask<float, T>(p => DoLoad<T>(p, name));
-            return task.Start(30);
+            ProgressResult<float, T> result = new ProgressResult<float, T>();
+            Executors.RunOnCoroutineNoReturn(DoLoad<T>(result, name));
+            return result;
         }
 
-        protected virtual IEnumerator DoLoad<T>(IProgressPromise<float, T> promise, string name)
+        protected virtual IEnumerator DoLoad<T>(IProgressPromise<float, T> promise, string name,IWindowManager windowManager=null)
         {
             name = Normalize(name);
             WeakReference weakRef;
@@ -172,6 +174,9 @@ namespace Loxodon.Framework.Examples
             }
             else
             {
+                if (windowManager != null && view is IWindow)
+                    (view as IWindow).WindowManager = windowManager;
+
                 promise.UpdateProgress(1f);
                 promise.SetResult(view);
             }
@@ -194,21 +199,19 @@ namespace Loxodon.Framework.Examples
             return target;
         }
 
-        public override IProgressTask<float, T> LoadWindowAsync<T>(string name)
+        public override IProgressResult<float, T> LoadWindowAsync<T>(string name)
         {
             return this.LoadWindowAsync<T>(null, name);
         }
 
-        public override IProgressTask<float, T> LoadWindowAsync<T>(IWindowManager windowManager, string name)
+        public override IProgressResult<float, T> LoadWindowAsync<T>(IWindowManager windowManager, string name)
         {
             if (windowManager == null)
                 windowManager = this.GetDefaultWindowManager();
 
-            ProgressTask<float, T> task = new ProgressTask<float, T>(p => DoLoad<T>(p, name));
-            return task.Start(30).OnPostExecute(win =>
-            {
-                win.WindowManager = windowManager;
-            });
+            ProgressResult<float, T> result = new ProgressResult<float, T>();
+            Executors.RunOnCoroutineNoReturn(DoLoad<T>(result, name, windowManager));
+            return result;
         }
     }
 }

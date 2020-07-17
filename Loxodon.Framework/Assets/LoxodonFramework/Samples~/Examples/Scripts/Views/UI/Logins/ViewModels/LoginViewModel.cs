@@ -122,7 +122,8 @@ namespace Loxodon.Framework.Examples
                 this.errors["username"] = localization.GetText("login.validation.username.error", "Please enter a valid username.");
                 return false;
             }
-            else {
+            else
+            {
                 this.errors.Remove("username");
                 return true;
             }
@@ -135,7 +136,8 @@ namespace Loxodon.Framework.Examples
                 this.errors["password"] = localization.GetText("login.validation.password.error", "Please enter a valid password.");
                 return false;
             }
-            else {
+            else
+            {
                 this.errors.Remove("password");
                 return true;
             }
@@ -156,67 +158,54 @@ namespace Loxodon.Framework.Examples
             get { return this.account; }
         }
 
-        public void Login()
+        public async void Login()
         {
-            if (log.IsDebugEnabled)
-                log.DebugFormat("login start. username:{0} password:{1}", this.username, this.password);
-
-            this.account = null;
-            this.loginCommand.Enabled = false;/*by databinding, auto set button.interactable = false. */
-
-            AsyncTask<Account> task;
-            if (!(this.ValidateUsername() && this.ValidatePassword()))
-                task = new AsyncTask<Account>(() => { return null; });
-            else
+            try
             {
-                task = new AsyncTask<Account>(() =>
+                if (log.IsDebugEnabled)
+                    log.DebugFormat("login start. username:{0} password:{1}", this.username, this.password);
+
+                this.account = null;
+                this.loginCommand.Enabled = false;/*by databinding, auto set button.interactable = false. */
+                if (!(this.ValidateUsername() && this.ValidatePassword()))
+                    return;
+
+                IAsyncResult<Account> result = this.accountService.Login(this.username, this.password);
+                Account account = await result;
+                if (result.Exception != null)
                 {
-                    IAsyncResult<Account> result = this.accountService.Login(this.username, this.password);
-                    Account account = result.Synchronized().WaitForResult();
-                    if (account != null)
-                    {
-                        Context.GetApplicationContext().GetMainLoopExcutor().RunOnMainThread(() =>
-                        {
-                            globalPreferences.SetString(LAST_USERNAME_KEY, this.username);
-                            globalPreferences.Save();
-                        });
-                    }
-                    return account;
-                });
-            }
+                    if (log.IsErrorEnabled)
+                        log.ErrorFormat("Exception:{0}", result.Exception);
 
-            task.OnPostExecute(account =>
-            {
+                    var tipContent = this.localization.GetText("login.exception.tip", "Login exception.");
+                    this.toastRequest.Raise(new Notification(tipContent));/* show toast */
+                    return;
+                }
+
                 if (account != null)
                 {
                     /* login success */
-
+                    globalPreferences.SetString(LAST_USERNAME_KEY, this.username);
+                    globalPreferences.Save();
                     this.account = account;
                     this.interactionFinished.Raise();/* Interaction completed, request to close the login window */
                 }
-                else {
+                else
+                {
                     /* Login failure */
-
                     var tipContent = this.localization.GetText("login.failure.tip", "Login failure.");
                     this.toastRequest.Raise(new Notification(tipContent));/* show toast */
                 }
-            }).OnError(e =>
-            {
-                if (log.IsErrorEnabled)
-                    log.ErrorFormat("OnError:{0}", e);
-
-                var tipContent = this.localization.GetText("login.exception.tip", "Login exception.");
-                this.toastRequest.Raise(new Notification(tipContent));/* show toast */
-            }).OnFinish(() =>
+            }
+            finally
             {
                 this.loginCommand.Enabled = true;/*by databinding, auto set button.interactable = true. */
-            }).Start();
+            }
         }
 
         public IAsyncResult<Account> GetAccount()
         {
             return this.accountService.GetAccount(this.Username);
         }
-
     }
 }

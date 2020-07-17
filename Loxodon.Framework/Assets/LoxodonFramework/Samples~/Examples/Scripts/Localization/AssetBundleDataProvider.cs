@@ -24,40 +24,39 @@
 
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.Networking;
 
-using Loxodon.Framework.Execution;
-using Loxodon.Framework.Localizations;
+using Loxodon.Framework.Asynchronous;
 using Loxodon.Log;
+using System.Threading.Tasks;
+using Loxodon.Framework.Localizations;
 
 namespace Loxodon.Framework.Examples
 {
     /// <summary>
-    /// AssetBundle data provider.
-    /// dir:
-    /// root/default/
-    /// 
-    /// root/zh/
-    /// root/zh-CN/
-    /// root/zh-TW/
-    /// root/zh-HK/
-    /// 
-    /// root/en/
-    /// root/en-US/
-    /// root/en-CA/
-    /// root/en-AU/
-    /// </summary>
-    public class AssetBundleDataProvider : IDataProvider
+	/// AssetBundle data provider.
+	/// dir:
+	/// root/default/
+	/// 
+	/// root/zh/
+	/// root/zh-CN/
+	/// root/zh-TW/
+	/// root/zh-HK/
+	/// 
+	/// root/en/
+	/// root/en-US/
+	/// root/en-CA/
+	/// root/en-AU/
+	/// </summary>
+	public class AssetBundleDataProvider : IDataProvider
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(AssetBundleDataProvider));
 
         private string assetBundleUrl;
         private IDocumentParser parser;
-        private ICoroutineExecutor executor;
 
         public AssetBundleDataProvider(string assetBundleUrl, IDocumentParser parser)
         {
@@ -69,52 +68,29 @@ namespace Loxodon.Framework.Examples
 
             this.assetBundleUrl = assetBundleUrl;
             this.parser = parser;
-            this.executor = new CoroutineExecutor();
         }
 
-        public void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
-        {
-            executor.RunOnCoroutine(DoLoad(cultureInfo, onCompleted));
-        }
-
-        IEnumerator DoLoad(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
+        public virtual async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-
-#if UNITY_2018_1_OR_NEWER
             using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl))
             {
-                www.SendWebRequest();
-                while (!www.isDone)
-                    yield return null;
+                await www.SendWebRequest();
 
                 DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
                 AssetBundle bundle = handler.assetBundle;
-#elif UNITY_2017_1_OR_NEWER
-            using (UnityWebRequest www = UnityWebRequest.GetAssetBundle(this.assetBundleUrl))
-            {
-                www.Send();
-                while (!www.isDone)
-                    yield return null;
-
-                DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
-                AssetBundle bundle = handler.assetBundle;
-#else
-            using (WWW www = new WWW(this.assetBundleUrl))
-            {
-                while (!www.isDone)
-                    yield return null;
-
-                AssetBundle bundle = www.assetBundle;
-#endif
+                if (bundle == null)
+                {
+                    if (log.IsWarnEnabled)
+                        log.WarnFormat("Failed to load Assetbundle from \"{0}\".", this.assetBundleUrl);
+                    return dict;
+                }
                 try
                 {
-
                     List<string> assetNames = new List<string>(bundle.GetAllAssetNames());
-
-                    List<string> defaultPaths = assetNames.FindAll(p => p.Contains("/default/"));
-                    List<string> twoLetterISOpaths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.TwoLetterISOLanguageName)));
-                    List<string> paths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.Name)));
+                    List<string> defaultPaths = assetNames.FindAll(p => p.Contains("/default/"));//eg:default
+                    List<string> twoLetterISOpaths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.TwoLetterISOLanguageName)));//eg:zh  en
+                    List<string> paths = cultureInfo.Name.Equals(cultureInfo.TwoLetterISOLanguageName) ? null : assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.Name)));//eg:zh-CN  en-US
 
                     FillData(dict, bundle, defaultPaths, cultureInfo);
                     FillData(dict, bundle, twoLetterISOpaths, cultureInfo);
@@ -128,10 +104,8 @@ namespace Loxodon.Framework.Examples
                             bundle.Unload(true);
                     }
                     catch (Exception) { }
-
-                    if (onCompleted != null)
-                        onCompleted(dict);
                 }
+                return dict;
             }
         }
 
@@ -159,7 +133,7 @@ namespace Loxodon.Framework.Examples
                     catch (Exception e)
                     {
                         if (log.IsWarnEnabled)
-                            log.WarnFormat("{0}", e);
+                            log.WarnFormat("An error occurred when loading localized data from \"{0}\".Error:{1}", path, e);
                     }
                 }
             }

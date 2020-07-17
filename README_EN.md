@@ -11,7 +11,7 @@
 
 *Developed by Clark*
 
-Requires Unity 2019.3 or higher.
+Requires Unity 2018.4 or higher.
 
 LoxodonFramework is a lightweight MVVM(Model-View-ViewModel) framework built specifically to target Unity3D.
 Databinding and localization are supported.It has a very flexible extensibility.It makes your game development faster and easier.
@@ -108,14 +108,9 @@ Download [Loxodon.Framework2.x.x.unitypackage](https://github.com/vovgou/loxodon
     - Expression binding;
 
 ## Notes  
-- LoxodonFramework supports .Net2.0 and .Net2.0 Subset  
-- LoxodonFramework supports .Net4.x and .Net Standard2.0  
-- LoxodonFramework supports Mono and IL2CPP  
-- AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampolines=8192" for IOS  
-
-    The configuration of trampolines is not necessary now, but in the early versions of Unity3d,if not configured, it will cause the game to crash on the iOS platform.
-
-     ![](docs/images/trampolines.png)
+- .Net2.0 and .Net2.0 Subset,please use version 1.9.x.
+- LoxodonFramework 2.0 supports .Net4.x and .Net Standard2.0  
+- LoxodonFramework 2.0 supports Mono and IL2CPP 
 
 ## Quick Start
 

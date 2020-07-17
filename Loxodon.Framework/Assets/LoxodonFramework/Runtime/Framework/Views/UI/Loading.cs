@@ -25,11 +25,15 @@
 using System;
 
 using Loxodon.Framework.Contexts;
+using Loxodon.Log;
 
 namespace Loxodon.Framework.Views
 {
     public class Loading : IDisposable
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(Loading));
+
+        private const string DEFAULT_VIEW_LOCATOR_KEY = "_DEFAULT_VIEW_LOCATOR";
         private const string DEFAULT_VIEW_NAME = "UI/Loading";
         private static object _lock = new object();
         private static int refCount = 0;
@@ -40,6 +44,25 @@ namespace Loxodon.Framework.Views
         {
             get { return string.IsNullOrEmpty(viewName) ? DEFAULT_VIEW_NAME : viewName; }
             set { viewName = value; }
+        }
+
+        private static IUIViewLocator GetUIViewLocator()
+        {
+            ApplicationContext context = Context.GetApplicationContext();
+            IUIViewLocator locator = context.GetService<IUIViewLocator>();
+            if (locator == null)
+            {
+                if (log.IsWarnEnabled)
+                    log.Warn("Not found the \"IUIViewLocator\" in the ApplicationContext.Try loading the AlertDialog using the DefaultUIViewLocator.");
+
+                locator = context.GetService<IUIViewLocator>(DEFAULT_VIEW_LOCATOR_KEY);
+                if (locator == null)
+                {
+                    locator = new DefaultUIViewLocator();
+                    context.GetContainer().Register(DEFAULT_VIEW_LOCATOR_KEY, locator);
+                }
+            }
+            return locator;
         }
 
         public static Loading Show(bool ignoreAnimation = false)
@@ -54,8 +77,7 @@ namespace Loxodon.Framework.Views
             {
                 if (refCount <= 0)
                 {
-                    ApplicationContext context = Context.GetApplicationContext();
-                    IUIViewLocator locator = context.GetService<IUIViewLocator>();
+                    IUIViewLocator locator = GetUIViewLocator();
                     window = locator.LoadWindow<LoadingWindow>(ViewName);
                     window.Create();
                     window.Show(this.ignoreAnimation);

@@ -31,14 +31,12 @@ namespace Loxodon.Framework.Examples
     public class AccountService : IAccountService
     {
         private IAccountRepository repository;
-        private IThreadExecutor executor;
 
         public event EventHandler<LoginEventArgs> LoginFinished;
 
         public AccountService(IAccountRepository repository)
         {
             this.repository = repository;
-            this.executor = new ThreadExecutor();
         }
 
 
@@ -54,29 +52,32 @@ namespace Loxodon.Framework.Examples
 
         public virtual IAsyncResult<Account> Login(string username, string password)
         {
-            return this.executor.Execute(new Action<IPromise<Account>>((promise) =>
+            AsyncResult<Account> result = new AsyncResult<Account>();
+            DoLogin(result, username, password);
+            return result;
+        }
+
+        protected async void DoLogin(IPromise<Account> promise, string username, string password)
+        {
+            try
             {
-                try
+                Account account = await this.GetAccount(username);
+                if (account == null || !account.Password.Equals(password))
                 {
-                    IAsyncResult<Account> accountResult = this.GetAccount(username);
-                    Account account = accountResult.Synchronized().WaitForResult();
-                    if (account == null || !account.Password.Equals(password))
-                    {
-                        promise.SetResult(null);
-                        this.RaiseLoginFinished(false, null);
-                    }
-                    else
-                    {
-                        promise.SetResult(account);
-                        this.RaiseLoginFinished(true, account);
-                    }
-                }
-                catch (Exception e)
-                {
-                    promise.SetException(e);
+                    promise.SetResult(null);
                     this.RaiseLoginFinished(false, null);
                 }
-            }));
+                else
+                {
+                    promise.SetResult(account);
+                    this.RaiseLoginFinished(true, account);
+                }
+            }
+            catch (Exception e)
+            {
+                promise.SetException(e);
+                this.RaiseLoginFinished(false, null);
+            }
         }
 
         public virtual IAsyncResult<Account> GetAccount(string username)

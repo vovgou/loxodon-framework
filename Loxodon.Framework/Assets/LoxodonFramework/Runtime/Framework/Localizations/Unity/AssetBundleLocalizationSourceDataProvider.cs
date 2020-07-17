@@ -22,12 +22,13 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.Execution;
+using Loxodon.Framework.Asynchronous;
 using Loxodon.Log;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -49,41 +50,21 @@ namespace Loxodon.Framework.Localizations
             this.filenames = filenames;
         }
 
-        public void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
-        {
-            Executors.RunOnCoroutine(DoLoad(cultureInfo, onCompleted));
-        }
-
-        protected virtual IEnumerator DoLoad(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
+        public virtual async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-
-#if UNITY_2018_1_OR_NEWER
             using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl))
             {
-                www.SendWebRequest();
-                while (!www.isDone)
-                    yield return null;
+                await www.SendWebRequest();
 
                 DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
                 AssetBundle bundle = handler.assetBundle;
-#elif UNITY_2017_1_OR_NEWER
-            using (UnityWebRequest www = UnityWebRequest.GetAssetBundle(this.assetBundleUrl))
-            {
-                www.Send();
-                while (!www.isDone)
-                    yield return null;
-
-                DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
-                AssetBundle bundle = handler.assetBundle;
-#else
-            using (WWW www = new WWW(this.assetBundleUrl))
-            {
-                while (!www.isDone)
-                    yield return null;
-
-                AssetBundle bundle = www.assetBundle;
-#endif
+                if (bundle == null)
+                {
+                    if (log.IsWarnEnabled)
+                        log.WarnFormat("Failed to load Assetbundle from \"{0}\".", this.assetBundleUrl);
+                    return dict;
+                }
                 try
                 {
                     List<string> assetNames = new List<string>(bundle.GetAllAssetNames());
@@ -114,10 +95,8 @@ namespace Loxodon.Framework.Localizations
                             bundle.Unload(true);
                     }
                     catch (Exception) { }
-
-                    if (onCompleted != null)
-                        onCompleted(dict);
                 }
+                return dict;
             }
         }
 

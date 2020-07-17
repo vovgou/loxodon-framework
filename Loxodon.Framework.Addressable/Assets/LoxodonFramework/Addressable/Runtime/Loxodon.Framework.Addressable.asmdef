@@ -1,0 +1,17 @@
+{
+    "name": "Loxodon.Framework.Addressable",
+    "references": [
+        "Loxodon.Log",
+        "Loxodon.Framework",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

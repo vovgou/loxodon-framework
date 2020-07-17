@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Loxodon.Framework.Asynchronous;
+using IAsyncResult = Loxodon.Framework.Asynchronous.IAsyncResult;
 
 namespace Loxodon.Framework.Views
 {
@@ -88,7 +89,7 @@ namespace Loxodon.Framework.Views
 
         public int Count { get { return localWindowManager.Count; } }
 
-        public override IAsyncTask Activate(bool ignoreAnimation)
+        public override IAsyncResult Activate(bool ignoreAnimation)
         {
             if (!this.Visibility)
                 throw new InvalidOperationException("The window is not visible.");
@@ -99,12 +100,13 @@ namespace Loxodon.Framework.Views
                 return (this.localWindowManager.Current as IManageable).Activate(ignoreAnimation);
             }
 
-            return new AsyncTask((promise) =>
+            AsyncResult result = new AsyncResult();
+            try
             {
                 if (this.Activated)
                 {
-                    promise.SetResult();
-                    return;
+                    result.SetResult();
+                    return result;
                 }
 
                 if (!ignoreAnimation && this.ActivationAnimation != null)
@@ -117,41 +119,49 @@ namespace Loxodon.Framework.Views
                         this.State = WindowState.ACTIVATION_ANIMATION_END;
                         this.Activated = true;
                         this.State = WindowState.ACTIVATED;
-                        promise.SetResult();
+                        result.SetResult();
                     }).Play();
                 }
                 else
                 {
                     this.Activated = true;
                     this.State = WindowState.ACTIVATED;
-                    promise.SetResult();
+                    result.SetResult();
                 }
-            }, true).Start(30);
+            }
+            catch (Exception e)
+            {
+                result.SetException(e);
+            }
+            return result;
         }
 
         /// <summary>
         /// Passivate
         /// </summary>
         /// <returns></returns>
-        public override IAsyncTask Passivate(bool ignoreAnimation)
+        public override IAsyncResult Passivate(bool ignoreAnimation)
         {
             if (!this.Visibility)
                 throw new InvalidOperationException("The window is not visible.");
 
             if (this.localWindowManager.Current != null)
             {
-                return (this.localWindowManager.Current as IManageable).Passivate(ignoreAnimation).OnFinish(() =>
+                IAsyncResult currResult = (this.localWindowManager.Current as IManageable).Passivate(ignoreAnimation);
+                currResult.Callbackable().OnCallback((r) =>
                 {
                     this.Activated = false;
                 });
+                return currResult;
             }
 
-            return new AsyncTask((promise) =>
+            AsyncResult result = new AsyncResult();
+            try
             {
                 if (!this.Activated)
                 {
-                    promise.SetResult();
-                    return;
+                    result.SetResult();
+                    return result;
                 }
 
                 this.Activated = false;
@@ -165,14 +175,19 @@ namespace Loxodon.Framework.Views
                     }).OnEnd(() =>
                     {
                         this.State = WindowState.PASSIVATION_ANIMATION_END;
-                        promise.SetResult();
+                        result.SetResult();
                     }).Play();
                 }
                 else
                 {
-                    promise.SetResult();
+                    result.SetResult();
                 }
-            }, true).Start(30);
+            }
+            catch (Exception e)
+            {
+                result.SetException(e);
+            }
+            return result;
         }
 
         public IEnumerator<IWindow> Visibles()

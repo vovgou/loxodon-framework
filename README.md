@@ -11,28 +11,39 @@
 
 *开发者 Clark*
 
-要求Unity 2019.3 或者更高版本
+要求Unity 2018.4 或者更高版本
 
 LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是专门为Unity3D游戏开发设计的，参考了WPF和Android的MVVM设计，它提供了视图和视图模型的数据绑定、本地化、一个简单的对象容器、配置文件组件、线程工具组件、应用上下文和玩家上下文，异步线程和协程的任务组件等基本组件，同时还提供了一个UI视图的框架。所有代码都基于面向对象面向接口的思路设计，几乎所有功能都可以自定义。而且在数据绑定部分进行了性能优化，在支持JIT的平台上使用的是委托的方式绑定，在不支持JIT的平台，默认使用的是反射，但是可以通过注入委托函数的方式来优化，它支持绑定到UGUI和FairyGUI控件，同时也很容易扩展对其他UI的支持。
 
 本框架使用C#语言开发，同时也支持使用XLua来开发，XLua插件是一个可选项，如果项目需要热更新，那么只要安装了XLua插件，则可以完全使用Lua来开发游戏。
 
-这个插件兼容 MacOSX,Windows,Linux,UWP,IOS and Android等等，并且完全开源。
+这个插件兼容 MacOSX,Windows,Linux,UWP,IOS and Android,WebGL等等，并且完全开源。
 
 **已测试的平台：**  
 PC/Mac/Linux  
 IOS  
 Android  
-UWP(window10)
+UWP(window10) 
+WebGL 
 
 ## 安装
 
-自Loxodon.Framework 2.0版本开始，保留了原有的 *.unitypackage包发布方式，同时添加了UPM发布方式，此版本要求Unity 2019.3.4及以上版本，框架的目录结构进行了一些调整，以符合UPM格式要求。
+自Loxodon.Framework 2.0版本开始，保留了原有的 .unitypackage包发布方式，同时添加了UPM发布方式，此版本要求Unity 2018.4.2及以上版本，框架的目录结构和API都进行了一些调整，同时引入了async/await、Task等新特性，升级前请先查看下文的升级注意事项。
 
-**升级注意：从1.x.x版本升级到2.0版本前，请先删除老版本的所有文件，按如下安装步骤安装新版本，2.0版本微调了IUIViewLocator接口，其他接口基本保持不变，如升级到2.0，可能需要调整IUIViewLocator接口的实现代码。2.0版本的教程和示例代码默认不会自动导入，如需要请手动导入到项目中**
+**安装注意：在中国区下载的Unity版本屏蔽了第三方仓库，会导致UPM包安装失败，咨询了Unity中国相关人员说是马上会放开，如果UPM方式安装失败请使用.unitypackage文件安装或者使用非中国区的Unity版本**
 
+### 1.x.x版本升级到2.0注意事项
 
-**安装注意：在中国区下载的Unity版本屏蔽了第三方仓库，会导致UPM包安装失败，咨询了Unity中国相关人员说是马上会放开，如果UPM方式安装失败请使用 .unitypackage文件安装或者使用非中国区的Unity版本**
+**从1.x.x版本升级到2.0版本前，请先删除老版本的所有文件，按下面的安装步骤安装新版本。2.0版本的教程和示例代码默认不会自动导入，如需要请手动导入到项目中。**
+
+** Loxodon.Framework.XLua和Loxodon.Framework.Bundle因为依赖问题仍然使用传统方式发布。 **
+
+**不兼容的改变：**
+- **修改了IUIViewLocator接口以及实现，如果继承了此接口的自定义实现需要调整。**
+- **修改了本地化模块的IDataProvider接口及实现，如果没有自定义类，不会有影响。**
+- **IAsyncTask和IProgressTask有用到多线程,在WebGL平台不支持，2.0版本后建议不再使用，框架中用到了它们的地方都改为IAsyncResult和IProgressResult。**
+- **新的API使用了async/await和Task，不再支持.net 2.0**
+- **修改了Window、WindowManager等几个类的函数，改IAsyncTask为IAsyncResult**
 
 ### 使用 OpenUPM 安装(推荐)
 
@@ -74,7 +85,7 @@ UWP(window10)
 
 ### 通过git URL安装
 
-Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework#2.0.0-preview 地址到UPM管理器，耐性等待一段时间，下载完成后即安装成功。
+Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework 地址到UPM管理器，耐性等待一段时间，下载完成后即安装成功。
 
 ![](docs/images/install_via_git.png)
 
@@ -117,14 +128,9 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
     - 支持类型转换器，可以将图片名称转换为图集中的Sprite
 
 ## 注意：  
-- LoxodonFramework 支持 .Net2.0 和 .Net2.0 Subset  
-- LoxodonFramework 支持 .Net4.x 和 .Net Standard2.0  
-- LoxodonFramework 支持 Mono 和 IL2CPP  
-- IOS平台需要配置 AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampolines=8192"   
-
-    现在这个配置不是必要的，在早期的Unity3D版本，在IOS平台上，不配置它们可能导致游戏崩溃。
-
-     ![](docs/images/trampolines.png)
+- .Net2.0 和 .Net2.0 Subset 请使用 1.9.x 版本，2.0版本不在支持
+- LoxodonFramework 2.0 支持 .Net4.x 和 .Net Standard2.0  
+- LoxodonFramework 2.0 支持 Mono 和 IL2CPP
 
 ## 快速开始
 

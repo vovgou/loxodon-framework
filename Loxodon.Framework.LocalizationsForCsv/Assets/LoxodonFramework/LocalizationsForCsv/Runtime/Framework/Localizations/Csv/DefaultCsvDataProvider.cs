@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Loxodon.Framework.Localizations
@@ -37,6 +38,10 @@ namespace Loxodon.Framework.Localizations
 
         private string root;
         private IDocumentParser parser;
+
+        public DefaultCsvDataProvider(string root) : this(root, new CsvDocumentParser())
+        {
+        }
 
         public DefaultCsvDataProvider(string root, IDocumentParser parser)
         {
@@ -50,18 +55,18 @@ namespace Loxodon.Framework.Localizations
             this.parser = parser;
         }
 
-        public void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onLoadCompleted)
+        public Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
         {
-            Dictionary<string, object> dict = new Dictionary<string, object>();
             try
             {
+                Dictionary<string, object> dict = new Dictionary<string, object>();
                 TextAsset[] texts = Resources.LoadAll<TextAsset>(this.root);
                 FillData(dict, texts, cultureInfo);
+                return Task.FromResult(dict);
             }
-            finally
+            catch (Exception e)
             {
-                if (onLoadCompleted != null)
-                    onLoadCompleted(dict);
+                return Task.FromException<Dictionary<string, object>>(e);
             }
         }
         private void FillData(Dictionary<string, object> dict, TextAsset[] texts, CultureInfo cultureInfo)

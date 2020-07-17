@@ -31,6 +31,7 @@ using UnityEngine;
 
 using Loxodon.Framework.Localizations;
 using Loxodon.Log;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Examples
 {
@@ -83,24 +84,23 @@ namespace Loxodon.Framework.Examples
             return buf.ToString();
         }
 
-        public void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
+        public virtual Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-
             try
             {
                 TextAsset[] defaultTexts = Resources.LoadAll<TextAsset>(GetDefaultPath()); //eg:default
                 TextAsset[] twoLetterISOTexts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.TwoLetterISOLanguageName));//eg:zh  en
-                TextAsset[] texts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.Name));//eg:zh-CN  en-US
+                TextAsset[] texts = cultureInfo.Name.Equals(cultureInfo.TwoLetterISOLanguageName) ? null : Resources.LoadAll<TextAsset>(GetPath(cultureInfo.Name));//eg:zh-CN  en-US
 
                 FillData(dict, defaultTexts, cultureInfo);
                 FillData(dict, twoLetterISOTexts, cultureInfo);
                 FillData(dict, texts, cultureInfo);
+                return Task.FromResult(dict);
             }
-            finally
+            catch (Exception e)
             {
-                if (onCompleted != null)
-                    onCompleted(dict);
+                return Task.FromException<Dictionary<string, object>>(e);
             }
         }
 
@@ -127,7 +127,7 @@ namespace Loxodon.Framework.Examples
                     catch (Exception e)
                     {
                         if (log.IsWarnEnabled)
-                            log.WarnFormat("{0}", e);
+                            log.WarnFormat("An error occurred when loading localized data from \"{0}\".Error:{1}", text.name, e);
                     }
                 }
             }

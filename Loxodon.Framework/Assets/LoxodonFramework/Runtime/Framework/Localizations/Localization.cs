@@ -28,6 +28,7 @@ using UnityEngine;
 using System.Globalization;
 
 using Loxodon.Framework.Observables;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Localizations
 {
@@ -37,9 +38,9 @@ namespace Loxodon.Framework.Localizations
         private static Localization instance;
 
         private readonly object _lock = new object();
+        private readonly Dictionary<string, IObservableProperty> data = new Dictionary<string, IObservableProperty>();
+        private readonly List<ProviderEntry> providers = new List<ProviderEntry>();
         private CultureInfo cultureInfo;
-        private Dictionary<string, IObservableProperty> data = new Dictionary<string, IObservableProperty>();
-        private List<ProviderEntry> providers = new List<ProviderEntry>();
         private EventHandler cultureInfoChanged;
 
         public static Localization Current
@@ -59,35 +60,15 @@ namespace Loxodon.Framework.Localizations
             set { lock (_instanceLock) { instance = value; } }
         }
 
-        [Obsolete("Please use \"Localization.Current\" instead of this method.")]
-        public static Localization Create(IDataProvider provider)
-        {
-            return Create(provider, null);
-        }
-
-        [Obsolete("Please use \"Localization.Current\" instead of this method.")]
-        public static Localization Create(IDataProvider provider, CultureInfo cultureInfo)
-        {
-            var localization = Current;
-            if (cultureInfo != null)
-                localization.CultureInfo = cultureInfo;
-            if (provider != null)
-                localization.AddDataProvider(provider);
-            return localization;
-        }
-
-        protected Localization() : this(null, null)
+        protected Localization() : this(null)
         {
         }
 
-        protected Localization(IDataProvider provider, CultureInfo cultureInfo)
+        protected Localization(CultureInfo cultureInfo)
         {
             this.cultureInfo = cultureInfo;
             if (this.cultureInfo == null)
                 this.cultureInfo = Locale.GetCultureInfo();
-
-            if (provider != null)
-                this.AddDataProvider(provider);
         }
 
         public event EventHandler CultureInfoChanged
@@ -113,9 +94,7 @@ namespace Loxodon.Framework.Localizations
         {
             try
             {
-                var handler = this.cultureInfoChanged;
-                if (handler != null)
-                    handler(this, EventArgs.Empty);
+                this.cultureInfoChanged?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception) { }
         }
@@ -123,23 +102,28 @@ namespace Loxodon.Framework.Localizations
         protected virtual void OnCultureInfoChanged()
         {
             RaiseCultureInfoChanged();
-            this.Load();
+            this.Refresh();
         }
 
-        public virtual void AddDataProvider(IDataProvider provider)
+        public Task AddDataProvider(IDataProvider provider)
+        {
+            return DoAddDataProvider(provider);
+        }
+
+        protected virtual async Task DoAddDataProvider(IDataProvider provider)
         {
             if (provider == null)
                 return;
 
+            var entry = new ProviderEntry(provider);
             lock (_lock)
             {
                 if (this.providers.Exists(e => e.Provider == provider))
                     return;
-
-                var entry = new ProviderEntry(provider);
-                provider.Load(this.CultureInfo, dict => OnLoadCompleted(entry, dict));
                 this.providers.Add(entry);
             }
+
+            await this.Load(entry);
         }
 
         public virtual void RemoveDataProvider(IDataProvider provider)
@@ -156,29 +140,33 @@ namespace Loxodon.Framework.Localizations
                     {
                         this.providers.RemoveAt(i);
                         OnUnloadCompleted(entry.Keys);
+                        (provider as IDisposable)?.Dispose();
                         return;
                     }
                 }
             }
         }
 
-        public virtual void Refresh()
+        public Task Refresh()
         {
-            this.Load();
+            return this.Load(this.providers.ToArray());
         }
 
-        protected virtual void Load()
+        protected virtual async Task Load(params ProviderEntry[] providers)
         {
-            if (this.providers == null || this.providers.Count <= 0)
+            if (providers == null || providers.Length <= 0)
                 return;
 
-            for (int i = 0; i < this.providers.Count; i++)
+            int count = providers.Length;
+            var cultureInfo = this.CultureInfo;
+            for (int i = 0; i < count; i++)
             {
                 try
                 {
                     var entry = providers[i];
                     var provider = entry.Provider;
-                    provider.Load(this.CultureInfo, dict => OnLoadCompleted(entry, dict));
+                    var dict = await provider.Load(cultureInfo);
+                    OnLoadCompleted(entry, dict);
                 }
                 catch (Exception) { }
             }

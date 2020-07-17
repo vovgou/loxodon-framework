@@ -28,7 +28,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
+using Loxodon.Framework.Asynchronous;
 
 namespace Loxodon.Framework.Localizations
 {
@@ -60,7 +62,6 @@ namespace Loxodon.Framework.Localizations
             this.filenames = filenames;
         }
 
-
         protected string GetDefaultPath(string filename)
         {
             return GetPath("default", filename);
@@ -76,39 +77,37 @@ namespace Loxodon.Framework.Localizations
             return buf.ToString();
         }
 
-        public virtual void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onLoadCompleted)
+        public virtual async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-
-            try
+            List<Task> tasks = new List<Task>();
+            foreach (string filename in filenames)
             {
-                foreach (string filename in filenames)
-                {
-                    try
-                    {
-                        LocalizationSourceAsset defaultSourceAsset = Resources.Load<LocalizationSourceAsset>(GetDefaultPath(filename)); //eg:default
-                        LocalizationSourceAsset twoLetterISOSourceAsset = Resources.Load<LocalizationSourceAsset>(GetPath(cultureInfo.TwoLetterISOLanguageName, filename));//eg:zh  en
-                        LocalizationSourceAsset sourceAsset = cultureInfo.Name.Equals(cultureInfo.TwoLetterISOLanguageName) ? null : Resources.Load<LocalizationSourceAsset>(GetPath(cultureInfo.Name, filename));//eg:zh-CN  en-US
+                tasks.Add(Load(dict, filename, cultureInfo));
+            }
+            await Task.WhenAll(tasks);
+            return dict;
+        }
 
-                        if (defaultSourceAsset != null)
-                            FillData(dict, defaultSourceAsset.Source);
-                        if (twoLetterISOSourceAsset != null)
-                            FillData(dict, twoLetterISOSourceAsset.Source);
-                        if (sourceAsset != null)
-                            FillData(dict, sourceAsset.Source);
-                    }
-                    catch (Exception e)
-                    {
-                        if (log.IsWarnEnabled)
-                            log.WarnFormat("An error occurred when loading localized data from \"{0}\".Error:{1}", filename, e);
-                    }
-                }
-            }
-            finally
+        protected virtual async Task Load(Dictionary<string, object> dict, string filename, CultureInfo cultureInfo)
+        {
+            LocalizationSourceAsset defaultSourceAsset = (LocalizationSourceAsset)await Resources.LoadAsync<LocalizationSourceAsset>(GetDefaultPath(filename)); //eg:default            
+            LocalizationSourceAsset twoLetterISOSourceAsset = (LocalizationSourceAsset)await Resources.LoadAsync<LocalizationSourceAsset>(GetPath(cultureInfo.TwoLetterISOLanguageName, filename));//eg:zh  en
+            LocalizationSourceAsset sourceAsset = cultureInfo.Name.Equals(cultureInfo.TwoLetterISOLanguageName) ? null : (LocalizationSourceAsset)await Resources.LoadAsync<LocalizationSourceAsset>(GetPath(cultureInfo.Name, filename));//eg:zh-CN  en-US
+
+            if (defaultSourceAsset == null && twoLetterISOSourceAsset == null && sourceAsset == null)
             {
-                if (onLoadCompleted != null)
-                    onLoadCompleted(dict);
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("Not found the localized file \"{0}\".", filename);
+                return;
             }
+
+            if (defaultSourceAsset != null)
+                FillData(dict, defaultSourceAsset.Source);
+            if (twoLetterISOSourceAsset != null)
+                FillData(dict, twoLetterISOSourceAsset.Source);
+            if (sourceAsset != null)
+                FillData(dict, sourceAsset.Source);
         }
 
         private void FillData(Dictionary<string, object> dict, MonolingualSource source)

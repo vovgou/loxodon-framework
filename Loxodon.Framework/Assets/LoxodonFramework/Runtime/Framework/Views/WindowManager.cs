@@ -26,13 +26,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-#if NETFX_CORE
-using System.Reflection;
-#endif
 
-using Loxodon.Log;
-using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Execution;
+using IAsyncResult = Loxodon.Framework.Asynchronous.IAsyncResult;
 
 namespace Loxodon.Framework.Views
 {
@@ -473,7 +469,7 @@ namespace Loxodon.Framework.Views
                     //Passivate the previous window
                     if (previous.Activated)
                     {
-                        IAsyncTask passivate = previous.Passivate(this.AnimationDisabled).Start();
+                        IAsyncResult passivate = previous.Passivate(this.AnimationDisabled);
                         yield return passivate.WaitForDone();
                     }
 
@@ -484,13 +480,13 @@ namespace Loxodon.Framework.Views
                     switch (actionType)
                     {
                         case ActionType.Hide:
-                            previous.DoHide(this.AnimationDisabled).Start();
+                            previous.DoHide(this.AnimationDisabled);
                             break;
                         case ActionType.Dismiss:
-                            previous.DoHide(this.AnimationDisabled).OnFinish(() =>
+                            previous.DoHide(this.AnimationDisabled).Callbackable().OnCallback((r) =>
                             {
                                 previous.DoDismiss();
-                            }).Start();
+                            });
                             break;
                         default:
                             break;
@@ -499,13 +495,13 @@ namespace Loxodon.Framework.Views
 
                 if (!current.Visibility)
                 {
-                    IAsyncTask show = current.DoShow(this.AnimationDisabled).Start();
+                    IAsyncResult show = current.DoShow(this.AnimationDisabled);
                     yield return show.WaitForDone();
                 }
 
                 if (this.manager.Activated && current.Equals(this.manager.Current))
                 {
-                    IAsyncTask activate = current.Activate(this.AnimationDisabled).Start();
+                    IAsyncResult activate = current.Activate(this.AnimationDisabled);
                     yield return activate.WaitForDone();
                 }
             }
@@ -528,13 +524,13 @@ namespace Loxodon.Framework.Views
                 {
                     if (current.Activated)
                     {
-                        IAsyncTask passivate = current.Passivate(this.AnimationDisabled).Start();
+                        IAsyncResult passivate = current.Passivate(this.AnimationDisabled);
                         yield return passivate.WaitForDone();
                     }
 
                     if (current.Visibility)
                     {
-                        IAsyncTask hide = current.DoHide(this.AnimationDisabled).Start();
+                        IAsyncResult hide = current.DoHide(this.AnimationDisabled);
                         yield return hide.WaitForDone();
                     }
                 }
@@ -542,7 +538,7 @@ namespace Loxodon.Framework.Views
                 {
                     if (current.Visibility)
                     {
-                        IAsyncTask hide = current.DoHide(this.AnimationDisabled).Start();
+                        IAsyncResult hide = current.DoHide(this.AnimationDisabled);
                         yield return hide.WaitForDone();
                     }
                 }
@@ -618,7 +614,7 @@ namespace Loxodon.Framework.Views
                             var current = manager.Current;
                             if (manager.Activated && current != null && !current.Activated && !this.transitions.Exists((e) => e.Window.WindowManager.Equals(manager)))
                             {
-                                IAsyncTask activate = (current as IManageable).Activate(transition.AnimationDisabled).Start();
+                                IAsyncResult activate = (current as IManageable).Activate(transition.AnimationDisabled);
                                 yield return activate.WaitForDone();
                             }
                         }

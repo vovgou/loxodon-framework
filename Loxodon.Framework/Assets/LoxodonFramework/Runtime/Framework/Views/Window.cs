@@ -27,6 +27,7 @@ using UnityEngine;
 
 using Loxodon.Log;
 using Loxodon.Framework.Asynchronous;
+using IAsyncResult = Loxodon.Framework.Asynchronous.IAsyncResult;
 
 namespace Loxodon.Framework.Views
 {
@@ -188,20 +189,21 @@ namespace Loxodon.Framework.Views
         /// Activate
         /// </summary>
         /// <returns></returns>
-        public virtual IAsyncTask Activate(bool ignoreAnimation)
+        public virtual IAsyncResult Activate(bool ignoreAnimation)
         {
-            return new AsyncTask((promise) =>
+            AsyncResult result = new AsyncResult();
+            try
             {
                 if (!this.Visibility)
                 {
-                    promise.SetException(new InvalidOperationException("The window is not visible."));
-                    return;
+                    result.SetException(new InvalidOperationException("The window is not visible."));
+                    return result;
                 }
 
                 if (this.Activated)
                 {
-                    promise.SetResult();
-                    return;
+                    result.SetResult();
+                    return result;
                 }
 
                 if (!ignoreAnimation && this.ActivationAnimation != null)
@@ -214,37 +216,42 @@ namespace Loxodon.Framework.Views
                         this.State = WindowState.ACTIVATION_ANIMATION_END;
                         this.Activated = true;
                         this.State = WindowState.ACTIVATED;
-                        promise.SetResult();
+                        result.SetResult();
                     }).Play();
                 }
                 else
                 {
                     this.Activated = true;
                     this.State = WindowState.ACTIVATED;
-                    promise.SetResult();
+                    result.SetResult();
                 }
-
-            }, true).Start(30);
+            }
+            catch (Exception e)
+            {
+                result.SetException(e);
+            }
+            return result;
         }
 
         /// <summary>
         /// Passivate
         /// </summary>
         /// <returns></returns>
-        public virtual IAsyncTask Passivate(bool ignoreAnimation)
+        public virtual IAsyncResult Passivate(bool ignoreAnimation)
         {
-            return new AsyncTask((promise) =>
+            AsyncResult result = new AsyncResult();
+            try
             {
                 if (!this.Visibility)
                 {
-                    promise.SetException(new InvalidOperationException("The window is not visible."));
-                    return;
+                    result.SetException(new InvalidOperationException("The window is not visible."));
+                    return result;
                 }
 
                 if (!this.Activated)
                 {
-                    promise.SetResult();
-                    return;
+                    result.SetResult();
+                    return result;
                 }
 
                 this.Activated = false;
@@ -258,14 +265,19 @@ namespace Loxodon.Framework.Views
                     }).OnEnd(() =>
                     {
                         this.State = WindowState.PASSIVATION_ANIMATION_END;
-                        promise.SetResult();
+                        result.SetResult();
                     }).Play();
                 }
                 else
                 {
-                    promise.SetResult();
+                    result.SetResult();
                 }
-            }, true).Start(30);
+            }
+            catch (Exception e)
+            {
+                result.SetException(e);
+            }
+            return result;
         }
 
         protected virtual void OnActivatedChanged()
@@ -304,9 +316,10 @@ namespace Loxodon.Framework.Views
             return this.WindowManager.Show(this).DisableAnimation(ignoreAnimation);
         }
 
-        public virtual IAsyncTask DoShow(bool ignoreAnimation = false)
+        public virtual IAsyncResult DoShow(bool ignoreAnimation = false)
         {
-            return new AsyncTask(promise =>
+            AsyncResult result = new AsyncResult();
+            Action<IPromise> action = promise =>
             {
                 try
                 {
@@ -339,7 +352,9 @@ namespace Loxodon.Framework.Views
                     if (log.IsWarnEnabled)
                         log.WarnFormat("The window named \"{0}\" failed to open!Error:{1}", this.Name, e);
                 }
-            }, true).Start(30);
+            };
+            action(result);
+            return result;
         }
 
         /// <summary>
@@ -363,9 +378,10 @@ namespace Loxodon.Framework.Views
             return this.WindowManager.Hide(this).DisableAnimation(ignoreAnimation);
         }
 
-        public virtual IAsyncTask DoHide(bool ignoreAnimation = false)
+        public virtual IAsyncResult DoHide(bool ignoreAnimation = false)
         {
-            return new AsyncTask(promise =>
+            AsyncResult result = new AsyncResult();
+            Action<IPromise> action = promise =>
             {
                 try
                 {
@@ -398,7 +414,9 @@ namespace Loxodon.Framework.Views
                     if (log.IsWarnEnabled)
                         log.WarnFormat("The window named \"{0}\" failed to hide!Error:{1}", this.Name, e);
                 }
-            }, true).Start(30);
+            };
+            action(result);
+            return result;
         }
 
         /// <summary>

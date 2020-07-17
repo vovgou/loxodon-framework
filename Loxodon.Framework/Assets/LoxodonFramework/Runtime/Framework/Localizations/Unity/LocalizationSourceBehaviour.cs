@@ -26,6 +26,7 @@ using Loxodon.Log;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Loxodon.Framework.Localizations
@@ -40,12 +41,12 @@ namespace Loxodon.Framework.Localizations
         [NonSerialized]
         protected MultilingualSourceDataProvider provider;
 
-        protected virtual void OnEnable()
+        protected virtual async void OnEnable()
         {
             if (provider == null)
                 provider = new MultilingualSourceDataProvider(this.name, this.Source);
 
-            Localization.Current.AddDataProvider(provider);
+            await Localization.Current.AddDataProvider(provider);
         }
 
         protected virtual void OnDisable()
@@ -74,13 +75,13 @@ namespace Loxodon.Framework.Localizations
                 this.source = source;
             }
 
-            public virtual void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onLoadCompleted)
+            public virtual Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
             {
                 Dictionary<string, object> dict = new Dictionary<string, object>();
                 try
                 {
                     if (source.Languages == null || source.Entries == null || source.Languages.Count <= 0 || source.Entries.Count <= 0)
-                        return;
+                        return Task.FromResult(dict);
 
                     List<string> languages = source.Languages;
                     List<MultilingualEntry> entries = source.Entries;
@@ -104,16 +105,14 @@ namespace Loxodon.Framework.Localizations
                     int cultureIndex = languages.IndexOf(cultureName);
                     if (cultureIndex >= 0 && cultureIndex != defaultIndex && cultureIndex != cultureISOIndex)
                         FillData(dict, entries, cultureIndex);
+
+                    return Task.FromResult(dict);
                 }
                 catch (Exception e)
                 {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("An error occurred when loading localized data from LocalizationSource \"{0}\".Error:{1}", this.name, e);
-                }
-                finally
-                {
-                    if (onLoadCompleted != null)
-                        onLoadCompleted(dict);
+                    return Task.FromException<Dictionary<string, object>>(e);
                 }
             }
 

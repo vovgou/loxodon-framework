@@ -30,6 +30,7 @@ using System.Text;
 using UnityEngine;
 
 using Loxodon.Log;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Localizations
 {
@@ -54,6 +55,10 @@ namespace Loxodon.Framework.Localizations
 
         private string root;
         private IDocumentParser parser;
+
+        public DefaultDataProvider(string root) : this(root, new XmlDocumentParser())
+        {
+        }
 
         public DefaultDataProvider(string root, IDocumentParser parser)
         {
@@ -82,10 +87,9 @@ namespace Loxodon.Framework.Localizations
             return buf.ToString();
         }
 
-        public virtual void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onLoadCompleted)
+        public virtual Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-
             try
             {
                 TextAsset[] defaultTexts = Resources.LoadAll<TextAsset>(GetDefaultPath()); //eg:default
@@ -95,11 +99,11 @@ namespace Loxodon.Framework.Localizations
                 FillData(dict, defaultTexts, cultureInfo);
                 FillData(dict, twoLetterISOTexts, cultureInfo);
                 FillData(dict, texts, cultureInfo);
+                return Task.FromResult(dict);
             }
-            finally
+            catch (Exception e)
             {
-                if (onLoadCompleted != null)
-                    onLoadCompleted(dict);
+                return Task.FromException<Dictionary<string, object>>(e);
             }
         }
 

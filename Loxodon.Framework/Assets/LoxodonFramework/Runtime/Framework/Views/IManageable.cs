@@ -33,28 +33,28 @@ namespace Loxodon.Framework.Views
         /// </summary>
         /// <param name="ignoreAnimation"></param>
         /// <returns></returns>
-        IAsyncTask Activate(bool ignoreAnimation);
+        IAsyncResult Activate(bool ignoreAnimation);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ignoreAnimation"></param>
         /// <returns></returns>
-        IAsyncTask Passivate(bool ignoreAnimation);
+        IAsyncResult Passivate(bool ignoreAnimation);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ignoreAnimation"></param>
         /// <returns></returns>
-        IAsyncTask DoShow(bool ignoreAnimation = false);
+        IAsyncResult DoShow(bool ignoreAnimation = false);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ignoreAnimation"></param>
         /// <returns></returns>
-        IAsyncTask DoHide(bool ignoreAnimation = false);
+        IAsyncResult DoHide(bool ignoreAnimation = false);
 
         /// <summary>
         /// 

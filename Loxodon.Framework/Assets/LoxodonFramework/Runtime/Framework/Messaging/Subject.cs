@@ -23,7 +23,7 @@
  */
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Loxodon.Framework.Messaging
 {
@@ -34,16 +34,8 @@ namespace Loxodon.Framework.Messaging
 
     public class Subject<T> : SubjectBase
     {
-        private readonly object _lock = new object();
-        private readonly List<Action<T>> actions = new List<Action<T>>();
-
-        public bool IsEmpty()
-        {
-            lock (_lock)
-            {
-                return this.actions.Count <= 0;
-            }
-        }
+        private readonly ConcurrentDictionary<string, WeakReference<Subscription>> subscriptions = new ConcurrentDictionary<string, WeakReference<Subscription>>();
+        public bool IsEmpty() { return subscriptions.Count <= 0; }
 
         public override void Publish(object message)
         {
@@ -52,48 +44,32 @@ namespace Loxodon.Framework.Messaging
 
         public void Publish(T message)
         {
-            Action<T>[] array = null;
-            lock (_lock)
-            {
-                if (actions.Count <= 0)
-                    return;
-
-                array = this.actions.ToArray();
-            }
-
-            if (array == null || array.Length <= 0)
+            if (subscriptions.Count <= 0)
                 return;
 
-            for (int i = 0; i < array.Length; i++)
+            foreach (var kv in subscriptions)
             {
-                try
-                {
-                    array[i](message);
-                }
-                catch (Exception) { }
+                Subscription subscription;
+                kv.Value.TryGetTarget(out subscription);
+                if (subscription != null)
+                    subscription.Publish(message);
             }
         }
 
         public IDisposable Subscribe(Action<T> action)
         {
-            this.Add(action);
             return new Subscription(this, action);
         }
 
-        internal void Add(Action<T> action)
+        void Add(Subscription subscription)
         {
-            lock (_lock)
-            {
-                this.actions.Add(action);
-            }
+            var reference = new WeakReference<Subscription>(subscription, false);
+            this.subscriptions.TryAdd(subscription.Key, reference);
         }
 
-        internal void Remove(Action<T> action)
+        void Remove(Subscription subscription)
         {
-            lock (_lock)
-            {
-                this.actions.Remove(action);
-            }
+            this.subscriptions.TryRemove(subscription.Key, out _);
         }
 
         class Subscription : IDisposable
@@ -101,11 +77,23 @@ namespace Loxodon.Framework.Messaging
             private readonly object _lock = new object();
             private Subject<T> parent;
             private Action<T> action;
+            public string Key { get; private set; }
 
             public Subscription(Subject<T> parent, Action<T> action)
             {
                 this.parent = parent;
                 this.action = action;
+                this.Key = Guid.NewGuid().ToString();
+                this.parent.Add(this);
+            }
+
+            public void Publish(T message)
+            {
+                try
+                {
+                    action(message);
+                }
+                catch (Exception) { }
             }
 
             #region IDisposable Support
@@ -125,7 +113,7 @@ namespace Loxodon.Framework.Messaging
 
                         if (parent != null)
                         {
-                            parent.Remove(action);
+                            parent.Remove(this);
                             action = null;
                             parent = null;
                         }

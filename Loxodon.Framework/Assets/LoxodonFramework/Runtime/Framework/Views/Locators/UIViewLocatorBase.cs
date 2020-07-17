@@ -50,25 +50,25 @@ namespace Loxodon.Framework.Views
         public abstract T LoadWindow<T>(IWindowManager windowManager, string name) where T : IWindow;
 
 
-        public virtual IProgressTask<float, IView> LoadViewAsync(string name)
+        public virtual IProgressResult<float, IView> LoadViewAsync(string name)
         {
             return LoadViewAsync<IView>(name);
         }
 
-        public abstract IProgressTask<float, T> LoadViewAsync<T>(string name) where T : IView;
+        public abstract IProgressResult<float, T> LoadViewAsync<T>(string name) where T : IView;
 
-        public virtual IProgressTask<float, IWindow> LoadWindowAsync(string name)
+        public virtual IProgressResult<float, IWindow> LoadWindowAsync(string name)
         {
             return LoadWindowAsync<IWindow>(name);
         }
 
-        public abstract IProgressTask<float, T> LoadWindowAsync<T>(string name) where T : IWindow;
+        public abstract IProgressResult<float, T> LoadWindowAsync<T>(string name) where T : IWindow;
 
-        public virtual IProgressTask<float, IWindow> LoadWindowAsync(IWindowManager windowManager, string name)
+        public virtual IProgressResult<float, IWindow> LoadWindowAsync(IWindowManager windowManager, string name)
         {
             return LoadWindowAsync<IWindow>(windowManager, name);
         }
 
-        public abstract IProgressTask<float, T> LoadWindowAsync<T>(IWindowManager windowManager, string name) where T : IWindow;
+        public abstract IProgressResult<float, T> LoadWindowAsync<T>(IWindowManager windowManager, string name) where T : IWindow;
     }
 }

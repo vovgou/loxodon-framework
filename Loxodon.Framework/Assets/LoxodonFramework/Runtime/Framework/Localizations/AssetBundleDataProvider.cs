@@ -24,14 +24,14 @@
 
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.Networking;
 
-using Loxodon.Framework.Execution;
+using Loxodon.Framework.Asynchronous;
 using Loxodon.Log;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Localizations
 {
@@ -57,6 +57,10 @@ namespace Loxodon.Framework.Localizations
         private string assetBundleUrl;
         private IDocumentParser parser;
 
+        public AssetBundleDataProvider(string assetBundleUrl) : this(assetBundleUrl, new XmlDocumentParser())
+        {
+        }
+
         public AssetBundleDataProvider(string assetBundleUrl, IDocumentParser parser)
         {
             if (string.IsNullOrEmpty(assetBundleUrl))
@@ -69,46 +73,24 @@ namespace Loxodon.Framework.Localizations
             this.parser = parser;
         }
 
-        public void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
-        {
-            Executors.RunOnCoroutine(DoLoad(cultureInfo, onCompleted));
-        }
-
-        protected virtual IEnumerator DoLoad(CultureInfo cultureInfo, Action<Dictionary<string, object>> onCompleted)
+        public virtual async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-
-#if UNITY_2018_1_OR_NEWER
             using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl))
             {
-                www.SendWebRequest();
-                while (!www.isDone)
-                    yield return null;
+                await www.SendWebRequest();
 
                 DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
                 AssetBundle bundle = handler.assetBundle;
-#elif UNITY_2017_1_OR_NEWER
-            using (UnityWebRequest www = UnityWebRequest.GetAssetBundle(this.assetBundleUrl))
-            {
-                www.Send();
-                while (!www.isDone)
-                    yield return null;
-
-                DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
-                AssetBundle bundle = handler.assetBundle;
-#else
-            using (WWW www = new WWW(this.assetBundleUrl))
-            {
-                while (!www.isDone)
-                    yield return null;
-
-                AssetBundle bundle = www.assetBundle;
-#endif
+                if (bundle == null)
+                {
+                    if (log.IsWarnEnabled)
+                        log.WarnFormat("Failed to load Assetbundle from \"{0}\".", this.assetBundleUrl);
+                    return dict;
+                }
                 try
                 {
-
                     List<string> assetNames = new List<string>(bundle.GetAllAssetNames());
-
                     List<string> defaultPaths = assetNames.FindAll(p => p.Contains("/default/"));//eg:default
                     List<string> twoLetterISOpaths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.TwoLetterISOLanguageName)));//eg:zh  en
                     List<string> paths = cultureInfo.Name.Equals(cultureInfo.TwoLetterISOLanguageName) ? null : assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.Name)));//eg:zh-CN  en-US
@@ -125,10 +107,8 @@ namespace Loxodon.Framework.Localizations
                             bundle.Unload(true);
                     }
                     catch (Exception) { }
-
-                    if (onCompleted != null)
-                        onCompleted(dict);
                 }
+                return dict;
             }
         }
 

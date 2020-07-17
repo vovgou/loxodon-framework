@@ -23,7 +23,12 @@ puppeteer:
 <!-- code_chunk_output -->
 
 - [概述](#概述)
-- [下载](#下载)
+- [安装](#安装)
+  - [1.x.x版本升级到2.0注意事项](#1xx版本升级到20注意事项)
+  - [使用 OpenUPM 安装(推荐)](#使用-openupm-安装推荐)
+  - [修改Packages/manifest.json文件安装](#修改packagesmanifestjson文件安装)
+  - [通过git URL安装](#通过git-url安装)
+  - [通过 *.unitypackage 文件安装](#通过-unitypackage-文件安装)
 - [官方插件（可选）](#官方插件可选)
 - [Lua插件安装（可选）](#lua插件安装可选)
   - [安装XLua](#安装xlua)
@@ -118,7 +123,7 @@ puppeteer:
 
 ## 概述
 
-**要求Unity 2019.3 或者更高版本**
+**要求Unity 2018.4 或者更高版本**
 
 LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是专门为Unity3D游戏开发设计的，参考了WPF和Android的MVVM设计，它提供了视图和视图模型的数据绑定、本地化、一个简单的服务容器、配置文件组件、线程工具组件、应用上下文和玩家上下文，异步线程和协程的任务组件等基本组件，同时还提供了一个UI视图的框架。所有代码都基于面向对象面向接口的思路设计，几乎所有功能都可以自定义。而且在数据绑定部分进行了性能优化，在支持JIT的平台上使用的是委托的方式绑定，在不支持JIT的平台，默认使用的是反射，但是可以通过注入委托函数的方式来优化！
 
@@ -131,7 +136,8 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 - **PC/Mac/Linux**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
 - **IOS**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
 - **Android**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
-- **UWP(window10)** (.Net4.x; .Net Standard 2.0; IL2CPP)  
+- **UWP(window10)** (.Net4.x; .Net Standard 2.0; IL2CPP)
+- **WebGL**
 
 **关键特性**
 
@@ -161,20 +167,85 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
     - 支持类型转换器，可以将图片名称转换为图集中的Sprite;
     - 可以自定义扩展更多的绑定类型;
 
-## 下载
+## 安装
 
-- [Unity3d官方商店下载](https://www.assetstore.unity3d.com/#!/content/77446)
-- [Github下载](https://github.com/vovgou/loxodon-framework/releases)
+自Loxodon.Framework 2.0版本开始，保留了原有的 .unitypackage包发布方式，同时添加了UPM发布方式，此版本要求Unity 2018.4.2及以上版本，框架的目录结构和API都进行了一些调整，同时引入了async/await、Task等新特性，升级前请先查看下文的升级注意事项。
+
+**安装注意：在中国区下载的Unity版本屏蔽了第三方仓库，会导致UPM包安装失败，咨询了Unity中国相关人员说是马上会放开，如果UPM方式安装失败请使用.unitypackage文件安装或者使用非中国区的Unity版本**
+
+### 1.x.x版本升级到2.0注意事项
+
+**从1.x.x版本升级到2.0版本前，请先删除老版本的所有文件，按下面的安装步骤安装新版本。2.0版本的教程和示例代码默认不会自动导入，如需要请手动导入到项目中。**
+
+**Loxodon.Framework.XLua和Loxodon.Framework.Bundle因为依赖问题仍然使用传统方式发布**
+
+**不兼容的改变：**
+- **修改了IUIViewLocator接口以及实现，如果继承了此接口的自定义实现需要调整。**
+- **修改了本地化模块的IDataProvider接口及实现，如果没有自定义类，不会有影响。**
+- **IAsyncTask和IProgressTask有用到多线程,在WebGL平台不支持，2.0版本后建议不再使用，框架中用到了它们的地方都改为IAsyncResult和IProgressResult。**
+- **新的API使用了async/await和Task，不再支持 .net 2.0**
+- **修改了Window、WindowManager等几个类的函数，改IAsyncTask为IAsyncResult**
+
+### 使用 OpenUPM 安装(推荐)
+
+[OpenUPM](https://openupm.com/) 是一个开源的UPM包仓库，它支持发布第三方的UPM包，它能够自动管理包的依赖关系，推荐使用它安装本框架.
+
+通过openupm命令安装包,要求[nodejs](https://nodejs.org/en/download/) and openupm-cli客户端的支持，如果没有安装请先安装nodejs和open-cli。
+
+    # 使用npm命令安装openupm-cli，如果已经安装请忽略.
+    npm install -g openupm-cli
+
+    #切换当前目录到项目的根目录
+    cd F:/workspace/New Unity Project
+
+    #安装 loxodon-framework
+    openupm add com.vovgou.loxodon-framework
+
+### 修改Packages/manifest.json文件安装
+
+通过修改manifest.json文件安装，不需要安装nodejs和openupm-cli客户端。在Unity项目根目录下找到Packages/manifest.json文件，在文件的scopedRegistries（没有可以自己添加）节点下添加第三方仓库package.openupm.com的配置，同时在dependencies节点下添加com.vovgou.loxodon-framework的配置，保存后切换到Unity窗口即可完成安装。
+
+    {
+      "dependencies": {
+        ...
+        "com.unity.modules.xr": "1.0.0",
+        "com.vovgou.loxodon-framework": "2.0.0-preview"
+      },
+      "scopedRegistries": [
+        {
+          "name": "package.openupm.com",
+          "url": "https://package.openupm.com",
+          "scopes": [
+            "com.vovgou.loxodon-framework",
+            "com.openupm"
+          ]
+        }
+      ]
+    }
+
+
+### 通过git URL安装
+
+Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework 地址到UPM管理器，耐性等待一段时间，下载完成后即安装成功。
+
+![](images/install_via_git.png)
+
+### 通过 *.unitypackage 文件安装
+
+从以下地址下载 [Loxodon.Framework2.x.x.unitypackage](https://github.com/vovgou/loxodon-framework/releases) 后,导入到你的项目中即完成安装.
+
+- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 ## 官方插件（可选）
 
-- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework-localization-for-csv)
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
 
     支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
 
-- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework-xlua)
+- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)
 
-    Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。安装步骤详见下一章节或者查看[Loxodon.Framework.XLua的文档](https://github.com/vovgou/loxodon-framework-xlua)    
+    Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。安装步骤详见下一章节或者查看[Loxodon.Framework.XLua的文档](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)    
 
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
@@ -182,7 +253,7 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
     ![](images/bundle.png)
 
-- [Loxodon Framework Log4Net](http://u3d.as/Gmr)
+- [Loxodon Framework Log4Net](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Log4Net)
 
     支持使用Log4Net在Unity中打印日志的插件，支持在局域网中远程调试。
 
@@ -791,7 +862,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
     BinaryFilePreferencesFactory factory = new BinaryFilePreferencesFactory(serializer, encryptor);
     Preferences.Register(factory);
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 Basic Tutorials.unity
 
 ### 配置文件（Properties文件）
 
@@ -941,7 +1012,7 @@ Properties文件格式如下，以key = value 的方式配置所有内容，key�
 ![](images/LocalizationSource2.png)
 
 - 本地化数据源脚本方式(LocalizationSourceBehaviour)
-通过本地化数据源脚本挂在GameObject对象上，可以直接存储在Prefab中或场景中，它无法按语言分别存储，所有支持语言的本地化资源都应该配置在同一个脚本文件中。LocalizationSourceBehaviour脚本中自带了DataProvider，当脚本运行会自动加载数据，当对象销毁时又会自动卸载数据。这种方式特别适合与UIView配合使用，当UIView创建时自动加载本地化数据，当UIView关闭时又会释放本地化数据。与Asset文件格式相比，它的优点是可以像一个Unity对象一样使用，拖入场景或者prefab中即可，不需要写脚本来管理它，它的缺点是所配置多个语言版本的数据都会加载到内存中，会占用更多的内存。[示例 Localization Source Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials/)
+通过本地化数据源脚本挂在GameObject对象上，可以直接存储在Prefab中或场景中，它无法按语言分别存储，所有支持语言的本地化资源都应该配置在同一个脚本文件中。LocalizationSourceBehaviour脚本中自带了DataProvider，当脚本运行会自动加载数据，当对象销毁时又会自动卸载数据。这种方式特别适合与UIView配合使用，当UIView创建时自动加载本地化数据，当UIView关闭时又会释放本地化数据。与Asset文件格式相比，它的优点是可以像一个Unity对象一样使用，拖入场景或者prefab中即可，不需要写脚本来管理它，它的缺点是所配置多个语言版本的数据都会加载到内存中，会占用更多的内存。
 ![](images/LocalizationSource3.png)
 ![](images/LocalizationSource4.png)
 
@@ -1264,13 +1335,13 @@ XML 格式配置如下:
     </resources>
 
 
-更多的示例请查看教程 [Localization Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 Localization Tutorials.unity
 
 #### 支持CSV格式的本地化插件
 
 如果习惯使用Excel的朋友可以下载我的CSV插件，它支持读取CSV文件格式的本地化配置，但是要求Unity版本在2018以上，支持.net 4.x或者.net standard 2.0。
 
-下载地址：[Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework-localization-for-csv/releases)
+下载地址：[Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework/releases)
 
 **配置文件格式如下**
 
@@ -1288,9 +1359,13 @@ XML 格式配置如下:
 
 ![](images/csv.png)
 
+**文件编码**
+
+ 如果文件中包含中文，请确保CSV文件使用UTF-8编码，否则在文件转换时可能出现乱码，使用WPS从excel文件导出为csv文件时，请重点检查编码格式是否为UTF-8编码(可以使用记事本或者EditPlus查看)。
+
 **支持类型和数组的表示**
 
-CSV配置同样支持上一节中XML配置所支持的所有基本数据类型，唯一不同的是CSV文件中使用逗号分隔符来支持数组类型，如下表所示。
+CSV配置同样支持上一节中XML配置所支持的所有基本数据类型，支持单元格内换行符，唯一不同的是CSV文件中使用逗号分隔符来支持数组类型，如下表所示。
 
 **注意：数组使用半角逗号分隔，在半角的双引号、单引号、小括号()、中括号[]、大括号{}、尖括号<>之间的逗号会被忽略，如数组的字符串中有逗号，请使用双引号或者单引号将字符串引起来,否则在数组分隔时会出错**
 
@@ -1313,11 +1388,21 @@ XML的配置文件和CSV的配置文件可以相互转换，但是对于数组�
 
 ![](images/xml2csv2.png)
 
+**文件示例**
+
+CSV源文件
+
+![](images/csv_source.png)
+
+转换为XML文件格式后的中文本地化文件（魔兽世界、星际争霸、帝国时代后面的换行符仍然存在，只是不可见）。
+
+![](images/csv2xml.png)
+
 ### 日志系统
 
 框架提供了一个可分级的日志系统，它支持ALL、DEBUG、INFO、WARN、ERROR、FATAL等多个级别，在项目在开发阶段和发布上线可以使用不同的日志打印级别。
 
-日志系统我提供了一个Unity3D的Debug版本的实现，它基本满足了一般的开发和调试需求，但是如果需要更强的日志功能，比如打印日志到文件系统，移动终端通过局域网将日志打印到电脑等，可以下载我的日志插件[Loxodon.Framework.Log4Net](https://assetstore.unity.com/packages/tools/utilities/loxodon-framework-log4net-79440)，它是一个用Log4Net实现的插件，功能非常强大。
+日志系统我提供了一个Unity3D的Debug版本的实现，它基本满足了一般的开发和调试需求，但是如果需要更强的日志功能，比如打印日志到文件系统，移动终端通过局域网将日志打印到电脑等，可以下载我的日志插件[Loxodon.Framework.Log4Net](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.Log4Net)，它是一个用Log4Net实现的插件，功能非常强大。
 
 默认日志系统的使用示例
 
@@ -1671,7 +1756,7 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
 
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 Basic Tutorials.unity
 
 #### async & await
 
@@ -1767,7 +1852,7 @@ Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以�
         }
     }
 
-更多的示例请查看教程 [Async & Await Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 Async & Await Tutorials.unity
 
 #### Task转Unity协程
 
@@ -1906,7 +1991,7 @@ InterceptableEnumerator支持条件语句块，可以在外部插入一个条件
         return enumerator;
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 Basic Tutorials.unity
 
 ### 消息系统(Messenger)
 
@@ -1958,7 +2043,7 @@ Messenger用于应用模块间的通讯，它提供了消息订阅和发布的�
         }
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 Basic Tutorials.unity
 
 ### 可观察的对象(Observables)
 
@@ -2036,7 +2121,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
         }
     }
 
-更多的示例请查看教程 [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+更多的示例请查看教程 Basic Tutorials.unity
 
 ### 数据绑定(Databinding)
 
@@ -2119,7 +2204,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
     //通过视图模型Icon，修改精灵名称，通过spriteConverter转换为对应的Sprite，赋值到图片的sprite属性上。
     bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();
 
-请查看示例 [ListView And Sprite Databinding Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+请查看示例 ListView And Sprite Databinding Tutorials.unity
 
 #### 绑定类型
 
@@ -2744,7 +2829,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
         }
     }
 
-请查看示例 [Interaction Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+请查看示例 Interaction Tutorials.unity
 
 #### 交互行为(InteractionAction)
 
@@ -2767,7 +2852,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
     //绑定InteractionAction到InteractionRequest
     bindingSet.Bind().For(v => v.loadingInteractionAction).To(vm => vm.LoadingRequest);
 
-请查看示例 [Interaction Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+请查看示例 Interaction Tutorials.unity
 
 #### 集合与列表视图的绑定
 在Unity3D游戏开发中，我们经常要使用到UGUI的ScrollRect控件，比如我们要展示一个装备列表，或者一个背包中的所有物品。那么我们可以使用数据绑定功能来自动更新列表中的内容吗，比如添加、删除、修改一个装备集合中的数据，装备列表视图会自动更新界面内容吗？ 答案是肯定的，使用ObservableList或者ObservableDictionary集合来存储装备信息，通过数据绑定集合到一个视图脚本上，就可以自动的更新装备列表的内容，只是这里的视图脚本需要我们自己实现，因为每个项目列表视图并不是标准化的，我无法提供一个通用的脚本来提供集合的绑定。
@@ -3116,7 +3201,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         }
     }
 
-请查看示例 [ListView And Sprite Databinding Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+请查看示例 ListView And Sprite Databinding Tutorials.unity
 
 #### 数据绑定与异步加载精灵
 在前文的示例中，我有使用到精灵的绑定，只是它是提前加载到内存中的。在这里我将讲讲如何通过数据绑定来异步加载一个精灵。与上一节中集合绑定类似，通过一个视图脚本就可以轻松实现精灵的异步加载。下面我们来看示例。
@@ -3241,7 +3326,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         }
     }
 
-请查看示例 [Databinding for Asynchronous Loading Sprites Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+请查看示例 Databinding for Asynchronous Loading Sprites Tutorials.unity
 
 ## Lua
 

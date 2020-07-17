@@ -25,12 +25,12 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Localizations
 {
     public interface IDataProvider
     {
-        void Load(CultureInfo cultureInfo, Action<Dictionary<string, object>> onLoadCompleted);
-
+        Task<Dictionary<string, object>> Load(CultureInfo cultureInfo);
     }
 }

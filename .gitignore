@@ -8,5 +8,3 @@ Logs
 *.log
 package-lock.json
 package-lock.json.meta
-AssetStoreTools
-AssetStoreTools.meta

@@ -39,7 +39,7 @@ namespace Loxodon.Framework.Binding.Proxy
             if (target == null)
                 throw new ArgumentNullException("target", "Unable to bind to target as it's null");
 
-            this.target = new WeakReference(target, true);
+            this.target = new WeakReference(target, false);
             this.function = function;
         }
 

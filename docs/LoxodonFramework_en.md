@@ -27,7 +27,11 @@ Table of Contents
 <!-- code_chunk_output -->
 
 - [Overview](#overview)
-- [Download](#download)
+- [Installation](#installation)
+  - [Install via OpenUPM (recommended)](#install-via-openupm-recommended)
+  - [Install via Packages/manifest.json](#install-via-packagesmanifestjson)
+  - [Install via git URL](#install-via-git-url)
+  - [Install via *.unitypackage file](#install-via-unitypackage-file)
 - [Official Plugin(optional)](#official-pluginoptional)
 - [Lua plugin installation (optional)](#lua-plugin-installation-optional)
   - [Install XLua](#install-xlua)
@@ -160,20 +164,69 @@ This plugin is compatible with MacOSX, Windows, Linux, UWP, IOS and Android, etc
     - Support type converter, you can convert the picture name to Sprite in the atlas;
     - You can customize and extend more binding types;
 
-## Download
+## Installation
 
-- [Unity3d official store download](https://www.assetstore.unity3d.com/#!/content/77446)
-- [Github download](https://github.com/vovgou/loxodon-framework/releases)
+### Install via OpenUPM (recommended)
+
+[OpenUPM](https://openupm.com/) can automatically manage dependencies, it is recommended to use it to install the framework.
+
+Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not installed please install them first.
+
+    # Install openupm-cli,please ignore if it is already installed.
+    npm install -g openupm-cli
+
+    #Go to the root directory of your project
+    cd F:/workspace/New Unity Project
+
+    #Install loxodon-framework
+    openupm add com.vovgou.loxodon-framework
+
+### Install via Packages/manifest.json
+
+Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework" in the "dependencies" node.
+
+Installing the framework in this way does not require nodejs and openm-cli.
+
+    {
+      "dependencies": {
+        ...
+        "com.unity.modules.xr": "1.0.0",
+        "com.vovgou.loxodon-framework": "2.0.0-preview"
+      },
+      "scopedRegistries": [
+        {
+          "name": "package.openupm.com",
+          "url": "https://package.openupm.com",
+          "scopes": [
+            "com.vovgou.loxodon-framework",
+            "com.openupm"
+          ]
+        }
+      ]
+    }
+
+### Install via git URL
+
+After Unity 2019.3.4f1 that support path query parameter of git package. You can add https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework#2.0.0-preview to Package Manager
+
+![](images/install_via_git.png)
+
+### Install via *.unitypackage file
+
+Download [Loxodon.Framework2.x.x.unitypackage](https://github.com/vovgou/loxodon-framework/releases) and import it into your project.
+
+- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 ## Official Plugin(optional)
 
-- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework-localization-for-csv)
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.LocalizationsForCsv)
 
     Support localization file format as csv file format, requires Unity2018.4 or later.
 
-- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework-xlua)
+- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.XLua)
 
-    Loxodon.Framework's XLua plugin, it is a lua MVVM framework that supports mixed programming of lua and c # or you can use lua completely to write your entire game. See the next chapter for installation steps or check the documentation of [Loxodon.Framework.XLua](https://github.com/vovgou/loxodon-framework-xlua)   
+    Loxodon.Framework's XLua plugin, it is a lua MVVM framework that supports mixed programming of lua and c # or you can use lua completely to write your entire game. See the next chapter for installation steps or check the documentation of [Loxodon.Framework.XLua](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.XLua)   
 
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
@@ -181,7 +234,7 @@ This plugin is compatible with MacOSX, Windows, Linux, UWP, IOS and Android, etc
 
     ![](images/bundle.png)
 
-- [Loxodon Framework Log4Net](http://u3d.as/Gmr)
+- [Loxodon Framework Log4Net](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.Log4Net)
 
     Plug-in for printing logs in Unity using Log4Net, and remote debugging in LAN.
 
@@ -791,7 +844,7 @@ In Preferences, although I have supported many data types, but there are always 
     BinaryFilePreferencesFactory factory = new BinaryFilePreferencesFactory(serializer, encryptor);
     Preferences.Register(factory);
 
-For more examples, see the [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the Basic Tutorials.unity
 
 ### Configuration(Properties File)
 
@@ -909,7 +962,8 @@ Sprites, textures (Texture2D / Texture3D), fonts (Font), audio effects (AudioCli
 ![](images/LocalizationSource1.png)
 ![](images/LocalizationSource2.png)
 
-- Localization SourceBehaviour The localization source source script is attached to the GameObject object and can be stored directly in Prefab or in the scene. It cannot be stored separately by language. All localized resources that support languages should be configured in the same In a script file. The LocalizationSourceBehaviour script comes with a DataProvider. When the script is run, the data is automatically loaded, and when the object is destroyed, the data is automatically unloaded. This method is particularly suitable for use with UIView. Localized data is automatically loaded when UIView is created, and localized data is released when UIView is closed. Compared with the Asset file format, it has the advantage that it can be used like a Unity object and can be dragged into the scene or prefab. There is no need to write a script to manage it. Its disadvantage is that data for multiple language versions will be loaded. Into memory, it will take up more memory. [Localization Source Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials/)
+- Localization SourceBehaviour The localization source source script is attached to the GameObject object and can be stored directly in Prefab or in the scene. It cannot be stored separately by language. All localized resources that support languages should be configured in the same In a script file. The LocalizationSourceBehaviour script comes with a DataProvider. When the script is run, the data is automatically loaded, and when the object is destroyed, the data is automatically unloaded. This method is particularly suitable for use with UIView. Localized data is automatically loaded when UIView is created, and localized data is released when UIView is closed. Compared with the Asset file format, it has the advantage that it can be used like a Unity object and can be dragged into the scene or prefab. There is no need to write a script to manage it. Its disadvantage is that data for multiple language versions will be loaded. Into memory, it will take up more memory. 
+
 ![](images/LocalizationSource3.png)
 ![](images/LocalizationSource4.png)
 
@@ -1217,13 +1271,13 @@ The localization file configuration is as follows:
     </resources>
 
 
-For more examples, see the [Localization Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the Localization Tutorials.unity
 
 #### Localization plugin supporting CSV format
 
 If you are accustomed to using Excel, you can download my CSV plug-in, which supports reading the localized configuration of the CSV file format, but requires that the Unity version is above 2018 and supports .net 4.x or .net standard 2.0.
 
-Download：[Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework-localization-for-csv/releases)
+Download：[Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework/releases)
 
 **The configuration file format is as follows**
 
@@ -1269,7 +1323,7 @@ Generate csv file as follows
 
 The framework provides a scalable logging system, which supports ALL, DEBUG, INFO, WARN, ERROR, FATAL and other levels. Different levels of log printing can be used during the development phase and release of the project.
 
-Logging system I provide a debug version of Unity3D, which basically meets general development and debugging needs, but if more powerful logging functions are needed, such as printing logs to a file system, mobile terminals printing logs to a computer via a LAN, etc. You can download my log plugin [Loxodon.Framework.Log4Net](https://assetstore.unity.com/packages/tools/utilities/loxodon-framework-log4net-79440), which is a plugin implemented with Log4Net, which is very powerful.
+Logging system I provide a debug version of Unity3D, which basically meets general development and debugging needs, but if more powerful logging functions are needed, such as printing logs to a file system, mobile terminals printing logs to a computer via a LAN, etc. You can download my log plugin [Loxodon.Framework.Log4Net](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.Log4Net), which is a plugin implemented with Log4Net, which is very powerful.
 
 Example of using the default logging system
 
@@ -1623,7 +1677,7 @@ Before C # 4.0, you needed to perform a complex asynchronous operation, generall
 
     }
 
-For more examples, see the [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the Basic Tutorials.unity
 
 ### Thread/Coroutine Executor
 
@@ -1732,7 +1786,7 @@ InterceptableEnumerator supports conditional statement blocks. You can insert a 
         return enumerator;
     }
 
-For more examples, see the [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the Basic Tutorials.unity
 
 ### Message System(Messenger)
 
@@ -1784,7 +1838,7 @@ Messenger is used for communication between application modules. It provides the
         }
     }
 
-For more examples, see the [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the Basic Tutorials.unity
 
 ### Observables
 
@@ -1862,7 +1916,7 @@ Let's take a look at the usage example of ObservableDictionary. When we need to 
         }
     }
 
-For more examples, see the [Basic Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the Basic Tutorials.unity
 
 ### Databinding
 
@@ -1945,7 +1999,7 @@ In general, basic data types are automatically converted when the field type of 
     //通过视图模型Icon，修改精灵名称，通过spriteConverter转换为对应的Sprite，赋值到图片的sprite属性上。
     bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();
 
-For more examples, see the [ListView And Sprite Databinding Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the ListView And Sprite Databinding Tutorials.unity
 
 #### Binding type
 
@@ -2570,7 +2624,7 @@ Take a look at the following code example, using an interactive request to open 
         }
     }
 
-For more examples, see the [Interaction Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the Interaction Tutorials.unity
 
 #### Interaction Action
 
@@ -2593,7 +2647,7 @@ InteractionAction is used in conjunction with InteractionRequest. An interaction
     //绑定InteractionAction到InteractionRequest
     bindingSet.Bind().For(v => v.loadingInteractionAction).To(vm => vm.LoadingRequest);
 
-For more examples, see the [Interaction Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the Interaction Tutorials.unity
 
 #### Collection and list view binding
 
@@ -2942,7 +2996,7 @@ Finally, the view model code for the ListView control and ListItemView is as fol
         }
     }
 
-For more examples, see the [ListView And Sprite Databinding Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the ListView And Sprite Databinding Tutorials.unity
 
 #### Data binding and asynchronous loading sprites
 
@@ -3068,7 +3122,7 @@ Then create the view and view model code of the sample interface as follows.
         }
     }
 
-For more examples, see the [Databinding for Asynchronous Loading Sprites Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
+For more examples, see the Databinding for Asynchronous Loading Sprites Tutorials.unity
 
 ## Lua
 
