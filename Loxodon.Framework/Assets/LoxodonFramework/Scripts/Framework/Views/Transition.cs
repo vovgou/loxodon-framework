@@ -27,6 +27,9 @@ using System.Collections;
 using Loxodon.Log;
 using Loxodon.Framework.Execution;
 using Loxodon.Framework.Asynchronous;
+#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
+using System.Runtime.CompilerServices;
+#endif
 
 namespace Loxodon.Framework.Views
 {
@@ -175,11 +178,9 @@ namespace Loxodon.Framework.Views
         }
 
 #if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
-        public CoroutineAwaiter GetAwaiter()
+        public IAwaiter GetAwaiter()
         {
-            CoroutineAwaiter awaiter = new CoroutineAwaiter();
-            this.OnFinish(() => { awaiter.SetResult(null); });
-            return awaiter;
+            return new TransitionAwaiter(this);
         }
 #endif
 
@@ -281,4 +282,36 @@ namespace Loxodon.Framework.Views
 
         protected abstract IEnumerator DoTransition();
     }
+
+#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
+    public struct TransitionAwaiter : IAwaiter, ICriticalNotifyCompletion
+    {
+        private Transition transition;
+
+        public TransitionAwaiter(Transition transition)
+        {
+            this.transition = transition ?? throw new ArgumentNullException("transition");
+        }
+
+        public bool IsCompleted => transition.IsDone;
+
+        public void GetResult()
+        {
+            if (!IsCompleted)
+                throw new Exception("The task is not finished yet");
+        }
+
+        public void OnCompleted(Action continuation)
+        {
+            UnsafeOnCompleted(continuation);
+        }
+
+        public void UnsafeOnCompleted(Action continuation)
+        {
+            if (continuation == null)
+                throw new ArgumentNullException("continuation");
+            transition.OnFinish(continuation);
+        }
+    }
+#endif
 }

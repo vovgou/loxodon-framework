@@ -28,24 +28,44 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using Object = UnityEngine.Object;
 
 namespace Loxodon.Framework.Asynchronous
 {
     public static class CoroutineAwaiterExtensions
     {
-        private static void RunOnCoroutine(IEnumerator routine, Action<Exception> onFinished)
+        private static CoroutineAwaiter RunOnCoroutine(IEnumerator routine)
         {
+            CoroutineAwaiter awaiter = new CoroutineAwaiter();
             InterceptableEnumerator enumerator = routine is InterceptableEnumerator ? (InterceptableEnumerator)routine : new InterceptableEnumerator(routine);
-            Exception exception = null;
             enumerator.RegisterCatchBlock(e =>
             {
-                exception = e;
+                awaiter.SetResult(e);
             });
             enumerator.RegisterFinallyBlock(() =>
             {
-                onFinished(exception);
+                if (!awaiter.IsCompleted)
+                    awaiter.SetResult(null);
             });
             Executors.RunOnCoroutineNoReturn(enumerator);
+            return awaiter;
+        }
+
+        private static CoroutineAwaiter<TResult> RunOnCoroutine<TResult>(IEnumerator routine, Func<TResult> getter)
+        {
+            CoroutineAwaiter<TResult> awaiter = new CoroutineAwaiter<TResult>();
+            InterceptableEnumerator enumerator = routine is InterceptableEnumerator ? (InterceptableEnumerator)routine : new InterceptableEnumerator(routine);
+            enumerator.RegisterCatchBlock(e =>
+            {
+                awaiter.SetResult(default(TResult), e);
+            });
+            enumerator.RegisterFinallyBlock(() =>
+            {
+                if (!awaiter.IsCompleted)
+                    awaiter.SetResult(getter(), null);
+            });
+            Executors.RunOnCoroutineNoReturn(enumerator);
+            return awaiter;
         }
 
         private static IEnumerator DoYieldInstruction(YieldInstruction instruction)
@@ -58,21 +78,17 @@ namespace Loxodon.Framework.Asynchronous
             yield return instruction;
         }
 
-        public static CoroutineAwaiter GetAwaiter(this IEnumerator coroutine)
+        public static IAwaiter GetAwaiter(this IEnumerator coroutine)
         {
-            CoroutineAwaiter awaiter = new CoroutineAwaiter();
-            RunOnCoroutine(coroutine, e => awaiter.SetResult(e));
-            return awaiter;
+            return RunOnCoroutine(coroutine);
         }
 
-        public static CoroutineAwaiter GetAwaiter(this YieldInstruction instruction)
+        public static IAwaiter GetAwaiter(this YieldInstruction instruction)
         {
-            CoroutineAwaiter awaiter = new CoroutineAwaiter();
-            RunOnCoroutine(DoYieldInstruction(instruction), e => awaiter.SetResult(e));
-            return awaiter;
+            return RunOnCoroutine(DoYieldInstruction(instruction));
         }
 
-        public static CoroutineAwaiter GetAwaiter(this WaitForMainThread instruction)
+        public static IAwaiter GetAwaiter(this WaitForMainThread instruction)
         {
             CoroutineAwaiter awaiter = new CoroutineAwaiter();
             Executors.RunOnMainThread(() =>
@@ -82,7 +98,7 @@ namespace Loxodon.Framework.Asynchronous
             return awaiter;
         }
 
-        public static CoroutineAwaiter GetAwaiter(this WaitForBackgroundThread instruction)
+        public static IAwaiter GetAwaiter(this WaitForBackgroundThread instruction)
         {
             CoroutineAwaiter awaiter = new CoroutineAwaiter();
             Executors.RunAsyncNoReturn(() =>
@@ -92,69 +108,67 @@ namespace Loxodon.Framework.Asynchronous
             return awaiter;
         }
 
-        public static CoroutineAwaiter<CustomYieldInstruction> GetAwaiter(this CustomYieldInstruction target)
+        public static IAwaiter<CustomYieldInstruction> GetAwaiter(this CustomYieldInstruction target)
         {
-            CoroutineAwaiter<CustomYieldInstruction> awaiter = new CoroutineAwaiter<CustomYieldInstruction>();
-            RunOnCoroutine(DoYieldInstruction(target), e => awaiter.SetResult(target, e));
-            return awaiter;
+            return RunOnCoroutine(DoYieldInstruction(target), () => target);
         }
 
-        public static CoroutineAwaiter<AsyncOperation> GetAwaiter(this AsyncOperation target)
+        public static IAwaiter GetAwaiter(this AsyncOperation target)
         {
-            CoroutineAwaiter<AsyncOperation> awaiter = new CoroutineAwaiter<AsyncOperation>();
-            RunOnCoroutine(DoYieldInstruction(target), e => awaiter.SetResult(target, e));
-            return awaiter;
+            return new AsyncOperationAwaiter(target);
         }
 
-        public static CoroutineAwaiter<UnityWebRequestAsyncOperation> GetAwaiter(this UnityWebRequestAsyncOperation target)
+        public static IAwaiter<Object> GetAwaiter(this ResourceRequest target)
         {
-            CoroutineAwaiter<UnityWebRequestAsyncOperation> awaiter = new CoroutineAwaiter<UnityWebRequestAsyncOperation>();
-            RunOnCoroutine(DoYieldInstruction(target), e => awaiter.SetResult(target, e));
-            return awaiter;
+            return new AsyncOperationAwaiter<ResourceRequest, Object>(target, (request) => request.asset);
         }
 
-        public static CoroutineAwaiter<UnityEngine.Object> GetAwaiter(this ResourceRequest target)
+        public static IAwaiter<Object> GetAwaiter(this AssetBundleRequest target)
         {
-            CoroutineAwaiter<UnityEngine.Object> awaiter = new CoroutineAwaiter<UnityEngine.Object>();
-            RunOnCoroutine(DoYieldInstruction(target), e => awaiter.SetResult(target.asset, e));
-            return awaiter;
+            return new AsyncOperationAwaiter<AssetBundleRequest, Object>(target, (request) => request.asset);
         }
 
-        public static CoroutineAwaiter<AssetBundle> GetAwaiter(this AssetBundleCreateRequest target)
+        public static IAwaiter<AssetBundle> GetAwaiter(this AssetBundleCreateRequest target)
         {
-            CoroutineAwaiter<AssetBundle> awaiter = new CoroutineAwaiter<AssetBundle>();
-            RunOnCoroutine(DoYieldInstruction(target), e => awaiter.SetResult(target.assetBundle, e));
-            return awaiter;
+            return new AsyncOperationAwaiter<AssetBundleCreateRequest, AssetBundle>(target, (request) => request.assetBundle);
         }
 
-        public static CoroutineAwaiter<object> GetAwaiter(this IAsyncResult asyncResult)
+        public static IAwaiter<UnityWebRequest> GetAwaiter(this UnityWebRequestAsyncOperation target)
         {
-            CoroutineAwaiter<object> awaiter = new CoroutineAwaiter<object>();
-            asyncResult.Callbackable().OnCallback(ar =>
-            {
-                awaiter.SetResult(ar.Result, ar.Exception);
-            });
-            return awaiter;
+            return new AsyncOperationAwaiter<UnityWebRequestAsyncOperation, UnityWebRequest>(target, (request) => request.webRequest);
         }
 
-        public static CoroutineAwaiter<TResult> GetAwaiter<TResult>(this IAsyncResult<TResult> asyncResult)
+        public static IAwaiter GetAwaiter(this IAsyncResult target)
         {
-            CoroutineAwaiter<TResult> awaiter = new CoroutineAwaiter<TResult>();
-            asyncResult.Callbackable().OnCallback(ar =>
-            {
-                awaiter.SetResult(ar.Result, ar.Exception);
-            });
-            return awaiter;
+            return new AsyncResultAwaiter<IAsyncResult>(target);
+        }
+
+        public static IAwaiter<TResult> GetAwaiter<TResult>(this IAsyncResult<TResult> target)
+        {
+            return new AsyncResultAwaiter<IAsyncResult<TResult>, TResult>(target);
+        }
+
+        public static IAwaiter GetAwaiter(this AsyncResult target)
+        {
+            return new AsyncResultAwaiter<IAsyncResult>(target);
+        }
+
+        public static IAwaiter<TResult> GetAwaiter<TResult>(this AsyncResult<TResult> target)
+        {
+            return new AsyncResultAwaiter<IAsyncResult<TResult>, TResult>(target);
         }
     }
 
     public class WaitForMainThread : CustomYieldInstruction
     {
+        public static readonly WaitForMainThread Default = new WaitForMainThread();
+
         public override bool keepWaiting => false;
     }
 
     public class WaitForBackgroundThread
     {
+        public static readonly WaitForBackgroundThread Default = new WaitForBackgroundThread();
     }
 }
 #endif

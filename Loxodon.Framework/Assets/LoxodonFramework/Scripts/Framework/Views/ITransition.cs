@@ -55,7 +55,7 @@ namespace Loxodon.Framework.Views
         /// 
         /// </summary>
         /// <returns></returns>
-        CoroutineAwaiter GetAwaiter();
+        IAwaiter GetAwaiter();
 #endif
 
         /// <summary>
