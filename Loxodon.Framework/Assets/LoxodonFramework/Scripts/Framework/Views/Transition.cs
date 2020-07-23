@@ -172,8 +172,8 @@ namespace Loxodon.Framework.Views
 
         protected virtual void OnEnd()
         {
-            this.RaiseFinished();
-            this.done = true;
+			this.done = true;
+            this.RaiseFinished();            
             this.Unbind();
         }
 
