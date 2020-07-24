@@ -26,7 +26,9 @@ require("framework.System")
 
 local util = require("xlua.util")
 local InterceptableEnumerator = CS.Loxodon.Framework.Execution.InterceptableEnumerator
+local Logger = require("framework.Logger")
 
+local log = Logger.GetLogger("Executors")
 ---
 --模块
 --@module Executors
@@ -51,8 +53,8 @@ local M = class("Executors",CS.Loxodon.Framework.Execution.Executors)
 --
 function M.RunLuaOnCoroutineNoReturn(func,...)
 	local ie = InterceptableEnumerator(util.cs_generator(func,...))	
-	ie:RegisterCatchBlock(function(e)
-			CS.UnityEngine.Debug.LogErrorFormat("{0}",e)
+	ie:RegisterCatchBlock(function(e)			
+			log:error("%s",e)
 		end)
 	M.RunOnCoroutineNoReturn(ie)
 end

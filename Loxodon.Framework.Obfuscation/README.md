@@ -1,4 +1,4 @@
-![](docs/icon.png)
+![](docs/images/icon.png)
 
 # Loxodon Framework Obfuscation
 

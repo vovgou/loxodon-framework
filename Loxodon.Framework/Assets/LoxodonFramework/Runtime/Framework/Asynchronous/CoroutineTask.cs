@@ -421,14 +421,9 @@ namespace Loxodon.Framework.Asynchronous
             return this.asyncResult.WaitForDone();
         }
 #if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
-        public virtual CoroutineAwaiter GetAwaiter()
+        public virtual IAwaiter GetAwaiter()
         {
-            CoroutineAwaiter awaiter = new CoroutineAwaiter();
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                awaiter.SetResult(ar.Exception);
-            });
-            return awaiter;
+            return new AsyncResultAwaiter<AsyncResult>(asyncResult);
         }
 #endif
 
@@ -941,14 +936,9 @@ namespace Loxodon.Framework.Asynchronous
             }
         }
 #if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
-        public override CoroutineAwaiter GetAwaiter()
+        public new IAwaiter<TResult> GetAwaiter()
         {
-            CoroutineAwaiter<TResult> awaiter = new CoroutineAwaiter<TResult>();
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                awaiter.SetResult(ar.Result, ar.Exception);
-            });
-            return awaiter;
+            return new AsyncResultAwaiter<AsyncResult<TResult>, TResult>(this.asyncResult);
         }
 #endif
     }

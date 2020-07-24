@@ -44,7 +44,8 @@ namespace Loxodon.Framework.Localizations
             this.converters.Add(new ColorTypeConverter());
             this.converters.Add(new VectorTypeConverter());
             this.converters.Add(new RectTypeConverter());
-            this.converters.Add(new PrimitiveTypeConverter());            
+            this.converters.Add(new PrimitiveTypeConverter());
+            this.converters.Add(new VersionTypeConverter());
         }
 
         public abstract Dictionary<string, object> Parse(Stream input, CultureInfo cultureInfo);

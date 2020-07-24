@@ -34,6 +34,11 @@ namespace Loxodon.Framework.XLua.Loaders
         public PathLoaderBase(string prefix, string suffix)
         {
             this.prefix = prefix;
+            if (!string.IsNullOrEmpty(this.prefix))
+                this.prefix = this.prefix.Replace(@"\", "/");
+            if (!this.prefix.EndsWith("/"))
+                this.prefix += "/";
+
             this.suffix = suffix;
         }
 

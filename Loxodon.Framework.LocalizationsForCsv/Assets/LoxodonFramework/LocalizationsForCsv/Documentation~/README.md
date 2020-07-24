@@ -136,7 +136,7 @@ CSV原文件
 
 Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.LocalizationsForCsv/Assets/LoxodonFramework/LocalizationsForCsv 地址到UPM管理器，耐性等待一段时间，下载完成后即安装成功。
 
-![](docs/images/install_via_git.png)
+![](docs/install_via_git.png)
 
 ### 通过 *.unitypackage 文件安装
 

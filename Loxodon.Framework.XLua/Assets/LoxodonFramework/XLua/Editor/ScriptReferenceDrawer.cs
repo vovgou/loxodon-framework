@@ -60,15 +60,18 @@ namespace Loxodon.Framework.Editors
                 typeProperty.enumValueIndex = (int)typeValue;
             }
 
+            float labelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 0.1f;
             switch (typeValue)
             {
                 case ScriptReferenceType.TextAsset:
-                    textProperty.objectReferenceValue = EditorGUI.ObjectField(valueRect, GUIContent.none, textProperty.objectReferenceValue, typeof(UnityEngine.TextAsset), false);
+                    EditorGUI.PropertyField(valueRect, textProperty, GUIContent.none);
                     break;
                 case ScriptReferenceType.Filename:
-                    filenameProperty.stringValue = EditorGUI.TextField(valueRect, GUIContent.none, filenameProperty.stringValue);
+                    EditorGUI.PropertyField(valueRect, filenameProperty, GUIContent.none);
                     break;
             }
+            EditorGUIUtility.labelWidth = labelWidth;
             EditorGUI.EndProperty();
         }
     }

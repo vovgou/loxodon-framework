@@ -1,0 +1,67 @@
+﻿---
+-- MIT License
+--
+-- Copyright (c) 2018 Clark Yang
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy of 
+-- this software and associated documentation files (the "Software"), to deal in 
+-- the Software without restriction, including without limitation the rights to 
+-- use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+-- of the Software, and to permit persons to whom the Software is furnished to do so, 
+-- subject to the following conditions:
+--
+-- The above copyright notice and this permission notice shall be included in all 
+-- copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+-- SOFTWARE.
+---
+
+require("framework.System")
+
+local AsyncTask = require("framework.AsyncTask")
+local Resources = CS.UnityEngine.Resources
+local GameObject = CS.UnityEngine.GameObject
+
+---
+-- 在Lua中使用async和await
+--@module AsyncAndAwaitExample
+local M=class("AsyncAndAwaitExample",target)
+---
+-- 异步start函数
+--
+M.start = async(function(self)
+		
+		await(AsyncTask.Delay(1000)) --Delay 1000 milliseconds
+		
+		local x,y,z = await(M.toPosition(1200,500,240))
+		printf("x=%s y=%s z=%s",x,y,z)
+		
+		local goTemplate = await(self:load("Prefabs/Cube",typeof(CS.UnityEngine.GameObject)))
+		
+		local go = GameObject.Instantiate(goTemplate)
+		go.transform.localPosition = CS.UnityEngine.Vector3.zero;
+	end)
+
+---
+--异步加载一个Cube
+--
+M.load= async(function(self,path,typename)
+		print("Load a Cube from the Resources folder.")
+		
+		local goTemplate = await(Resources.LoadAsync(path,typename))
+		
+		print("Loading a Cube is complete.")
+		return goTemplate
+	end)
+
+M.toPosition = async(function(x,y,z)
+		return x/1000.0,y/1000.0,z/1000.0
+	end)
+
+return M

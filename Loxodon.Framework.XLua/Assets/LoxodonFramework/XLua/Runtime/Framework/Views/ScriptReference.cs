@@ -64,20 +64,15 @@ namespace Loxodon.Framework.Views
 
         public void OnAfterDeserialize()
         {
-#if !UNITY_EDITOR
-            switch (type)
-            {
-                case ScriptReferenceType.TextAsset:
-                    this.filename = null;
-                    break;
-                case ScriptReferenceType.Filename:
-                    this.text = null;
-                    break;
-            }
-#endif
+            Clear();
         }
 
         public void OnBeforeSerialize()
+        {
+            Clear();
+        }
+
+        protected virtual void Clear()
         {
 #if !UNITY_EDITOR
             switch (type)

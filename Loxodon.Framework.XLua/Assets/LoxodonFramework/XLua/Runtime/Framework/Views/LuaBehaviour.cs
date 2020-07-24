@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Views.Variables;
 using System;
 using UnityEngine;
@@ -40,7 +41,7 @@ namespace Loxodon.Framework.Views
         protected Action<MonoBehaviour> onAwake;
         protected Action<MonoBehaviour> onEnable;
         protected Action<MonoBehaviour> onDisable;
-        protected Action<MonoBehaviour> onStart;
+        protected Func<MonoBehaviour, ILuaTask> onStart;
         protected Action<MonoBehaviour> onUpdate;
         protected Action<MonoBehaviour> onDestroy;
 
@@ -83,7 +84,7 @@ namespace Loxodon.Framework.Views
             onAwake = metatable.Get<Action<MonoBehaviour>>("awake");
             onEnable = metatable.Get<Action<MonoBehaviour>>("enable");
             onDisable = metatable.Get<Action<MonoBehaviour>>("disable");
-            onStart = metatable.Get<Action<MonoBehaviour>>("start");
+            onStart = metatable.Get<Func<MonoBehaviour, ILuaTask>>("start");
             onUpdate = metatable.Get<Action<MonoBehaviour>>("update");
             onDestroy = metatable.Get<Action<MonoBehaviour>>("destroy");
         }
@@ -108,10 +109,14 @@ namespace Loxodon.Framework.Views
                 onDisable(this);
         }
 
-        protected virtual void Start()
+        protected virtual async void Start()
         {
             if (onStart != null)
-                onStart(this);
+            {
+                ILuaTask task = onStart(this);
+                if (task != null)
+                    await task;
+            }
         }
 
         protected virtual void Update()

@@ -398,31 +398,31 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        private static string GetPackageFullPath()
-        {
-            string packagePath = Path.GetFullPath("Packages/com.vovgou.loxodon-framework-localization-csv");
-            if (Directory.Exists(packagePath))
-                return packagePath;
+        //private static string GetPackageFullPath()
+        //{
+        //    string packagePath = Path.GetFullPath("Packages/com.vovgou.loxodon-framework-localization-csv");
+        //    if (Directory.Exists(packagePath))
+        //        return packagePath;
 
-            packagePath = Path.GetFullPath("Assets/..");
-            if (Directory.Exists(packagePath))
-            {
-                if (Directory.Exists(packagePath + "/Assets/Packages/com.vovgou.loxodon-framework-localization-csv/Extras~"))
-                    return packagePath + "/Assets/Packages/com.vovgou.loxodon-framework-localization-csv";
+        //    packagePath = Path.GetFullPath("Assets/..");
+        //    if (Directory.Exists(packagePath))
+        //    {
+        //        if (Directory.Exists(packagePath + "/Assets/Packages/com.vovgou.loxodon-framework-localization-csv/Package Resources"))
+        //            return packagePath + "/Assets/Packages/com.vovgou.loxodon-framework-localization-csv";
 
-                if (Directory.Exists(packagePath + "/Assets/LoxodonFramework/LocalizationsForCsv/Extras~"))
-                    return packagePath + "/Assets/LoxodonFramework/LocalizationsForCsv";
+        //        if (Directory.Exists(packagePath + "/Assets/LoxodonFramework/LocalizationsForCsv/Package Resources"))
+        //            return packagePath + "/Assets/LoxodonFramework/LocalizationsForCsv";
 
-                return null;
-            }
-            return null;
-        }
+        //        return null;
+        //    }
+        //    return null;
+        //}
 
-        [MenuItem("Tools/Loxodon/Samples/Import Localization CSV Tutorials", false, 2000)]
-        private static void ImportExamples()
-        {
-            string packageFullPath = GetPackageFullPath();
-            AssetDatabase.ImportPackage(packageFullPath + "/Extras~/Tutorials.unitypackage", true);
-        }
+        //[MenuItem("Tools/Loxodon/Samples/Import Localization CSV Tutorials", false, 2000)]
+        //private static void ImportExamples()
+        //{
+        //    string packageFullPath = GetPackageFullPath();
+        //    AssetDatabase.ImportPackage(packageFullPath + "/Package Resources/Tutorials.unitypackage", true);
+        //}
     }
 }

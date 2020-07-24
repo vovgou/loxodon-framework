@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-addressable",
   "displayName": "Loxodon Framework Addressable",
-  "version": "2.0.0-preview.3",
+  "version": "2.0.1-preview",
   "unity": "2018.4",
   "description": "This is a plugin that uses Unity's addressable asset system to load resources.",
   "license": "MIT",
@@ -27,6 +27,6 @@
   "relatedPackages": {},
   "dependencies": {
     "com.unity.addressables": "1.1.10",
-    "com.vovgou.loxodon-framework": "2.0.0-preview.3"
+    "com.vovgou.loxodon-framework": "2.0.1-preview"
   }
 }

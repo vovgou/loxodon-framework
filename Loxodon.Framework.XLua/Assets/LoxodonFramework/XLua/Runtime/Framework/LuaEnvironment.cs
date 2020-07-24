@@ -28,6 +28,7 @@ using UnityEngine;
 using Loxodon.Framework.Execution;
 using XLua;
 using Loxodon.Log;
+using IAsyncResult = Loxodon.Framework.Asynchronous.IAsyncResult;
 
 namespace Loxodon.Framework
 {
@@ -36,9 +37,9 @@ namespace Loxodon.Framework
         private static readonly ILog log = LogManager.GetLogger(typeof(LuaEnvironment));
 
         private static float interval = 2;
-        private static WaitForSeconds wait;
+        private static WaitForSecondsRealtime wait;
         private static LuaEnv luaEnv;
-        private static Asynchronous.IAsyncResult result;
+        private static IAsyncResult result;
 
         public static float Interval
         {
@@ -49,7 +50,7 @@ namespace Loxodon.Framework
                     return;
 
                 interval = value;
-                wait = new WaitForSeconds(interval);
+                wait = new WaitForSecondsRealtime(interval);
             }
         }
 
@@ -63,7 +64,7 @@ namespace Loxodon.Framework
                     if (result != null)
                         result.Cancel();
 
-                    wait = new WaitForSeconds(interval);
+                    wait = new WaitForSecondsRealtime(interval);
                     result = Executors.RunOnCoroutine(DoTick());
                 }
 

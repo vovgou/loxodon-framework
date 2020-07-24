@@ -66,7 +66,7 @@ namespace Loxodon.Framework.Views
         EXIT_ANIMATION_BEGIN,
         INVISIBLE,
         EXIT_ANIMATION_END,
-        DISSMISS_BEGIN,
+        DISMISS_BEGIN,
         DISMISS_END
     }
 

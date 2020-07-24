@@ -1,0 +1,113 @@
+﻿---
+-- MIT License
+--
+-- Copyright (c) 2018 Clark Yang
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy of 
+-- this software and associated documentation files (the "Software"), to deal in 
+-- the Software without restriction, including without limitation the rights to 
+-- use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+-- of the Software, and to permit persons to whom the Software is furnished to do so, 
+-- subject to the following conditions:
+--
+-- The above copyright notice and this permission notice shall be included in all 
+-- copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+-- SOFTWARE.
+---
+
+require("framework.System")
+
+local SimpleCommand = CS.Loxodon.Framework.Commands.SimpleCommand
+local Context = CS.Loxodon.Framework.Contexts.Context
+local Executors = require("framework.Executors")
+
+local ObservableObject = require("framework.ObservableObject")
+local InteractionRequest = require("framework.InteractionRequest")
+local ProgressBar = require("Views.UI.Startup.ProgressBar")
+local LoginViewModel = require("Views.UI.Logins.LoginViewModel")
+
+---
+--模块
+--@module StartupViewModel
+local M=class("StartupViewModel",ObservableObject)
+
+--[[--
+构造函数
+@param #table self
+@param #table t 初始化参数
+]]
+function M:ctor()
+	M.super.ctor(self)
+	local context = Context.GetApplicationContext()
+	self.localization = context:GetService("Localization")
+	self.accountService = context:GetService("accountService")
+	self.globalPreferences = context:GetGlobalPreferences()
+	
+	self.loginRequest = InteractionRequest(self)
+	self.dismissRequest = InteractionRequest(self)
+	
+	self.progressBar = ProgressBar()
+	
+	self.command = SimpleCommand(function()
+			self.command.Enabled = false
+			local loginViewModel = LoginViewModel({accountService = self.accountService, localization = self.localization, globalPreferences = self.globalPreferences})
+			self.loginRequest:Raise(loginViewModel, function(vm)
+					self.command.Enabled = true
+					if vm.account then
+						self:loadScene()
+					end
+				end)
+		end,true)
+end
+
+function M:unzip()
+	return Executors.RunLuaOnCoroutine(function()
+			self.command.Enabled = false
+			self.progressBar.enable = true
+			self.progressBar.tip = self.localization:GetText("startup.progressbar.tip.unziping")
+			
+			local progress = 0
+			while(progress < 1) do
+				progress = progress + 0.01
+				self.progressBar.progress = progress		
+				coroutine.yield(CS.UnityEngine.WaitForSeconds(0.03))
+			end
+			
+			self.progressBar.tip = ""
+			self.command.Enabled = true
+			self.progressBar.enable = false
+			self.command:Execute(nil)
+		end)
+end
+
+function M:loadScene()
+	Executors.RunLuaOnCoroutineNoReturn(function()
+			self.progressBar.enable = true
+			self.progressBar.tip = self.localization:GetText("startup.progressbar.tip.loading")
+			
+			local request = CS.UnityEngine.Resources.LoadAsync("Prefabs/Cube")
+			local progress = 0
+			while(not request.isDone or progress < 1) do
+				progress = progress + 0.05
+				self.progressBar.progress = progress
+				coroutine.yield(CS.UnityEngine.WaitForSeconds(0.03))
+			end
+			
+			local sceneTemplate = request.asset
+			CS.UnityEngine.GameObject.Instantiate(sceneTemplate)
+			self.progressBar.progress = 1
+			
+			self.progressBar.tip = ""
+			self.progressBar.enable = false
+			self.dismissRequest:Raise(nil)
+		end)
+end
+
+return M

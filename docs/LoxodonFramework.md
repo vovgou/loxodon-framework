@@ -29,12 +29,12 @@ puppeteer:
   - [修改Packages/manifest.json文件安装](#修改packagesmanifestjson文件安装)
   - [通过git URL安装](#通过git-url安装)
   - [通过 *.unitypackage 文件安装](#通过-unitypackage-文件安装)
+  - [导入示例](#导入示例)
 - [官方插件（可选）](#官方插件可选)
 - [Lua插件安装（可选）](#lua插件安装可选)
   - [安装XLua](#安装xlua)
-  - [配置宏定义](#配置宏定义)
   - [导入Lua插件](#导入lua插件)
-  - [查看示例](#查看示例)
+  - [导入示例](#导入示例-1)
 - [快速入门](#快速入门)
   - [C# 示例](#c-示例)
   - [Lua 示例](#lua-示例)
@@ -74,8 +74,12 @@ puppeteer:
     - [AsyncTask](#asynctask)
     - [ProgressTask](#progresstask)
     - [CoroutineTask](#coroutinetask)
-    - [async & await](#async-await)
+  - [Async & Await](#async-await)
+    - [C# 的 async & await](#c-的-async-await)
     - [Task转Unity协程](#task转unity协程)
+    - [Lua的async & await](#lua的async-await)
+    - [C# 调用Lua的async函数](#c-调用lua的async函数)
+    - [Lua的try / catch / finally](#lua的try-catch-finally)
   - [线程/协程执行器](#线程协程执行器)
     - [执行器(Executors)](#执行器executors)
     - [定时任务执行器(IScheduledExecutor)](#定时任务执行器ischeduledexecutor)
@@ -129,20 +133,23 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
 本框架使用C#语言开发，同时也支持使用XLua来开发，XLua插件是一个可选项，如果项目需要热更新，那么只要安装了XLua插件，则可以完全使用Lua来开发游戏。
 
-这个插件兼容 MacOSX,Windows,Linux,UWP,IOS and Android等等，并且完全开源。
+这个插件兼容 MacOSX,Windows,Linux,UWP,WebGL,IOS and Android等等，并且完全开源。
 
 **已测试的平台：**  
 
-- **PC/Mac/Linux**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
-- **IOS**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
-- **Android**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
+- **PC/Mac/Linux**  (.Net4.x; .Net Standard 2.0; IL2CPP)  
+- **IOS**  (.Net4.x; .Net Standard 2.0; IL2CPP)  
+- **Android**  (.Net4.x; .Net Standard 2.0; IL2CPP)  
 - **UWP(window10)** (.Net4.x; .Net Standard 2.0; IL2CPP)
-- **WebGL**
+- **WebGL**  (.Net4.x; .Net Standard 2.0; IL2CPP)
 
 **关键特性**
 
 - 支持多平台，高扩展性，面向接口开发;
-- 支持C#和Lua开发;
+- 支持UGUI和FairyGUI;
+- 支持XLua，可以完全使用Lua脚本开发（可选）;  
+- 支持async&await (C#和Lua都支持);
+- Lua支持了try&catch&finally;
 - 支持线程和协程的异步结果和异步任务，采用Future/Promise设计模式;
 - 提供了多线程组件，线程切换组件和定时执行器;
 - 提供了一个消息系统，支持订阅和发布;
@@ -237,15 +244,28 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 - [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
 - [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
+
+### 导入示例
+
+ - Unity 2019 及以上版本可以通过Package Manager导入示例
+
+   打开包管理器，找到Import into project 按钮点击，导入示例到项目中。
+
+   ![](docs/images/install_examples.png)
+
+ - Unity 2018 版本导入示例
+
+   在Packages/Loxodon Framework/Package Resources/ 目录中找到Examples.unitypackage和Tutorials.unitypackage，双击导入到项目。
+
 ## 官方插件（可选）
-
-- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
-
-    支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
 
 - [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)
 
     Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。安装步骤详见下一章节或者查看[Loxodon.Framework.XLua的文档](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)    
+
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
+
+    支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
 
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
@@ -259,10 +279,32 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 
     ![](images/log4net.png)
 
+- [Loxodon Framework Obfuscation](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Obfuscation)
+
+    数据类型内存混淆插件，支持ObfuscatedByte，ObfuscatedShort，ObfuscatedInt,ObfuscatedLong,ObfuscatedFloat,ObfuscatedDouble类型，防止内存修改器修改游戏数值，支持数值类型的所有运算符，与byte、short、int、long、float、double类型之间可以自动转换，使用时替换对应的数值类型即可。
+    Float和Double类型混淆时转为int和long类型进行与或运算，确保不会丢失精度，类型转换时使用unsafe代码，兼顾转换性能。
+
+    **注意：要求Unity2018以上版本，请开启"Allow unsafe Code"**
+
+    ![](docs/images/obfuscation_unsafe.png)
+
+    **使用示例：**
+
+       ObfuscatedInt  length = 200;
+       ObfuscatedFloat scale = 20.5f;
+       int offset = 30;
+
+       float value = (length * scale) + offset;
+
+
+- [Loxodon Framework Addressable](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Addressable)
+
+    有关Addressable Asset System功能的扩展与支持。
+
 
 ## Lua插件安装（可选）
 
-在本框架中，对于Lua语言的支持是通过插件扩展的方式来支持，它依赖腾讯的XLua项目和Loxodon.Framework.XLua插件，在项目的LoxodonFramework/Docs/XLua目录中可以找到Loxodon.Framework.XLua的插件，它是可选的，只有需要热更新并且使用Lua语言开发的项目才需要安装它。具体安装步骤如下，为避免出错，请严格按以下步骤安装。
+在本框架中，对于Lua语言的支持是通过插件扩展的方式来支持，它依赖腾讯的XLua项目和Loxodon.Framework框架，从Github下载[Loxodon.Framework.XLua.unitypackage](https://github.com/vovgou/loxodon-framework/releases)，导入你的项目。它是可选的，只有需要热更新并且使用Lua语言开发的项目才需要安装它。具体安装步骤如下。
 
 ### 安装XLua
 从Xlua的Github仓库下载最新版的XLua，可以使用源码版本Source code.zip或者xlua_v2.x.xx.zip版本（建议使用xlua_v2.x.xx.zip版本，避免和XLua示例类名冲突）。请将下载好的xlua解压缩，拷贝到当前项目中。
@@ -273,20 +315,15 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 
 [XLua下载](https://github.com/Tencent/xLua/releases "xlua")
 
-![](images/xlua_2.1.14.png)
-
-### 配置宏定义
-配置Unity3D项目Player Setting/Other Settings/Scripting Define Symbols，添加XLUA的宏定义，为避免将来切换平台时出错，最好将PC、Android、iOS等平台的都配上。
-
-![](images/ScriptingDefineSymbols.png)
+![](images/xlua_2.1.15.png)
 
 ### 导入Lua插件
-在LoxodonFramework/Docs/XLua/目录中，找到Loxodon.Framework.XLua.unitypackage文件，双击导入项目。
+从Github下载[Loxodon.Framework.XLua.unitypackage](https://github.com/vovgou/loxodon-framework/releases)文件，双击导入项目。
 
 如果出现编译错误，请检查是否导入了XLua的Examples目录，这个目录下的InvokeLua.cs文件定义了PropertyChangedEventArgs类，因没有使用命名空间，会导致类名冲突，请删除XLua目录下的Examples文件夹或者给InvokeLua.cs文件中的PropertyChangedEventArgs类添加上命名空间。
 
-### 查看示例
-打开LoxodonFramework/Lua/Examples目录，查看示例。
+### 导入示例
+在文件夹LoxodonFramework/XLua/PackageResources/目录下找到Examples.unitypackage 文件，双击导入项目。
 
 ## 快速入门
 
@@ -1758,7 +1795,9 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
 
 更多的示例请查看教程 Basic Tutorials.unity
 
-#### async & await
+### Async & Await
+
+#### C# 的 async & await
 
 Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以使用C#的新特性async和await。框架为IEnumerator、YieldInstruction、CustomYieldInstruction、AsyncOperation、IAsyncResult、CoroutineTask等等扩展了GetAwaiter()函数，以支持async-await特性。同时增加WaitForMainThread和WaitForBackgroundThread类用来切换代码片段的工作线程。
 
@@ -1884,6 +1923,118 @@ Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以�
             Debug.LogFormat("Delay End");
         }
     }
+
+#### Lua的async & await
+
+为了保持Lua开发与C#开发同步,在Lua中我也同样增加了async & await的支持，并且确保C#和Lua可以相互调用。
+
+Lua中async是一个函数，async只能有一个输入参数，而且必须是一个函数，async将输入的函数包装为一个lua协程，返回值是一个被包装后的函数。async的输入函数可以是有参数的，也可以是无参数的函数，函数可以有一个或者多个返回值，也可以无返回值。
+
+await同样也是一个函数，await函数的输入参数必须是一个AsyncTask对象，或者是任何一个实现了GetAwaiter()函数的异步结果，不管是C#的对象还是lua对象都支持，所以无论是C#的Task、UniTask还是Unity的异步结果，都可以作为await的输入参数。await函数会监听异步结果的回调，同时挂起当前协程，当异步任务完成，回调后会触发协程继续执行。await同样支持无返回值，单个返回值或者多个返回值的异步结果。
+
+async & await函数定义在AsyncTask模块中，只要在lua文件中通过require导入AsyncTask模块，即可使用
+
+下面请看示例，将下面的lua类挂在LuaBehaviour上，通过LuaBehaviour自动调用start函数。
+
+    require("framework.System")     
+    local AsyncTask = require("framework.AsyncTask") --导入AsyncTask模块，同时导入了 async、await、try 函数
+
+    local M=class("Example",target)    
+
+    --定义position函数，输入参数是xyz，返回AsyncTask异步对象
+    --async支持多个返回值的函数
+    M.position = async(function(x,y,z)
+		return x/1000.0,y/1000.0,z/1000.0
+	end)
+
+    M.start = async(function(self)		
+		await(AsyncTask.Delay(1000)) --Delay 1000 milliseconds
+
+		local x,y,z = await(M.position(1200,500,240)) --异步调用position函数，返回x,y,z
+
+		printf("x=%s y=%s z=%s",x,y,z)		
+
+		--异步调用Resources.LoadAsync
+		local goTemplate = await(CS.UnityEngine.Resources.LoadAsync("Prefabs/Cube",typeof(CS.UnityEngine.GameObject)))
+
+		local go = GameObject.Instantiate(goTemplate)
+
+		go.transform.localPosition = CS.UnityEngine.Vector3.zero;
+	end)
+
+#### C# 调用Lua的async函数
+
+在C#运行时，我实现了ILuaTask接口，在C#方可以很方便的将AsyncTask对象自动转换为ILuaTask对象，方便C#调用。
+
+如上示例中的M.start函数，执行start()将会返回一个AsyncTask的lua对象，请看下面的C#调用代码。
+
+    public class LuaBehaviour : MonoBehaviour, ILuaExtendable
+    {
+        protected LuaTable metatable;
+        protected Func<MonoBehaviour, ILuaTask> onStart;
+
+        protected virtual void Awake()
+        {
+            ...
+
+            metatable = (LuaTable)result[0];
+            //调用lua的start函数，此函数可以是async包装的异步函数，也可以是普通函数
+            onStart = metatable.Get<Func<MonoBehaviour, ILuaTask>>("start");
+        }
+
+        protected virtual async void Start()
+        {
+            if (onStart != null)
+            {
+                //start是async包装的异步函数则会返回ILuaTask对象，否则返回null
+                ILuaTask task = onStart(this);
+                if (task != null)
+                    await task;
+            }
+        }
+    }
+
+#### Lua的try / catch / finally
+
+为配合async和await的使用，使用try函数包装了lua的xpcall函数，以方便在lua函数中捕获异常。
+
+try函数的输入参数一个lua表，起结构如下，t[0]是主函数，t.catch是catch函数，t.finally是finally函数
+
+	{
+		function()
+			--这是主函数
+		end,
+		catch=function(e)
+			--这是catch函数
+		end,
+		finally =function()
+			--这是finally函数
+		end			
+	}
+
+try/catch的示例
+
+    local position = async(function(x,y,z)
+
+        --try 实际是一个函数，如果需要返回值则在try之前加return，否则不需要加return
+
+		return try{
+			function()
+				--这是主函数
+				error("This a test,throw an exception")				
+				return x/1000.0,y/1000.0,z/1000.0
+			end,
+			catch=function(e)
+				--这是catch函数
+				printf("Catch exception:%s",e)
+				return 0,0,0 --发生异常，返回默认值
+			end,
+			finally =function()
+				--这是finally函数
+				print("Execute the finally block")
+			end			
+		}		
+	end)
 
 ### 线程/协程执行器
 在Unity3d逻辑脚本的开发中，是不支持多线程的，所有的UnityEngine.Object对象，都只能在主线程中访问和修改，但是在游戏开发过程中，我们很难避免会使用到多线程编程，比如通过Socket连接从网络上接受数据，通过多线程下载资源，一些纯计CPU计算的逻辑切入到后台线程去运算等等。这里就会面临一个线程切换的问题。所以在Loxodon.Framework框架中，我设计了一个线程和协程的执行器配合前文中的任务结果来使用，它能够很方便的将任务切换到主线程执行，也能很方便的开启一个后台线程任务。

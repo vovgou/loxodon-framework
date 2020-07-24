@@ -83,7 +83,6 @@ Loxodon.Framework.Log4Net depends on Loxodon.Framework, please install Loxodon.F
 
 Download Loxodon.Framework.unitypackage and Loxodon.Framework.Log4Net.unitypackage, import them into your project.
 
-- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
 - [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 ## English manual

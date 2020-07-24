@@ -444,7 +444,7 @@ namespace Loxodon.Framework.Views
             {
                 if (!this.dismissed)
                 {
-                    this.State = WindowState.DISSMISS_BEGIN;
+                    this.State = WindowState.DISMISS_BEGIN;
                     this.dismissed = true;
                     this.OnDismiss();
                     this.RaiseOnDismissed();

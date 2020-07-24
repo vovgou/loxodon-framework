@@ -35,9 +35,8 @@ Table of Contents
 - [Official Plugin(optional)](#official-pluginoptional)
 - [Lua plugin installation (optional)](#lua-plugin-installation-optional)
   - [Install XLua](#install-xlua)
-  - [Macro definition](#macro-definition)
   - [Import Lua plugin](#import-lua-plugin)
-  - [View example](#view-example)
+  - [Import the samples](#import-the-samples)
 - [Quick start](#quick-start)
   - [C# example](#c-example)
   - [Lua example](#lua-example)
@@ -121,7 +120,7 @@ Table of Contents
 
 ## Overview
 
-**Requires Unity 2019.3 or higher**
+**Requires Unity 2018.4 or higher**
 
 LoxodonFramework is a lightweight MVVM (Model-View-ViewModel) framework. It is specially designed for Unity3D game development. It refers to the MVVM design of WPF and Android. It provides data binding and localization of views and view models , A simple service container, configuration file component, thread tool component, application context and player context, asynchronous thread and coroutine task components, and other basic components. It also provides a framework for UI views. All code is designed based on the idea of object-oriented and interface-oriented, and almost all functions can be customized. In addition, performance optimization has been performed in the data binding part. On the platform that supports JIT, the delegation method is used for binding. On the platforms that do not support JIT, reflection is used by default, but it can be optimized by injecting the delegate function!
 
@@ -139,7 +138,7 @@ This plugin is compatible with MacOSX, Windows, Linux, UWP, IOS and Android, etc
 **Key features**
 
 - Supports multiple platforms, high scalability, and interface-oriented development;
-- Support C # and Lua development;
+- Supports C # and Lua development;
 - Supports asynchronous results and asynchronous tasks of threads and coroutines, adopting Future/Promise design pattern;
 - Provides multi-threaded components, thread switching components and timed executors;
 - Provides a messaging system that supports subscription and publishing;
@@ -256,18 +255,14 @@ Download the latest version of XLua from the Xlua Github repository, you can use
 
 ![](images/xlua_2.1.14.png)
 
-### Macro definition
-Configure the Unity3D project Player Setting / Other Settings / Scripting Define Symbols, add XLUA macro definitions, in order to avoid errors when switching platforms in the future, it is best to match PC, Android, iOS and other platforms.
-
-![](images/ScriptingDefineSymbols.png)
-
 ### Import Lua plugin
-In the LoxodonFramework / Docs / XLua / directory, locate the Loxodon.Framework.XLua.unitypackage file and double-click the imported project.
+
+Download [Loxodon.Framework.XLua.unitypackage](https://github.com/vovgou/loxodon-framework/releases) from github and import it into your Unity project.
 
 If there is a compilation error, please check whether the XLua Examples directory is imported. The InvokeLua.cs file in this directory defines the PropertyChangedEventArgs class. Because no namespace is used, class names will conflict. Please delete the Examples folder in the XLua directory or Add a namespace to the PropertyChangedEventArgs class in the InvokeLua.cs file.
 
-### View example
-Open the LoxodonFramework/Lua/Examples directory to see examples.
+### Import the samples
+Find Examples.unitypackage in the "Assets/LoxodonFramework/XLua/Package Resources" folder and import it into the project.
 
 ## Quick start
 
