@@ -1,0 +1,14 @@
+{
+    "name": "Loxodon.Log.Log4Net",
+    "references": [
+        "Loxodon.Log"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

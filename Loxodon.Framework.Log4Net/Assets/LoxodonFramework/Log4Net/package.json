@@ -1,0 +1,39 @@
+{
+  "name": "com.vovgou.loxodon-framework-log4net",
+  "displayName": "Loxodon Framework Log4Net",
+  "version": "2.0.1-preview",
+  "unity": "2018.4",
+  "description": "This is a plugin for the logging feature of Loxodon.Framework, which helps you use Log4Net in your Unity project.",  
+  "license": "MIT",
+  "keywords": [
+    "Loxodon",
+    "Framework",
+    "Databinding",
+    "Localization",
+    "MVVM",
+    "UI",
+    "UGUI",
+    "FairyGUI",
+    "UIElements",
+    "XLua",
+    "Lua",
+    "log4net"
+  ],
+  "author": {
+    "name": "Clark Yang",
+    "email": "yangpc.china@gmail.com",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+  "category": "GUI",
+  "relatedPackages": {},
+  "dependencies": {
+    "com.vovgou.loxodon-framework": "2.0.1-preview"
+  },
+  "samples": [
+    {
+      "displayName": "Tutorials",
+      "description": "Tutorials",
+      "path": "Samples~/Tutorials"
+    }
+  ]
+}

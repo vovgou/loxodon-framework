@@ -1,0 +1,32 @@
+{
+  "name": "com.vovgou.loxodon-framework-addressable",
+  "displayName": "Loxodon Framework Addressable",
+  "version": "2.0.1-preview",
+  "unity": "2018.4",
+  "description": "This is a plugin that uses Unity's addressable asset system to load resources.",
+  "license": "MIT",
+  "keywords": [
+    "Loxodon",
+    "Framework",
+    "Databinding",
+    "Localization",
+    "MVVM",
+    "UI",
+    "UGUI",
+    "Addressable",
+    "UIElements",
+    "XLua",
+    "Lua"
+  ],
+  "author": {
+    "name": "Clark Yang",
+    "email": "yangpc.china@gmail.com",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+  "category": "GUI",
+  "relatedPackages": {},
+  "dependencies": {
+    "com.unity.addressables": "1.1.10",
+    "com.vovgou.loxodon-framework": "2.0.1-preview"
+  }
+}

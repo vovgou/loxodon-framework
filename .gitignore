@@ -4,3 +4,8 @@ Temp
 .vs
 *.csproj
 *.sln
+Logs
+*.log
+package-lock.json
+package-lock.json.meta
+.lpproj

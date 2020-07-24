@@ -2,43 +2,151 @@
 
 # Loxodon Framework XLua
 
-[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/cocowolf/loxodon-framework-xlua/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v1.1.4-blue.png)](https://github.com/cocowolf/loxodon-framework-xlua/releases)
+[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE) [![release](https://img.shields.io/badge/release-v2.0.0-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
 
 
-**要求Unity 5.6.0或者更高版本**
+**要求Unity 2018.4 或者更高版本**
 
 Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。
 
 ## 要求 ##
 
-[Loxodon Framework](https://github.com/cocowolf/loxodon-framework)
+[Loxodon Framework](https://github.com/vovgou/loxodon-framework)
 
 本项目作为Loxodon.Framework插件，必须在Loxodon.Framework环境下使用，请在安装使用前先安装Loxodon.Framework框架。
 
 ## Quick start ##
 
-1. You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.[XLua Download](https://github.com/Tencent/xLua/releases) 
+1. If [Loxodon.Framework 2.0](https://github.com/vovgou/loxodon-framework/blob/master/README.md) is not installed, please install it first.
+
+2. You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.[XLua Download](https://github.com/Tencent/xLua/releases)  
         
-2. Configure a macro definition called "XLUA" in PlayerSetting/Scripting Defin Symbols.It is recommended to configure all platforms.
-        
-3. Find Loxodon.Framework.XLua.unitypackage in the LoxodonFramework/Docs/XLua directory and import it into the project.
+3. Download [Loxodon.Framework.XLua.unitypackage](https://github.com/vovgou/loxodon-framework/releases) from github and import it into your Unity project.
 
 4. **In Unity2018 and above, if you use .net 4.x and .net standard 2.0, there will be compatibility issues. Please see the xlua's FAQs.** [XLua FAQ](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/Faq_EN.md) 
-        
-5. Please see the example in the LoxodonFramework/Lua/Examples directory to enjoy your lua tour.
+
+5. Find Examples.unitypackage in the "Assets/LoxodonFramework/XLua/Package Resources" folder and import it into the project.
 
 
 ## 安装教程 ##
 
 1. 从Xlua的Github仓库下载最新版的XLua，可以使用源码版本Source code.zip或者xlua_v2.x.xx.zip版本（建议使用xlua_v2.x.xx.zip版本，避免命XLua目录下测试类导致的类名冲突）。将下载好的xlua解压缩，拷贝到项目中。**注意：Unity2018请使用.net3.5,否则会出错，如果想使用.net4.6请参考xlua的FQA解决兼容性问题。**[XLua FAQ](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/faq.md) [下载XLua](https://github.com/Tencent/xLua/releases) 
         
-2. 配置Unity3D项目PlayerSetting/Scripting Defin Symbols，添加XLUA的宏定义，为避免出错，最好将PC、Android、iOS等平台的都配上。
-        
-3. 导入LoxodonFramework目录下Docs/XLua/Loxodon.Framework.XLua.unitypackage。如果出现编译错误，请检查是否导入了XLua的Examples目录，这个目录下的InvokeLua.cs文件定义了PropertyChangedEventArgs类，因没有使用命名空间，会导致和System.ComponentModel.PropertyChangedEventArgs类冲突，请删除XLua目录下的Examples文件夹或者给InvokeLua.cs文件中的PropertyChangedEventArgs类添加上命名空间。
-        
-4. 打开LoxodonFramework/Lua/Examples 目录，查看示例。
+2. 从Github下载[Loxodon.Framework.XLua.unitypackage](https://github.com/vovgou/loxodon-framework/releases)，并导入到项目中。如果出现编译错误，请检查是否导入了XLua的Examples目录，这个目录下的InvokeLua.cs文件定义了PropertyChangedEventArgs类，因没有使用命名空间，会导致和System.ComponentModel.PropertyChangedEventArgs类冲突，请删除XLua目录下的Examples文件夹或者给InvokeLua.cs文件中的PropertyChangedEventArgs类添加上命名空间。
 
+3.如果需要导入示例，请在"Assets/LoxodonFramework/XLua/PackageResources"文件夹下找到Examples.unitypackage，双击导入项目。
+
+## Lua Async
+
+### async & await
+
+async是一个函数，async只能有一个输入参数，而且必须是一个函数，async将输入的函数包装为一个lua协程，返回值是一个被包装后的函数。async的输入函数可以是有参数的，也可以是无参数的函数，函数可以有一个或者多个返回值，也可以无返回值。
+
+await同样也是一个函数，await函数的输入参数必须是一个AsyncTask对象，或者是任何一个实现了GetAwaiter()函数的异步结果，不管是C#的对象还是lua对象都支持，所以无论是C#的Task、UniTask还是Unity的异步结果，都可以作为await的输入参数。await函数会监听异步结果的回调，同时挂起当前协程，当异步任务完成，回调后会触发协程继续执行。await同样支持无返回值，单个返回值或者多个返回值的异步结果。
+
+async & await函数定义在AsyncTask模块中，只要在lua文件中通过require导入AsyncTask模块，即可使用
+
+下面请看示例，将下面的lua类挂在LuaBehaviour上，通过LuaBehaviour自动调用start函数。
+
+    require("framework.System")     
+    local AsyncTask = require("framework.AsyncTask") --导入AsyncTask模块，同时导入了 async、await、try 函数
+
+    local M=class("Example",target)    
+
+    --定义position函数，输入参数是xyz，返回AsyncTask异步对象
+    --async支持多个返回值的函数
+    M.position = async(function(x,y,z)
+		return x/1000.0,y/1000.0,z/1000.0
+	end)
+	
+    M.start = async(function(self)		
+		await(AsyncTask.Delay(1000)) --Delay 1000 milliseconds
+		
+		local x,y,z = await(M.position(1200,500,240)) --异步调用position函数，返回x,y,z
+		
+		printf("x=%s y=%s z=%s",x,y,z)		
+		
+		--异步调用Resources.LoadAsync
+		local goTemplate = await(CS.UnityEngine.Resources.LoadAsync("Prefabs/Cube",typeof(CS.UnityEngine.GameObject)))
+		
+		local go = GameObject.Instantiate(goTemplate)
+		
+		go.transform.localPosition = CS.UnityEngine.Vector3.zero;
+	end)
+
+### C# 调用Lua的async函数
+
+在C#运行时，我实现了ILuaTask接口，在C#方可以很方便的将AsyncTask对象自动转换为ILuaTask对象，方便C#调用。
+
+如上示例中的M.start函数，执行start()将会返回一个AsyncTask的lua对象，请看下面的C#调用代码。
+
+    public class LuaBehaviour : MonoBehaviour, ILuaExtendable
+    {
+        protected LuaTable metatable;
+        protected Func<MonoBehaviour, ILuaTask> onStart;
+
+        protected virtual void Awake()
+        {
+            ...
+            
+            metatable = (LuaTable)result[0];
+            //调用lua的start函数，此函数可以是async包装的异步函数，也可以是普通函数
+            onStart = metatable.Get<Func<MonoBehaviour, ILuaTask>>("start");
+        }
+
+        protected virtual async void Start()
+        {
+            if (onStart != null)
+            {
+                //start是async包装的异步函数则会返回ILuaTask对象，否则返回null
+                ILuaTask task = onStart(this);
+                if (task != null)
+                    await task;
+            }
+        }
+    }
+
+### try / catch / finally
+
+为配合async和await的使用，使用try函数包装了lua的xpcall函数，以方便在lua函数中捕获异常。
+
+try函数的输入参数一个lua表，起结构如下，t[0]是主函数，t.catch是catch函数，t.finally是finally函数
+
+	{
+		function()	
+			--这是主函数
+		end,
+		catch=function(e)
+			--这是catch函数
+		end,
+		finally =function()
+			--这是finally函数
+		end			
+	}
+	
+try/catch的示例
+
+    local position = async(function(x,y,z)
+    
+        --try 实际是一个函数，如果需要返回值则在try之前加return，否则不需要加return
+    
+		return try{
+			function()	
+				--这是主函数
+				error("This a test,throw an exception")				
+				return x/1000.0,y/1000.0,z/1000.0
+			end,
+			catch=function(e)
+				--这是catch函数
+				printf("Catch exception:%s",e)
+				return 0,0,0 --发生异常，返回默认值
+			end,
+			finally =function()
+				--这是finally函数
+				print("Execute the finally block")
+			end			
+		}		
+	end)
 
 ## Lua 预编译工具 ##
 
@@ -121,5 +229,5 @@ Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua�
 
 ## 联系方式
 邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
-网站: [https://cocowolf.github.io/loxodon-framework/](https://cocowolf.github.io/loxodon-framework/)  
+网站: [https://vovgou.github.io/loxodon-framework/](https://vovgou.github.io/loxodon-framework/)  
 QQ群: 622321589 [![](https://pub.idqqimg.com/wpa/images/group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)

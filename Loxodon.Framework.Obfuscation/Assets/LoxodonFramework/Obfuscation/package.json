@@ -1,0 +1,30 @@
+{
+  "name": "com.vovgou.loxodon-framework-obfuscation",
+  "displayName": "Loxodon Framework Obfuscation",
+  "version": "2.0.1-preview",
+  "unity": "2018.4",
+  "description": "This is a library that supports memory obfuscation of numeric types, it ensures that your sensitive data will not be found by the memory scanners and searchers.",
+  "license": "MIT",
+  "keywords": [
+    "obfuscation",
+    "Loxodon",
+    "Framework",
+    "Databinding",
+    "Localization",
+    "MVVM",
+    "UI",
+    "UGUI",
+    "FairyGUI",
+    "UIElements",
+    "XLua",
+    "Lua"
+  ],
+  "author": {
+    "name": "Clark Yang",
+    "email": "yangpc.china@gmail.com",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+  "category": "GUI",
+  "relatedPackages": {},
+  "dependencies": {}
+}

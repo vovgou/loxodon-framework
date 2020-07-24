@@ -1,0 +1,138 @@
+﻿---
+-- MIT License
+--
+-- Copyright (c) 2018 Clark Yang
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy of 
+-- this software and associated documentation files (the "Software"), to deal in 
+-- the Software without restriction, including without limitation the rights to 
+-- use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+-- of the Software, and to permit persons to whom the Software is furnished to do so, 
+-- subject to the following conditions:
+--
+-- The above copyright notice and this permission notice shall be included in all 
+-- copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+-- SOFTWARE.
+---
+
+require("framework.System")
+
+local util = require("xlua.util")
+local Executors = require("framework.Executors")
+local ProgressResult = CS.Loxodon.Framework.Asynchronous["ProgressResult`1[System.Single]"]
+local Time = CS.UnityEngine.Time
+---
+-- 在Lua中使用协程的例子
+-- 将一个Lua函数通过util.cs_generator包装成一个C#的迭代器IEnumerator，然后用Executors调用
+--@module CoroutineExample
+local M=class("CoroutineExample",target)
+
+function M:start()
+	--[[--
+	在C#脚本LuaBehaviour中定义的属性或者是通过Variables配置而虚拟出来的属性，都可以在Lua脚本中通过self.xxx 来访问
+	如下示例，通过self.startButton self.stopButton 访问启动和停止按钮，通过self.slider 访问滑动条
+	]]	
+	self.startButton.onClick:AddListener(function() 
+			if self.loadResult then
+				self.loadResult:Cancel()
+				self.loadResult = nil
+			end
+			
+			print("onClick Start")
+			self.loadResult = self:load()
+			self.loadResult:Callbackable():OnProgressCallback(function(progress)
+					--printf("progress:%0.2f",progress) -- 打印进度，%0.2f 是小数点2位的浮点数
+					self.slider.value = progress
+				end)
+		end)
+	
+	self.stopButton.onClick:AddListener(function()
+			if self.loadResult then
+				self.loadResult:Cancel()
+				self.loadResult = nil
+			end
+			print("onClick Stop") 
+		end)
+	
+	
+	self.startButton2.onClick:AddListener(function() 
+			if self.loadResult2 then
+				self.loadResult2:Cancel()
+				self.loadResult2 = nil
+			end
+			
+			print("onClick Start")
+			local txt = self.duration.text
+			self.loadResult2 = self:load2(tonumber(txt))
+			self.loading.enabled = true
+			self.loadResult2:Callbackable():OnCallback(function(r)
+					self.loading.enabled = false
+					self.loadResult2 = nil
+				end)
+		end)
+	
+	self.stopButton2.onClick:AddListener(function()
+			if self.loadResult2 then
+				self.loadResult2:Cancel()
+				self.loadResult2 = nil
+			end
+			print("onClick Stop") 
+		end)
+	print("lua start...")
+end
+
+---
+-- 加载
+function M:load()
+	local result = ProgressResult(true)
+	
+	--以下几种方式都可以调用协程，推荐使用为lua封装的版本
+	--Executors.RunOnCoroutineNoReturn(util.cs_generator(function() self:doLoad(result) end))
+	--Executors.RunLuaOnCoroutineNoReturn(function() self:doLoad(result) end)
+	Executors.RunLuaOnCoroutineNoReturn(function(promise) self:doLoad(promise) end,result)
+	return result
+end
+
+---
+-- 模拟一个加载任务
+function M:doLoad(promise)
+	print("task start")
+	
+	for i = 1, 50 do
+		--如果有取消请求，即调用了ProgressResult的Cancel()函数，则终止任务
+		if promise.IsCancellationRequested then
+			break
+		end
+		
+		promise:UpdateProgress(i/50) --更新任务进度	
+		
+		--这里coroutine.yield中可以不传入参数，则表示是每帧执行一次，
+		--也可以传入所有继承了YieldInstruction的参数，如:UnityEngine.WaitForSeconds(0.1)
+		--还可以传入一个IEnumerator对象，如：AsyncResult.WaitForDone()
+		coroutine.yield(CS.UnityEngine.WaitForSeconds(0.05))--等待0.05秒
+	end	
+	promise:UpdateProgress(1)
+	promise:SetResult()	--设置任务执行完成
+	print("task end")
+end
+
+function M:load2(duration)
+	return Executors.RunLuaOnCoroutine(function(duration)
+			print("task2 start")
+			local wait = CS.UnityEngine.WaitForSeconds(0.05)
+			local startTime = Time.realtimeSinceStartup
+			while Time.realtimeSinceStartup - startTime < duration do				
+				coroutine.yield(wait)
+			end
+			print("task2 end")
+		end,duration)
+end
+
+return M

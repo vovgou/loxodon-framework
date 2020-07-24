@@ -1,0 +1,5 @@
+key,type,description,default,zh,zh-CN,zh-TW
+app.name,string,,LoxodonFramework,LoxodonFramework框架,LoxodonFramework框架,
+databinding.tutorials.title,string,,Databinding Examples,数据绑定示例,数据绑定示例,
+databinding.tutorials.description,string,,"The current username is {0},and the username being entered is {1}","当前的用户名是:{0},正在输入的是:{1}","当前的用户名是:{0},正在输入的是:{1}",
+localization.tutorials.content,string,,"People's living, the book is dead, the living dead reading, can take the book to read. dead books read living, people reading can be put to death.",人是活的，书是死的，活人读死书，可以把书读活。死书读活人，可以把人读死。,人是活的，书是死的，活人读死书，可以把书读活。死书读活人，可以把人读死。,

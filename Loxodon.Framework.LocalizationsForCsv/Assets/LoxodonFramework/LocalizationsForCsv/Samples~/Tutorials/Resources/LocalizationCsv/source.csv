@@ -1,0 +1,13 @@
+key,type,zh-CN,default,en-US
+application.data.version,version,1.0.1,1.0.0,1.0.0
+application.colors,color-array,"#000000,#0000FFFF","#000000,#FF000000",
+application.game.name,string,"WarCraft
+StarCraft
+Age of Empires","魔兽世界
+星际争霸
+帝国时代","WarCraft
+StarCraft
+Age of Empires"
+application.framework.author,string-array,,"clark,vovgou",
+application.game.test.text,string,<a>This is a test.</a>,<a>这是一个测试</a>,<a>This is a test.</a>
+application.framework.descriptions,string-array,"Author:Clark,""&quot;LoxodonFramework&quot; 是一个轻量级MVVM框架,它使你的游戏开发更快速更容易.""","""Author:Clark"",""The &quot;LoxodonFramework&quot; is a lightweight MVVM framework,It makes your game development faster and easier.""",

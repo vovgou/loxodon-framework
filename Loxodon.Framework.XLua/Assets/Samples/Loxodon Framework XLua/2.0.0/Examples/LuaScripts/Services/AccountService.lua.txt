@@ -1,0 +1,65 @@
+---
+-- MIT License
+--
+-- Copyright (c) 2018 Clark Yang
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy of 
+-- this software and associated documentation files (the "Software"), to deal in 
+-- the Software without restriction, including without limitation the rights to 
+-- use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+-- of the Software, and to permit persons to whom the Software is furnished to do so, 
+-- subject to the following conditions:
+--
+-- The above copyright notice and this permission notice shall be included in all 
+-- copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+-- SOFTWARE.
+---
+
+require("framework.System")
+
+local ObservableObject = require("framework.ObservableObject")
+local AsyncTask = require("framework.AsyncTask")
+local Account = class("Account",ObservableObject)
+
+---
+-- 账号服务示例
+-- 这只是一个示例，真实业务请使用异步方式，通过网络组件从服务器获取账号信息，缓存在本服务中
+--@module AccountService
+local M=class("AccountService")
+
+function M:ctor()
+	self.accounts = {}	
+	local account = Account({username="test",password="test"})
+	self.accounts[account.username] = account
+end
+
+M.register = async(function(self,account)
+		self.accounts[account.username] = account
+		return account
+	end)
+
+M.update = async(function(self,account)
+		self.accounts[account.username] = account
+		return account
+	end)
+
+M.login = async(function(self,username,password)
+		local account = await(self:getAccount(username))
+		if account.password == password then
+			return account
+		end
+		return nil
+	end)
+
+M.getAccount = async(function(self,username)
+		return self.accounts[username]
+	end)
+
+return M

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app.name">Loxodon Framework Examples</string>
+	<string name="framework.name">LoxodonFramework</string>
+	<vector3 name="user.position">(20 , 20.2 , 30)</vector3>
+  <rect name="button.coordinates">(100.0,100.0,240,60)</rect>
+	<color name="color.black">#000000</color>
+	<color-array name="button.transition.colors">
+		<item>#FFFFFFFF</item>
+		<item>#F5F5F5FF</item>
+		<item>#C8C8C8FF</item>
+		<item>#C8C8C880</item>
+	</color-array>
+	<datetime name="created">2016-10-27T00:00:00.000</datetime>
+</resources>

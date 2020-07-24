@@ -1,0 +1,3 @@
+key,type,description,default,zh-CN
+databinding.tutorials.dialog.title,string,,Databinding Examples,数据绑定示例
+databinding.tutorials.dialog.message,string,,This is a test.,这是一个测试
