@@ -117,7 +117,7 @@ namespace Loxodon.Framework.Localizations
             if (typeName.EndsWith("-array", StringComparison.OrdinalIgnoreCase))
             {
                 string[] array = StringSpliter.Split(value, ',');
-                return this.Parse(typeName, array);
+                return this.Parse(typeName.Replace("-array", ""), array);
             }
             else
             {
