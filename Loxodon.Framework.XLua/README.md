@@ -17,7 +17,7 @@ Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua�
 
 ## Quick start ##
 
-1. If [Loxodon.Framework 2.0](https://github.com/vovgou/loxodon-framework/blob/master/README_EN.md) is not installed, please install it first.
+1. If [Loxodon.Framework 2.0](https://github.com/vovgou/loxodon-framework/blob/master/README.md) is not installed, please install it first.
 
 2. You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.[XLua Download](https://github.com/Tencent/xLua/releases)  
         

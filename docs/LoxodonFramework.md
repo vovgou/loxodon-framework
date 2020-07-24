@@ -241,7 +241,7 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 
 从以下地址下载 [Loxodon.Framework2.x.x.unitypackage](https://github.com/vovgou/loxodon-framework/releases) 后,导入到你的项目中即完成安装.
 
-- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [AssetStore](https://assetstore.unity.com/packages/tools/gui/loxodon-framework-77446)
 - [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 

@@ -78,7 +78,7 @@ After Unity 2019.3.4f1 that support path query parameter of git package. You can
 
 Download [Loxodon.Framework2.x.x.unitypackage](https://github.com/vovgou/loxodon-framework/releases) and import it into your project.
 
-- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [AssetStore](https://assetstore.unity.com/packages/tools/gui/loxodon-framework-77446)
 - [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 ### Import the samples
@@ -197,24 +197,24 @@ Create a view and view model of the progress bar.
     }
 
 ## Plugins
-- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework-localization-for-csv)
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
 
     It supports localization files in csv format, requires Unity2018.4 or higher.
 
-- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework-xlua)
+- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)
 
     It supports making games with lua scripts.
 
     - Installation
-        - You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.[XLua Download](https://github.com/Tencent/xLua/releases)
+        - If [Loxodon.Framework 2.0](https://github.com/vovgou/loxodon-framework/blob/master/README.md) is not installed, please install it first.
 
-        - Configure a macro definition called "XLUA" in PlayerSetting/Scripting Defin Symbols.It is recommended to configure all platforms.
+        - You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.[XLua Download](https://github.com/Tencent/xLua/releases)  
+        
+        - Download [Loxodon.Framework.XLua.unitypackage](https://github.com/vovgou/loxodon-framework/releases) from github and import it into your Unity project.
 
-        - Find Loxodon.Framework.XLua.unitypackage in the LoxodonFramework/Docs/XLua directory and import it into the project.
+        - **In Unity2018 and above, if you use .net 4.x and .net standard 2.0, there will be compatibility issues. Please see the xlua's FAQs.** [XLua FAQ](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/Faq_EN.md) 
 
-        - **In Unity2018 and above, if you use .net 4.x and .net standard 2.0, there will be compatibility issues. Please see the xlua's FAQs.** [XLua FAQ](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/Faq_EN.md)
-
-        - Please see the example in the LoxodonFramework/Lua/Examples directory to enjoy your lua tour.
+        - Find Examples.unitypackage in the "Assets/LoxodonFramework/XLua/Package Resources" folder and import it into the project.
 
     - Lua precompilation tool
 
@@ -228,11 +228,27 @@ Create a view and view model of the progress bar.
 
     ![](docs/images/bundle.png)
 
-- [Loxodon Framework Log4Net](http://u3d.as/Gmr)
+- [Loxodon Framework Log4Net](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Log4Net)
 
     This is a log plugin.It helps you to use Log4Net in the Unity3d.
 
     ![](docs/images/log4net.png)
+
+- [Loxodon Framework Obfuscation](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Obfuscation)
+
+    **NOTE:Please enable "Allow unsafe Code"**
+
+    ![](docs/images/obfuscation_unsafe.png)
+
+    **Example:**
+
+		ObfuscatedInt  length = 200;
+		ObfuscatedFloat scale = 20.5f;
+		int offset = 30;
+		
+		float value = (length * scale) + offset;
+
+- [Loxodon Framework Addressable](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Addressable)
 
 - [Json.Net.Aot](https://github.com/Daddoon/Json.NET.Aot)
 
@@ -252,9 +268,6 @@ Create a view and view model of the progress bar.
 
 
 ## Tutorials and Examples
-
-- [Tutorials](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Tutorials)
-- [Examples](https://github.com/vovgou/loxodon-framework/tree/master/Assets/LoxodonFramework/Examples)
 
  ![](docs/images/Launcher.gif)
 

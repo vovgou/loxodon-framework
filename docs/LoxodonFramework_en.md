@@ -214,7 +214,7 @@ After Unity 2019.3.4f1 that support path query parameter of git package. You can
 
 Download [Loxodon.Framework2.x.x.unitypackage](https://github.com/vovgou/loxodon-framework/releases) and import it into your project.
 
-- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [AssetStore](https://assetstore.unity.com/packages/tools/gui/loxodon-framework-77446)
 - [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 ## Official Plugin(optional)

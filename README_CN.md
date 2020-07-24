@@ -93,7 +93,7 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 
 从以下地址下载 [Loxodon.Framework2.x.x.unitypackage](https://github.com/vovgou/loxodon-framework/releases) 后,导入到你的项目中即完成安装.
 
-- [AssetStore](https://www.assetstore.unity3d.com/#!/content/77446)
+- [AssetStore](https://assetstore.unity.com/packages/tools/gui/loxodon-framework-77446)
 - [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
 ### 导入示例
@@ -221,6 +221,10 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 
 ## 插件与集成（可选）
 
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
+
+    支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
+
 - [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)
 
     Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。安装步骤详见下一章节或者查看[Loxodon.Framework.XLua的文档](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)    
@@ -238,10 +242,6 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
         使用Lua预编译工具可以将Lua脚本预编译为字节码文件，并且可以选择是否加密该文件。Lua官方的luac命令编译的字节码分64位和32位，如果想编译64位和32位兼容的字节码，请参考XLua的官方文件，有关通用字节码编译的部分[《通用字节码》](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/compatible_bytecode.md)。
 
     	![](docs/images/LuaPrecompileWizard.png)
-
-- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
-
-    支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
     
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
