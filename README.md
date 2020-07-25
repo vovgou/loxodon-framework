@@ -70,7 +70,7 @@ Installing the framework in this way does not require nodejs and openm-cli.
 
 ### Install via git URL
 
-After Unity 2019.3.4f1 that support path query parameter of git package. You can add https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework#2.0.0-preview to Package Manager
+After Unity 2019.3.4f1 that support path query parameter of git package. You can add https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework to Package Manager
 
 ![](docs/images/install_via_git.png)
 
