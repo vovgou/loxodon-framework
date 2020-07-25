@@ -27,7 +27,7 @@ require("framework.System")
 local Executors = require("framework.Executors")
 local Logger = require("framework.Logger")
 
-local log = Logger.GetLogger("LuaTask")
+local log = Logger.GetLogger("AsyncTask")
 
 ---
 --LuaTaskAwaiter
