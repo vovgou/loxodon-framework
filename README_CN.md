@@ -23,8 +23,8 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 PC/Mac/Linux  
 IOS  
 Android  
-UWP(window10) 
-WebGL 
+UWP(window10)  
+WebGL  
 
 ## 安装
 
