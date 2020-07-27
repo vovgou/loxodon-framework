@@ -24,8 +24,8 @@ The plugin is compatible with MacOSX,Windows,Linux,UWP,WebGL,IOS and Android,and
 PC/Mac/Linux  
 IOS  
 Android  
-UWP(window10) 
-WebGL 
+UWP(window10)  
+WebGL  
 
 ## Installation
 
