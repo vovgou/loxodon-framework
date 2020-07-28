@@ -157,7 +157,7 @@ Create a view and view model of the progress bar.
         }
     }
 
-	public class ProgressBarView : UIView
+    public class ProgressBarView : UIView
     {
         public GameObject progressBar;
         public Text progressTip;
@@ -257,6 +257,8 @@ Create a view and view model of the progress bar.
 - [LiteDB](https://github.com/mbdavid/LiteDB)
 
     LiteDB is a small, fast and lightweight NoSQL embedded database.
+
+    ![](https://camo.githubusercontent.com/d85fc448ef9266962a8e67f17f6d16080afdce6b/68747470733a2f2f7062732e7477696d672e636f6d2f6d656469612f445f313432727a57774145434a44643f666f726d61743d6a7067266e616d653d39303078393030)
 
 - [SQLite4Unity3d](https://github.com/robertohuertasm/SQLite4Unity3d)
 
