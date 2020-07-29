@@ -23,6 +23,8 @@
  */
 
 using System;
+using System.IO;
+using System.Text;
 using UnityEngine;
 using System.Globalization;
 using XLua;
@@ -34,7 +36,7 @@ using Loxodon.Framework.Binding;
 using Loxodon.Framework.Localizations;
 using Loxodon.Framework.Services;
 using Loxodon.Framework.XLua.Loaders;
-using System.IO;
+using Loxodon.Framework.Security.Cryptography;
 
 namespace Loxodon.Framework.Examples
 {
@@ -80,10 +82,6 @@ namespace Loxodon.Framework.Examples
             /* register Localization */
             container.Register<Localization>(Localization.Current);
 
-            ///* register AccountRepository */
-            //IAccountRepository accountRepository = new AccountRepository();
-            //container.Register<IAccountService>(new AccountService(accountRepository));
-
             var luaEnv = LuaEnvironment.LuaEnv;
 #if UNITY_EDITOR
             foreach (string dir in Directory.GetDirectories(Application.dataPath, "LuaScripts", SearchOption.AllDirectories))
@@ -92,10 +90,17 @@ namespace Loxodon.Framework.Examples
                 luaEnv.AddLoader(new FileLoader(dir, ".lua.txt"));
             }
 #else
-            var decryptor = new RijndaelCryptograph(128,Encoding.ASCII.GetBytes("E4YZgiGQ0aqe5LEJ"), Encoding.ASCII.GetBytes("5Hh2390dQlVh0AqC"));
-            luaEnv.AddLoader( new DecodableLoader(new FileLoader(Application.streamingAssetsPath + "/LuaScripts/", ".bytes"), decryptor));
-            luaEnv.AddLoader( new DecodableLoader(new FileLoader(Application.persistentDataPath + "/LuaScripts/", ".bytes"), decryptor));
+            /* Pre-compiled and encrypted */
+            //var decryptor = new RijndaelCryptograph(128,Encoding.ASCII.GetBytes("E4YZgiGQ0aqe5LEJ"), Encoding.ASCII.GetBytes("5Hh2390dQlVh0AqC"));
+            //luaEnv.AddLoader( new DecodableLoader(new FileLoader(Application.streamingAssetsPath + "/LuaScripts/", ".bytes"), decryptor));
+            //luaEnv.AddLoader( new DecodableLoader(new FileLoader(Application.persistentDataPath + "/LuaScripts/", ".bytes"), decryptor));
+
+            /* Lua source code */
+            luaEnv.AddLoader(new FileLoader(Application.streamingAssetsPath + "/LuaScripts/", ".bytes"));
+            luaEnv.AddLoader(new FileLoader(Application.persistentDataPath + "/LuaScripts/", ".bytes"));
 #endif
+
+
 
             InitLuaEnv();
 
@@ -154,12 +159,18 @@ namespace Loxodon.Framework.Examples
             if (onDestroy != null)
                 onDestroy(this);
 
-            metatable = null;
             onDestroy = null;
             onStart = null;
             onEnable = null;
             onDisable = null;
             onAwake = null;
+
+            if (metatable != null)
+            {
+                metatable.Dispose();
+                metatable = null;
+            }
+
             if (scriptEnv != null)
             {
                 scriptEnv.Dispose();

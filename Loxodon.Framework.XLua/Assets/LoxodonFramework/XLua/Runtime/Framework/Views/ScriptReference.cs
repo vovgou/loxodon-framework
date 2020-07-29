@@ -35,6 +35,10 @@ namespace Loxodon.Framework.Views
     [System.Serializable]
     public class ScriptReference : ISerializationCallbackReceiver
     {
+#if UNITY_EDITOR
+        [SerializeField]
+        private Object cachedAsset;
+#endif
         [SerializeField]
         protected TextAsset text;
 
@@ -47,19 +51,16 @@ namespace Loxodon.Framework.Views
         public virtual ScriptReferenceType Type
         {
             get { return this.type; }
-            set { this.type = value; }
         }
 
         public virtual TextAsset Text
         {
             get { return this.text; }
-            set { this.text = value; }
         }
 
         public virtual string Filename
         {
             get { return this.filename; }
-            set { this.filename = value; }
         }
 
         public void OnAfterDeserialize()

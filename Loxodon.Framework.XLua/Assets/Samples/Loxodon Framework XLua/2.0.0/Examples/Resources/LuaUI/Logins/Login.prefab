@@ -2051,9 +2051,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   windowType: 1
   script:
-    text: {fileID: 4900000, guid: e261a20de8a60724f9695bb4d2ea5529, type: 3}
+    text: {fileID: 0}
     filename: Views.UI.Logins.LoginWindow
     type: 1
+    cachedAsset: {fileID: 4900000, guid: e261a20de8a60724f9695bb4d2ea5529, type: 3}
   variables:
     variables:
     - name: username

@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Samples/Loxodon Framework XLua/2.0.0/Examples/Launcher.unity
+    guid: df62c4bdcfb3e9a489c4abfe79c7cfa1
   m_configObjects: {}

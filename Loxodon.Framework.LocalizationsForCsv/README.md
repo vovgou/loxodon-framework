@@ -1,8 +1,8 @@
-![](docs/icon.png)
+![](docs/images/icon.png)
 
 # Loxodon Framework Localization For CSV
 
-[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE) [![release](https://img.shields.io/badge/release-v1.0.0-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
+[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE) [![release](https://img.shields.io/badge/release-v2.0.0-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
 
 
 *开发者 Clark*
@@ -23,7 +23,7 @@
 **关于值的本地化查询规则是根据System.Globalization.CultureInfo类的TwoLetterISOLanguageName和Name字段来查询的。
 优先按CultureInfo.Name查询，如果不存在则使用CultureInfo.TwoLetterISOLanguageName查询，最后才会使用默认值，比如下图中，如果当前语言是zh-CN的话，优先使用zh-CN的配置，如果不存在zh-CN的列或者zh-CN配置为空，则使用zh列的配置，如果zh列不存在或者字段为空则使用默认列的配置。**
 
-![](docs/csv.png)
+![](docs/images/csv.png)
 
 ### 文件编码 ###
 
@@ -78,14 +78,14 @@ XML的配置文件和CSV的配置文件可以相互转换，但是对于数组�
 
 生成csv文件如下
 
-![](docs/xml2csv2.png)
+![](docs/images/xml2csv2.png)
 
 ### 文件示例 ###
 CSV原文件
-![](docs/csv_source.png)
+![](docs/images/csv_source.png)
 
 转换为XML文件格式后的中文本地化文件（魔兽世界、星际争霸、帝国时代后面的换行符仍然存在，只是不可见）。
-![](docs/csv2xml.png)
+![](docs/images/csv2xml.png)
 
 ## 安装
 
@@ -136,7 +136,7 @@ CSV原文件
 
 Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.LocalizationsForCsv/Assets/LoxodonFramework/LocalizationsForCsv 地址到UPM管理器，耐性等待一段时间，下载完成后即安装成功。
 
-![](docs/install_via_git.png)
+![](docs/images/install_via_git.png)
 
 ### 通过 *.unitypackage 文件安装
 

@@ -160,6 +160,7 @@ MonoBehaviour:
     text: {fileID: 4900000, guid: 74167add488bba047b037f8f85c27410, type: 3}
     filename: 
     type: 0
+    cachedAsset: {fileID: 4900000, guid: 74167add488bba047b037f8f85c27410, type: 3}
   variables:
     variables: []
 --- !u!222 &286787991

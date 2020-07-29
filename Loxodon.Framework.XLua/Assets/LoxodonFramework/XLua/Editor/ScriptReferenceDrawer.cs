@@ -23,8 +23,11 @@
  */
 
 using Loxodon.Framework.Views;
+using Loxodon.Framework.XLua;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Loxodon.Framework.Editors
 {
@@ -36,43 +39,181 @@ namespace Loxodon.Framework.Editors
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
-
+            var objectProperty = property.FindPropertyRelative("cachedAsset");
+            var typeProperty = property.FindPropertyRelative("type");
             var textProperty = property.FindPropertyRelative("text");
             var filenameProperty = property.FindPropertyRelative("filename");
-            var typeProperty = property.FindPropertyRelative("type");
 
             float y = position.y;
             float x = position.x;
             float height = GetPropertyHeight(property, label);
             float width = position.width - HORIZONTAL_GAP * 2;
 
-            Rect nameRect = new Rect(x, y, Mathf.Min(200, width * 0.3f), height);
-            Rect typeRect = new Rect(nameRect.xMax + HORIZONTAL_GAP, y, Mathf.Min(100, width * 0.2f), height);
+            Rect nameRect = new Rect(x, y, 60, height);
+            Rect typeRect = new Rect(nameRect.xMax + HORIZONTAL_GAP, y, 80, height);
             Rect valueRect = new Rect(typeRect.xMax + HORIZONTAL_GAP, y, position.xMax - typeRect.xMax - HORIZONTAL_GAP, height);
 
             EditorGUI.LabelField(nameRect, property.displayName);
 
+            Object asset = objectProperty.objectReferenceValue;
             ScriptReferenceType typeValue = (ScriptReferenceType)typeProperty.enumValueIndex;
             EditorGUI.BeginChangeCheck();
-            typeValue = (ScriptReferenceType)EditorGUI.EnumPopup(typeRect, typeValue);
-            if (EditorGUI.EndChangeCheck())
+            ScriptReferenceType newTypeValue = (ScriptReferenceType)EditorGUI.EnumPopup(typeRect, typeValue);
+            if (EditorGUI.EndChangeCheck() && typeValue != newTypeValue)
             {
-                typeProperty.enumValueIndex = (int)typeValue;
+                if (ValidateSetting(asset, newTypeValue))
+                {
+                    typeProperty.enumValueIndex = (int)newTypeValue;
+                    UpdateProperty(filenameProperty, textProperty, newTypeValue, asset);
+                }
             }
 
             float labelWidth = EditorGUIUtility.labelWidth;
             EditorGUIUtility.labelWidth = 0.1f;
-            switch (typeValue)
+
+            EditorGUI.BeginChangeCheck();
+            Object newAsset = null;
+            switch (newTypeValue)
             {
-                case ScriptReferenceType.TextAsset:
-                    EditorGUI.PropertyField(valueRect, textProperty, GUIContent.none);
-                    break;
                 case ScriptReferenceType.Filename:
-                    EditorGUI.PropertyField(valueRect, filenameProperty, GUIContent.none);
-                    break;
+                    {
+                        if (asset != null)
+                        {
+                            var name = asset.name;
+                            asset.name = filenameProperty.stringValue;
+                            newAsset = EditorGUI.ObjectField(valueRect, GUIContent.none, asset, typeof(Object), false);
+                            asset.name = name;
+                        }
+                        else
+                        {
+                            newAsset = EditorGUI.ObjectField(valueRect, GUIContent.none, asset, typeof(Object), false);
+                        }
+                        break;
+                    }
+                case ScriptReferenceType.TextAsset:
+                    {
+                        if (asset is TextAsset)
+                            newAsset = EditorGUI.ObjectField(valueRect, GUIContent.none, asset, typeof(TextAsset), false);
+                        else
+                            newAsset = EditorGUI.ObjectField(valueRect, GUIContent.none, null, typeof(TextAsset), false);
+                        break;
+                    }
             }
+            if (EditorGUI.EndChangeCheck())
+            {
+                if (ValidateAsset(newAsset) && ValidateSetting(newAsset, newTypeValue))
+                {
+                    objectProperty.objectReferenceValue = newAsset;
+                    UpdateProperty(filenameProperty, textProperty, newTypeValue, newAsset);
+                }
+            }
+
             EditorGUIUtility.labelWidth = labelWidth;
             EditorGUI.EndProperty();
+        }
+
+        protected virtual bool ValidateAsset(Object asset)
+        {
+            if (asset == null)
+                return true;
+
+            if (!(asset is TextAsset || asset is DefaultAsset))
+            {
+                Debug.LogWarningFormat("Invalid asset for ScriptReference");
+                return false;
+            }
+
+            string path = AssetDatabase.GetAssetPath(asset);
+            if (string.IsNullOrEmpty(path))
+                return false;
+
+            if (asset is DefaultAsset && Directory.Exists(path))
+            {
+                Debug.LogWarningFormat("Invalid asset for ScriptReference path = '{0}'.", path);
+                return false;
+            }
+
+            if (path.EndsWith(".cs"))
+            {
+                Debug.LogWarningFormat("Invalid asset for ScriptReference path = '{0}'.", path);
+                return false;
+            }
+            return true;
+        }
+
+        protected virtual bool ValidateSetting(Object asset, ScriptReferenceType type)
+        {
+            if (asset == null || type == ScriptReferenceType.TextAsset)
+                return true;
+
+            string path = AssetDatabase.GetAssetPath(asset);
+            LuaSettings luaSettings = LuaSettings.GetOrCreateSettings();
+            foreach (string root in luaSettings.SrcRoots)
+            {
+                if (path.StartsWith(root))
+                {
+                    return true;
+                }
+            }
+
+            if (EditorUtility.DisplayDialog("Notice", string.Format("The file \"{0}\" is not in the source code folder of lua. Do you want to add a source code folder?", asset.name), "Yes", "Cancel"))
+            {
+                SettingsService.OpenProjectSettings("Project/LuaSettingsProvider");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public virtual void UpdateProperty(SerializedProperty filenameProperty, SerializedProperty textProperty, ScriptReferenceType type, Object asset)
+        {
+            switch (type)
+            {
+                case ScriptReferenceType.TextAsset:
+                    if (asset != null && asset is TextAsset)
+                        textProperty.objectReferenceValue = (TextAsset)asset;
+                    else
+                        textProperty.objectReferenceValue = null;
+                    filenameProperty.stringValue = null;
+                    break;
+                case ScriptReferenceType.Filename:
+                    if (asset != null)
+                        filenameProperty.stringValue = GetFilename(asset);
+                    else
+                        filenameProperty.stringValue = null;
+                    textProperty.objectReferenceValue = null;
+                    break;
+            }
+        }
+
+        protected virtual string GetFilename(Object asset)
+        {
+            if (asset == null)
+                return null;
+
+            string path = AssetDatabase.GetAssetPath(asset);
+            if (string.IsNullOrEmpty(path))
+                return null;
+
+            int start = path.LastIndexOf("/");
+            int dotIndex = path.IndexOf(".", start);
+            if (dotIndex > -1)
+                path = path.Substring(0, dotIndex);
+
+            LuaSettings luaSettings = LuaSettings.GetOrCreateSettings();
+            foreach (string root in luaSettings.SrcRoots)
+            {
+                if (path.StartsWith(root))
+                {
+                    path = path.Replace(root + "/", "");
+                    break;
+                }
+            }
+
+            path = path.Replace("/", ".");
+            return path;
         }
     }
 }

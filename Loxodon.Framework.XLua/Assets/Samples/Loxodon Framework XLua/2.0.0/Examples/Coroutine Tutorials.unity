@@ -324,6 +324,7 @@ MonoBehaviour:
     text: {fileID: 4900000, guid: 649169a9f36b2cb4d88ce8a5f1fb0069, type: 3}
     filename: 
     type: 0
+    cachedAsset: {fileID: 4900000, guid: 649169a9f36b2cb4d88ce8a5f1fb0069, type: 3}
   variables:
     variables:
     - name: startButton

@@ -147,6 +147,16 @@ try/catch的示例
 			end			
 		}		
 	end)
+	
+## LuaBehaviour's ScriptReference
+
+LuaBehaviour对象挂载Lua脚本支持两种方式，TextAsset方式和Filename方式，TextAsset方式挂载的Lua脚本会随Prefab一起打包到AssetBundle中，如果要更新脚本则必须和Prefab对象一起更新，而Filename则不会，仅仅只是在Prefab对象中存储了一个字符串，在LuaBehaviour初始化时通过这个字符串动态加载lua脚本，正式生产环境，建议使用Filename方式挂载脚本。
+
+新版本的ScriptReference支持自动生成Filename，在Editor/Project Settings/Lua Settings界面，配置好Lua源代码的根目录后（可以配置多个目录），只要将目录下的Lua文件拖放到LuaBehaviour上，则会自动生成Filename，并且可以在TextAsset和Filename类型之间随意切换。
+
+![](docs/images/LuaSettings.png) 
+
+![](docs/images/ScriptReference.png) 
 
 ## Lua 预编译工具 ##
 
@@ -154,13 +164,13 @@ try/catch的示例
 
 ![](docs/images/LuaPrecompileWizard.png)
 
-
+- Only Copy:勾选这个选择，只拷贝源文件到目标文件夹中，不会预编译Lua代码，但同样可以加密和修改文件名。开发阶段请勾选此项，避免预编译因为版本等不兼容问题导致的麻烦。
 - Bin:luac命令的路径，如果要编译64位或者32位或者两者相兼容的字节码，请选择对应的luac命令。
 - Output：编译后的字节码文件的存储目录。可以选择Assets下面的某个目录，统一打包为一个AssetBundle，也可以选择StreamingAssets下的某个目录，直接从StreamingAssets文件夹中加载。预编译后的字节码文件的扩展名可以选择".luac"或者".bytes"，也可以自定义其他的扩展名。
 - Src：lua源代码的根目录，支持多个源代码目录。源代码文件扩展名必须是".lua"或者".lua.txt"。
 - Encryption：加密功能，默认支持AES加密方式，也可以自己扩展新的加密方式，加密部分的面板是动态的，扩展了新的加密方式，会自动显示在工具的界面中。
 - Apply：保存设置
-- Precompile：预编译Lua脚本
+- Precompile Or Copy：预编译或者拷贝Lua脚本
 
 ### Lua加载器 ###
 

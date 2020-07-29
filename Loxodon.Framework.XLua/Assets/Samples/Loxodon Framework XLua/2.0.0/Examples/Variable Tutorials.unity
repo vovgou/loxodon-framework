@@ -520,6 +520,7 @@ MonoBehaviour:
     text: {fileID: 4900000, guid: 05152fe1e08882a49a0af4d35455c7cf, type: 3}
     filename: 
     type: 0
+    cachedAsset: {fileID: 4900000, guid: 05152fe1e08882a49a0af4d35455c7cf, type: 3}
   variables:
     variables:
     - name: vector

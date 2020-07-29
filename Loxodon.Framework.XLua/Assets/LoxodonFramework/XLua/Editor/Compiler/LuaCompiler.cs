@@ -60,13 +60,31 @@ namespace Loxodon.Framework.XLua.Editors
             if (!outputFile.Directory.Exists)
                 outputFile.Directory.Create();
 
-            RunCMD(command, string.Format(" {0} -o {1} {2}", debug ? "" : "-s", outputFile.FullName, inputFile.FullName));
+            RunCMD(command, string.Format(" {0} -o \"{1}\" \"{2}\"", debug ? "" : "-s", outputFile.FullName, inputFile.FullName));
 
             if (this.encryptor != null && outputFile.Exists)
             {
                 byte[] buffer = File.ReadAllBytes(outputFile.FullName);
                 File.WriteAllBytes(outputFile.FullName, encryptor.Encrypt(buffer));
             }
+        }
+
+        public void Copy(FileInfo inputFile, FileInfo outputFile)
+        {
+            if (!inputFile.Exists)
+            {
+                UnityEngine.Debug.LogErrorFormat("Not found the file \"{0}\"", inputFile.FullName);
+                return;
+            }
+
+            if (!outputFile.Directory.Exists)
+                outputFile.Directory.Create();
+
+            byte[] buffer = File.ReadAllBytes(inputFile.FullName);
+            if (encryptor != null)
+                buffer = encryptor.Encrypt(buffer);
+
+            File.WriteAllBytes(outputFile.FullName, buffer);
         }
 
         public static void RunCMD(string command, string args)

@@ -982,6 +982,7 @@ MonoBehaviour:
     text: {fileID: 4900000, guid: f812ddd1ba934c24597da18244f26c5e, type: 3}
     filename: 
     type: 0
+    cachedAsset: {fileID: 4900000, guid: f812ddd1ba934c24597da18244f26c5e, type: 3}
   variables:
     variables:
     - name: title

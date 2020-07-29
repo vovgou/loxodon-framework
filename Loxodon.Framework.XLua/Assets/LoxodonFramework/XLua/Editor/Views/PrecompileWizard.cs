@@ -42,9 +42,13 @@ namespace Loxodon.Framework.XLua.Editors
         [MenuItem("Tools/Loxodon/Precompile Wizard for Lua")]
         static void CreateWizard()
         {
-            PrecompileWizard wizard = DisplayWizard<PrecompileWizard>("Precompile Wizard", "Precompile", "Apply");
+            PrecompileWizard wizard = DisplayWizard<PrecompileWizard>("Precompile Wizard", "Precompile Or Copy", "Apply");
             wizard.isValid = true;
         }
+
+        [SerializeField]
+        [HideInInspector]
+        private bool onlyCopy;
 
         [SerializeField]
         [HideInInspector]
@@ -148,7 +152,18 @@ namespace Loxodon.Framework.XLua.Editors
             //base.DrawWizardGUI();
             EditorGUILayout.Space();
             EditorGUILayout.Space();
-            DrawBinPath();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel(new GUIContent("Only Copy", "Only copy files, do not compile."));
+            this.onlyCopy = EditorGUILayout.Toggle(this.onlyCopy);
+            EditorGUILayout.EndHorizontal();
+
+            if (!this.onlyCopy)
+            {
+                EditorGUILayout.Space();
+                DrawBinPath();
+            }
+
             EditorGUILayout.Space();
             DrawOutputPath();
             EditorGUILayout.Space();
@@ -206,7 +221,7 @@ namespace Loxodon.Framework.XLua.Editors
         protected virtual void DrawOutputPath()
         {
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PrefixLabel("Output");
+            EditorGUILayout.PrefixLabel(new GUIContent("Output", "The output folder"));
             this.output = EditorGUILayout.TextField(output);
             if (this.isEditExtensions)
             {
@@ -277,8 +292,9 @@ namespace Loxodon.Framework.XLua.Editors
 
         protected virtual void DrawBinPath()
         {
+
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PrefixLabel("Bin");
+            EditorGUILayout.PrefixLabel(new GUIContent("Bin", "Precompiled command"));
             this.bin = EditorGUILayout.TextField(this.bin);
             DrawBrowseFileButton(ref this.bin, "Browse", string.Empty);
             EditorGUILayout.EndHorizontal();
@@ -396,7 +412,7 @@ namespace Loxodon.Framework.XLua.Editors
 
         void OnWizardUpdate()
         {
-            if (this.bin == null || string.IsNullOrEmpty(this.bin))
+            if (!onlyCopy && (this.bin == null || string.IsNullOrEmpty(this.bin)))
             {
                 errorString = "The \"Bin\" field cannot be empty, please select the precompilation command.";
                 this.isValid = false;
@@ -509,10 +525,20 @@ namespace Loxodon.Framework.XLua.Editors
                     List<FileInfo> list = kv.Value;
                     foreach (var fileInfo in list)
                     {
-                        EditorUtility.DisplayProgressBar("Lua Precompile", "Precompiling, please wait!", (i++ / (float)total));
-                        string fullName = Regex.Replace(fileInfo.FullName, LUA_EXTENSION_PATTERN, Extension);
-                        fullName = fullName.Replace(root.FullName, output.FullName);
-                        compiler.Compile(fileInfo, new FileInfo(fullName), this.debug);
+                        if (onlyCopy)
+                        {
+                            EditorUtility.DisplayProgressBar("Copy", "File copying, please wait!", (i++ / (float)total));
+                            string fullName = Regex.Replace(fileInfo.FullName, LUA_EXTENSION_PATTERN, Extension);
+                            fullName = fullName.Replace(root.FullName, output.FullName);
+                            compiler.Copy(fileInfo, new FileInfo(fullName));
+                        }
+                        else
+                        {
+                            EditorUtility.DisplayProgressBar("Lua Precompile", "Precompiling, please wait!", (i++ / (float)total));
+                            string fullName = Regex.Replace(fileInfo.FullName, LUA_EXTENSION_PATTERN, Extension);
+                            fullName = fullName.Replace(root.FullName, output.FullName);
+                            compiler.Compile(fileInfo, new FileInfo(fullName), this.debug);
+                        }
                     }
                 }
                 EditorUtility.OpenWithDefaultApp(output.FullName);
