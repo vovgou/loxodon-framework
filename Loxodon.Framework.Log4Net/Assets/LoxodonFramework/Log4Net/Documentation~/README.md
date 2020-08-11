@@ -38,7 +38,7 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
     #Go to the root directory of your project
     cd F:/workspace/New Unity Project
 
-    #Install loxodon-framework
+    #Install loxodon-framework-log4net
     openupm add com.vovgou.loxodon-framework-log4net
 
 ### Install via Packages/manifest.json
@@ -51,15 +51,14 @@ Installing the framework in this way does not require nodejs and openm-cli.
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
-        "com.vovgou.loxodon-framework-log4net": "2.0.0-preview"
+        "com.vovgou.loxodon-framework-log4net": "2.0.1"
       },
       "scopedRegistries": [
         {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
-            "com.vovgou.loxodon-framework",
-            "com.vovgou.loxodon-framework-log4net",
+            "com.vovgou",
             "com.openupm"
           ]
         }

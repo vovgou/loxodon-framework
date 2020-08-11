@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Loxodon.Framework.Messaging
 {
@@ -56,7 +57,7 @@ namespace Loxodon.Framework.Messaging
             }
         }
 
-        public IDisposable Subscribe(Action<T> action)
+        public ISubscription<T> Subscribe(Action<T> action)
         {
             return new Subscription(this, action);
         }
@@ -72,28 +73,37 @@ namespace Loxodon.Framework.Messaging
             this.subscriptions.TryRemove(subscription.Key, out _);
         }
 
-        class Subscription : IDisposable
+        class Subscription : ISubscription<T>
         {
-            private readonly object _lock = new object();
-            private Subject<T> parent;
+            private Subject<T> subject;
             private Action<T> action;
+            private SynchronizationContext context;
             public string Key { get; private set; }
 
-            public Subscription(Subject<T> parent, Action<T> action)
+            public Subscription(Subject<T> subject, Action<T> action)
             {
-                this.parent = parent;
+                this.subject = subject;
                 this.action = action;
                 this.Key = Guid.NewGuid().ToString();
-                this.parent.Add(this);
+                this.subject.Add(this);
             }
 
             public void Publish(T message)
             {
                 try
                 {
-                    action(message);
+                    if (this.context != null)
+                        context.Post(state => action(message), null);
+                    else
+                        action(message);
                 }
                 catch (Exception) { }
+            }
+
+            public ISubscription<T> ObserveOn(SynchronizationContext context)
+            {
+                this.context = context ?? throw new ArgumentNullException("context");
+                return this;
             }
 
             #region IDisposable Support
@@ -104,23 +114,21 @@ namespace Loxodon.Framework.Messaging
                 if (this.disposed)
                     return;
 
-                lock (_lock)
+                try
                 {
-                    try
-                    {
-                        if (this.disposed)
-                            return;
+                    if (this.disposed)
+                        return;
 
-                        if (parent != null)
-                        {
-                            parent.Remove(this);
-                            action = null;
-                            parent = null;
-                        }
-                    }
-                    catch (Exception) { }
-                    disposed = true;
+                    if (subject != null)
+                        subject.Remove(this);
+
+                    context = null;
+                    action = null;
+                    subject = null;
+                    
                 }
+                catch (Exception) { }
+                disposed = true;
             }
 
             ~Subscription()

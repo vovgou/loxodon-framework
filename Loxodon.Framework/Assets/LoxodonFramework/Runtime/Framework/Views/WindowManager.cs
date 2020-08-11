@@ -307,13 +307,26 @@ namespace Loxodon.Framework.Views
 
         protected virtual Transform GetTransform(IWindow window)
         {
-            if (window == null)
+            try
+            {
+                if (window == null)
+                    return null;
+
+                if (window is UIView)
+                    return (window as UIView).Transform;
+
+                var propertyInfo = window.GetType().GetProperty("Transform");
+                if (propertyInfo != null)
+                    return (Transform)propertyInfo.GetGetMethod().Invoke(window, null);
+
+                if (window is Component)
+                    return (window as Component).transform;
                 return null;
-            if (window is UIView)
-                return (window as UIView).Transform;
-            if (window is Component)
-                return (window as Component).transform;
-            return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }           
         }
 
         protected virtual int GetChildIndex(Transform child)

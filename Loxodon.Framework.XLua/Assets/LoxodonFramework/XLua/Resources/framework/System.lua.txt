@@ -90,7 +90,6 @@ function Launcher:printClassName()
 end
 
 @param #string classname 类名
-@param #table t  
 @param #object super 父类或者创建对象实例的函数
 @return table
 ]]

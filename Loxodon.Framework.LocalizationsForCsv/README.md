@@ -123,8 +123,7 @@ CSV原文件
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
-            "com.vovgou.loxodon-framework-localization-csv",
-            "com.vovgou.loxodon-framework",
+            "com.vovgou",
             "com.openupm"
           ]
         }

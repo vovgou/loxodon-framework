@@ -61,7 +61,7 @@ Installing the framework in this way does not require nodejs and openm-cli.
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
-            "com.vovgou.loxodon-framework",
+            "com.vovgou",
             "com.openupm"
           ]
         }
@@ -249,6 +249,10 @@ Create a view and view model of the progress bar.
 		float value = (length * scale) + offset;
 
 - [Loxodon Framework Addressable](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Addressable)
+
+- [Loxodon Framework Connection](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Connection)
+
+    This is a network connection component, implemented using TcpClient, supports IPV6 and IPV4, automatically recognizes the current network when connecting with a domain name, and preferentially connects to the IPV4 network.
 
 - [Json.Net.Aot](https://github.com/Daddoon/Json.NET.Aot)
 

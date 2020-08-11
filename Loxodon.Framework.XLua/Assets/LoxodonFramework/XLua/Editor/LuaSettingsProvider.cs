@@ -26,7 +26,11 @@ using Loxodon.Framework.XLua;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
+#if UNITY_2019_1_OR_NEWER
+using UnityEngine.UIElements;
+#else
 using UnityEngine.Experimental.UIElements;
+#endif
 
 namespace Loxodon.Framework.Editors
 {
@@ -122,14 +126,6 @@ namespace Loxodon.Framework.Editors
             {
                 EditorGUI.PropertyField(rootRect, root, GUIContent.none);
             }
-
-            //Rect pathRect = new Rect(x, y, width - 20, height);
-            //Rect rootRect = new Rect(x, y, width, height);
-            //Color color = GUI.contentColor;
-            //GUI.contentColor = transparentColor;           
-            //EditorGUI.PropertyField(rootRect, root, GUIContent.none);
-            //GUI.contentColor = color;
-            //EditorGUI.LabelField(pathRect, new GUIContent(path));
         }
 
         protected virtual void AddSrcRoot(SerializedProperty roots, int index)
@@ -143,7 +139,6 @@ namespace Loxodon.Framework.Editors
             rootProperty.objectReferenceValue = null;
 
             roots.serializedObject.ApplyModifiedProperties();
-            //GUI.FocusControl(null);
         }
 
         protected virtual void AskRemoveSrcRoot(SerializedProperty roots, int index)
@@ -176,7 +171,6 @@ namespace Loxodon.Framework.Editors
             root.objectReferenceValue = null;
             roots.DeleteArrayElementAtIndex(index);
             roots.serializedObject.ApplyModifiedProperties();
-            //GUI.FocusControl(null);
         }
 
         [SettingsProvider]

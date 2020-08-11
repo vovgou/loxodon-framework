@@ -29,6 +29,7 @@ using System.Globalization;
 
 using Loxodon.Framework.Observables;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace Loxodon.Framework.Localizations
 {
@@ -38,7 +39,7 @@ namespace Loxodon.Framework.Localizations
         private static Localization instance;
 
         private readonly object _lock = new object();
-        private readonly Dictionary<string, IObservableProperty> data = new Dictionary<string, IObservableProperty>();
+        private readonly ConcurrentDictionary<string, IObservableProperty> data = new ConcurrentDictionary<string, IObservableProperty>();
         private readonly List<ProviderEntry> providers = new List<ProviderEntry>();
         private CultureInfo cultureInfo;
         private EventHandler cultureInfoChanged;
@@ -320,10 +321,8 @@ namespace Loxodon.Framework.Localizations
             foreach (string key in keys)
             {
                 IObservableProperty value;
-                if (data.TryGetValue(key, out value))
+                if (data.TryRemove(key, out value) && value != null)
                     value.Value = null;
-
-                data.Remove(key);
             }
         }
 

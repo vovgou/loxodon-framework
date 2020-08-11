@@ -75,7 +75,7 @@ WebGL
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
-            "com.vovgou.loxodon-framework",
+            "com.vovgou",
             "com.openupm"
           ]
         }
@@ -275,6 +275,12 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 - [Loxodon Framework Addressable](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Addressable)
 
     有关Addressable Asset System功能的扩展与支持。
+
+- [Loxodon Framework Connection](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Connection)
+
+    这是一个网络连接组件，使用TcpClient实现，实现了Socket连接，自动重连，消息的订阅，事件订阅，请求、响应等操作，支持IPV6和IPV4，使用域名连接时自动识别当前网络，优先连接IPV4网络。使用IPV4地址连接时，自动尝试以``64:ff9b::``为前缀的IPV6地址，如果正确配置NAT64网关，也应该可以连上（未测试）。
+
+    使用本组件之前，需要自定义消息的编码解码器和消息类型，如果协议存在握手消息，请自定义IHandshakeHandler，实现握手功能。
 
 - [Json.Net.Aot](https://github.com/Daddoon/Json.NET.Aot)
 

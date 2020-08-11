@@ -3554,6 +3554,8 @@ MonoBehaviour脚本无法被继承，但是它的实例可以被lua扩展，使�
 
 "target"对象是在C#脚本LuaLauncher中，在初始化lua脚本环境时将自己的实例注入到lua环境的，在本框架所有的扩展脚本中，统一使用"target"的变量名,请在游戏逻辑开发中遵循这一规则。
 
+**注意 Lua继承一个C#类或者Lua扩展了MonoBehaviour实例之后，在Lua运行时中，C#实例和Lua模块对应的实例是同一个对象，你拿到了MonoBehaviour的实例对象，不但可以访问所有MonoBehaviour中的函数和属性，同时也可以访问Lua脚本中扩展的函数和属性**
+
 C#代码，LuaLauncher脚本中初始化lua执行环境的部分。
 
     var luaEnv = LuaEnvironment.LuaEnv;

@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+using Loxodon.Framework.Interactivity;
+using Loxodon.Framework.Observables;
 using XLua;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
@@ -37,11 +39,22 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if (metatable == null || !metatable.ContainsKey(description.TargetName))
                 return null;
 
-            LuaFunction function = metatable.Get<LuaFunction>(description.TargetName);
-            if (function == null)
-                return null;
+            var obj = metatable.Get<object>(description.TargetName);
+            if (obj != null)
+            {
+                LuaFunction function = obj as LuaFunction;
+                if (function != null)
+                    return new LuaMethodTargetProxy(target, function);
 
-            return new LuaMethodTargetProxy(target, function);
+                IObservableProperty observableValue = obj as IObservableProperty;
+                if (observableValue != null)
+                    return new ObservableTargetProxy(target, observableValue);
+
+                IInteractionAction interactionAction = obj as IInteractionAction;
+                if (interactionAction != null)
+                    return new InteractionTargetProxy(target, interactionAction);
+            }
+            return new LuaTableTargetProxy(target, description.TargetName);
         }
     }
 }

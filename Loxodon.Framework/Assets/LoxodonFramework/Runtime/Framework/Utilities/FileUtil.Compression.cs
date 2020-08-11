@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#if UNITY_ANDROID && NET_STANDARD_2_0 && (!UNITY_2019_3_OR_NEWER || CSHARP_ZIP)
+#if UNITY_ANDROID && NET_STANDARD_2_0
 using System;
 using System.Collections.Generic;
 using System.IO;

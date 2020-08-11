@@ -1,0 +1,123 @@
+![](docs/images/icon.png)
+
+# Loxodon Framework Connection
+
+[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE) [![release](https://img.shields.io/badge/release-v2.0.0-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
+
+
+*Developed by Clark*
+
+Requires Unity 2018.4 or higher.
+
+This is a network connection component, implemented using TcpClient, supports IPV6 and IPV4, automatically recognizes the current network when connecting with a domain name, and preferentially connects to the IPV4 network.
+
+## Installation
+
+### Install via OpenUPM (recommended)
+
+[OpenUPM](https://openupm.com/) can automatically manage dependencies, it is recommended to use it to install the framework.
+
+Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not installed please install them first.
+
+    # Install openupm-cli,please ignore if it is already installed.
+    npm install -g openupm-cli
+
+    #Go to the root directory of your project
+    cd F:/workspace/New Unity Project
+
+    #Install loxodon-framework-connection
+    openupm add com.vovgou.loxodon-framework-connection
+
+### Install via Packages/manifest.json
+
+Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-connection" in the "dependencies" node.
+
+Installing the framework in this way does not require nodejs and openm-cli.
+
+    {
+      "dependencies": {
+        ...
+        "com.unity.modules.xr": "1.0.0",
+        "com.vovgou.loxodon-framework-connection": "2.0.0"
+      },
+      "scopedRegistries": [
+        {
+          "name": "package.openupm.com",
+          "url": "https://package.openupm.com",
+          "scopes": [
+            "com.vovgou",
+            "com.openupm"
+          ]
+        }
+      ]
+    }
+
+### Install via git URL
+
+After Unity 2019.3.4f1 that support path query parameter of git package. You can add https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework to Package Manager
+
+- Loxodon.Framework.Connection: https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.Connection/Assets/LoxodonFramework/Connection
+
+
+![](docs/images/install_via_git.png)
+
+### Install via *.unitypackage file
+
+Download Loxodon.Framework.Connection.unitypackage, import them into your project.
+
+- [Releases](https://github.com/vovgou/loxodon-framework/releases)
+
+## Quick Start
+
+    IConnector<Request, Response, Notification> connector;
+    ISubscription<EventArgs> eventSubscription;
+    ISubscription<Notification> messageSubscription;
+    
+    async void Start()
+    {
+        //Create TcpChannel
+        var channel = new TcpChannel(new DefaultDecoder(), new DefaultEncoder(), new HandshakeHandler());
+        channel.NoDelay = true;
+        channel.IsBigEndian = true;
+
+        //Create Connector
+        connector = new DefaultConnector<Request, Response, Notification>(channel);
+        connector.AutoReconnect = true;
+
+        //Subscribe to events
+        eventSubscription = connector.Events().ObserveOn(SynchronizationContext.Current).Subscribe((e) =>
+        {
+            Debug.LogFormat("Received Event:{0}", e);
+        });
+
+        //Subscribe to notification messages
+        messageSubscription = connector.Received().Filter(message =>
+        {
+            //Filter messages
+            if (message.CommandID > 0 && message.CommandID <= 100)
+                return true;
+            return false;
+        }).ObserveOn(SynchronizationContext.Current).Subscribe(message =>
+        {
+            Debug.LogFormat("Received Notification:{0}", message);
+        });
+
+        //Send a notification message
+        Notification notification = new Notification();
+        notification.CommandID = 10;
+        notification.ContentType = 0;
+        notification.Content = Encoding.UTF8.GetBytes("this is a notification.");
+        await connector.Send(notification);
+
+        //Send a request message and receive a response message.
+        Request request = new Request();
+        request.CommandID = 20;
+        request.ContentType = 0;
+        request.Content = Encoding.UTF8.GetBytes("this is a request.");
+        Response response = await connector.Send(request);
+    }
+
+## Contact Us
+Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
+Website: [https://vovgou.github.io/loxodon-framework/](https://vovgou.github.io/loxodon-framework/)  
+QQ Group: 622321589 [![](https://pub.idqqimg.com/wpa/images/group.png)](https:////shang.qq.com/wpa/qunwpa?idkey=71c1e43c24900ee84aeffc76fb67c0bacddc3f62a516fe80eae6b9521f872c59)

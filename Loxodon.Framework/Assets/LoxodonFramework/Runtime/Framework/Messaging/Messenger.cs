@@ -23,12 +23,8 @@
  */
 
 using System;
-using System.Collections.Generic;
-
+using System.Collections.Concurrent;
 using Loxodon.Log;
-#if NETFX_CORE
-using System.Reflection;
-#endif
 
 namespace Loxodon.Framework.Messaging
 {
@@ -41,8 +37,8 @@ namespace Loxodon.Framework.Messaging
 
         public static readonly Messenger Default = new Messenger();
 
-        private readonly Dictionary<Type, SubjectBase> notifiers = new Dictionary<Type, SubjectBase>();
-        private readonly Dictionary<string, Dictionary<Type, SubjectBase>> channelNotifiers = new Dictionary<string, Dictionary<Type, SubjectBase>>();
+        private readonly ConcurrentDictionary<Type, SubjectBase> notifiers = new ConcurrentDictionary<Type, SubjectBase>();
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<Type, SubjectBase>> channelNotifiers = new ConcurrentDictionary<string, ConcurrentDictionary<Type, SubjectBase>>();
 
         /// <summary>
         /// Subscribe a message.
@@ -51,16 +47,14 @@ namespace Loxodon.Framework.Messaging
         /// <param name="action">The action that will be executed when a message of type T is sent.</param>
         /// <returns>Disposable object that can be used to unsubscribe the message from the messenger.
         /// if the disposable object is disposed,the message is automatically unsubscribed.</returns>
-        public virtual IDisposable Subscribe(Type type, Action<object> action)
+        public virtual ISubscription<object> Subscribe(Type type, Action<object> action)
         {
             SubjectBase notifier;
-            lock (notifiers)
+            if (!notifiers.TryGetValue(type, out notifier))
             {
-                if (!notifiers.TryGetValue(type, out notifier))
-                {
-                    notifier = new Subject<object>();
-                    notifiers.Add(type, notifier);
-                }
+                notifier = new Subject<object>();
+                if (!notifiers.TryAdd(type, notifier))
+                    notifiers.TryGetValue(type, out notifier);
             }
             return (notifier as Subject<object>).Subscribe(action);
         }
@@ -72,16 +66,15 @@ namespace Loxodon.Framework.Messaging
         /// <param name="action">The action that will be executed when a message of type T is sent.</param>
         /// <returns>Disposable object that can be used to unsubscribe the message from the messenger.
         /// if the disposable object is disposed,the message is automatically unsubscribed.</returns>
-        public virtual IDisposable Subscribe<T>(Action<T> action)
+        public virtual ISubscription<T> Subscribe<T>(Action<T> action)
         {
+            Type type = typeof(T);
             SubjectBase notifier;
-            lock (notifiers)
+            if (!notifiers.TryGetValue(type, out notifier))
             {
-                if (!notifiers.TryGetValue(typeof(T), out notifier))
-                {
-                    notifier = new Subject<T>();
-                    notifiers.Add(typeof(T), notifier);
-                }
+                notifier = new Subject<T>();
+                if (!notifiers.TryAdd(type, notifier))
+                    notifiers.TryGetValue(type, out notifier);
             }
             return (notifier as Subject<T>).Subscribe(action);
         }
@@ -98,25 +91,26 @@ namespace Loxodon.Framework.Messaging
         /// <param name="action">The action that will be executed when a message of type T is sent.</param>
         /// <returns>Disposable object that can be used to unsubscribe the message from the messenger.
         /// if the disposable object is disposed,the message is automatically unsubscribed.</returns>
-        public virtual IDisposable Subscribe(string channel, Type type, Action<object> action)
+        public virtual ISubscription<object> Subscribe(string channel, Type type, Action<object> action)
         {
-            Dictionary<Type, SubjectBase> dict = null;
             SubjectBase notifier = null;
-            lock (channelNotifiers)
+            ConcurrentDictionary<Type, SubjectBase> dict = null;
+            if (!channelNotifiers.TryGetValue(channel, out dict))
             {
-                if (!channelNotifiers.TryGetValue(channel, out dict))
-                {
-                    dict = new Dictionary<Type, SubjectBase>();
-                    channelNotifiers.Add(channel, dict);
-                }
+                dict = new ConcurrentDictionary<Type, SubjectBase>();
+                if (!channelNotifiers.TryAdd(channel, dict))
+                    channelNotifiers.TryGetValue(channel, out dict);
+            }
 
-                if (!dict.TryGetValue(type, out notifier))
-                {
-                    notifier = new Subject<object>();
-                    dict.Add(type, notifier);
-                }
+            if (!dict.TryGetValue(type, out notifier))
+            {
+                notifier = new Subject<object>();
+                if (!dict.TryAdd(type, notifier))
+                    dict.TryGetValue(type, out notifier);
             }
             return (notifier as Subject<object>).Subscribe(action);
+
+
         }
 
         /// <summary>
@@ -131,23 +125,22 @@ namespace Loxodon.Framework.Messaging
         /// <param name="action">The action that will be executed when a message of type T is sent.</param>
         /// <returns>Disposable object that can be used to unsubscribe the message from the messenger.
         /// if the disposable object is disposed,the message is automatically unsubscribed.</returns>
-        public virtual IDisposable Subscribe<T>(string channel, Action<T> action)
+        public virtual ISubscription<T> Subscribe<T>(string channel, Action<T> action)
         {
-            Dictionary<Type, SubjectBase> dict = null;
             SubjectBase notifier = null;
-            lock (channelNotifiers)
+            ConcurrentDictionary<Type, SubjectBase> dict = null;
+            if (!channelNotifiers.TryGetValue(channel, out dict))
             {
-                if (!channelNotifiers.TryGetValue(channel, out dict))
-                {
-                    dict = new Dictionary<Type, SubjectBase>();
-                    channelNotifiers.Add(channel, dict);
-                }
+                dict = new ConcurrentDictionary<Type, SubjectBase>();
+                if (!channelNotifiers.TryAdd(channel, dict))
+                    channelNotifiers.TryGetValue(channel, out dict);
+            }
 
-                if (!dict.TryGetValue(typeof(T), out notifier))
-                {
-                    notifier = new Subject<T>();
-                    dict.Add(typeof(T), notifier);
-                }
+            if (!dict.TryGetValue(typeof(T), out notifier))
+            {
+                notifier = new Subject<T>();
+                if (!dict.TryAdd(typeof(T), notifier))
+                    dict.TryGetValue(typeof(T), out notifier);
             }
             return (notifier as Subject<T>).Subscribe(action);
         }
@@ -168,22 +161,11 @@ namespace Loxodon.Framework.Messaging
         /// <param name="message">The message to send to subscribed recipients.</param>
         public virtual void Publish<T>(T message)
         {
-            if (message == null)
+            if (message == null || notifiers.Count <= 0)
                 return;
 
             Type messageType = message.GetType();
-
-            List<KeyValuePair<Type, SubjectBase>> list;
-
-            lock (notifiers)
-            {
-                if (notifiers.Count <= 0)
-                    return;
-
-                list = new List<KeyValuePair<Type, SubjectBase>>(this.notifiers);
-            }
-
-            foreach (KeyValuePair<Type, SubjectBase> kv in list)
+            foreach (var kv in notifiers)
             {
                 try
                 {
@@ -227,19 +209,12 @@ namespace Loxodon.Framework.Messaging
             if (string.IsNullOrEmpty(channel) || message == null)
                 return;
 
+            ConcurrentDictionary<Type, SubjectBase> dict = null;
+            if (!channelNotifiers.TryGetValue(channel, out dict) || dict.Count <= 0)
+                return;
+
             Type messageType = message.GetType();
-            Dictionary<Type, SubjectBase> dict = null;
-            List<KeyValuePair<Type, SubjectBase>> list = null;
-
-            lock (this.channelNotifiers)
-            {
-                if (!channelNotifiers.TryGetValue(channel, out dict) || dict.Count <= 0)
-                    return;
-
-                list = new List<KeyValuePair<Type, SubjectBase>>(dict);
-            }
-
-            foreach (KeyValuePair<Type, SubjectBase> kv in list)
+            foreach (var kv in dict)
             {
                 try
                 {

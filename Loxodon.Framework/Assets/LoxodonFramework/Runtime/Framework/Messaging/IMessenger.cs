@@ -38,7 +38,7 @@ namespace Loxodon.Framework.Messaging
         /// <param name="action">The action that will be executed when a message of type T is sent.</param>
         /// <returns>Disposable object that can be used to unsubscribe the message from the messenger.
         /// if the disposable object is disposed,the message is automatically unsubscribed.</returns>
-        IDisposable Subscribe(Type type, Action<object> action);
+        ISubscription<object> Subscribe(Type type, Action<object> action);
 
         /// <summary>
         /// Subscribe a message.
@@ -47,7 +47,7 @@ namespace Loxodon.Framework.Messaging
         /// <param name="action">The action that will be executed when a message of type T is sent.</param>
         /// <returns>Disposable object that can be used to unsubscribe the message from the messenger.
         /// if the disposable object is disposed,the message is automatically unsubscribed.</returns>
-        IDisposable Subscribe<T>(Action<T> action);
+        ISubscription<T> Subscribe<T>(Action<T> action);
 
         /// <summary>
         /// Subscribe a message.
@@ -61,7 +61,7 @@ namespace Loxodon.Framework.Messaging
         /// <param name="action">The action that will be executed when a message of type T is sent.</param>
         /// <returns>Disposable object that can be used to unsubscribe the message from the messenger.
         /// if the disposable object is disposed,the message is automatically unsubscribed.</returns>
-        IDisposable Subscribe(string channel, Type type, Action<object> action);
+        ISubscription<object> Subscribe(string channel, Type type, Action<object> action);
 
         /// <summary>
         /// Subscribe a message.
@@ -75,7 +75,7 @@ namespace Loxodon.Framework.Messaging
         /// <param name="action">The action that will be executed when a message of type T is sent.</param>
         /// <returns>Disposable object that can be used to unsubscribe the message from the messenger.
         /// if the disposable object is disposed,the message is automatically unsubscribed.</returns>
-        IDisposable Subscribe<T>(string channel, Action<T> action);
+        ISubscription<T> Subscribe<T>(string channel, Action<T> action);
 
         /// <summary>
         /// Publish a message to subscribed recipients. 
