@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
@@ -164,18 +165,45 @@ namespace Loxodon.Framework.Net.Connection
                         }
                     }
 
+                    if (ipv4Client != null)
+                        ipv4Client.Close();
+                    if (ipv6Client != null)
+                        ipv6Client.Close();
+
                     if (lastex != null)
                         throw lastex;
 
                     throw new SocketException((int)SocketError.NotConnected);
                 });
-                var stream = this.WrapStream(client.GetStream());
+
+                var stream = await this.WrapStream(client.GetStream());
                 reader = new BinaryReader(stream, false, IsBigEndian);
                 writer = new BinaryWriter(stream, false, IsBigEndian);
 
                 if (handshakeHandler != null)
                     await handshakeHandler.OnHandshake(this);
                 this.connected = true;
+            }
+            catch (Exception)
+            {
+                if (client != null)
+                {
+                    client.Close();
+                    client = null;
+                }
+
+                if (reader != null)
+                {
+                    reader.Dispose();
+                    reader = null;
+                }
+
+                if (writer != null)
+                {
+                    writer.Dispose();
+                    writer = null;
+                }
+                throw;
             }
             finally
             {
@@ -202,6 +230,18 @@ namespace Loxodon.Framework.Net.Connection
 
                     if (delayTime > 0)
                         await Task.Delay(delayTime);
+                }
+
+                if (reader != null)
+                {
+                    reader.Dispose();
+                    reader = null;
+                }
+
+                if (writer != null)
+                {
+                    writer.Dispose();
+                    writer = null;
                 }
             }
             finally

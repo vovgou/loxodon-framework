@@ -72,13 +72,25 @@ Download Loxodon.Framework.Connection.unitypackage, import them into your projec
     IConnector<Request, Response, Notification> connector;
     ISubscription<EventArgs> eventSubscription;
     ISubscription<Notification> messageSubscription;
-    
     async void Start()
     {
         //Create TcpChannel
         var channel = new TcpChannel(new DefaultDecoder(), new DefaultEncoder(), new HandshakeHandler());
         channel.NoDelay = true;
         channel.IsBigEndian = true;
+
+        //TLS encryption is optional
+        channel.Secure(true, "vovgou.com", null, (sender, certificate, chain, sslPolicyErrors) =>
+        {
+            //Verify self-signed certificates
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
+            if (certificate != null && certificate.GetCertHashString() == "3C33D870E7826E9E83B4476D6A6122E497A6D282")
+                return true;
+
+            return false;
+        });
 
         //Create Connector
         connector = new DefaultConnector<Request, Response, Notification>(channel);
@@ -116,6 +128,38 @@ Download Loxodon.Framework.Connection.unitypackage, import them into your projec
         request.Content = Encoding.UTF8.GetBytes("this is a request.");
         Response response = await connector.Send(request);
     }
+    
+## How to create a self signed certificate
+
+- Download Makecert.exe from [here](https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/)
+   
+  ![](docs/images/download_makecert.png)
+  
+- Install Window 8.1 SDK
+
+  ![](docs/images/install_makecert.png)
+  
+- Add "C:\Program Files (x86)\Windows Kits\8.0\bin\x64" to the operating system environment variable PATH
+
+- Creating self signed certificates
+
+      makecert -r -pe -n "CN=vovgou.com" -b 01/01/2020 -e 01/01/2120 -sky exchange -a sha256 -len 2048 -sv vovgou.pvk  vovgou.cer
+  
+      pvk2pfx.exe -pvk vovgou.pvk -spc vovgou.cer -pfx vovgou.pfx
+
+- Use self-signed certificates
+
+      TextAsset textAsset = Resources.Load<TextAsset>("vovgou.pfx");
+      X509Certificate2 cert = new X509Certificate2(textAsset.bytes, "123456");
+      
+      var server = new Server(port);
+      server.Secure(true, cert, (sender, certificate, chain, sslPolicyErrors) =>
+      {
+         //The server does not verify the client's certificate and returns true
+         return true;
+      });
+
+For the complete makecert.exe parameter reference [click here](http://msdn.microsoft.com/en-us/library/bfsktky3%28v=vs.110%29.aspx)
 
 ## Contact Us
 Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   

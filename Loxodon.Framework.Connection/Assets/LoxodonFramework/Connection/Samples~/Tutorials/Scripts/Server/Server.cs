@@ -24,7 +24,11 @@
 
 using Loxodon.Framework.Examples.Messages;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,6 +44,9 @@ namespace Loxodon.Framework.Examples
         CancellationTokenSource cancellationTokenSource;
         CancellationToken cancellationToken;
 
+        bool secure;
+        X509Certificate cert;
+        RemoteCertificateValidationCallback remoteCertificateValidationCallback;
         List<TcpClient> clients = new List<TcpClient>();
         bool started = false;
         int port;
@@ -49,6 +56,19 @@ namespace Loxodon.Framework.Examples
         }
 
         public bool Started { get { return started; } }
+
+        public void Secure(bool secure, X509Certificate cert = null)
+        {
+            Secure(secure, cert, null);
+        }
+
+        public void Secure(bool secure, X509Certificate cert, RemoteCertificateValidationCallback remoteCertificateValidationCallback)
+        {
+            this.secure = secure;
+            this.cert = cert;
+            this.remoteCertificateValidationCallback = remoteCertificateValidationCallback;
+        }
+
         public void Start()
         {
             cancellationTokenSource = new CancellationTokenSource();
@@ -77,7 +97,26 @@ namespace Loxodon.Framework.Examples
                 try
                 {
                     clients.Add(client);
-                    var stream = client.GetStream();
+                    Stream stream = null;
+                    if (secure)
+                    {
+                        try
+                        {
+                            SslStream sslStream = new SslStream(client.GetStream(), false, new RemoteCertificateValidationCallback(ValidateClientCertificate));
+                            await sslStream.AuthenticateAsServerAsync(cert, false, SslProtocols.Tls | SslProtocols.Ssl3 | SslProtocols.Ssl2, false);
+                            stream = sslStream;
+                        }
+                        catch (System.Exception e)
+                        {
+                            Debug.LogErrorFormat("AuthenticateAsServerAsync,Exception:{0}", e);
+                            throw;
+                        }
+                    }
+                    else
+                    {
+                        stream = client.GetStream();
+                    }
+
                     BinaryReader reader = new BinaryReader(stream, false);
                     BinaryWriter writer = new BinaryWriter(stream, false);
 
@@ -141,6 +180,20 @@ namespace Loxodon.Framework.Examples
             }, cancellationToken);
         }
 
+        protected virtual bool ValidateClientCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (remoteCertificateValidationCallback != null)
+                return remoteCertificateValidationCallback(sender, certificate, chain, sslPolicyErrors);
+
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
+            if (certificate == null)
+                return true;
+
+            return false;
+        }
+
 
         public void Stop()
         {
@@ -163,7 +216,6 @@ namespace Loxodon.Framework.Examples
                     client.Close();
                 }
             }
-
         }
     }
 }

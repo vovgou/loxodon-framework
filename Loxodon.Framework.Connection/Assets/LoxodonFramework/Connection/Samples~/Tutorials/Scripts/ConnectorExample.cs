@@ -25,6 +25,8 @@
 using Loxodon.Framework.Examples.Messages;
 using Loxodon.Framework.Net.Connection;
 using System;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using UnityEngine;
@@ -45,17 +47,46 @@ namespace Loxodon.Framework.Examples
             //初始化服务器
             server = new Server(port);
 
+            //开启TLS加密，这是可选的，可用不设置
+            TextAsset textAsset = Resources.Load<TextAsset>("vovgou.pfx");
+            X509Certificate2 cert = new X509Certificate2(textAsset.bytes, "123456");
+            server.Secure(true, cert, (sender, certificate, chain, sslPolicyErrors) =>
+             {
+                 //服务器设置不要求客户端证书，服务器方不校验客户端的协议，直接返回true
+                 return true;
+             });
+
             //----------------------
 
             //创建TcpChannel，如果游戏协议没有定义握手消息，那么HandshakeHandler可以为null
             var channel = new TcpChannel(new DefaultDecoder(), new DefaultEncoder(), new HandshakeHandler());
             channel.NoDelay = true;
-            channel.IsBigEndian = true;
-            connector = new DefaultConnector<Request, Response, Notification>(channel);
-            connector.AutoReconnect = true;
+            channel.IsBigEndian = true;//默认使用大端字节序，一般网络字节流用大端
 
-            //订阅事件
-            eventSubscription = connector.Events().ObserveOn(SynchronizationContext.Current).Subscribe((e) =>
+            //如果服务器没有开启TLS加密，可用不设置
+            channel.Secure(true, "vovgou.com", null, (sender, certificate, chain, sslPolicyErrors) =>
+             {
+                 //客户端方校验服务器端的自签名协议
+                 if (sslPolicyErrors == SslPolicyErrors.None)
+                     return true;
+
+                 if (certificate != null && certificate.GetCertHashString() == "3C33D870E7826E9E83B4476D6A6122E497A6D282")
+                     return true;
+
+                 return false;
+             });
+
+            connector = new DefaultConnector<Request, Response, Notification>(channel);
+            connector.AutoReconnect = true;//开启自动重连，只重连一次，失败后不再重试，建议使用心跳包保证连接可用
+
+            //订阅事件,收到ConnectionEventArgs参数
+            eventSubscription = connector.Events().Filter(e =>
+            {
+                //消息过滤，只订阅ConnectionEventArgs类型的事件
+                if (e is ConnectionEventArgs)
+                    return true;
+                return false;
+            }).ObserveOn(SynchronizationContext.Current).Subscribe((e) =>
             {
                 Debug.LogFormat("Client Received Event:{0}", e);
             });
@@ -187,6 +218,5 @@ namespace Loxodon.Framework.Examples
                 server = null;
             }
         }
-
     }
 }

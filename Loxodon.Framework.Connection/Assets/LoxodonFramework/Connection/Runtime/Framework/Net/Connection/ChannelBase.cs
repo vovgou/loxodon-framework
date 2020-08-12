@@ -46,6 +46,7 @@ namespace Loxodon.Framework.Net.Connection
         protected string serverName;
         protected X509Certificate cert;
         protected bool secure;
+        protected RemoteCertificateValidationCallback remoteCertificateValidationCallback;
         protected IHandshakeHandler handshakeHandler;
 
         public ChannelBase(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler)
@@ -72,12 +73,18 @@ namespace Loxodon.Framework.Net.Connection
 
         public void Secure(bool secure, string serverName, X509Certificate cert = null)
         {
+            Secure(secure, serverName, cert, null);
+        }
+
+        public void Secure(bool secure, string serverName, X509Certificate cert, RemoteCertificateValidationCallback remoteCertificateValidationCallback)
+        {
             this.secure = secure;
             this.serverName = serverName;
             this.cert = cert;
+            this.remoteCertificateValidationCallback = remoteCertificateValidationCallback;
         }
 
-        protected virtual Stream WrapStream(Stream stream)
+        protected virtual async Task<Stream> WrapStream(Stream stream)
         {
             if (!secure)
                 return stream;
@@ -90,25 +97,26 @@ namespace Loxodon.Framework.Net.Connection
             }
 
             SslStream sslStream = new SslStream(stream, false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
-            sslStream.AuthenticateAsClient(this.serverName, certs, SslProtocols.Tls, false);
+            try
+            {
+                await sslStream.AuthenticateAsClientAsync(this.serverName, certs, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12, false);
+            }
+            catch (Exception)
+            {
+                sslStream.Close();
+                throw;
+            }
             return sslStream;
         }
 
         protected virtual bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
+            if (remoteCertificateValidationCallback != null)
+                return remoteCertificateValidationCallback(sender, certificate, chain, sslPolicyErrors);
+
             if (sslPolicyErrors == SslPolicyErrors.None)
                 return true;
 
-            if (chain.ChainStatus.Length == 1)
-            {
-                if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateChainErrors) > 0 || certificate.Subject == certificate.Issuer)
-                {
-                    if (chain.ChainStatus[0].Status == X509ChainStatusFlags.UntrustedRoot)
-                    {
-                        return true;
-                    }
-                }
-            }
             return false;
         }
 
