@@ -23,6 +23,7 @@
  */
 
 using Loxodon.Framework.Views;
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -41,7 +42,9 @@ namespace Loxodon.Framework.Editors
             var windowTypeProperty = serializedObject.FindProperty("windowType");
 
             WindowType windowType = (WindowType)windowTypeProperty.enumValueIndex;
-            foldout = EditorGUILayout.Foldout(foldout, new GUIContent("Window Setting", ""));
+            foldout = EditorGUILayout.Foldout(foldout, new GUIContent("Window Settings", ""));
+
+            string[] windowSettings = new string[] { "windowType", "windowPriority" };
 
             bool expanded = true;
             while (property.NextVisible(expanded))
@@ -51,28 +54,19 @@ namespace Loxodon.Framework.Editors
                     if ("m_Script" == property.propertyPath)
                         continue;
 
-                    if ("windowType" == property.propertyPath)
+                    if (Array.IndexOf(windowSettings, property.propertyPath) >= 0)
                     {
                         if (foldout)
                         {
+                            if ("windowPriority" == property.propertyPath && windowType != WindowType.QUEUED_POPUP)
+                                continue;
+
                             EditorGUI.indentLevel++;
-                            EditorGUILayout.PropertyField(property, new GUIContent("Window Type", ""));
+                            if ("windowPriority" == property.propertyPath)
+                                EditorGUILayout.PropertyField(property, new GUIContent(property.displayName, "When pop-up windows are queued to open, windows with higher priority will be opened first."));
+                            else
+                                EditorGUILayout.PropertyField(property, new GUIContent(property.displayName));
                             EditorGUI.indentLevel--;
-                        }
-                        continue;
-                    }
-
-
-                    if ("windowPriority" == property.propertyPath && foldout)
-                    {
-                        if (windowType == WindowType.QUEUED_POPUP)
-                        {
-                            if (foldout)
-                            {
-                                EditorGUI.indentLevel++;
-                                EditorGUILayout.PropertyField(property, new GUIContent("Window Priority", "When pop-up windows are queued to open, windows with higher priority will be opened first."));
-                                EditorGUI.indentLevel--;
-                            }
                         }
                         continue;
                     }
