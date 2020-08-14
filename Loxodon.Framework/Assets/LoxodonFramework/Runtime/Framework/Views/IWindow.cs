@@ -29,7 +29,7 @@ namespace Loxodon.Framework.Views
     public enum WindowType
     {
         /// <summary>
-        /// Full screen window.
+        /// The full screen window.
         /// </summary>
         FULL,
 
@@ -39,14 +39,19 @@ namespace Loxodon.Framework.Views
         POPUP,
 
         /// <summary>
-        /// Dialog window
+        /// The dialog window
         /// </summary>
         DIALOG,
 
         /// <summary>
         /// The progress bar dialog window
         /// </summary>
-        PROGRESS 
+        PROGRESS,
+
+        /// <summary>
+        /// The Queued pop-up window.
+        /// </summary>
+        QUEUED_POPUP
     }
 
     public enum WindowState
@@ -140,6 +145,12 @@ namespace Loxodon.Framework.Views
         /// window type.
         /// </summary>
         WindowType WindowType { get; set; }
+
+        /// <summary>
+        /// The priority of the window.When pop-up windows are queued to open, 
+        /// windows with higher priority will be opened first.
+        /// </summary>
+        int WindowPriority { get; set; }
 
         /// <summary>
         /// Create window

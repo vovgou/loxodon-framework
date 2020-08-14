@@ -326,7 +326,7 @@ namespace Loxodon.Framework.Views
             catch (Exception)
             {
                 return null;
-            }           
+            }
         }
 
         protected virtual int GetChildIndex(Transform child)
@@ -578,10 +578,37 @@ namespace Loxodon.Framework.Views
 
             public void Execute(Transition transition)
             {
-                this.transitions.Add(transition);
-                if (!this.running)
+                try
                 {
-                    this.taskResult = Executors.RunOnCoroutine(this.DoTask());
+                    if (transition is ShowTransition && transition.Window.WindowType == WindowType.QUEUED_POPUP)
+                    {
+                        int index = this.transitions.FindLastIndex((t) => (t is ShowTransition)
+                        && t.Window.WindowType == WindowType.QUEUED_POPUP
+                        && t.Window.WindowManager == transition.Window.WindowManager
+                        && t.Window.WindowPriority >= transition.Window.WindowPriority);
+                        if (index >= 0)
+                        {
+                            this.transitions.Insert(index + 1, transition);
+                            return;
+                        }
+
+                        index = this.transitions.FindIndex((t) => (t is ShowTransition)
+                        && t.Window.WindowType == WindowType.QUEUED_POPUP
+                        && t.Window.WindowManager == transition.Window.WindowManager
+                        && t.Window.WindowPriority < transition.Window.WindowPriority);
+                        if (index >= 0)
+                        {
+                            this.transitions.Insert(index, transition);
+                            return;
+                        }
+                    }
+
+                    this.transitions.Add(transition);
+                }
+                finally
+                {
+                    if (!this.running)
+                        taskResult = Executors.RunOnCoroutine(this.DoTask());
                 }
             }
 
@@ -598,13 +625,20 @@ namespace Loxodon.Framework.Views
 
             private bool Check(Transition transition)
             {
-                if (transition is ShowTransition)
-                {
-                    IWindowManager manager = transition.Window.WindowManager;
-                    var current = manager.Current;
-                    if (current != null && (current.WindowType == WindowType.DIALOG || current.WindowType == WindowType.PROGRESS))
-                        return false;
-                }
+                if (!(transition is ShowTransition))
+                    return true;
+
+                IManageable window = transition.Window;
+                IWindowManager manager = window.WindowManager;
+                var current = manager.Current;
+                if (current == null)
+                    return true;
+
+                if (current.WindowType == WindowType.DIALOG || current.WindowType == WindowType.PROGRESS)
+                    return false;
+
+                if (current.WindowType == WindowType.QUEUED_POPUP && !(window.WindowType == WindowType.DIALOG || window.WindowType == WindowType.PROGRESS))
+                    return false;
                 return true;
             }
 

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-#if UNITY_2019_3_OR_NEWER
+#if UNITY_2019_1_OR_NEWER
 using Loxodon.Framework.Binding.Reflection;
 using Loxodon.Framework.Commands;
 using Loxodon.Framework.Execution;

@@ -234,43 +234,44 @@ namespace Loxodon.Framework.Obfuscation
 
         public int CompareTo(object value)
         {
-            if (value == null)
+            if (value == null) return 1;
+
+            if (value is float)
             {
-                return 1;
+                float i = (float)value;
+                if (Value < i) return -1;
+                if (Value > i) return 1;
+                return 0;
             }
-            if (!(value is float))
+
+            if (value is ObfuscatedFloat)
             {
-                throw new ArgumentException();
+                ObfuscatedFloat i = (ObfuscatedFloat)value;
+                if (Value < i.Value) return -1;
+                if (Value > i.Value) return 1;
+                return 0;
             }
-            float num = (float)value;
-            if (this.Value < num)
-            {
-                return -1;
-            }
-            if (this.Value > num)
-            {
-                return 1;
-            }
-            return 0;
+
+            throw new ArgumentException();
         }
 
 
         public int CompareTo(float value)
         {
-            if (this.Value < value)
-            {
-                return -1;
-            }
-            if (this.Value > value)
-            {
-                return 1;
-            }
+            if (this.Value < value) return -1;
+            if (this.Value > value) return 1;
             return 0;
         }
 
         public override bool Equals(object obj)
         {
-            return ((obj is ObfuscatedFloat) && (this == ((ObfuscatedFloat)obj)));
+            if (obj is ObfuscatedFloat)
+                return this.Value == ((ObfuscatedFloat)obj).Value;
+
+            if (obj is float)
+                return this.Value == (float)obj;
+
+            return false;
         }
 
         public bool Equals(float obj)

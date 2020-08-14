@@ -201,42 +201,43 @@ namespace Loxodon.Framework.Obfuscation
 
         public int CompareTo(object value)
         {
-            if (value == null)
+            if (value == null) return 1;
+
+            if (value is byte)
             {
-                return 1;
+                byte i = (byte)value;
+                if (Value < i) return -1;
+                if (Value > i) return 1;
+                return 0;
             }
-            if (!(value is int))
+
+            if (value is ObfuscatedByte)
             {
-                throw new ArgumentException();
+                ObfuscatedByte i = (ObfuscatedByte)value;
+                if (Value < i.Value) return -1;
+                if (Value > i.Value) return 1;
+                return 0;
             }
-            int num = (int)value;
-            if (this.Value < num)
-            {
-                return -1;
-            }
-            if (this.Value > num)
-            {
-                return 1;
-            }
-            return 0;
+
+            throw new ArgumentException();
         }
 
         public int CompareTo(byte value)
         {
-            if (this.Value < value)
-            {
-                return -1;
-            }
-            if (this.Value > value)
-            {
-                return 1;
-            }
+            if (this.Value < value) return -1;
+            if (this.Value > value) return 1;
             return 0;
         }
 
         public override bool Equals(object obj)
         {
-            return ((obj is ObfuscatedByte) && (this == ((ObfuscatedByte)obj)));
+            if (obj is ObfuscatedByte)
+                return this.Value == ((ObfuscatedByte)obj).Value;
+
+            if (obj is byte)
+                return this.Value == (byte)obj;
+
+            return false;
         }
 
         public bool Equals(byte obj)

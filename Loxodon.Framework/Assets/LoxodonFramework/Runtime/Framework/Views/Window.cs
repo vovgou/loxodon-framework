@@ -38,8 +38,10 @@ namespace Loxodon.Framework.Views
 
         [SerializeField]
         private WindowType windowType = WindowType.FULL;
+        [SerializeField]
+        [Range(0, 10)]
+        private int windowPriority = 0;
         private IWindowManager windowManager;
-
         private bool created = false;
         private bool dismissed = false;
         private bool activated = false;
@@ -129,6 +131,20 @@ namespace Loxodon.Framework.Views
             set { this.windowType = value; }
         }
 
+        public int WindowPriority
+        {
+            get { return this.windowPriority; }
+            set
+            {
+                if (value < 0)
+                    this.windowPriority = 0;
+                else if (value > 10)
+                    this.windowPriority = 10;
+                else
+                    this.windowPriority = value;
+            }
+        }
+
         protected void RaiseActivatedChanged()
         {
             try
@@ -139,7 +155,7 @@ namespace Loxodon.Framework.Views
             catch (Exception e)
             {
                 if (log.IsWarnEnabled)
-                    log.Warn("", e);
+                    log.WarnFormat("{0}", e);
             }
         }
 
@@ -153,7 +169,7 @@ namespace Loxodon.Framework.Views
             catch (Exception e)
             {
                 if (log.IsWarnEnabled)
-                    log.Warn("", e);
+                    log.WarnFormat("{0}", e);
             }
         }
 
@@ -167,7 +183,7 @@ namespace Loxodon.Framework.Views
             catch (Exception e)
             {
                 if (log.IsWarnEnabled)
-                    log.Warn("", e);
+                    log.WarnFormat("{0}", e);
             }
         }
 
@@ -181,7 +197,7 @@ namespace Loxodon.Framework.Views
             catch (Exception e)
             {
                 if (log.IsWarnEnabled)
-                    log.Warn("", e);
+                    log.WarnFormat("{0}", e);
             }
         }
 

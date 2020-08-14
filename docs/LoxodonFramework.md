@@ -2867,7 +2867,45 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
 - **窗口类型**
 
-  窗口类型分为四种类型，全屏窗口（FULL），弹出窗口（POPUP），对话框窗口（DIALOG），进度条窗口（PROGRESS）。不同的窗口类型，在窗口打开和被遮挡时会有不同的表现。弹出窗口在被其他窗口覆盖时，会自动关闭。对话框窗口和进度窗口有最高的优先级，它会显示在最顶层，并且只允许打开一个，当有对话窗或者进度窗口显示时，如果打开其他窗口，其他窗口不会显示，只有当对话框或者进度窗关闭时才会显示出来，如果同时打开多个对话窗，对话窗口会排队处理，只有关闭前一个才会显示下一个。
+  窗口类型按不同的功能特征分为FULL、POPUP、QUEUED_POPUP、DIALOG、PROGRESS五种类型。
+
+    - 全屏窗口(FULL)
+
+        全屏窗口一般为全屏显示，它优先级较低。
+
+    - 弹出窗口(POPUP)
+
+        弹出窗口在被其他窗口覆盖时，会自动关闭，但是可以通过ITransition.Overlay()函数重写覆盖规则；
+
+            var window = ...
+            window.Show().Overlay((previous,current) =>
+            {
+                 if (previous == null || previous.WindowType == WindowType.FULL)
+                    return ActionType.None;
+
+                if (previous.WindowType == WindowType.POPUP)
+                    return ActionType.Dismiss;
+
+                return ActionType.None;
+            });
+
+       以上代码覆盖默认的规则，通过它可以控制前一个窗口的关闭和隐藏等。
+
+    - 系统对话窗(DIALOG)
+
+        系统对话窗和进度窗口有最高的优先级，在同一个窗口管理器中，它会显示在最顶层，并且只允许打开一个，当有对话窗或者进度窗口显示时，如果打开其他窗口，其他窗口不会显示，只有当系统对话框或者进度窗关闭时其它窗口才会显示出来，如果同时打开多个对话窗，对话窗口会排队处理，只有关闭前一个才会显示下一个；系统对话窗一般用来处理网络断开提示重连，或者退出游戏时提示用户确认等。
+
+    - 进度条对话窗(PROGRESS)
+
+        功能等同于系统对话窗，在显示进度条对话窗时使用。
+
+    - 队列弹窗(QUEUED_POPUP)
+
+        队列弹窗(QUEUED_POPUP)功能类似DIALOG类型，但是可以配置窗口优先级，在同一个窗口管理器，它只允许打开一个，当有其他的QUEUED_POPUP或者POPUP、FULL等窗口打开时，会排队等候，并且优先级高的QUEUED_POPUP窗口先打开，优先级低的后打开，其他窗口最后打开，队列弹窗(QUEUED_POPUP)优先级低于DIALOG和PROGRESS窗口，如果有DIALOG或者PROGRESS窗口打开时会被覆盖。
+
+        这种类型的窗口一般用来展示服务器推送的消息上，比如游戏启动时，服务器推送多个消息，打开公告牌，领取奖励等等，需要打开多个窗口显示时可以使用这种类型，并且对弹出窗口排序。
+
+    窗口类型设置如下图：
 
   ![](images/WindowType.png)  
 

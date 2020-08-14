@@ -214,42 +214,43 @@ namespace Loxodon.Framework.Obfuscation
 
         public int CompareTo(object value)
         {
-            if (value == null)
+            if (value == null) return 1;
+
+            if (value is long)
             {
-                return 1;
+                long i = (long)value;
+                if (Value < i) return -1;
+                if (Value > i) return 1;
+                return 0;
             }
-            if (!(value is int))
+
+            if (value is ObfuscatedLong)
             {
-                throw new ArgumentException();
+                ObfuscatedLong i = (ObfuscatedLong)value;
+                if (Value < i.Value) return -1;
+                if (Value > i.Value) return 1;
+                return 0;
             }
-            int num = (int)value;
-            if (this.Value < num)
-            {
-                return -1;
-            }
-            if (this.Value > num)
-            {
-                return 1;
-            }
-            return 0;
+
+            throw new ArgumentException();
         }
 
         public int CompareTo(long value)
         {
-            if (this.Value < value)
-            {
-                return -1;
-            }
-            if (this.Value > value)
-            {
-                return 1;
-            }
+            if (Value < value) return -1;
+            if (Value > value) return 1;
             return 0;
         }
 
         public override bool Equals(object obj)
         {
-            return ((obj is ObfuscatedLong) && (this == ((ObfuscatedLong)obj)));
+            if (obj is ObfuscatedLong)
+                return this.Value == ((ObfuscatedLong)obj).Value;
+
+            if (obj is long)
+                return this.Value == (long)obj;
+
+            return false;
         }
 
         public bool Equals(long obj)
