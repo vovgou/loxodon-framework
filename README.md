@@ -7,7 +7,7 @@
 
 [(中文版)](README_CN.md)
 
-**MVVM Framework for Unity3D(C# & XLua)**
+**MVVM and Databinding for Unity3d(C# & XLua)**
 
 *Developed by Clark*
 
