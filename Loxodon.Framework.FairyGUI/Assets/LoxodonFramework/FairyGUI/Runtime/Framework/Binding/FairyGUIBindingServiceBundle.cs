@@ -22,35 +22,29 @@
  * SOFTWARE.
  */
 
-#if FAIRY_GUI
-using FairyGUI;
-using Loxodon.Framework.Binding.Reflection;
-namespace Loxodon.Framework.Binding.Proxy.Targets
+using Loxodon.Framework.Binding.Proxy.Targets;
+using Loxodon.Framework.Services;
+using System;
+
+namespace Loxodon.Framework.Binding
 {
-    public class FairyPropertyProxy : PropertyTargetProxy
+    public class FairyGUIBindingServiceBundle : AbstractServiceBundle
     {
-
-        private EventListener listener;
-        public FairyPropertyProxy(object target, IProxyPropertyInfo propertyInfo, EventListener listener) : base(target, propertyInfo)
+        public FairyGUIBindingServiceBundle(IServiceContainer container) : base(container)
         {
-            this.listener = listener;
         }
 
-        public override BindingMode DefaultMode { get { return BindingMode.TwoWay; } }
-
-        protected override void DoSubscribeForValueChange(object target)
+        protected override void OnStart(IServiceContainer container)
         {
-            if (this.listener == null || target == null)
-                return;
+            var targetFactory = container.Resolve<ITargetProxyFactoryRegister>();
+            if (targetFactory == null)
+                throw new Exception("Data binding service is not initialized,please create a BindingServiceBundle service before using it.");
 
-            listener.Add(RaiseValueChanged);
+            targetFactory.Register(new FairyTargetProxyFactory(), 20);
         }
 
-        protected override void DoUnsubscribeForValueChange(object target)
+        protected override void OnStop(IServiceContainer container)
         {
-            if (listener != null)
-                listener.Remove(RaiseValueChanged);
         }
     }
 }
-#endif

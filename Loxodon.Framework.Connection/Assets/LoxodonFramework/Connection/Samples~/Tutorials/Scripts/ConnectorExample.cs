@@ -76,16 +76,19 @@ namespace Loxodon.Framework.Examples
                  return false;
              });
 
-            connector = new DefaultConnector<Request, Response, Notification>(channel);
+            //每个20秒空闲则触发空闲事件，并且每隔20秒触发一次,时间为0则关闭空闲事件，首次空闲First为true。示例中只开启了读写都空闲的事件
+            IdleStateMonitor idleStateMonitor = new IdleStateMonitor(TimeSpan.FromTicks(0), TimeSpan.FromTicks(0), TimeSpan.FromSeconds(20f));
+            connector = new DefaultConnector<Request, Response, Notification>(channel, idleStateMonitor);
             connector.AutoReconnect = true;//开启自动重连，只重连一次，失败后不再重试，建议使用心跳包保证连接可用
 
             //订阅事件,收到ConnectionEventArgs参数
             eventSubscription = connector.Events().Filter(e =>
             {
                 //消息过滤，只订阅ConnectionEventArgs类型的事件
-                if (e is ConnectionEventArgs)
-                    return true;
-                return false;
+                //if (e is ConnectionEventArgs)
+                //    return true;
+                //return false;
+                return true;
             }).ObserveOn(SynchronizationContext.Current).Subscribe((e) =>
             {
                 Debug.LogFormat("Client Received Event:{0}", e);

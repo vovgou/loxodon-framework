@@ -1,0 +1,38 @@
+{
+  "name": "com.vovgou.loxodon-framework-fgui",
+  "displayName": "Loxodon Framework FairyGUI",
+  "version": "2.0.4",
+  "unity": "2018.4",
+  "description": "",  
+  "license": "MIT",
+  "keywords": [
+    "Loxodon",
+    "Framework",
+    "Databinding",
+    "Localization",
+    "MVVM",
+    "UI",
+    "UGUI",
+    "FairyGUI",
+    "UIElements",
+    "XLua",
+    "Lua"
+  ],
+  "author": {
+    "name": "Clark Yang",
+    "email": "yangpc.china@gmail.com",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+  "category": "GUI",
+  "relatedPackages": {},
+  "dependencies": {
+    "com.vovgou.loxodon-framework": "2.0.4"
+  },
+  "samples": [
+    {
+      "displayName": "Tutorials",
+      "description": "Tutorials",
+      "path": "Samples~/Tutorials"
+    }
+  ]
+}

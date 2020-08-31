@@ -24,7 +24,7 @@
 
 using System;
 using System.Collections.Generic;
-namespace Loxodon.Framework.Localizations
+namespace Loxodon.Framework.Editors
 {
     public class Language
     {

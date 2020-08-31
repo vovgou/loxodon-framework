@@ -59,9 +59,6 @@ namespace Loxodon.Framework.Binding
             TargetProxyFactory targetFactory = new TargetProxyFactory();
             targetFactory.Register(new UniversalTargetProxyFactory(), 0);
             targetFactory.Register(new UnityTargetProxyFactory(), 10);
-#if FAIRY_GUI
-            targetFactory.Register(new FairyTargetProxyFactory(), 20);
-#endif
 #if UNITY_2019_1_OR_NEWER
             targetFactory.Register(new VisualElementProxyFactory(), 30);
 #endif

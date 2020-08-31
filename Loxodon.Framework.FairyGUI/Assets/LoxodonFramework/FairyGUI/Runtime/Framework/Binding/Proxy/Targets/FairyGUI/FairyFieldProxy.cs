@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-#if FAIRY_GUI
 using FairyGUI;
 using Loxodon.Framework.Binding.Reflection;
 namespace Loxodon.Framework.Binding.Proxy.Targets
@@ -52,4 +51,3 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         }
     }
 }
-#endif

@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 
 using Loxodon.Log;
+using System.Runtime.CompilerServices;
 
 namespace Loxodon.Framework.Observables
 {
@@ -147,7 +148,7 @@ namespace Loxodon.Framework.Observables
         /// <param name="newValue"></param>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        protected bool Set<T>(ref T field, T newValue, string propertyName)
+        protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
             if (object.Equals(field, newValue))
                 return false;

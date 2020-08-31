@@ -48,10 +48,17 @@ namespace Loxodon.Framework.Net.Connection
         protected object stateLock = new object();
         protected ConnectionState state = ConnectionState.Closed;
         protected IChannel<IMessage> channel;
+        protected IdleStateMonitor idleStateMonitor;
 
-        public DefaultConnector(IChannel<IMessage> channel)
+        public DefaultConnector(IChannel<IMessage> channel) : this(channel, null)
+        {
+        }
+
+        public DefaultConnector(IChannel<IMessage> channel, IdleStateMonitor idleStateMonitor)
         {
             this.channel = channel ?? throw new ArgumentNullException("channel");
+            this.idleStateMonitor = idleStateMonitor ?? new IdleStateMonitor(TimeSpan.FromSeconds(30.0));
+            this.idleStateMonitor.IdleStateChanged += OnIdleStateChanged;
         }
 
         public virtual int TimeoutMilliseconds
@@ -104,6 +111,12 @@ namespace Loxodon.Framework.Net.Connection
             }
         }
 
+        protected virtual void OnIdleStateChanged(object sender, IdleStateEventArgs e)
+        {
+            if (eventArgsSubject != null)
+                eventArgsSubject.Publish(e);
+        }
+
         public async Task Connect(string hostname, int port, int timeoutMilliseconds)
         {
             ValidateDisposed();
@@ -118,7 +131,6 @@ namespace Loxodon.Framework.Net.Connection
                 this.hostname = hostname;
                 this.port = port;
                 this.connTimeoutMilliseconds = timeoutMilliseconds;
-                //await DoConnect().TimeoutAfter(this.connTimeoutMilliseconds);
                 await DoConnect();
                 this.State = ConnectionState.Connected;
                 this.eventArgsSubject.Publish(ConnectionEventArgs.ConnectedEventArgs);
@@ -209,6 +221,12 @@ namespace Loxodon.Framework.Net.Connection
                     this.eventArgsSubject.Publish(ConnectionEventArgs.ClosedEventArgs);
                 }
 
+                if (idleStateMonitor != null)
+                {
+                    idleStateMonitor.IdleStateChanged -= OnIdleStateChanged;
+                    idleStateMonitor.Dispose();
+                }
+
                 foreach (var kv in promises)
                 {
                     var promise = kv.Value;
@@ -259,6 +277,7 @@ namespace Loxodon.Framework.Net.Connection
         protected virtual async Task DoConnect()
         {
             await channel.Connect(hostname, port, connTimeoutMilliseconds);
+            idleStateMonitor?.OnConnected();
         }
 
         protected virtual async Task DoDisconnect()
@@ -266,6 +285,7 @@ namespace Loxodon.Framework.Net.Connection
             if (this.channel != null && this.channel.Connected)
             {
                 await channel.Close();
+                idleStateMonitor?.OnDisconnected();
             }
         }
 
@@ -278,6 +298,8 @@ namespace Loxodon.Framework.Net.Connection
                 if (t.IsCompleted)
                 {
                     promises.TryAdd(request.Sequence.ToString(), promise);
+
+                    idleStateMonitor?.OnSent();
                 }
                 else
                 {
@@ -290,9 +312,10 @@ namespace Loxodon.Framework.Net.Connection
             return promise.Task;
         }
 
-        protected virtual Task DoSend(TNotification notification)
+        protected virtual async Task DoSend(TNotification notification)
         {
-            return this.channel.WriteAsync(notification);
+            await this.channel.WriteAsync(notification);
+            idleStateMonitor?.OnSent();
         }
 
         protected virtual async void DoReceived()
@@ -311,6 +334,8 @@ namespace Loxodon.Framework.Net.Connection
                     }
 
                     IMessage message = await this.channel.ReadAsync();
+                    idleStateMonitor?.OnReceived();
+
                     if (message is TNotification)
                     {
                         this.notificationSubject.Publish((TNotification)message);
@@ -416,6 +441,13 @@ namespace Loxodon.Framework.Net.Connection
                             this.State = ConnectionState.Closing;
                             DoDisconnect();
                             this.channel = null;
+                        }
+
+                        if (idleStateMonitor != null)
+                        {
+                            idleStateMonitor.IdleStateChanged -= OnIdleStateChanged;
+                            idleStateMonitor.Dispose();
+                            idleStateMonitor = null;
                         }
 
                         this.eventArgsSubject.Dispose();

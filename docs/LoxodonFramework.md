@@ -273,6 +273,14 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 
     ![](images/bundle.png)
 
+- [Loxodon Framework FairyGUI](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.FairyGUI)
+
+    框架已支持FairyGUI控件的数据绑定，请下载FairyGUI-unity和Loxodon Framework FairyGUI，并导入项目中。
+
+    **下载：**
+    [FairyGUI-unity](https://github.com/fairygui/FairyGUI-unity)
+    [Loxodon Framework FairyGUI](https://github.com/vovgou/loxodon-framework/releases)  
+
 - [Loxodon Framework Log4Net](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Log4Net)
 
     支持使用Log4Net在Unity中打印日志的插件，支持在局域网中远程调试。

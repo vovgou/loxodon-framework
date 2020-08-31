@@ -45,7 +45,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public override string ToString()
         {
-            return string.Format("ConnectionEvent:{0}", this.Name);
+            return string.Format("ConnectionEvent:[{0}]", this.Name);
         }
     }
 }

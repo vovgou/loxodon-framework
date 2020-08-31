@@ -55,7 +55,6 @@ namespace Loxodon.Framework.Editors
 
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
-            // This function is called when the user clicks on the MyCustom element in the Settings window.
             m_LuaSettings = LuaSettings.GetSerializedSettings();
             var rootsProperty = m_LuaSettings.FindProperty("srcRoots");
 

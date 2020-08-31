@@ -151,10 +151,11 @@ namespace Loxodon.Framework.Editors
             foreach (string root in luaSettings.SrcRoots)
             {
                 if (path.StartsWith(root))
-                {
                     return true;
-                }
             }
+
+            if (path.IndexOf("Resources") >= 0)
+                return true;
 
             if (EditorUtility.DisplayDialog("Notice", string.Format("The file \"{0}\" is not in the source code folder of lua. Do you want to add a source code folder?", asset.name), "Yes", "Cancel"))
             {
@@ -207,10 +208,14 @@ namespace Loxodon.Framework.Editors
             {
                 if (path.StartsWith(root))
                 {
-                    path = path.Replace(root + "/", "");
-                    break;
+                    path = path.Replace(root + "/", "").Replace("/", ".");
+                    return path;
                 }
             }
+
+            int index = path.IndexOf("Resources");
+            if (index >= 0)
+                path = path.Substring(index + 10);
 
             path = path.Replace("/", ".");
             return path;

@@ -131,6 +131,8 @@ Download Loxodon.Framework.Connection.unitypackage, import them into your projec
     
 ## How to create a self signed certificate
 
+### Use makecert.exe and pvk2pfx.exe tools to create a self-signed certificate
+
 - Download Makecert.exe from [here](https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/)
    
   ![](docs/images/download_makecert.png)
@@ -160,6 +162,41 @@ Download Loxodon.Framework.Connection.unitypackage, import them into your projec
       });
 
 For the complete makecert.exe parameter reference [click here](http://msdn.microsoft.com/en-us/library/bfsktky3%28v=vs.110%29.aspx)
+
+### Create and use a self-signed certificate in Netty
+
+    public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
+
+    	public void init() {
+    		try {
+                selfSignedCertificate = new SelfSignedCertificate(
+    			     "vovgou.com");
+    			sslContext = SslContext.newServerContext(
+    			     selfSignedCertificate.certificate(),
+    			     selfSignedCertificate.privateKey());
+    		} catch (Exception e) {
+    			throw new RuntimeException(e);
+    		}
+    	}
+    
+    	public void destroy() {
+    		if (selfSignedCertificate != null) {
+    			selfSignedCertificate.delete();
+    			selfSignedCertificate = null;
+    		}
+    	}
+
+    	@Override
+    	protected void initChannel(SocketChannel ch) throws Exception {
+    		if (sslContext != null) {
+    			ch.pipeline().addLast(sslContext.newHandler(ch.alloc()));
+    		}
+    		ch.pipeline().addLast("encoder", factory.newMessageEncoder());
+    		ch.pipeline().addLast("decoder", factory.newMessageDecoder());
+    		if (this.handlers != null)
+    			ch.pipeline().addLast(this.getEventExecutorGroup(), this.handlers);
+    	}
+    }
 
 ## Contact Us
 Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   

@@ -359,7 +359,7 @@ namespace Loxodon.Framework.XLua.Editors
                 if (!string.IsNullOrEmpty(path))
                 {
                     projectPath = projectPath.Replace("\\", "/");
-                    if (path.StartsWith(projectPath))
+                    if (path.StartsWith(projectPath) && path.Length > projectPath.Length)
                         path = path.Remove(0, projectPath.Length + 1);
                     url = path;
                     GUI.FocusControl(null);
@@ -385,7 +385,7 @@ namespace Loxodon.Framework.XLua.Editors
                 if (!string.IsNullOrEmpty(path))
                 {
                     projectPath = projectPath.Replace("\\", "/");
-                    if (path.StartsWith(projectPath))
+                    if (path.StartsWith(projectPath) && path.Length > projectPath.Length)
                         path = path.Remove(0, projectPath.Length + 1);
                     url = path;
                     GUI.FocusControl(null);
@@ -402,7 +402,7 @@ namespace Loxodon.Framework.XLua.Editors
                 {
                     var projectPath = Path.GetFullPath(".");
                     projectPath = projectPath.Replace("\\", "/");
-                    if (path.StartsWith(projectPath))
+                    if (path.StartsWith(projectPath) && path.Length > projectPath.Length)
                         path = path.Remove(0, projectPath.Length + 1);
                     urls[index] = path;
                     GUI.FocusControl(null);
