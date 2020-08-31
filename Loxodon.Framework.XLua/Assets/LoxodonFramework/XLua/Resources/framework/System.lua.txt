@@ -235,7 +235,11 @@ function extends(target,cls)
 	meta.__original_meta = original_meta
 	
 	meta.__index = function(t, k)
-		return meta[k] or original_indexer(t, k)
+		local ret = meta[k]
+		if ret ~= nil then
+			return ret
+		end
+		return original_indexer(t, k)
 	end
 	
 	meta.__newindex = function(t, k, v)
