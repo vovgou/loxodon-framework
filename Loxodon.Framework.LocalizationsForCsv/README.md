@@ -74,7 +74,7 @@ XML的配置文件和CSV的配置文件可以相互转换，但是对于数组�
 
 选择XML配置文件的根目录，右键选择Loxodon/Xml To Csv 命令，会自动将目录下的所有xml文件转换为csv格式的文件，XML中不同语言版本会合并到同一个csv文件中。同样，CSV文件也可以转换为XML文件，如果CSV文件中包含多个语言的配置版本，会被拆分成多个XML文件。
 
-![](docs/xml2csv.png)
+![](docs/images/xml2csv.png)
 
 生成csv文件如下
 
