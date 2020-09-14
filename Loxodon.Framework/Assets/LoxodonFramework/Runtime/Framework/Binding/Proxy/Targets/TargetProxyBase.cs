@@ -31,6 +31,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
     public abstract class TargetProxyBase : BindingProxyBase, ITargetProxy
     {
         private readonly WeakReference target;
+        protected TypeCode typeCode = TypeCode.Empty;
         protected readonly string targetName;
         public TargetProxyBase(object target)
         {
@@ -42,6 +43,22 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         }
 
         public abstract Type Type { get; }
+
+        public virtual TypeCode TypeCode
+        {
+            get
+            {
+                if (typeCode == TypeCode.Empty)
+                {
+#if NETFX_CORE
+                    typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(Type);
+#else
+                    typeCode = Type.GetTypeCode(Type);
+#endif
+                }
+                return typeCode;
+            }
+        }
 
         public virtual object Target
         {

@@ -73,11 +73,7 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             try
             {
-#if NETFX_CORE
                 return (Func<TResult>)methodInfo.CreateDelegate(typeof(Func<TResult>));
-#elif !UNITY_IOS
-                return (Func<TResult>)Delegate.CreateDelegate(typeof(Func<TResult>), methodInfo);
-#endif
             }
             catch (Exception e)
             {
@@ -150,11 +146,7 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             try
             {
-#if NETFX_CORE
                 return (Func<P1, TResult>)methodInfo.CreateDelegate(typeof(Func<P1, TResult>));
-#elif !UNITY_IOS
-                return (Func<P1, TResult>)Delegate.CreateDelegate(typeof(Func<P1, TResult>), methodInfo);
-#endif
             }
             catch (Exception e)
             {
@@ -228,11 +220,7 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             try
             {
-#if NETFX_CORE
-                return (Func<P1, P2,TResult>)methodInfo.CreateDelegate(typeof(Func<P1,P2, TResult>));
-#elif !UNITY_IOS
-                return (Func<P1, P2, TResult>)Delegate.CreateDelegate(typeof(Func<P1, P2, TResult>), methodInfo);
-#endif
+                return (Func<P1, P2, TResult>)methodInfo.CreateDelegate(typeof(Func<P1, P2, TResult>));
             }
             catch (Exception e)
             {
@@ -300,11 +288,7 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             try
             {
-#if NETFX_CORE
-                return (Func<P1, P2,P3,TResult>)methodInfo.CreateDelegate(typeof(Func<P1,P2,P3, TResult>));
-#elif !UNITY_IOS
-                return (Func<P1, P2, P3, TResult>)Delegate.CreateDelegate(typeof(Func<P1, P2, P3, TResult>), methodInfo);
-#endif
+                return (Func<P1, P2, P3, TResult>)methodInfo.CreateDelegate(typeof(Func<P1, P2, P3, TResult>));
             }
             catch (Exception e)
             {
@@ -371,11 +355,7 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             try
             {
-#if NETFX_CORE
-                return  (Action)methodInfo.CreateDelegate(typeof(Action));
-#elif !UNITY_IOS
-                return (Action)Delegate.CreateDelegate(typeof(Action), methodInfo);
-#endif
+                return (Action)methodInfo.CreateDelegate(typeof(Action));
             }
             catch (Exception e)
             {
@@ -449,11 +429,7 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             try
             {
-#if NETFX_CORE
-                return  (Action<P1>)methodInfo.CreateDelegate(typeof(Action<P1>));
-#elif !UNITY_IOS
-                return (Action<P1>)Delegate.CreateDelegate(typeof(Action<P1>), methodInfo);
-#endif
+                return (Action<P1>)methodInfo.CreateDelegate(typeof(Action<P1>));
             }
             catch (Exception e)
             {
@@ -525,11 +501,7 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             try
             {
-#if NETFX_CORE
-                return  (Action<P1,P2>)methodInfo.CreateDelegate(typeof(Action<P1,P2>));
-#elif !UNITY_IOS
-                return (Action<P1, P2>)Delegate.CreateDelegate(typeof(Action<P1, P2>), methodInfo);
-#endif
+                return (Action<P1, P2>)methodInfo.CreateDelegate(typeof(Action<P1, P2>));
             }
             catch (Exception e)
             {
@@ -601,11 +573,7 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             try
             {
-#if NETFX_CORE
-                return  (Action<P1,P2,P3>)methodInfo.CreateDelegate(typeof(Action<P1,P2,P3>));
-#elif !UNITY_IOS
-                return (Action<P1, P2, P3>)Delegate.CreateDelegate(typeof(Action<P1, P2, P3>), methodInfo);
-#endif
+                return (Action<P1, P2, P3>)methodInfo.CreateDelegate(typeof(Action<P1, P2, P3>));
             }
             catch (Exception e)
             {

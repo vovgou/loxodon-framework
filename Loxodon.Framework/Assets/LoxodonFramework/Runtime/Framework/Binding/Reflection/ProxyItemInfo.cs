@@ -32,6 +32,7 @@ namespace Loxodon.Framework.Binding.Reflection
     public class ProxyItemInfo : IProxyItemInfo
     {
         private readonly bool isValueType;
+        private TypeCode typeCode;
         protected PropertyInfo propertyInfo;
         protected MethodInfo getMethod;
         protected MethodInfo setMethod;
@@ -48,11 +49,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentException("The property types do not match!");
 
             this.propertyInfo = propertyInfo;
-#if NETFX_CORE
             this.isValueType = this.propertyInfo.DeclaringType.GetTypeInfo().IsValueType;
-#else
-            this.isValueType = this.propertyInfo.DeclaringType.IsValueType;
-#endif
 
             if (this.propertyInfo.CanRead)
                 this.getMethod = propertyInfo.GetGetMethod();
@@ -64,6 +61,22 @@ namespace Loxodon.Framework.Binding.Reflection
         public bool IsValueType { get { return isValueType; } }
 
         public Type ValueType { get { return this.propertyInfo.PropertyType; } }
+
+        public TypeCode ValueTypeCode
+        {
+            get
+            {
+                if (typeCode == TypeCode.Empty)
+                {
+#if NETFX_CORE
+                    typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(ValueType);
+#else
+                    typeCode = Type.GetTypeCode(ValueType);
+#endif
+                }
+                return typeCode;
+            }
+        }
 
         public Type DeclaringType { get { return this.propertyInfo.DeclaringType; } }
 
@@ -125,7 +138,6 @@ namespace Loxodon.Framework.Binding.Reflection
             this.setMethod.Invoke(target, new object[] { key, value });
         }
     }
-
 
     public class ListProxyItemInfo<T, TValue> : ProxyItemInfo, IProxyItemInfo<T, int, TValue> where T : IList<TValue>
     {
@@ -196,6 +208,7 @@ namespace Loxodon.Framework.Binding.Reflection
 
     public class ArrayProxyItemInfo : IProxyItemInfo
     {
+        private TypeCode typeCode;
         protected readonly Type type;
         public ArrayProxyItemInfo(Type type)
         {
@@ -205,6 +218,22 @@ namespace Loxodon.Framework.Binding.Reflection
         }
 
         public Type ValueType { get { return type.HasElementType ? type.GetElementType() : typeof(object); } }
+
+        public TypeCode ValueTypeCode
+        {
+            get
+            {
+                if (typeCode == TypeCode.Empty)
+                {
+#if NETFX_CORE
+                    typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(ValueType);
+#else
+                    typeCode = Type.GetTypeCode(ValueType);
+#endif
+                }
+                return typeCode;
+            }
+        }
 
         public Type DeclaringType { get { return this.type; } }
 

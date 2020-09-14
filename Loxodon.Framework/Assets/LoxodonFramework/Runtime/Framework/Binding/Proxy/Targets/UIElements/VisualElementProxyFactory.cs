@@ -127,11 +127,16 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.DateTime: return new ValueChangedEventProxy<DateTime>((INotifyValueChanged<DateTime>)target);
                 case TypeCode.Object:
                 default:
-#if UNITY_IOS
-                    throw new NotSupportedException();
-#else
-                    return (ITargetProxy)Activator.CreateInstance(typeof(ValueChangedEventProxy<>).MakeGenericType(type), target);
-#endif
+                    {
+                        try
+                        {
+                            return (ITargetProxy)Activator.CreateInstance(typeof(ValueChangedEventProxy<>).MakeGenericType(type), target);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new NotSupportedException("", e);
+                        }
+                    }
             }
         }
 
@@ -163,11 +168,16 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.DateTime: return new VisualElementPropertyProxy<DateTime>(target, propertyInfo);
                 case TypeCode.Object:
                 default:
-#if UNITY_IOS
-                    throw new NotSupportedException();
-#else
-                    return (ITargetProxy)Activator.CreateInstance(typeof(VisualElementPropertyProxy<>).MakeGenericType(type), target, propertyInfo);
-#endif
+                    {
+                        try
+                        {
+                            return (ITargetProxy)Activator.CreateInstance(typeof(VisualElementPropertyProxy<>).MakeGenericType(type), target, propertyInfo);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new NotSupportedException("", e);
+                        }
+                    }
             }
         }
 
@@ -199,11 +209,16 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.DateTime: return new VisualElementFieldProxy<DateTime>(target, fieldInfo);
                 case TypeCode.Object:
                 default:
-#if UNITY_IOS
-                    throw new NotSupportedException();
-#else
-                    return (ITargetProxy)Activator.CreateInstance(typeof(VisualElementFieldProxy<>).MakeGenericType(type), target, fieldInfo);
-#endif
+                    {
+                        try
+                        {
+                            return (ITargetProxy)Activator.CreateInstance(typeof(VisualElementFieldProxy<>).MakeGenericType(type), target, fieldInfo);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new NotSupportedException("", e);
+                        }
+                    }
             }
         }
 

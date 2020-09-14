@@ -115,17 +115,18 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 - [常见问题解答 FAQ](https://github.com/vovgou/loxodon-framework/blob/master/docs/faq.md)
 
 ## 关键功能：
-- MVVM框架，支持UGUI和FairyGUI;
-- 支持XLua，可以完全使用Lua脚本开发（可选）
-- 支持async&await (C#和Lua都支持)
-- Lua支持了try&catch&finally
-- 多平台支持;
-- 高扩展性，面向接口开发;
-- 支持线程和协程的异步结果和异步任务，采用Future/Promise设计模式;
-- 多线程组件和定时执行器;<br>
+- MVVM框架，支持UGUI和FairyGUI，将来会支持UIToolkit;
+- 支持XLua，可以完全使用Lua脚本开发（可选）;
+- 支持async&await (C#和Lua都支持); 
+- Lua支持了try&catch&finally; 
+- 多平台支持; 
+- 高扩展性，面向接口开发; 
+- 运行时委托替代反射（包括IOS平台），尽可能的避免值类型的装箱拆箱;
+- 支持线程和协程的异步结果和异步任务，采用Future/Promise设计模式; 
+- 多线程组件和定时执行器; 
 - 支持消息系统，订阅和发布事件;
-- 支持对象池
-- 支持Properties的配置文件
+- 支持对象池; 
+- 支持Properties的配置文件; 
 - 可加密的配置文件，支持对象存取，可以自定义对象转换器，支持更多的对象;
 - 本地化支持，支持xml、csv、asset等多种配置方式，支持图片等多媒体资源本地化;
 - 数据绑定支持:

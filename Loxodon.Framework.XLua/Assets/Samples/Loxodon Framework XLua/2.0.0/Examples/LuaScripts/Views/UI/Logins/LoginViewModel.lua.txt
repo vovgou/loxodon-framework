@@ -89,7 +89,7 @@ M.login = async(function(self)
 					return
 				end
 				
-				local account = await self.accountService:login(self.username, self.password)		
+				local account = await(self.accountService:login(self.username, self.password))				
 				
 				if account then            
 					self.globalPreferences:SetString("LAST_USERNAME", self.username)

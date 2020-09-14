@@ -56,6 +56,18 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             }
         }
 
+        public override TypeCode TypeCode
+        {
+            get
+            {
+                var proxy = GetProxy();
+                if (proxy == null)
+                    return TypeCode.Object;
+
+                return proxy.TypeCode;
+            }
+        }
+
         protected ISourceProxy GetProxy()
         {
             ProxyEntry proxyEntry = proxies[count - 1];

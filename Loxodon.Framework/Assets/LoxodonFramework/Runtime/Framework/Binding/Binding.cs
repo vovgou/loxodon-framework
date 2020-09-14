@@ -215,7 +215,6 @@ namespace Loxodon.Framework.Binding
 
                         this.isUpdatingTarget = true;
 
-                        Type valueType = this.sourceProxy.Type;
                         IObtainable obtainable = this.sourceProxy as IObtainable;
                         if (obtainable == null)
                             return;
@@ -224,11 +223,7 @@ namespace Loxodon.Framework.Binding
                         if (modifier == null)
                             return;
 
-#if NETFX_CORE
-                        TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(valueType);
-#else
-                        TypeCode typeCode = Type.GetTypeCode(valueType);
-#endif
+                        TypeCode typeCode = this.sourceProxy.TypeCode;
                         switch (typeCode)
                         {
                             case TypeCode.Boolean:
@@ -269,19 +264,19 @@ namespace Loxodon.Framework.Binding
                                 }
                             case TypeCode.Int16:
                                 {
-                                    var value = obtainable.GetValue<Int16>();
+                                    var value = obtainable.GetValue<short>();
                                     this.SetTargetValue(modifier, value);
                                     break;
                                 }
                             case TypeCode.Int32:
                                 {
-                                    var value = obtainable.GetValue<Int32>();
+                                    var value = obtainable.GetValue<int>();
                                     this.SetTargetValue(modifier, value);
                                     break;
                                 }
                             case TypeCode.Int64:
                                 {
-                                    var value = obtainable.GetValue<Int64>();
+                                    var value = obtainable.GetValue<long>();
                                     this.SetTargetValue(modifier, value);
                                     break;
                                 }
@@ -305,24 +300,25 @@ namespace Loxodon.Framework.Binding
                                 }
                             case TypeCode.UInt16:
                                 {
-                                    var value = obtainable.GetValue<UInt16>();
+                                    var value = obtainable.GetValue<ushort>();
                                     this.SetTargetValue(modifier, value);
                                     break;
                                 }
                             case TypeCode.UInt32:
                                 {
-                                    var value = obtainable.GetValue<UInt32>();
+                                    var value = obtainable.GetValue<uint>();
                                     this.SetTargetValue(modifier, value);
                                     break;
                                 }
                             case TypeCode.UInt64:
                                 {
-                                    var value = obtainable.GetValue<UInt64>();
+                                    var value = obtainable.GetValue<ulong>();
                                     this.SetTargetValue(modifier, value);
                                     break;
                                 }
                             case TypeCode.Object:
                                 {
+                                    Type valueType = this.sourceProxy.Type;
                                     if (valueType.Equals(typeof(Vector2)))
                                     {
                                         var value = obtainable.GetValue<Vector2>();
@@ -395,7 +391,7 @@ namespace Loxodon.Framework.Binding
 
                 this.isUpdatingSource = true;
 
-                Type valueType = this.targetProxy.Type;
+
                 IObtainable obtainable = this.targetProxy as IObtainable;
                 if (obtainable == null)
                     return;
@@ -403,11 +399,8 @@ namespace Loxodon.Framework.Binding
                 IModifiable modifier = this.sourceProxy as IModifiable;
                 if (modifier == null)
                     return;
-#if NETFX_CORE
-                TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(valueType);
-#else
-                TypeCode typeCode = Type.GetTypeCode(valueType);
-#endif
+
+                TypeCode typeCode = this.targetProxy.TypeCode;
                 switch (typeCode)
                 {
                     case TypeCode.Boolean:
@@ -448,19 +441,19 @@ namespace Loxodon.Framework.Binding
                         }
                     case TypeCode.Int16:
                         {
-                            var value = obtainable.GetValue<Int16>();
+                            var value = obtainable.GetValue<short>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
                     case TypeCode.Int32:
                         {
-                            var value = obtainable.GetValue<Int32>();
+                            var value = obtainable.GetValue<int>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
                     case TypeCode.Int64:
                         {
-                            var value = obtainable.GetValue<Int64>();
+                            var value = obtainable.GetValue<long>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
@@ -484,24 +477,25 @@ namespace Loxodon.Framework.Binding
                         }
                     case TypeCode.UInt16:
                         {
-                            var value = obtainable.GetValue<UInt16>();
+                            var value = obtainable.GetValue<ushort>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
                     case TypeCode.UInt32:
                         {
-                            var value = obtainable.GetValue<UInt32>();
+                            var value = obtainable.GetValue<uint>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
                     case TypeCode.UInt64:
                         {
-                            var value = obtainable.GetValue<UInt64>();
+                            var value = obtainable.GetValue<ulong>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
                     case TypeCode.Object:
                         {
+                            Type valueType = this.targetProxy.Type;
                             if (valueType.Equals(typeof(Vector2)))
                             {
                                 var value = obtainable.GetValue<Vector2>();

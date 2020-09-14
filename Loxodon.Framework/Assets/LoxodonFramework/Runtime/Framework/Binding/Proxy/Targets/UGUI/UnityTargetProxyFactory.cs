@@ -114,11 +114,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         protected virtual ITargetProxy CreateUnityPropertyProxy(object target, IProxyPropertyInfo propertyInfo, UnityEventBase updateTrigger)
         {
             Type type = propertyInfo.ValueType;
-#if NETFX_CORE
-            TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
-#else
-            TypeCode typeCode = Type.GetTypeCode(type);
-#endif
+            TypeCode typeCode = propertyInfo.ValueTypeCode;
 
             switch (typeCode)
             {
@@ -139,22 +135,23 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.DateTime: return new UnityPropertyProxy<DateTime>(target, propertyInfo, (UnityEvent<DateTime>)updateTrigger);
                 case TypeCode.Object:
                 default:
-#if UNITY_IOS
-                    throw new NotSupportedException();
-#else
-                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityPropertyProxy<>).MakeGenericType(propertyInfo.ValueType), target, propertyInfo, updateTrigger);
-#endif
+                    {
+                        try
+                        {
+                            return (ITargetProxy)Activator.CreateInstance(typeof(UnityPropertyProxy<>).MakeGenericType(propertyInfo.ValueType), target, propertyInfo, updateTrigger);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new NotSupportedException("", e);
+                        }
+                    }
             }
         }
 
         protected virtual ITargetProxy CreateUnityFieldProxy(object target, IProxyFieldInfo fieldInfo, UnityEventBase updateTrigger)
         {
             Type type = fieldInfo.ValueType;
-#if NETFX_CORE
-            TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
-#else
-            TypeCode typeCode = Type.GetTypeCode(type);
-#endif
+            TypeCode typeCode = fieldInfo.ValueTypeCode;
 
             switch (typeCode)
             {
@@ -175,11 +172,16 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.DateTime: return new UnityFieldProxy<DateTime>(target, fieldInfo, (UnityEvent<DateTime>)updateTrigger);
                 case TypeCode.Object:
                 default:
-#if UNITY_IOS
-                    throw new NotSupportedException();
-#else
-                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityFieldProxy<>).MakeGenericType(fieldInfo.ValueType), target, fieldInfo, updateTrigger);
-#endif
+                    {
+                        try
+                        {
+                            return (ITargetProxy)Activator.CreateInstance(typeof(UnityFieldProxy<>).MakeGenericType(fieldInfo.ValueType), target, fieldInfo, updateTrigger);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new NotSupportedException("", e);
+                        }
+                    }
             }
         }
 
@@ -229,11 +231,16 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                             return new UnityEventProxy<DateTime>(target, (UnityEvent<DateTime>)unityEvent);
                         case TypeCode.Object:
                         default:
-#if UNITY_IOS
-                            throw new NotSupportedException();
-#else
-                            return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<>).MakeGenericType(paramTypes[0]), target, unityEvent);
-#endif
+                            {
+                                try
+                                {
+                                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<>).MakeGenericType(paramTypes[0]), target, unityEvent);
+                                }
+                                catch (Exception e)
+                                {
+                                    throw new NotSupportedException("", e);
+                                }
+                            }
                     }
                 default:
                     throw new NotSupportedException("Too many parameters");

@@ -64,10 +64,6 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
                     list.Add(innerProxy);
             }
 
-#if UNITY_IOS
-            Func<object[], object> del = expression.DynamicCompile();
-            proxy = new ExpressionSourceProxy(description.IsStatic ? null : source, del, description.ReturnType, list);
-#else
             try
             {
                 var del = expression.Compile();
@@ -88,7 +84,6 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
                 Func<object[], object> del = expression.DynamicCompile();
                 proxy = new ExpressionSourceProxy(description.IsStatic ? null : source, del, description.ReturnType, list);
             }
-#endif
             if (proxy != null)
                 return true;
 

@@ -43,6 +43,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public override Type Type { get { return this.propertyInfo.ValueType; } }
 
+        public override TypeCode TypeCode { get { return this.propertyInfo.ValueTypeCode; } }
+
         public override BindingMode DefaultMode { get { return BindingMode.TwoWay; } }
 
         public override object GetValue()

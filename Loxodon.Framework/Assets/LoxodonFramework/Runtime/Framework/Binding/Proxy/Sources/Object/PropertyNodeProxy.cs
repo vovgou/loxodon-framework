@@ -25,9 +25,6 @@
 using Loxodon.Framework.Binding.Reflection;
 using Loxodon.Log;
 using System;
-#if NETFX_CORE
-using System.Reflection;
-#endif
 
 using INotifyPropertyChanged = System.ComponentModel.INotifyPropertyChanged;
 using PropertyChangedEventArgs = System.ComponentModel.PropertyChangedEventArgs;
@@ -64,6 +61,8 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
         }
 
         public override Type Type { get { return propertyInfo.ValueType; } }
+
+        public override TypeCode TypeCode { get { return propertyInfo.ValueTypeCode; } }
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {

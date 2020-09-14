@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
@@ -37,12 +36,23 @@ namespace Loxodon.Framework.Net.Connection
     {
         protected readonly SemaphoreSlim connectLock = new SemaphoreSlim(1, 1);
         protected TcpClient client;
+        protected AddressFamily family = AddressFamily.InterNetwork;
+        protected bool adaptiveAddressFamily = true;
         public TcpChannel(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder) : this(decoder, encoder, null)
         {
         }
 
         public TcpChannel(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler) : base(decoder, encoder, handshakeHandler)
         {
+        }
+
+        public TcpChannel(AddressFamily family, IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler) : base(decoder, encoder, handshakeHandler)
+        {
+            if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
+                throw new ArgumentException("family");
+
+            this.family = family;
+            this.adaptiveAddressFamily = false;
         }
 
         public override bool Connected { get { return client != null ? client.Connected && connected : false; } }
@@ -62,25 +72,12 @@ namespace Loxodon.Framework.Net.Connection
                 client = await Task.Run(async () =>
                 {
                     IPAddress[] addresses = await Dns.GetHostAddressesAsync(hostname);
-                    List<IPAddress> ipv4Addresses = new List<IPAddress>();
-                    List<IPAddress> ipv6Addresses = new List<IPAddress>();
-                    foreach (IPAddress address in addresses)
-                    {
-                        if (address.AddressFamily == AddressFamily.InterNetwork)
-                        {
-                            ipv4Addresses.Add(address);
-                        }
-                        else if (address.AddressFamily == AddressFamily.InterNetworkV6)
-                        {
-                            ipv6Addresses.Add(address);
-                        }
-                    }
 
                     Exception lastex = null;
                     TcpClient ipv6Client = null;
                     TcpClient ipv4Client = null;
                     IPAddress nat64Address = null;
-                    if (Socket.OSSupportsIPv4)
+                    if ((adaptiveAddressFamily && Socket.OSSupportsIPv4) || family == AddressFamily.InterNetwork)
                     {
                         ipv4Client = new TcpClient(AddressFamily.InterNetwork);
                         ipv4Client.NoDelay = NoDelay;
@@ -88,7 +85,7 @@ namespace Loxodon.Framework.Net.Connection
                         ipv4Client.SendBufferSize = SendBufferSize;
                     }
 
-                    if (Socket.OSSupportsIPv6)
+                    if ((adaptiveAddressFamily && Socket.OSSupportsIPv6) || family == AddressFamily.InterNetworkV6)
                     {
                         ipv6Client = new TcpClient(AddressFamily.InterNetworkV6);
                         ipv6Client.NoDelay = NoDelay;
@@ -99,24 +96,21 @@ namespace Loxodon.Framework.Net.Connection
                         if (Regex.IsMatch(hostname, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$"))
                         {
                             nat64Address = IPAddress.Parse("64:ff9b::" + hostname);
-                            ipv6Addresses.Add(nat64Address);
                         }
                     }
 
-                    if (ipv4Client != null && ipv4Addresses.Count > 0)
+                    foreach (var address in addresses)
                     {
-                        foreach (var address in ipv4Addresses)
+                        try
                         {
-                            try
+                            if (address.AddressFamily == AddressFamily.InterNetwork && ipv4Client != null)
                             {
                                 var result = ipv4Client.BeginConnect(address, port, null, null);
                                 if (result.AsyncWaitHandle.WaitOne(timeoutMilliseconds))
                                 {
                                     ipv4Client.EndConnect(result);
-
                                     if (ipv6Client != null)
                                         ipv6Client.Close();
-
                                     return ipv4Client;
                                 }
                                 else
@@ -125,20 +119,8 @@ namespace Loxodon.Framework.Net.Connection
                                     throw new SocketException((int)SocketError.TimedOut);
                                 }
                             }
-                            catch (Exception ex)
-                            {
-                                if (ex is ThreadAbortException || ex is StackOverflowException || ex is OutOfMemoryException)
-                                    throw;
-                                lastex = ex;
-                            }
-                        }
-                    }
 
-                    if (ipv6Client != null && ipv6Addresses.Count > 0)
-                    {
-                        foreach (var address in ipv6Addresses)
-                        {
-                            try
+                            if (address.AddressFamily == AddressFamily.InterNetworkV6 && ipv6Client != null)
                             {
                                 var result = ipv6Client.BeginConnect(address, port, null, null);
                                 if (result.AsyncWaitHandle.WaitOne(timeoutMilliseconds))
@@ -154,15 +136,39 @@ namespace Loxodon.Framework.Net.Connection
                                     throw new SocketException((int)SocketError.TimedOut);
                                 }
                             }
-                            catch (Exception ex)
-                            {
-                                if (ex is ThreadAbortException || ex is StackOverflowException || ex is OutOfMemoryException)
-                                    throw;
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex is ThreadAbortException || ex is StackOverflowException || ex is OutOfMemoryException)
+                                throw;
+                            lastex = ex;
+                        }
+                    }
 
-                                if (address != nat64Address)
-                                    lastex = ex;
+                    try
+                    {
+                        if (nat64Address != null)
+                        {
+                            //Try to connect to the server through the NAT64 gateway
+                            var result = ipv6Client.BeginConnect(nat64Address, port, null, null);
+                            if (result.AsyncWaitHandle.WaitOne(timeoutMilliseconds))
+                            {
+                                ipv6Client.EndConnect(result);
+                                if (ipv4Client != null)
+                                    ipv4Client.Close();
+                                return ipv6Client;
+                            }
+                            else
+                            {
+                                ipv6Client.Close();
+                                throw new SocketException((int)SocketError.TimedOut);
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (lastex == null)
+                            lastex = ex;
                     }
 
                     if (ipv4Client != null)

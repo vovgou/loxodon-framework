@@ -27,13 +27,7 @@ using System.Reflection;
 
 using Loxodon.Log;
 
-#if !UNITY_IOS && !ENABLE_IL2CPP && !NET_STANDARD_2_0
-using System.Reflection.Emit;
-#endif
-
-#if !UNITY_IOS && !ENABLE_IL2CPP
 using System.Linq.Expressions;
-#endif
 
 namespace Loxodon.Framework.Binding.Reflection
 {
@@ -43,6 +37,7 @@ namespace Loxodon.Framework.Binding.Reflection
         private static readonly ILog log = LogManager.GetLogger(typeof(ProxyFieldInfo));
 
         private readonly bool isValueType;
+        private TypeCode typeCode;
         protected FieldInfo fieldInfo;
 
         public ProxyFieldInfo(FieldInfo fieldInfo)
@@ -51,16 +46,28 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentNullException("fieldInfo");
 
             this.fieldInfo = fieldInfo;
-#if NETFX_CORE
             this.isValueType = this.fieldInfo.DeclaringType.GetTypeInfo().IsValueType;
-#else
-            this.isValueType = this.fieldInfo.DeclaringType.IsValueType;
-#endif
         }
 
         public virtual bool IsValueType { get { return isValueType; } }
 
         public virtual Type ValueType { get { return fieldInfo.FieldType; } }
+
+        public TypeCode ValueTypeCode
+        {
+            get
+            {
+                if (typeCode == TypeCode.Empty)
+                {
+#if NETFX_CORE
+                    typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(ValueType);
+#else
+                    typeCode = Type.GetTypeCode(ValueType);
+#endif
+                }
+                return typeCode;
+            }
+        }
 
         public virtual Type DeclaringType { get { return this.fieldInfo.DeclaringType; } }
 
@@ -127,68 +134,53 @@ namespace Loxodon.Framework.Binding.Reflection
             if (fieldInfo.IsInitOnly)
                 return null;
 
-#if !UNITY_IOS && !ENABLE_IL2CPP
-#if NETFX_CORE || NET_STANDARD_2_0
             try
             {
-                var targetExp = Expression.Parameter(typeof(T), "target");
-                var paramExp = Expression.Parameter(typeof(TValue), "value");
-                var fieldExp = Expression.Field(fieldInfo.IsStatic ? null : targetExp, fieldInfo);
-                var assignExp = Expression.Assign(fieldExp, paramExp);
-                var lambda = Expression.Lambda<Action<T, TValue>>(assignExp, targetExp, paramExp);
-                return lambda.Compile();
+                bool expressionSupportRestricted = false;
+#if ENABLE_IL2CPP
+                //Only reference types are supported; value types are not supported
+                expressionSupportRestricted = true;
+#endif
+                if (!expressionSupportRestricted || !(typeof(T).IsValueType || typeof(TValue).IsValueType))
+                {
+                    var targetExp = Expression.Parameter(typeof(T), "target");
+                    var paramExp = Expression.Parameter(typeof(TValue), "value");
+                    var fieldExp = Expression.Field(fieldInfo.IsStatic ? null : targetExp, fieldInfo);
+                    var assignExp = Expression.Assign(fieldExp, paramExp);
+                    var lambda = Expression.Lambda<Action<T, TValue>>(assignExp, targetExp, paramExp);
+                    return lambda.Compile();
+                }
             }
             catch (Exception e)
             {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
-#else
-            try
-            {
-                DynamicMethod m = new DynamicMethod("Setter", typeof(void), new Type[] { typeof(T), typeof(TValue) }, typeof(T));
-                ILGenerator cg = m.GetILGenerator();
-                if (fieldInfo.IsStatic)
-                {
-                    cg.Emit(OpCodes.Ldarg_1);
-                    cg.Emit(OpCodes.Stsfld, fieldInfo);
-                    cg.Emit(OpCodes.Ret);
-                }
-                else
-                {
-                    cg.Emit(OpCodes.Ldarg_0);
-                    cg.Emit(OpCodes.Ldarg_1);
-                    cg.Emit(OpCodes.Stfld, fieldInfo);
-                    cg.Emit(OpCodes.Ret);
-                }
-                return (Action<T, TValue>)m.CreateDelegate(typeof(Action<T, TValue>));
-            }
-            catch (Exception e)
-            {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("{0}", e);
-            }
-#endif
-#endif
             return null;
         }
 
         private Func<T, TValue> MakeGetter(FieldInfo fieldInfo)
         {
-#if !UNITY_IOS && !ENABLE_IL2CPP
             try
             {
-                var targetExp = Expression.Parameter(typeof(T), "target");
-                var fieldExp = Expression.Field(fieldInfo.IsStatic ? null : targetExp, fieldInfo);
-                var lambda = Expression.Lambda<Func<T, TValue>>(fieldExp, targetExp);
-                return lambda.Compile();
+                bool expressionSupportRestricted = false;
+#if ENABLE_IL2CPP
+                //Only reference types are supported; value types are not supported
+                expressionSupportRestricted = true;
+#endif
+                if (!expressionSupportRestricted || !(typeof(T).IsValueType || typeof(TValue).IsValueType))
+                {
+                    var targetExp = Expression.Parameter(typeof(T), "target");
+                    var fieldExp = Expression.Field(fieldInfo.IsStatic ? null : targetExp, fieldInfo);
+                    var lambda = Expression.Lambda<Func<T, TValue>>(fieldExp, targetExp);
+                    return lambda.Compile();
+                }
             }
             catch (Exception e)
             {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
-#endif
             return null;
         }
 

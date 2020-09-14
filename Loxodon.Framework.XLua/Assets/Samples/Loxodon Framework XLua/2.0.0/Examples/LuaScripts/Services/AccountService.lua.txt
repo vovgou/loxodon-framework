@@ -51,8 +51,8 @@ M.update = async(function(self,account)
 	end)
 
 M.login = async(function(self,username,password)
-		local account = await(self:getAccount(username))
-		if account.password == password then
+		local account = await(self:getAccount(username))		
+		if account and account.password == password then
 			return account
 		end
 		return nil

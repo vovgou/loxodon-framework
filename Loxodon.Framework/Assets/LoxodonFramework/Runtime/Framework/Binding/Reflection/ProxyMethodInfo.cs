@@ -38,11 +38,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentNullException("methodInfo");
 
             this.methodInfo = methodInfo;
-#if NETFX_CORE
             this.isValueType = methodInfo.DeclaringType.GetTypeInfo().IsValueType;
-#else
-            this.isValueType = methodInfo.DeclaringType.IsValueType;
-#endif
         }
 
         public virtual Type DeclaringType { get { return this.methodInfo.DeclaringType; } }
@@ -110,11 +106,8 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 if (isValueType)
                     return null;
-#if NETFX_CORE
+
                 return (Func<T, TResult>)this.methodInfo.CreateDelegate(typeof(Func<T, TResult>));
-#elif !UNITY_IOS
-                return (Func<T, TResult>)Delegate.CreateDelegate(typeof(Func<T, TResult>), this.methodInfo);
-#endif
             }
             catch (Exception e)
             {
@@ -188,11 +181,8 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 if (isValueType)
                     return null;
-#if NETFX_CORE
+
                 return (Func<T, P1, TResult>)methodInfo.CreateDelegate(typeof(Func<T, P1, TResult>));
-#elif !UNITY_IOS
-                return (Func<T, P1, TResult>)Delegate.CreateDelegate(typeof(Func<T, P1, TResult>), methodInfo);
-#endif
             }
             catch (Exception e)
             {
@@ -267,11 +257,8 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 if (isValueType)
                     return null;
-#if NETFX_CORE
+
                 return (Func<T, P1, P2, TResult>)methodInfo.CreateDelegate(typeof(Func<T, P1, P2, TResult>));
-#elif !UNITY_IOS
-                return (Func<T, P1, P2, TResult>)Delegate.CreateDelegate(typeof(Func<T, P1, P2, TResult>), methodInfo);
-#endif
             }
             catch (Exception e)
             {
@@ -345,11 +332,8 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 if (isValueType)
                     return null;
-#if NETFX_CORE
-                return  (Func<T, P1, P2, P3, TResult>)methodInfo.CreateDelegate(typeof(Func<T, P1, P2, P3, TResult>));
-#elif !UNITY_IOS
-                return (Func<T, P1, P2, P3, TResult>)Delegate.CreateDelegate(typeof(Func<T, P1, P2, P3, TResult>), methodInfo);
-#endif
+
+                return (Func<T, P1, P2, P3, TResult>)methodInfo.CreateDelegate(typeof(Func<T, P1, P2, P3, TResult>));
             }
             catch (Exception e)
             {
@@ -419,11 +403,8 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 if (isValueType)
                     return null;
-#if NETFX_CORE
-                return  (Action<T>)methodInfo.CreateDelegate(typeof(Action<T>));
-#elif !UNITY_IOS
-                return (Action<T>)Delegate.CreateDelegate(typeof(Action<T>), methodInfo);
-#endif
+
+                return (Action<T>)methodInfo.CreateDelegate(typeof(Action<T>));
             }
             catch (Exception e)
             {
@@ -501,11 +482,8 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 if (isValueType)
                     return null;
-#if NETFX_CORE
-                return  (Action<T, P1>)methodInfo.CreateDelegate(typeof(Action<T, P1>));
-#elif !UNITY_IOS
-                return (Action<T, P1>)Delegate.CreateDelegate(typeof(Action<T, P1>), methodInfo);
-#endif
+
+                return (Action<T, P1>)methodInfo.CreateDelegate(typeof(Action<T, P1>));
             }
             catch (Exception e)
             {
@@ -583,11 +561,8 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 if (isValueType)
                     return null;
-#if NETFX_CORE
-                return  (Action<T, P1, P2>)methodInfo.CreateDelegate(typeof(Action<T, P1, P2>));
-#elif !UNITY_IOS
-                return (Action<T, P1, P2>)Delegate.CreateDelegate(typeof(Action<T, P1, P2>), methodInfo);
-#endif
+
+                return (Action<T, P1, P2>)methodInfo.CreateDelegate(typeof(Action<T, P1, P2>));
             }
             catch (Exception e)
             {
@@ -666,11 +641,8 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 if (isValueType)
                     return null;
-#if NETFX_CORE
+
                 return (Action<T, P1, P2, P3>)methodInfo.CreateDelegate(typeof(Action<T, P1, P2, P3>));
-#elif !UNITY_IOS
-                return (Action<T, P1, P2, P3>)Delegate.CreateDelegate(typeof(Action<T, P1, P2, P3>), methodInfo);
-#endif
             }
             catch (Exception e)
             {

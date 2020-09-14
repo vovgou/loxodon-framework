@@ -26,9 +26,6 @@ using Loxodon.Framework.Binding.Reflection;
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
-#if NETFX_CORE
-using System.Reflection;
-#endif
 
 using INotifyCollectionChanged = System.Collections.Specialized.INotifyCollectionChanged;
 using NotifyCollectionChangedAction = System.Collections.Specialized.NotifyCollectionChangedAction;
@@ -63,6 +60,8 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
         }
 
         public override Type Type { get { return this.itemInfo.ValueType; } }
+
+        public override TypeCode TypeCode { get { return itemInfo.ValueTypeCode; } }
 
         protected abstract void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e);
 

@@ -30,6 +30,8 @@ namespace Loxodon.Framework.Binding.Reflection
     {
         Type ValueType { get; }
 
+        TypeCode ValueTypeCode { get; }
+
         object GetValue(object target);
 
         void SetValue(object target, object value);

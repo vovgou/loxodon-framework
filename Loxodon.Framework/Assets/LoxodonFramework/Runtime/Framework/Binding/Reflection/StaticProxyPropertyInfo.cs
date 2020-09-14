@@ -80,11 +80,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 var setMethod = propertyInfo.GetSetMethod();
                 if (setMethod == null)
                     return null;
-#if NETFX_CORE || NET_4_6 || NET_STANDARD_2_0 || NET46 || NETSTANDARD2_0
                 return (Action<TValue>)setMethod.CreateDelegate(typeof(Action<TValue>));
-#elif !UNITY_IOS
-                return (Action<TValue>)Delegate.CreateDelegate(typeof(Action<TValue>), setMethod);
-#endif
             }
             catch (Exception e)
             {
@@ -105,11 +101,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 var getMethod = propertyInfo.GetGetMethod();
                 if (getMethod == null)
                     return null;
-#if NETFX_CORE || NET_4_6 || NET_STANDARD_2_0 || NET46 || NETSTANDARD2_0
                 return (Func<TValue>)getMethod.CreateDelegate(typeof(Func<TValue>));
-#elif !UNITY_IOS
-                return (Func<TValue>)Delegate.CreateDelegate(typeof(Func<TValue>), getMethod);
-#endif
             }
             catch (Exception e)
             {

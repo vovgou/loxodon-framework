@@ -30,6 +30,8 @@ namespace Loxodon.Framework.Binding.Proxy.Sources
     {
         Type Type { get; }
 
+        TypeCode TypeCode { get; }
+
         object Source { get; }
     }
 }

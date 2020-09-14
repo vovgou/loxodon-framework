@@ -33,6 +33,7 @@ namespace Loxodon.Framework.Binding.Reflection
         //private static readonly ILog log = LogManager.GetLogger(typeof(ProxyPropertyInfo));
 
         private readonly bool isValueType;
+        private TypeCode typeCode;
         protected PropertyInfo propertyInfo;
         protected MethodInfo getMethod;
         protected MethodInfo setMethod;
@@ -43,11 +44,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentNullException("propertyInfo");
 
             this.propertyInfo = propertyInfo;
-#if NETFX_CORE
             this.isValueType = this.propertyInfo.DeclaringType.GetTypeInfo().IsValueType;
-#else
-            this.isValueType = this.propertyInfo.DeclaringType.IsValueType;
-#endif
 
             if (this.propertyInfo.CanRead)
                 this.getMethod = propertyInfo.GetGetMethod();
@@ -59,6 +56,22 @@ namespace Loxodon.Framework.Binding.Reflection
         public virtual bool IsValueType { get { return isValueType; } }
 
         public virtual Type ValueType { get { return this.propertyInfo.PropertyType; } }
+
+        public TypeCode ValueTypeCode
+        {
+            get
+            {
+                if (typeCode == TypeCode.Empty)
+                {
+#if NETFX_CORE
+                    typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(ValueType);
+#else
+                    typeCode = Type.GetTypeCode(ValueType);
+#endif
+                }
+                return typeCode;
+            }
+        }
 
         public virtual Type DeclaringType { get { return this.propertyInfo.DeclaringType; } }
 
@@ -140,11 +153,8 @@ namespace Loxodon.Framework.Binding.Reflection
                 var setMethod = propertyInfo.GetSetMethod();
                 if (setMethod == null)
                     return null;
-#if NETFX_CORE || NET_4_6 || NET_STANDARD_2_0 || NET46 || NETSTANDARD2_0
+
                 return (Action<T, TValue>)setMethod.CreateDelegate(typeof(Action<T, TValue>));
-#elif !UNITY_IOS
-                return (Action<T, TValue>)Delegate.CreateDelegate(typeof(Action<T, TValue>), setMethod);
-#endif
             }
             catch (Exception e)
             {
@@ -165,11 +175,8 @@ namespace Loxodon.Framework.Binding.Reflection
                 var getMethod = propertyInfo.GetGetMethod();
                 if (getMethod == null)
                     return null;
-#if NETFX_CORE || NET_4_6 || NET_STANDARD_2_0 || NET46 || NETSTANDARD2_0
+
                 return (Func<T, TValue>)getMethod.CreateDelegate(typeof(Func<T, TValue>));
-#elif !UNITY_IOS
-                return (Func<T, TValue>)Delegate.CreateDelegate(typeof(Func<T, TValue>), getMethod);
-#endif
             }
             catch (Exception e)
             {

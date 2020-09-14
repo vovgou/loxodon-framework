@@ -181,12 +181,7 @@ namespace Loxodon.Framework.Binding.Reflection
             if (this.baseType != null)
                 return this.baseType;
 
-#if NETFX_CORE
             Type _baseType = type.GetTypeInfo().BaseType;
-#else
-            Type _baseType = type.BaseType;
-#endif
-
             if (_baseType == null)
                 return null;
 
@@ -441,9 +436,6 @@ namespace Loxodon.Framework.Binding.Reflection
         protected IProxyFieldInfo CreateProxyFieldInfo(FieldInfo fieldInfo)
         {
             IProxyFieldInfo info = null;
-#if UNITY_IOS
-            info = new ProxyFieldInfo(fieldInfo);
-#else
             try
             {
                 info = (IProxyFieldInfo)Activator.CreateInstance(typeof(ProxyFieldInfo<,>).MakeGenericType(fieldInfo.DeclaringType, fieldInfo.FieldType), fieldInfo);
@@ -452,7 +444,6 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 info = new ProxyFieldInfo(fieldInfo);
             }
-#endif
             if (info != null)
                 this.fields.Add(info.Name, info);
             return info;
@@ -461,9 +452,6 @@ namespace Loxodon.Framework.Binding.Reflection
         protected IProxyPropertyInfo CreateProxyPropertyInfo(PropertyInfo propertyInfo)
         {
             IProxyPropertyInfo info = null;
-#if UNITY_IOS
-            info = new ProxyPropertyInfo(propertyInfo);
-#else
             try
             {
                 Type type = propertyInfo.DeclaringType;
@@ -492,7 +480,6 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 info = new ProxyPropertyInfo(propertyInfo);
             }
-#endif
             if (info != null)
                 this.properties.Add(info.Name, info);
             return info;
@@ -501,9 +488,6 @@ namespace Loxodon.Framework.Binding.Reflection
         protected IProxyMethodInfo CreateProxyMethodInfo(MethodInfo methodInfo)
         {
             IProxyMethodInfo info = null;
-#if UNITY_IOS
-            info = new ProxyMethodInfo(methodInfo);
-#else
             try
             {
                 Type returnType = methodInfo.ReturnType;
@@ -612,7 +596,6 @@ namespace Loxodon.Framework.Binding.Reflection
             {
                 info = new ProxyMethodInfo(methodInfo);
             }
-#endif
             if (info != null)
                 this.AddMethodInfo(info);
 
@@ -624,83 +607,86 @@ namespace Loxodon.Framework.Binding.Reflection
             var elementType = type.GetElementType();
 
             IProxyItemInfo info = null;
-#if UNITY_IOS
-            var code = Type.GetTypeCode(elementType);
-            switch (code)
+            try
             {
-                case TypeCode.Boolean:
-                    info = new ArrayProxyItemInfo<bool[], bool>();
-                    break;
-                case TypeCode.Byte:
-                    info = new ArrayProxyItemInfo<byte[], byte>();
-                    break;
-                case TypeCode.Char:
-                    info = new ArrayProxyItemInfo<char[], char>();
-                    break;
-                case TypeCode.DateTime:
-                    info = new ArrayProxyItemInfo<DateTime[], DateTime>();
-                    break;
-                case TypeCode.Decimal:
-                    info = new ArrayProxyItemInfo<Decimal[], Decimal>();
-                    break;
-                case TypeCode.Double:
-                    info = new ArrayProxyItemInfo<Double[], Double>();
-                    break;
-                case TypeCode.Int16:
-                    info = new ArrayProxyItemInfo<Int16[], Int16>();
-                    break;
-                case TypeCode.Int32:
-                    info = new ArrayProxyItemInfo<Int32[], Int32>();
-                    break;
-                case TypeCode.Int64:
-                    info = new ArrayProxyItemInfo<Int64[], Int64>();
-                    break;
-                case TypeCode.SByte:
-                    info = new ArrayProxyItemInfo<SByte[], SByte>();
-                    break;
-                case TypeCode.Single:
-                    info = new ArrayProxyItemInfo<Single[], Single>();
-                    break;
-                case TypeCode.String:
-                    info = new ArrayProxyItemInfo<string[], string>();
-                    break;
-                case TypeCode.UInt16:
-                    info = new ArrayProxyItemInfo<UInt16[], UInt16>();
-                    break;
-                case TypeCode.UInt32:
-                    info = new ArrayProxyItemInfo<UInt32[], UInt32>();
-                    break;
-                case TypeCode.UInt64:
-                    info = new ArrayProxyItemInfo<UInt64[], UInt64>();
-                    break;
-                case TypeCode.Object:
-                    {
-                        if (type.Equals(typeof(Vector2)))
-                            info = new ArrayProxyItemInfo<Vector2[], Vector2>();
-                        else if (type.Equals(typeof(Vector3)))
-                            info = new ArrayProxyItemInfo<Vector3[], Vector3>();
-                        else if (type.Equals(typeof(Vector4)))
-                            info = new ArrayProxyItemInfo<Vector4[], Vector4>();
-                        else if (type.Equals(typeof(Color)))
-                            info = new ArrayProxyItemInfo<Color[], Color>();
-                        else if (type.Equals(typeof(Rect)))
-                            info = new ArrayProxyItemInfo<Rect[], Rect>();
-                        else if (type.Equals(typeof(Quaternion)))
-                            info = new ArrayProxyItemInfo<Quaternion[], Quaternion>();
-                        else if (type.Equals(typeof(Version)))
-                            info = new ArrayProxyItemInfo<Version[], Version>();
-                        else
-                            info = new ArrayProxyItemInfo(type);
-                        break;
-                    }                   
-                default:
-                    info = new ArrayProxyItemInfo(type);
-                    break;
+                info = (IProxyItemInfo)Activator.CreateInstance(typeof(ArrayProxyItemInfo<,>).MakeGenericType(type, elementType));
             }
-#else
+            catch (Exception)
+            {
+                var code = Type.GetTypeCode(elementType);
+                switch (code)
+                {
+                    case TypeCode.Boolean:
+                        info = new ArrayProxyItemInfo<bool[], bool>();
+                        break;
+                    case TypeCode.Byte:
+                        info = new ArrayProxyItemInfo<byte[], byte>();
+                        break;
+                    case TypeCode.Char:
+                        info = new ArrayProxyItemInfo<char[], char>();
+                        break;
+                    case TypeCode.DateTime:
+                        info = new ArrayProxyItemInfo<DateTime[], DateTime>();
+                        break;
+                    case TypeCode.Decimal:
+                        info = new ArrayProxyItemInfo<Decimal[], Decimal>();
+                        break;
+                    case TypeCode.Double:
+                        info = new ArrayProxyItemInfo<Double[], Double>();
+                        break;
+                    case TypeCode.Int16:
+                        info = new ArrayProxyItemInfo<Int16[], Int16>();
+                        break;
+                    case TypeCode.Int32:
+                        info = new ArrayProxyItemInfo<Int32[], Int32>();
+                        break;
+                    case TypeCode.Int64:
+                        info = new ArrayProxyItemInfo<Int64[], Int64>();
+                        break;
+                    case TypeCode.SByte:
+                        info = new ArrayProxyItemInfo<SByte[], SByte>();
+                        break;
+                    case TypeCode.Single:
+                        info = new ArrayProxyItemInfo<Single[], Single>();
+                        break;
+                    case TypeCode.String:
+                        info = new ArrayProxyItemInfo<string[], string>();
+                        break;
+                    case TypeCode.UInt16:
+                        info = new ArrayProxyItemInfo<UInt16[], UInt16>();
+                        break;
+                    case TypeCode.UInt32:
+                        info = new ArrayProxyItemInfo<UInt32[], UInt32>();
+                        break;
+                    case TypeCode.UInt64:
+                        info = new ArrayProxyItemInfo<UInt64[], UInt64>();
+                        break;
+                    case TypeCode.Object:
+                        {
+                            if (type.Equals(typeof(Vector2)))
+                                info = new ArrayProxyItemInfo<Vector2[], Vector2>();
+                            else if (type.Equals(typeof(Vector3)))
+                                info = new ArrayProxyItemInfo<Vector3[], Vector3>();
+                            else if (type.Equals(typeof(Vector4)))
+                                info = new ArrayProxyItemInfo<Vector4[], Vector4>();
+                            else if (type.Equals(typeof(Color)))
+                                info = new ArrayProxyItemInfo<Color[], Color>();
+                            else if (type.Equals(typeof(Rect)))
+                                info = new ArrayProxyItemInfo<Rect[], Rect>();
+                            else if (type.Equals(typeof(Quaternion)))
+                                info = new ArrayProxyItemInfo<Quaternion[], Quaternion>();
+                            else if (type.Equals(typeof(Version)))
+                                info = new ArrayProxyItemInfo<Version[], Version>();
+                            else
+                                info = new ArrayProxyItemInfo(type);
+                            break;
+                        }
+                    default:
+                        info = new ArrayProxyItemInfo(type);
+                        break;
+                }
+            }
 
-            info = (IProxyItemInfo)Activator.CreateInstance(typeof(ArrayProxyItemInfo<,>).MakeGenericType(type, elementType));
-#endif
             if (info != null)
                 this.itemInfo = info;
             return info;
@@ -714,20 +700,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new NotSupportedException();
 
             IProxyItemInfo info = null;
-#if UNITY_IOS
-            if (type.IsSubclassOfGenericTypeDefinition(typeof(IDictionary<,>)))
-            {
-                info = this.CreateDictionaryProxyItemInfo(propertyInfo);
-            }
-            else if (type.IsSubclassOfGenericTypeDefinition(typeof(IList<>)))
-            {
-                info = this.CreateListProxyItemInfo(propertyInfo);
-            }
-            else
-            {
-                info = new ProxyItemInfo(propertyInfo);
-            }
-#else
+
             try
             {
                 if (type.IsSubclassOfGenericTypeDefinition(typeof(IDictionary<,>)))
@@ -746,9 +719,20 @@ namespace Loxodon.Framework.Binding.Reflection
             }
             catch (Exception)
             {
-                info = new ProxyItemInfo(propertyInfo);
+                if (type.IsSubclassOfGenericTypeDefinition(typeof(IDictionary<,>)))
+                {
+                    info = this.CreateDictionaryProxyItemInfo(propertyInfo);
+                }
+                else if (type.IsSubclassOfGenericTypeDefinition(typeof(IList<>)))
+                {
+                    info = this.CreateListProxyItemInfo(propertyInfo);
+                }
+                else
+                {
+                    info = new ProxyItemInfo(propertyInfo);
+                }
             }
-#endif
+
             if (info != null)
                 this.itemInfo = info;
             return info;

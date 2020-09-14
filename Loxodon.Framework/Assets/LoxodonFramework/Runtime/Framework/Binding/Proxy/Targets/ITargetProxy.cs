@@ -30,6 +30,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
     {
         Type Type { get; }
 
+        TypeCode TypeCode { get; }
+
         object Target { get; }
 
         BindingMode DefaultMode { get; }

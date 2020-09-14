@@ -29,14 +29,30 @@ namespace Loxodon.Framework.Binding.Proxy.Sources
 {
     public abstract class SourceProxyBase : BindingProxyBase, ISourceProxy
     {
+        protected TypeCode typeCode = TypeCode.Empty;
         protected readonly object source;
-
         public SourceProxyBase(object source)
         {
             this.source = source;
         }
 
         public abstract Type Type { get; }
+
+        public virtual TypeCode TypeCode
+        {
+            get
+            {
+                if (typeCode == TypeCode.Empty)
+                {
+#if NETFX_CORE
+                    typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(Type);
+#else
+                    typeCode = Type.GetTypeCode(Type);
+#endif
+                }
+                return typeCode;
+            }
+        }
 
         public virtual object Source { get { return this.source; } }
     }
