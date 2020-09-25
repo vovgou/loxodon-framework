@@ -9,7 +9,7 @@
 
 Requires Unity 2018.4 or higher.
 
-This is a network connection component, implemented using TcpClient, supports IPV6 and IPV4, automatically recognizes the current network when connecting with a domain name, and preferentially connects to the IPV4 network.
+This is a network connection component, implemented using TcpClient, supports IPV6 and IPV4, automatically recognizes the current network when connecting to a domain name, and connects to the server according to the address list given by DNS.
 
 ## Installation
 
