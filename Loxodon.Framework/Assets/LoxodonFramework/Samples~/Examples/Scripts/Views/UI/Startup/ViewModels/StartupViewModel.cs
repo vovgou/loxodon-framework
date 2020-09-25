@@ -144,7 +144,7 @@ namespace Loxodon.Framework.Examples
                 this.progressBar.Enable = true;
                 this.ProgressBar.Tip = R.startup_progressbar_tip_loading;
 
-                ResourceRequest request = Resources.LoadAsync<GameObject>("Scenes/Jungle");
+                ResourceRequest request = Resources.LoadAsync<GameObject>("Prefabs/Cube");
                 while (!request.isDone)
                 {
                     this.ProgressBar.Progress = request.progress;/* update progress */
