@@ -20,6 +20,8 @@ For tutorials,examples and support,please see the project.You can also discuss t
 
 The plugin is compatible with MacOSX,Windows,Linux,UWP,WebGL,IOS and Android,and provides all the source code of the project.
 
+If you like this framework or think it is useful, please write a review on [AssetStore](https://assetstore.unity.com/packages/tools/gui/loxodon-framework-2-0-178583#reviews) or give me a STAR or FORK it on Github, thank you!
+
 **Tested in Unity 3D on the following platforms:**  
 PC/Mac/Linux  
 IOS  

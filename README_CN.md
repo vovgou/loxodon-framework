@@ -19,6 +19,8 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 
 这个插件兼容 MacOSX,Windows,Linux,UWP,IOS and Android,WebGL等等，并且完全开源。
 
+如果你喜欢这个框架或者觉得它对你来说是有用的，请帮我在[AssetStore](https://assetstore.unity.com/packages/tools/gui/loxodon-framework-2-0-178583#reviews)上写一个评论或者在Github上给一颗星，更多人的参与才是开源作者工作的动力，谢谢！
+
 **已测试的平台：**  
 PC/Mac/Linux  
 IOS  
