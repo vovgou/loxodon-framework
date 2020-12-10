@@ -149,7 +149,7 @@ namespace Loxodon.Framework.Net.Connection
             int n = 0;
             while (n < count)
             {
-                int len = await this.input.ReadAsync(buffer, offset + n, count);
+                int len = await this.input.ReadAsync(buffer, offset + n, count - n);
                 if (len <= 0)
                     throw new IOException("Stream is closed.");
 
