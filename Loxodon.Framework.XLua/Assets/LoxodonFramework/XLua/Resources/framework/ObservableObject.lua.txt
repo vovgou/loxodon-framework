@@ -1,4 +1,4 @@
-﻿---
+---
 -- MIT License
 --
 -- Copyright (c) 2018 Clark Yang
@@ -38,7 +38,11 @@ local __index = function(t,k)
 	if string.find(k, "^_") == 1 then
 		return getmetatable(t)[k]
 	else
-		return rawget(t,"_attr_"..k) or getmetatable(t)[k]
+		local v = rawget(t,"_attr_"..k)
+		if v ~= nil then
+			return v
+		end 
+		return getmetatable(t)[k]
 	end	
 end
 

@@ -83,7 +83,8 @@ namespace Loxodon.Framework.Net.Http
             if (fileInfo.Exists)
                 fileInfo.Delete();
 
-            tmpFileInfo.MoveTo(fileInfo.FullName);
+            File.Move(tmpFileInfo.FullName, fileInfo.FullName);
+            //tmpFileInfo.MoveTo(fileInfo.FullName);//This is a bug and this method may fail on the Android platform
         }
 
 #if UNITY_2019_3_OR_NEWER

@@ -39,8 +39,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public static void RemoveListener(this UnityEventBase unity, Delegate listener)
         {
-            MethodInfo add = unity.GetType().GetMethod("RemoveListener");
-            add.Invoke(unity, new object[] { listener });
+            MethodInfo remove = unity.GetType().GetMethod("RemoveListener");
+            remove.Invoke(unity, new object[] { listener });
         }
 
         public static Type GetListenerType(this UnityEventBase unity)
