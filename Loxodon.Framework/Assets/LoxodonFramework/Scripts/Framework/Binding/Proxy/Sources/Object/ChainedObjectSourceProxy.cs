@@ -210,7 +210,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
         void Unbind()
         {
-            for (int i = proxies.Length - 1; i <= 0; i--)
+            for (int i = proxies.Length - 1; i >= 0; i--)
             {
                 ProxyEntry proxyEntry = proxies[i];
                 if (proxyEntry == null)
