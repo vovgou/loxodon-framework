@@ -1,5 +1,5 @@
 ﻿  Loxodon Framework
-Version: 1.9.12
+Version: 1.9.13
 © 2016, Clark Yang
 =======================================
 
@@ -16,6 +16,9 @@ AOT Compilation Options: "nrgctx-trampolines=8192,nimt-trampolines=8192,ntrampol
 
 UPDATE NOTES
 ----------------------------------------
+version 1.9.13
+	Fixed a bug of ChainedObjectSourceProxy.Unbind()
+
 version 1.9.12
 	Fixed a bug that IL2CPP does not support resurrection for weak references.
 
