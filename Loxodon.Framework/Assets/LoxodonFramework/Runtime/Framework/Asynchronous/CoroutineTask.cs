@@ -74,7 +74,7 @@ namespace Loxodon.Framework.Asynchronous
         /// <returns>A Task that represents the time delay</returns>
         public static CoroutineTask Delay(float secondsDelay)
         {
-            return new CoroutineTask(() => DoDelay(secondsDelay));
+            return new CoroutineTask(DoDelay(secondsDelay));
         }
 
         /// <summary>
