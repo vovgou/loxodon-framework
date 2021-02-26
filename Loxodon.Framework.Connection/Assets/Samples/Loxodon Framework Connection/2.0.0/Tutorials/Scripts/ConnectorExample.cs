@@ -37,8 +37,9 @@ namespace Loxodon.Framework.Examples
     {
         Server server;
 
-        IConnector<Request, Response, Notification> connector;
+        DefaultConnector<Request, Response, Notification> connector;
         ISubscription<EventArgs> eventSubscription;
+        ISubscription<EventArgs> idleEventSubscription;
         ISubscription<Notification> messageSubscription;
 
         int port = 8000;
@@ -77,7 +78,7 @@ namespace Loxodon.Framework.Examples
              });
 
             //每个20秒空闲则触发空闲事件，并且每隔20秒触发一次,时间为0则关闭空闲事件，首次空闲First为true。示例中只开启了读写都空闲的事件
-            IdleStateMonitor idleStateMonitor = new IdleStateMonitor(TimeSpan.FromTicks(0), TimeSpan.FromTicks(0), TimeSpan.FromSeconds(20f));
+            IdleStateMonitor idleStateMonitor = new IdleStateMonitor(TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(20f));
             connector = new DefaultConnector<Request, Response, Notification>(channel, idleStateMonitor);
             connector.AutoReconnect = true;//开启自动重连，只重连一次，失败后不再重试，建议使用心跳包保证连接可用
 
@@ -106,6 +107,26 @@ namespace Loxodon.Framework.Examples
             {
                 Debug.LogFormat("Client Received Notification:{0}", notification);
             });
+
+            //订阅连接空闲事件，发生心跳消息
+            idleEventSubscription = connector.Events()
+                .Filter(e => e is IdleStateEventArgs)
+                .ObserveOn(SynchronizationContext.Current)
+                .Subscribe(e =>
+                {
+                    try
+                    {
+                        if (e is IdleStateEventArgs idleStateEventArgs)
+                        {
+                            if (idleStateEventArgs.IsFirst && (idleStateEventArgs.State == IdleState.ReaderIdle))
+                            {
+                                //send a ping message
+                                SendHeartbeatMessage();
+                            }
+                        }
+                    }
+                    catch (Exception) { }
+                });
         }
 
         async void Connect()
@@ -148,6 +169,29 @@ namespace Loxodon.Framework.Examples
             }
         }
 
+        async void SendHeartbeatMessage()
+        {
+            try
+            {
+                Request request = new Request();
+                request.CommandID = 0;
+                request.ContentType = 0;
+                request.Content = Encoding.UTF8.GetBytes("ping");
+                Response response = await connector.Send(request);
+            }
+            catch (TimeoutException e)
+            {
+                //Timeout
+                if (connector.State == ConnectionState.Connected)
+                    await connector.Reconnect();
+            }
+            catch (Exception e)
+            {
+                //Exception
+                Debug.LogFormat("{0}", e);
+            }
+        }
+
         void OnGUI()
         {
             int x = 50;
@@ -170,7 +214,7 @@ namespace Loxodon.Framework.Examples
             if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), connector.Connected ? "Disconnect" : "Connect"))
             {
                 if (connector.Connected)
-                    connector.Disconnect();
+                    _ = connector.Disconnect();
                 else
                     Connect();
             }
@@ -202,6 +246,12 @@ namespace Loxodon.Framework.Examples
                 eventSubscription = null;
             }
 
+            if (idleEventSubscription != null)
+            {
+                idleEventSubscription.Dispose();
+                idleEventSubscription = null;
+            }
+
             if (messageSubscription != null)
             {
                 messageSubscription.Dispose();
@@ -210,7 +260,7 @@ namespace Loxodon.Framework.Examples
 
             if (connector != null)
             {
-                connector.Shutdown();
+                _ = connector.Shutdown();
                 connector.Dispose();
                 connector = null;
             }
