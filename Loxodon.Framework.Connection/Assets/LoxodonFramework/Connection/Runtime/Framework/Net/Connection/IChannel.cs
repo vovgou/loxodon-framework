@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Net.Connection
@@ -41,6 +42,16 @@ namespace Loxodon.Framework.Net.Connection
         /// <param name="timeoutMilliseconds"></param>
         /// <returns></returns>
         Task Connect(string hostname, int port, int timeoutMilliseconds);
+
+        /// <summary>
+        /// Connects the Client to the specified port on the specified host.
+        /// </summary>
+        /// <param name="hostname"></param>
+        /// <param name="port"></param>
+        /// <param name="timeoutMilliseconds"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken);
 
         /// <summary>
         /// Read a message asynchronously.

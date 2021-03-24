@@ -23,6 +23,7 @@
  */
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Net.Connection
@@ -30,14 +31,18 @@ namespace Loxodon.Framework.Net.Connection
     public class TaskTimeoutOrCompletionSource<TResult> : TaskCompletionSource<TResult>
     {
         private long endTime;
-        public TaskTimeoutOrCompletionSource(int timeoutMilliseconds)
+        private CancellationToken cancellationToken;
+        public TaskTimeoutOrCompletionSource(int timeoutMilliseconds, CancellationToken cancellationToken)
         {
+            this.cancellationToken = cancellationToken;
             this.endTime = DateTime.Now.Ticks + timeoutMilliseconds * TimeSpan.TicksPerMillisecond;
         }
 
         public TimeSpan Delay { get { return TimeSpan.FromTicks(endTime - DateTime.Now.Ticks); } }
 
         public bool IsTimeout { get { return (endTime - DateTime.Now.Ticks) <= 0; } }
+
+        public bool IsCanceled { get { return cancellationToken.IsCancellationRequested; } }
 
         public void SetTimeout()
         {
@@ -47,6 +52,11 @@ namespace Loxodon.Framework.Net.Connection
         public bool TrySetTimeout()
         {
             return this.TrySetException(new TimeoutException("The operation has timed out."));
+        }
+
+        public new bool TrySetCanceled()
+        {
+            return TrySetCanceled(cancellationToken);
         }
     }
 }

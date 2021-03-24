@@ -27,6 +27,7 @@ using System.IO;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Net.Connection
@@ -120,7 +121,12 @@ namespace Loxodon.Framework.Net.Connection
             return false;
         }
 
-        public abstract Task Connect(string hostname, int port, int timeoutMilliseconds);
+        public Task Connect(string hostname, int port, int timeoutMilliseconds)
+        {
+            return Connect(hostname, port, timeoutMilliseconds, default(CancellationToken));
+        }
+
+        public abstract Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken);
 
         public virtual Task<IMessage> ReadAsync()
         {

@@ -24,6 +24,7 @@
 
 using System;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Net.Connection
@@ -54,12 +55,30 @@ namespace Loxodon.Framework.Net.Connection
         Task Connect(string hostname, int port, int timeoutMilliseconds);
 
         /// <summary>
+        /// Connects the Client to the specified port on the specified host.
+        /// Supports IPV6 and IPV4, it is recommended to use domain names instead of IP addresses
+        /// </summary>
+        /// <param name="hostname"></param>
+        /// <param name="port"></param>
+        /// <param name="timeoutMilliseconds"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Reconnect to the server
         /// </summary>
         /// <exception cref="TimeoutException"></exception>
         /// <exception cref="SocketException"></exception>
         /// <returns></returns>
         Task Reconnect();
+
+        /// <summary>
+        /// Reconnect to the server
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task Reconnect(CancellationToken cancellationToken);
 
         /// <summary>
         /// Forces a connection to disconnect.
@@ -108,6 +127,25 @@ namespace Loxodon.Framework.Net.Connection
         /// <exception cref="TimeoutException"></exception>
         /// <returns></returns>
         Task<TResponse> Send(TRequest request, int timeoutMilliseconds);
+
+        /// <summary>
+        /// Send a request message
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <exception cref="TimeoutException"></exception>
+        /// <returns></returns>
+        Task<TResponse> Send(TRequest request, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Send a request message
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="timeoutMilliseconds"></param>
+        /// <param name="cancellationToken"></param>
+        /// <exception cref="TimeoutException"></exception>
+        /// <returns></returns>
+        Task<TResponse> Send(TRequest request, int timeoutMilliseconds, CancellationToken cancellationToken);
 
         /// <summary>
         /// Send a notification message

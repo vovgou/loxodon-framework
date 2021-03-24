@@ -23,7 +23,6 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
@@ -57,9 +56,10 @@ namespace Loxodon.Framework.Net.Connection
 
         public override bool Connected { get { return client != null ? client.Connected && connected : false; } }
 
-        public override async Task Connect(string hostname, int port, int timeoutMilliseconds)
+        public override async Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken)
         {
-            await connectLock.WaitAsync();
+            if (!await connectLock.WaitAsync(timeoutMilliseconds, cancellationToken))
+                throw new TimeoutException();
             try
             {
                 if (client != null)
@@ -72,6 +72,8 @@ namespace Loxodon.Framework.Net.Connection
                 client = await Task.Run(async () =>
                 {
                     IPAddress[] addresses = await Dns.GetHostAddressesAsync(hostname);
+
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     Exception lastex = null;
                     TcpClient ipv6Client = null;
@@ -101,6 +103,7 @@ namespace Loxodon.Framework.Net.Connection
 
                     foreach (var address in addresses)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         try
                         {
                             if (address.AddressFamily == AddressFamily.InterNetwork && ipv4Client != null)
@@ -145,6 +148,8 @@ namespace Loxodon.Framework.Net.Connection
                         }
                     }
 
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     try
                     {
                         if (nat64Address != null)
@@ -180,7 +185,7 @@ namespace Loxodon.Framework.Net.Connection
                         throw lastex;
 
                     throw new SocketException((int)SocketError.NotConnected);
-                });
+                }, cancellationToken);
 
                 var stream = await this.WrapStream(client.GetStream());
                 reader = new BinaryReader(stream, false, IsBigEndian);

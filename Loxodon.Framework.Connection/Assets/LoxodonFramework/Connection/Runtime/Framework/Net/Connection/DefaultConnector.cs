@@ -117,10 +117,17 @@ namespace Loxodon.Framework.Net.Connection
                 eventArgsSubject.Publish(e);
         }
 
-        public async Task Connect(string hostname, int port, int timeoutMilliseconds)
+        public Task Connect(string hostname, int port, int timeoutMilliseconds)
+        {
+            return Connect(hostname, port, timeoutMilliseconds, default(CancellationToken));
+        }
+
+        public async Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken)
         {
             ValidateDisposed();
-            await connectLock.WaitAsync();
+            if (!await connectLock.WaitAsync(timeoutMilliseconds, cancellationToken))
+                throw new TimeoutException();
+
             try
             {
                 this.Init();
@@ -131,7 +138,7 @@ namespace Loxodon.Framework.Net.Connection
                 this.hostname = hostname;
                 this.port = port;
                 this.connTimeoutMilliseconds = timeoutMilliseconds;
-                await DoConnect();
+                await DoConnect(cancellationToken);
                 this.State = ConnectionState.Connected;
                 this.eventArgsSubject.Publish(ConnectionEventArgs.ConnectedEventArgs);
             }
@@ -152,16 +159,21 @@ namespace Loxodon.Framework.Net.Connection
             }
         }
 
-        public async Task Reconnect()
+        public Task Reconnect()
         {
-            await connectLock.WaitAsync();
+            return Reconnect(default(CancellationToken));
+        }
+
+        public async Task Reconnect(CancellationToken cancellationToken)
+        {
+            await connectLock.WaitAsync(cancellationToken);
             try
             {
                 await this.DoDisconnect();
 
                 this.State = ConnectionState.Connecting;
                 this.eventArgsSubject.Publish(ConnectionEventArgs.ReconnectingEventArgs);
-                await DoConnect().TimeoutAfter(this.connTimeoutMilliseconds);
+                await DoConnect(cancellationToken);
                 this.State = ConnectionState.Connected;
                 this.eventArgsSubject.Publish(ConnectionEventArgs.ConnectedEventArgs);
             }
@@ -260,11 +272,21 @@ namespace Loxodon.Framework.Net.Connection
             return Send(request, this.TimeoutMilliseconds);
         }
 
-        public virtual async Task<TResponse> Send(TRequest request, int timeoutMilliseconds)
+        public Task<TResponse> Send(TRequest request, int timeoutMilliseconds)
+        {
+            return Send(request, timeoutMilliseconds, default(CancellationToken));
+        }
+
+        public Task<TResponse> Send(TRequest request, CancellationToken cancellationToken)
+        {
+            return Send(request, TimeoutMilliseconds, cancellationToken);
+        }
+
+        public virtual async Task<TResponse> Send(TRequest request, int timeoutMilliseconds, CancellationToken cancellationToken)
         {
             ValidateDisposed();
             ValidateConnected();
-            return await this.DoSend(request, timeoutMilliseconds);
+            return await this.DoSend(request, timeoutMilliseconds, cancellationToken);
         }
 
         public virtual async Task Send(TNotification notification)
@@ -274,9 +296,9 @@ namespace Loxodon.Framework.Net.Connection
             await this.DoSend(notification);
         }
 
-        protected virtual async Task DoConnect()
+        protected virtual async Task DoConnect(CancellationToken cancellationToken)
         {
-            await channel.Connect(hostname, port, connTimeoutMilliseconds);
+            await channel.Connect(hostname, port, connTimeoutMilliseconds, cancellationToken);
             idleStateMonitor?.OnConnected();
         }
 
@@ -289,15 +311,18 @@ namespace Loxodon.Framework.Net.Connection
             }
         }
 
-        protected virtual Task<TResponse> DoSend(TRequest request, int timeoutMilliseconds)
+        protected virtual Task<TResponse> DoSend(TRequest request, int timeoutMilliseconds, CancellationToken cancellationToken)
         {
             int timeout = Math.Max(timeoutMilliseconds, DEFAULT_TIMEOUT);
-            TaskTimeoutOrCompletionSource<TResponse> promise = new TaskTimeoutOrCompletionSource<TResponse>(timeout);
+            TaskTimeoutOrCompletionSource<TResponse> promise = new TaskTimeoutOrCompletionSource<TResponse>(timeout, cancellationToken);
             this.channel.WriteAsync(request).ContinueWith(t =>
             {
                 if (t.IsCompleted)
                 {
-                    promises.TryAdd(request.Sequence.ToString(), promise);
+                    if (cancellationToken.IsCancellationRequested)
+                        promise.TrySetCanceled();
+                    else
+                        promises.TryAdd(request.Sequence.ToString(), promise);
 
                     idleStateMonitor?.OnSent();
                 }
@@ -387,6 +412,13 @@ namespace Loxodon.Framework.Net.Connection
                     {
                         var sequence = kv.Key;
                         var promise = kv.Value;
+
+                        if (promise.IsCanceled)
+                        {
+                            promise.SetCanceled();
+                            promises.TryRemove(sequence, out _);
+                        }
+
                         if (promise.IsTimeout)
                         {
                             promise.SetTimeout();
