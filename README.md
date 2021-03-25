@@ -3,8 +3,8 @@
 # Loxodon Framework
 
 [![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE)
-[![release](https://img.shields.io/badge/release-v2.0.0-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
-[![openupm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.cn/packages/com.vovgou.loxodon-framework/)
+[![release](https://img.shields.io/badge/release-v2.0.7-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
+[![openupm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.vovgou.loxodon-framework/)
 
 [(中文版)](README_CN.md)
 
