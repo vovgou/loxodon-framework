@@ -156,19 +156,12 @@ namespace Loxodon.Framework.Utilities
                     IntPtr array = IntPtr.Zero;
                     try
                     {
-#if UNITY_2019_3_OR_NEWER                        
-                        array = AndroidJNI.NewSByteArray(count);
-#else
                         array = AndroidJNI.NewByteArray(count);
-#endif
                         var method = AndroidJNIHelper.GetMethodID(inputStream.GetRawClass(), "read", "([B)I");
                         ret = AndroidJNI.CallIntMethod(inputStream.GetRawObject(), method, new[] { new jvalue() { l = array } });
-#if UNITY_2019_3_OR_NEWER
-                        sbyte[] data = AndroidJNI.FromSByteArray(array);
-#else
                         byte[] data = AndroidJNI.FromByteArray(array);
-#endif
-                        Array.Copy(data, 0, buffer, offset, ret);
+                        //Array.Copy(data, 0, buffer, offset, ret);
+                        Buffer.BlockCopy(data, 0, buffer, 0, ret);
                     }
                     finally
                     {
