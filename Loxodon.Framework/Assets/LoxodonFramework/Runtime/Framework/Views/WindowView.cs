@@ -25,6 +25,7 @@
 using UnityEngine;
 
 using Loxodon.Framework.Views.Animations;
+using System.Collections.Generic;
 
 namespace Loxodon.Framework.Views
 {
@@ -43,6 +44,29 @@ namespace Loxodon.Framework.Views
         {
             get { return this.passivationAnimation; }
             set { this.passivationAnimation = value; }
+        }
+
+        public virtual List<IUIView> Views
+        {
+            get
+            {
+                var transform = this.Transform;
+                List<IUIView> views = new List<IUIView>();
+                int count = transform.childCount;
+                for (int i = 0; i < count; i++)
+                {
+                    var child = transform.GetChild(i);
+                    var view = child.GetComponent<IUIView>();
+                    if (view != null)
+                        views.Add(view);
+                }
+                return views;
+            }
+        }
+
+        public virtual IUIView GetView(string name)
+        {
+            return this.Views.Find(v => v.Name.Equals(name));
         }
 
         public virtual void AddView(IUIView view, bool worldPositionStays = false)

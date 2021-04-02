@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Loxodon.Framework.Views
@@ -33,6 +34,10 @@ namespace Loxodon.Framework.Views
     /// </summary>
     public interface IViewGroup : IView
     {
+        List<IView> Views { get; }
+
+        IView GetView(string name);
+
         void AddView(IView view, bool worldPositionStays = false);
 
         void AddView(IView view, Layout layout);
