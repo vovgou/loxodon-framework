@@ -160,8 +160,11 @@ namespace Loxodon.Framework.Security.Cryptography
                 {
                     if (!leaveOpen)
                     {
-                        stream.Close();
-                        stream = null;
+                        if (stream != null)
+                        {
+                            stream.Close();
+                            stream = null;
+                        }
                     }
                 }
             }

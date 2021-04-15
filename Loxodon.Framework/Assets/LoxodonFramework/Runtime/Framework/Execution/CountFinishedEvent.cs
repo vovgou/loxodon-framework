@@ -31,7 +31,6 @@ namespace Loxodon.Framework.Execution
     /// </summary>
     public class CountFinishedEvent
     {
-        private readonly object _lock = new object();
         private readonly ManualResetEvent resetEvent = new ManualResetEvent(false);
         private int count = 0;
 
@@ -42,36 +41,24 @@ namespace Loxodon.Framework.Execution
 
         public bool Reset()
         {
-            lock (_lock)
-            {
-                return this.resetEvent.Reset();
-            }
+            return this.resetEvent.Reset();
         }
 
         public bool Set()
         {
-            lock (_lock)
-            {
-                if (--count <= 0)
-                    return resetEvent.Set();
-                return false;
-            }
+            if (Interlocked.Decrement(ref count) <= 0)
+                return resetEvent.Set();
+            return false;
         }
 
         public bool Wait()
         {
-            lock (_lock)
-            {
-                return resetEvent.WaitOne();
-            }
+            return resetEvent.WaitOne();
         }
 
         public bool Wait(int millisecondsTimeout)
         {
-            lock (_lock)
-            {
-                return resetEvent.WaitOne(millisecondsTimeout);
-            }
+            return resetEvent.WaitOne(millisecondsTimeout);
         }
     }
 }

@@ -32,6 +32,9 @@ namespace Loxodon.Framework.Tutorials
     {
         IEnumerator Start()
         {
+            Debug.LogFormat("Wait for 2 seconds");
+            yield return CoroutineTask.Delay(2f).WaitForDone();
+
             CoroutineTask task = new CoroutineTask(DoTask())
                 .ContinueWith(
                     DoContinueTask(),
