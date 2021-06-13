@@ -46,7 +46,8 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentNullException("fieldInfo");
 
             this.fieldInfo = fieldInfo;
-            this.isValueType = this.fieldInfo.DeclaringType.GetTypeInfo().IsValueType;
+            //this.isValueType = this.fieldInfo.DeclaringType.GetTypeInfo().IsValueType;
+            this.isValueType = this.fieldInfo.DeclaringType.IsValueType;
         }
 
         public virtual bool IsValueType { get { return isValueType; } }

@@ -44,7 +44,8 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentNullException("propertyInfo");
 
             this.propertyInfo = propertyInfo;
-            this.isValueType = this.propertyInfo.DeclaringType.GetTypeInfo().IsValueType;
+            //this.isValueType = this.propertyInfo.DeclaringType.GetTypeInfo().IsValueType;
+            this.isValueType = this.propertyInfo.DeclaringType.IsValueType;
 
             if (this.propertyInfo.CanRead)
                 this.getMethod = propertyInfo.GetGetMethod();

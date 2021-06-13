@@ -38,7 +38,8 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentNullException("methodInfo");
 
             this.methodInfo = methodInfo;
-            this.isValueType = methodInfo.DeclaringType.GetTypeInfo().IsValueType;
+            //this.isValueType = methodInfo.DeclaringType.GetTypeInfo().IsValueType;
+            this.isValueType = methodInfo.DeclaringType.IsValueType;
         }
 
         public virtual Type DeclaringType { get { return this.methodInfo.DeclaringType; } }

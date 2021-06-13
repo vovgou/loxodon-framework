@@ -23,10 +23,6 @@
  */
 
 using System;
-#if NETFX_CORE
-using System.Reflection;
-#endif
-
 using Loxodon.Log;
 using Loxodon.Framework.Binding.Proxy;
 using Loxodon.Framework.Binding.Converters;

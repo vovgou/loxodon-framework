@@ -90,7 +90,12 @@ namespace Loxodon.Framework.Binding
             Register<Button, Button.ButtonClickedEvent>("onClick", t => t.onClick, null);
 
             Register<InputField, InputField.OnChangeEvent>("onValueChanged", t => t.onValueChanged, null);
+#if UNITY_2021_1_OR_NEWER
+            Register<InputField, InputField.EndEditEvent>("onEndEdit", t => t.onEndEdit, null);
+            Register<InputField, InputField.SubmitEvent>("onSubmit", t => t.onSubmit, null);
+#else
             Register<InputField, InputField.SubmitEvent>("onEndEdit", t => t.onEndEdit, null);
+#endif
             Register<InputField, string>("text", t => t.text, (t, v) => t.text = v);
 
             Register<Scrollbar, Scrollbar.ScrollEvent>("onValueChanged", t => t.onValueChanged, null);

@@ -181,7 +181,8 @@ namespace Loxodon.Framework.Binding.Reflection
             if (this.baseType != null)
                 return this.baseType;
 
-            Type _baseType = type.GetTypeInfo().BaseType;
+            //Type _baseType = type.GetTypeInfo().BaseType;
+            Type _baseType = type.BaseType;
             if (_baseType == null)
                 return null;
 
@@ -362,14 +363,18 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public IProxyMethodInfo GetMethod(string name)
         {
-            MemberInfo memberInfo = this.type.FindFirstMemberInfo(name);
-            if (memberInfo == null)
+            //MemberInfo memberInfo = this.type.FindFirstMemberInfo(name);            
+            //if (memberInfo == null)
+            //    return null;
+
+            //if (!(memberInfo is MethodInfo))
+            //    return null;
+
+            MethodInfo methodInfo = this.type.GetMethod(name);
+            if (methodInfo == null)
                 return null;
 
-            if (!(memberInfo is MethodInfo))
-                return null;
-
-            return this.GetMethod(name, ((MethodInfo)memberInfo).GetParameterTypes().ToArray());
+            return this.GetMethod(name, methodInfo.GetParameterTypes().ToArray());
         }
 
         public virtual IProxyMethodInfo GetMethod(string name, Type[] parameterTypes)
@@ -393,14 +398,18 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public IProxyMethodInfo GetMethod(string name, BindingFlags flags)
         {
-            MemberInfo memberInfo = this.type.FindFirstMemberInfo(name, flags);
-            if (memberInfo == null)
+            //MemberInfo memberInfo = this.type.FindFirstMemberInfo(name, flags);
+            //if (memberInfo == null)
+            //    return null;
+
+            //if (!(memberInfo is MethodInfo))
+            //    return null;
+
+            MethodInfo methodInfo = this.type.GetMethod(name, flags);
+            if (methodInfo == null)
                 return null;
 
-            if (!(memberInfo is MethodInfo))
-                return null;
-
-            return this.GetMethod(name, ((MethodInfo)memberInfo).GetParameterTypes().ToArray(), flags);
+            return this.GetMethod(name, methodInfo.GetParameterTypes().ToArray(), flags);
         }
 
         public IProxyMethodInfo GetMethod(string name, Type[] parameterTypes, BindingFlags flags)
@@ -459,7 +468,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 {
                     ParameterInfo[] parameters = propertyInfo.GetIndexParameters();
                     if (parameters != null && parameters.Length > 0)
-                        throw new NotSupportedException();
+                        throw new ParameterMismatchException();
 
                     info = (IProxyPropertyInfo)Activator.CreateInstance(typeof(StaticProxyPropertyInfo<,>).MakeGenericType(type, propertyInfo.PropertyType), propertyInfo);
                 }
@@ -467,12 +476,12 @@ namespace Loxodon.Framework.Binding.Reflection
                 {
                     ParameterInfo[] parameters = propertyInfo.GetIndexParameters();
                     if (parameters != null && parameters.Length == 1)
-                        throw new NotSupportedException();
+                        throw new ParameterMismatchException();
 
                     info = (IProxyPropertyInfo)Activator.CreateInstance(typeof(ProxyPropertyInfo<,>).MakeGenericType(type, propertyInfo.PropertyType), propertyInfo);
                 }
             }
-            catch (NotSupportedException e)
+            catch (ParameterMismatchException e)
             {
                 throw e;
             }

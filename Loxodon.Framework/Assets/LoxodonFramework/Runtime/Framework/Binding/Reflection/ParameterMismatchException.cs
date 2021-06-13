@@ -22,10 +22,26 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Binding.Proxy.Sources
+using System;
+
+namespace Loxodon.Framework.Binding.Reflection
 {
-    public interface ISourceProxyFactory
+    public class ParameterMismatchException : Exception
     {
-        ISourceProxy CreateProxy(object source, SourceDescription description);
+        public ParameterMismatchException()
+        {
+        }
+
+        public ParameterMismatchException(string message) : base(message)
+        {
+        }
+
+        public ParameterMismatchException(Exception exception) : base("", exception)
+        {
+        }
+
+        public ParameterMismatchException(string message, Exception exception) : base(message, exception)
+        {
+        }
     }
 }
