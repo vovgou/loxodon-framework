@@ -64,6 +64,32 @@ namespace Loxodon.Framework.Views
             return locator;
         }
 
+        public static IUIViewGroup GetCurrentViewGroup()
+        {
+            GlobalWindowManager windowManager = GlobalWindowManager.Root;
+            IWindow window = windowManager.Current;
+            while (window is WindowContainer windowContainer)
+            {
+                window = windowContainer.Current;
+            }
+            return window as IUIViewGroup;
+        }
+
+        public static Toast Show(string text, float duration = 3f)
+        {
+            return Show(ViewName, null, text, duration, null, null);
+        }
+
+        public static Toast Show(string text, float duration, UILayout layout)
+        {
+            return Show(ViewName, null, text, duration, layout, null);
+        }
+
+        public static Toast Show(string text, float duration, UILayout layout, Action callback)
+        {
+            return Show(ViewName, null, text, duration, layout, callback);
+        }
+
         public static Toast Show(IUIViewGroup viewGroup, string text, float duration = 3f)
         {
             return Show(ViewName, viewGroup, text, duration, null, null);
@@ -88,6 +114,9 @@ namespace Loxodon.Framework.Views
             ToastView view = locator.LoadView<ToastView>(viewName);
             if (view == null)
                 throw new NotFoundException("Not found the \"ToastView\".");
+
+            if (viewGroup == null)
+                viewGroup = GetCurrentViewGroup();
 
             Toast toast = new Toast(view, viewGroup, text, duration, layout);
             toast.Show();
