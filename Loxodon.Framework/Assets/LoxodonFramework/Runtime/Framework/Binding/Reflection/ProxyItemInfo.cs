@@ -49,7 +49,8 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentException("The property types do not match!");
 
             this.propertyInfo = propertyInfo;
-            this.isValueType = this.propertyInfo.DeclaringType.GetTypeInfo().IsValueType;
+            //this.isValueType = this.propertyInfo.DeclaringType.GetTypeInfo().IsValueType;
+            this.isValueType = this.propertyInfo.DeclaringType.IsValueType;
 
             if (this.propertyInfo.CanRead)
                 this.getMethod = propertyInfo.GetGetMethod();

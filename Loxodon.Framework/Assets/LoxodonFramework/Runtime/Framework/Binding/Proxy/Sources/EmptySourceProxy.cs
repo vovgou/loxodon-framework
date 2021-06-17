@@ -23,6 +23,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using Loxodon.Log;
 
 namespace Loxodon.Framework.Binding.Proxy.Sources
@@ -42,30 +43,31 @@ namespace Loxodon.Framework.Binding.Proxy.Sources
 
         public virtual object GetValue()
         {
-            if (log.IsWarnEnabled)
-                log.WarnFormat("this is an empty source proxy,If you see this, then the DataContext/SourceObject is null.The SourceDescription is \"{0}\"", description.ToString());
-
+            DebugWarning();
             return null;
         }
 
         public virtual TValue GetValue<TValue>()
         {
-            if (log.IsWarnEnabled)
-                log.WarnFormat("this is an empty source proxy,If you see this, then the DataContext/SourceObject is null.The SourceDescription is \"{0}\"", description.ToString());
-
+            DebugWarning();
             return default(TValue);
         }
 
         public virtual void SetValue(object value)
         {
-            if (log.IsWarnEnabled)
-                log.WarnFormat("this is an empty source proxy,If you see this, then the DataContext/SourceObject is null.The SourceDescription is \"{0}\"", description.ToString());
+            DebugWarning();
         }
 
         public virtual void SetValue<TValue>(TValue value)
         {
+            DebugWarning();
+        }
+
+        [Conditional("DEBUG")]
+        private void DebugWarning()
+        {
             if (log.IsWarnEnabled)
-                log.WarnFormat("this is an empty source proxy,If you see this, then the DataContext/SourceObject is null.The SourceDescription is \"{0}\"", description.ToString());
+                log.WarnFormat("this is an empty source proxy,If you see this, then the DataContext is null.The SourceDescription is \"{0}\"", description.ToString());
         }
     }
 }
