@@ -77,13 +77,20 @@ namespace Loxodon.Framework.Views
 
     public class WindowStateEventArgs : EventArgs
     {
+        private readonly WindowState oldState;
         private readonly WindowState state;
-        public WindowStateEventArgs(WindowState state)
+        private readonly IWindow window;
+        public WindowStateEventArgs(IWindow window, WindowState oldState, WindowState newState)
         {
-            this.state = state;
+            this.window = window;
+            this.oldState = oldState;
+            this.state = newState;
         }
 
+        public WindowState OldState { get { return this.oldState; } }
         public WindowState State { get { return this.state; } }
+
+        public IWindow Window { get { return this.window; } }
     }
 
     /// <summary>

@@ -109,8 +109,6 @@ namespace Loxodon.Framework.Messaging
                     dict.TryGetValue(type, out notifier);
             }
             return (notifier as Subject<object>).Subscribe(action);
-
-
         }
 
         /// <summary>

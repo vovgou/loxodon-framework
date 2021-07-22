@@ -24,10 +24,11 @@
 
 using Loxodon.Framework.Binding.Reflection;
 using System;
+using UnityEngine;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
-    public class MethodTargetProxy : TargetProxyBase, IObtainable
+    public class MethodTargetProxy : TargetProxyBase, IObtainable, IProxyInvoker
     {
         protected readonly IProxyMethodInfo methodInfo;
         protected IProxyInvoker invoker;
@@ -37,12 +38,14 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if (!methodInfo.ReturnType.Equals(typeof(void)))
                 throw new ArgumentException("methodInfo");
 
-            this.invoker = new WeakProxyInvoker(new WeakReference(target, false), methodInfo);
+            this.invoker = this;// new WeakProxyInvoker(new WeakReference(target, false), methodInfo);
         }
 
         public override BindingMode DefaultMode { get { return BindingMode.OneWayToSource; } }
 
         public override Type Type { get { return typeof(IProxyInvoker); } }
+
+        public IProxyMethodInfo ProxyMethodInfo { get { return this.methodInfo; } }
 
         public object GetValue()
         {
@@ -52,6 +55,21 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         public TValue GetValue<TValue>()
         {
             return (TValue)this.invoker;
+        }
+
+        public object Invoke(params object[] args)
+        {
+            if (this.methodInfo.IsStatic)
+                return this.methodInfo.Invoke(null, args);
+
+            var obj = this.Target;
+            if (obj == null)
+                return null;
+
+            if (obj is Behaviour behaviour && !behaviour.isActiveAndEnabled)
+                return null;
+
+            return this.methodInfo.Invoke(obj, args);
         }
     }
 }

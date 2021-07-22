@@ -31,46 +31,62 @@ using Loxodon.Log;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Localizations;
 using Loxodon.Framework.Services;
+using Loxodon.Framework.Messaging;
 
 namespace Loxodon.Framework.Examples
 {
-	public class Launcher : MonoBehaviour
+    public class Launcher : MonoBehaviour
     {
 
         //private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		private ApplicationContext context;
-		void Awake()
-		{           
-			GlobalWindowManager windowManager = FindObjectOfType<GlobalWindowManager>();
-			if (windowManager == null)
-				throw new NotFoundException("Not found the GlobalWindowManager.");
-			
-			context = Context.GetApplicationContext();
+        private ApplicationContext context;
+        ISubscription<WindowStateEventArgs> subscription;
+        void Awake()
+        {
+            GlobalWindowManager windowManager = FindObjectOfType<GlobalWindowManager>();
+            if (windowManager == null)
+                throw new NotFoundException("Not found the GlobalWindowManager.");
 
-			IServiceContainer container = context.GetContainer();
+            context = Context.GetApplicationContext();
 
-			/* Initialize the data binding service */
-			BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
-			bundle.Start();
+            IServiceContainer container = context.GetContainer();
 
-			/* Initialize the ui view locator and register UIViewLocator */
-			container.Register<IUIViewLocator>(new ResourcesViewLocator ());
+            /* Initialize the data binding service */
+            BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
+            bundle.Start();
 
-			/* Initialize the localization service */
-			//CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
-			CultureInfo cultureInfo = Locale.GetCultureInfo();
+            /* Initialize the ui view locator and register UIViewLocator */
+            container.Register<IUIViewLocator>(new ResourcesViewLocator());
+
+            /* Initialize the localization service */
+            //CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
+            CultureInfo cultureInfo = Locale.GetCultureInfo();
             var localization = Localization.Current;
             localization.CultureInfo = cultureInfo;
             localization.AddDataProvider(new ResourcesDataProvider("LocalizationExamples", new XmlDocumentParser()));
 
-			/* register Localization */
-			container.Register<Localization>(localization);
+            /* register Localization */
+            container.Register<Localization>(localization);
 
-			/* register AccountRepository */
-			IAccountRepository accountRepository = new AccountRepository();
-			container.Register<IAccountService>(new AccountService(accountRepository));
-		}
+            /* register AccountRepository */
+            IAccountRepository accountRepository = new AccountRepository();
+            container.Register<IAccountService>(new AccountService(accountRepository));
+
+            /* Enable window state broadcast */
+            GlobalSetting.enableWindowStateBroadcast = true;
+            /* 
+			 * Use the CanvasGroup.blocksRaycasts instead of the CanvasGroup.interactable 
+			 * to control the interactivity of the view
+			 */
+            GlobalSetting.useBlocksRaycastsInsteadOfInteractable = true;
+
+            /* Subscribe to window state change events */
+            subscription = Window.Messenger.Subscribe<WindowStateEventArgs>(e =>
+            {
+                Debug.LogFormat("The window[{0}] state changed from {1} to {2}", e.Window.Name, e.OldState, e.State);
+            });
+        }
 
         IEnumerator Start()
         {

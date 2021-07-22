@@ -126,8 +126,25 @@ namespace Loxodon.Framework.Views
 
         public virtual bool Interactable
         {
-            get { return !this.IsDestroyed() && this.gameObject != null ? this.CanvasGroup.interactable : false; }
-            set { if (!this.IsDestroyed() && this.gameObject != null) this.CanvasGroup.interactable = value; }
+            get
+            {
+                if (this.IsDestroyed() || this.gameObject == null)
+                    return false;
+
+                if (GlobalSetting.useBlocksRaycastsInsteadOfInteractable)
+                    return this.CanvasGroup.blocksRaycasts;
+                return this.CanvasGroup.interactable;
+            }
+            set
+            {
+                if (this.IsDestroyed() || this.gameObject == null)
+                    return;
+
+                if (GlobalSetting.useBlocksRaycastsInsteadOfInteractable)
+                    this.CanvasGroup.blocksRaycasts = value;
+                else
+                    this.CanvasGroup.interactable = value;
+            }
         }
 
         public virtual CanvasGroup CanvasGroup
@@ -141,7 +158,7 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public virtual IAttributes ExtraAttributes { get { return this.attributes; } }        
+        public virtual IAttributes ExtraAttributes { get { return this.attributes; } }
 
         protected virtual void OnVisibilityChanged()
         {

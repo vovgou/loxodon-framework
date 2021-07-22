@@ -393,6 +393,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   windowType: 0
+  windowPriority: 0
+  enableEventBroadcast: 1
   progressBarText: {fileID: 114000010867857088}
   progressBarSlider: {fileID: 114000013170448662}
   tipText: {fileID: 114000011950960436}

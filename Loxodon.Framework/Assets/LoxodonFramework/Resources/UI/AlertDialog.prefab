@@ -350,6 +350,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   windowType: 2
+  windowPriority: 0
+  broadcast: 1
   Title: {fileID: 114000010795470336}
   Message: {fileID: 114000011101670006}
   Content: {fileID: 1000014269051906}

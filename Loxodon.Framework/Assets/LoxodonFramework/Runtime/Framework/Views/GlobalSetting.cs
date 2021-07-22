@@ -22,39 +22,18 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.Interactivity;
-using System;
-using UnityEngine;
-
-namespace Loxodon.Framework.Binding.Proxy.Targets
+namespace Loxodon.Framework.Views
 {
-    public class InteractionTargetProxy : TargetProxyBase, IObtainable
+    public class GlobalSetting
     {
-        protected readonly EventHandler<InteractionEventArgs> handler;
+        /// <summary>
+        /// Whether to use the CanvasGroup.blocksRaycasts instead of the CanvasGroup.interactable to control the interactivity of the view  
+        /// </summary>
+        public static bool useBlocksRaycastsInsteadOfInteractable = false;
 
-        public InteractionTargetProxy(object target, IInteractionAction interactionAction) : base(target)
-        {
-            this.handler = (sender, args) =>
-            {
-                if (target is Behaviour behaviour && !behaviour.isActiveAndEnabled)
-                    return;
-
-                interactionAction.OnRequest(sender, args);
-            };
-        }
-
-        public override Type Type { get { return typeof(EventHandler<InteractionEventArgs>); } }
-
-        public override BindingMode DefaultMode { get { return BindingMode.OneWayToSource; } }
-
-        public object GetValue()
-        {
-            return handler;
-        }
-
-        public TValue GetValue<TValue>()
-        {
-            return (TValue)GetValue();
-        }
+        /// <summary>
+        /// Whether to enable the window state broadcast feature.
+        /// </summary>
+        public static bool enableWindowStateBroadcast = true;
     }
 }

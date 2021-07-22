@@ -24,6 +24,7 @@
 
 using Loxodon.Framework.Views;
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -44,7 +45,12 @@ namespace Loxodon.Framework.Editors
             WindowType windowType = (WindowType)windowTypeProperty.enumValueIndex;
             foldout = EditorGUILayout.Foldout(foldout, new GUIContent("Window Settings", ""));
 
-            string[] windowSettings = new string[] { "windowType", "windowPriority" };
+            List<GUIContent> windowSettings = new List<GUIContent>()
+            {
+                new GUIContent("windowType","Type of Window"),
+                new GUIContent("windowPriority","When pop-up windows are queued to open, windows with higher priority will be opened first."),
+                new GUIContent("stateBroadcast","If true, the window state broadcasting feature is enabled.")
+            };
 
             bool expanded = true;
             while (property.NextVisible(expanded))
@@ -54,7 +60,8 @@ namespace Loxodon.Framework.Editors
                     if ("m_Script" == property.propertyPath)
                         continue;
 
-                    if (Array.IndexOf(windowSettings, property.propertyPath) >= 0)
+                    GUIContent propertyContent = windowSettings.Find(c => c.text.Equals(property.propertyPath));
+                    if (propertyContent != null)
                     {
                         if (foldout)
                         {
@@ -62,10 +69,7 @@ namespace Loxodon.Framework.Editors
                                 continue;
 
                             EditorGUI.indentLevel++;
-                            if ("windowPriority" == property.propertyPath)
-                                EditorGUILayout.PropertyField(property, new GUIContent(property.displayName, "When pop-up windows are queued to open, windows with higher priority will be opened first."));
-                            else
-                                EditorGUILayout.PropertyField(property, new GUIContent(property.displayName));
+                            EditorGUILayout.PropertyField(property, propertyContent);
                             EditorGUI.indentLevel--;
                         }
                         continue;

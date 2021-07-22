@@ -70,6 +70,12 @@ namespace Loxodon.Framework.Tutorials
             }
         }
 
+        protected override void OnDestroy()
+        {
+            if (this.items != null)
+                this.items.CollectionChanged -= OnCollectionChanged;
+        }
+
         protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
         {
             switch (eventArgs.Action)

@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace Loxodon.Framework.Net.Connection
         protected readonly SemaphoreSlim connectLock = new SemaphoreSlim(1, 1);
         protected readonly Subject<EventArgs> eventArgsSubject = new Subject<EventArgs>();
         protected readonly Subject<TNotification> notificationSubject = new Subject<TNotification>();
-        protected readonly ConcurrentDictionary<string, TaskTimeoutOrCompletionSource<TResponse>> promises = new ConcurrentDictionary<string, TaskTimeoutOrCompletionSource<TResponse>>();
+        protected readonly ConcurrentDictionary<uint, TaskTimeoutOrCompletionSource<TResponse>> promises = new ConcurrentDictionary<uint, TaskTimeoutOrCompletionSource<TResponse>>(new UInt32EqualityComparer());
 
         protected string hostname;
         protected int port;
@@ -49,7 +50,6 @@ namespace Loxodon.Framework.Net.Connection
         protected ConnectionState state = ConnectionState.Closed;
         protected IChannel<IMessage> channel;
         protected IdleStateMonitor idleStateMonitor;
-
         public DefaultConnector(IChannel<IMessage> channel) : this(channel, null)
         {
         }
@@ -93,10 +93,16 @@ namespace Loxodon.Framework.Net.Connection
                     if (this.state == value)
                         return;
 
+                    ConnectionState oldState = this.state;
                     this.state = value;
+                    this.OnStateChanged(oldState, value);
                     Monitor.PulseAll(stateLock);
                 }
             }
+        }
+
+        protected virtual void OnStateChanged(ConnectionState oldState, ConnectionState newState)
+        {
         }
 
         protected virtual void Init()
@@ -116,6 +122,8 @@ namespace Loxodon.Framework.Net.Connection
             if (eventArgsSubject != null)
                 eventArgsSubject.Publish(e);
         }
+
+        public IChannel<IMessage> Channel { get { return this.channel; } }
 
         public Task Connect(string hostname, int port, int timeoutMilliseconds)
         {
@@ -299,6 +307,11 @@ namespace Loxodon.Framework.Net.Connection
         protected virtual async Task DoConnect(CancellationToken cancellationToken)
         {
             await channel.Connect(hostname, port, connTimeoutMilliseconds, cancellationToken);
+            OnConnected();
+        }
+
+        protected virtual void OnConnected()
+        {
             idleStateMonitor?.OnConnected();
         }
 
@@ -307,8 +320,13 @@ namespace Loxodon.Framework.Net.Connection
             if (this.channel != null && this.channel.Connected)
             {
                 await channel.Close();
-                idleStateMonitor?.OnDisconnected();
+                OnDisconnected();
             }
+        }
+
+        protected virtual void OnDisconnected()
+        {
+            idleStateMonitor?.OnDisconnected();
         }
 
         protected virtual Task<TResponse> DoSend(TRequest request, int timeoutMilliseconds, CancellationToken cancellationToken)
@@ -322,9 +340,9 @@ namespace Loxodon.Framework.Net.Connection
                     if (cancellationToken.IsCancellationRequested)
                         promise.TrySetCanceled();
                     else
-                        promises.TryAdd(request.Sequence.ToString(), promise);
+                        promises.TryAdd(request.Sequence, promise);
 
-                    idleStateMonitor?.OnSent();
+                    OnSent(request);
                 }
                 else
                 {
@@ -340,6 +358,11 @@ namespace Loxodon.Framework.Net.Connection
         protected virtual async Task DoSend(TNotification notification)
         {
             await this.channel.WriteAsync(notification);
+            OnSent(notification);
+        }
+
+        protected virtual void OnSent(IMessage message)
+        {
             idleStateMonitor?.OnSent();
         }
 
@@ -359,27 +382,27 @@ namespace Loxodon.Framework.Net.Connection
                     }
 
                     IMessage message = await this.channel.ReadAsync();
-                    idleStateMonitor?.OnReceived();
-
-                    if (message is TNotification)
+                    if (message is TNotification notification)
                     {
-                        this.notificationSubject.Publish((TNotification)message);
+                        this.notificationSubject.Publish(notification);
                         continue;
                     }
 
-                    if (message is TResponse)
+                    if (message is TResponse response)
                     {
-                        TResponse response = (TResponse)message;
                         TaskTimeoutOrCompletionSource<TResponse> promise;
-                        if (promises.TryRemove(response.Sequence.ToString(), out promise) && promise != null)
+                        if (promises.TryRemove(response.Sequence, out promise) && promise != null)
                             promise.SetResult(response);
                         continue;
                     }
+
+                    OnReceived(message);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     if (this.State == ConnectionState.Connected)
                     {
+                        OnIOException(e);
                         this.eventArgsSubject.Publish(ConnectionEventArgs.ExceptionEventArgs);
                         await DoDisconnect();
                         if (this.State != ConnectionState.Connected)
@@ -400,6 +423,16 @@ namespace Loxodon.Framework.Net.Connection
                     }
                 }
             }
+        }
+
+        protected virtual void OnReceived(IMessage message)
+        {
+            idleStateMonitor?.OnReceived();
+        }
+
+        protected virtual void OnIOException(Exception e)
+        {
+
         }
 
         protected virtual void DoTick()
@@ -450,6 +483,21 @@ namespace Loxodon.Framework.Net.Connection
             if (this.disposedValue)
                 throw new ObjectDisposedException(this.GetType().FullName);
         }
+
+        #region IEqualityComparer<uint> Support
+        public class UInt32EqualityComparer : IEqualityComparer<uint>
+        {
+            bool IEqualityComparer<uint>.Equals(uint x, uint y)
+            {
+                return x == y;
+            }
+
+            int IEqualityComparer<uint>.GetHashCode(uint obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
+        #endregion
 
         #region IDisposable Support
         private bool disposedValue = false;

@@ -204,11 +204,6 @@ namespace Loxodon.Framework.Net.Connection
             }
         }
 
-        public void OnShutdown()
-        {
-            Dispose(true);
-        }
-
         protected void RaiseIdleStateChanged(IdleStateEventArgs eventArgs)
         {
             IdleStateChanged?.Invoke(this, eventArgs);

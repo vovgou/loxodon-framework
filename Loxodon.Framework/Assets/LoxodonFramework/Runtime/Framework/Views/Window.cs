@@ -28,6 +28,7 @@ using UnityEngine;
 using Loxodon.Log;
 using Loxodon.Framework.Asynchronous;
 using IAsyncResult = Loxodon.Framework.Asynchronous.IAsyncResult;
+using Loxodon.Framework.Messaging;
 
 namespace Loxodon.Framework.Views
 {
@@ -36,11 +37,15 @@ namespace Loxodon.Framework.Views
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(Window));
 
+        public static readonly IMessenger Messenger = new Messenger();
+
         [SerializeField]
         private WindowType windowType = WindowType.FULL;
         [SerializeField]
         [Range(0, 10)]
         private int windowPriority = 0;
+        [SerializeField]
+        private bool stateBroadcast = true;
         private IWindowManager windowManager;
         private bool created = false;
         private bool dismissed = false;
@@ -120,8 +125,9 @@ namespace Loxodon.Framework.Views
                 if (this.state.Equals(value))
                     return;
 
+                WindowState old = this.state;
                 this.state = value;
-                this.RaiseStateChanged(this.state);
+                this.RaiseStateChanged(old, this.state);
             }
         }
 
@@ -187,12 +193,16 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        protected void RaiseStateChanged(WindowState state)
+        protected void RaiseStateChanged(WindowState oldState, WindowState newState)
         {
             try
             {
+                WindowStateEventArgs eventArgs = new WindowStateEventArgs(this, oldState, newState);
+                if (GlobalSetting.enableWindowStateBroadcast && stateBroadcast)
+                    Messenger.Publish(eventArgs);
+
                 if (this.stateChanged != null)
-                    this.stateChanged(this, new WindowStateEventArgs(state));
+                    this.stateChanged(this, eventArgs);
             }
             catch (Exception e)
             {

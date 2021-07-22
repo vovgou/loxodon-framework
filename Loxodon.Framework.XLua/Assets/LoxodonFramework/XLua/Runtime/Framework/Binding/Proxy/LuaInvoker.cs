@@ -24,6 +24,7 @@
 
 using Loxodon.Log;
 using System;
+using UnityEngine;
 using XLua;
 
 namespace Loxodon.Framework.Binding.Proxy
@@ -51,6 +52,9 @@ namespace Loxodon.Framework.Binding.Proxy
             {
                 var target = this.Target;
                 if (target == null)
+                    return null;
+
+                if (target is Behaviour behaviour && !behaviour.isActiveAndEnabled)
                     return null;
 
                 int length = args != null ? args.Length + 1 : 1;

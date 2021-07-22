@@ -52,7 +52,7 @@ namespace Loxodon.Framework.Views
             if (locator == null)
             {
                 if (log.IsWarnEnabled)
-                    log.Warn("Not found the \"IUIViewLocator\" in the ApplicationContext.Try loading the AlertDialog using the DefaultUIViewLocator.");
+                    log.Warn("Not found the \"IUIViewLocator\" in the ApplicationContext.Try loading the Toast using the DefaultUIViewLocator.");
 
                 locator = context.GetService<IUIViewLocator>(DEFAULT_VIEW_LOCATOR_KEY);
                 if (locator == null)
@@ -118,7 +118,7 @@ namespace Loxodon.Framework.Views
             if (viewGroup == null)
                 viewGroup = GetCurrentViewGroup();
 
-            Toast toast = new Toast(view, viewGroup, text, duration, layout);
+            Toast toast = new Toast(view, viewGroup, text, duration, layout, callback);
             toast.Show();
             return toast;
         }
