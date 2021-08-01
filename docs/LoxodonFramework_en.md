@@ -9,70 +9,83 @@ puppeteer:
 ![](images/icon.png)
 # Loxodon Framework
 
-*MVVM Framework for Unity3D(C# & XLua)*
+*MVVM Framework for Unity3D (C# & XLua)*
+
+*Version 2.0.0*
 
 *Developed by Clark*
-*Translation by Tien Nguyen*
-*Version 1.9.4*
 
-*This is just a preliminary translation file, it may have some problems, we need more help, welcome to join us.*
+*Chinese Manual by Clark; and translated by Tien Nguyen and Xu Rongfeng*
+
+*This is a preliminary translated manual according Chinese version, which may includes translation or express errors, if any divergences Chinese shall prevail. You are welcome to join us to provide any supports.*
+
 *Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)*
 
 <div style="page-break-after: always;"></div>
 
-Table of Contents
----
+## Table of Contents
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=2 depthTo=6 orderedList=false} -->
 <!-- code_chunk_output -->
 
+- [Table of Contents](#table-of-contents)
 - [Overview](#overview)
 - [Installation](#installation)
   - [Install via OpenUPM (recommended)](#install-via-openupm-recommended)
-  - [Install via Packages/manifest.json](#install-via-packagesmanifestjson)
+  - [Install via modified Packages/manifest.json](#install-via-modified-packagesmanifestjson)
   - [Install via git URL](#install-via-git-url)
   - [Install via *.unitypackage file](#install-via-unitypackage-file)
+  - [Import example](#import-example)
 - [Official Plugin(optional)](#official-pluginoptional)
 - [Lua plugin installation (optional)](#lua-plugin-installation-optional)
-  - [Install XLua](#install-xlua)
+  - [XLua Installation](#xlua-installation)
   - [Import Lua plugin](#import-lua-plugin)
-  - [Import the samples](#import-the-samples)
+  - [Import the examples](#import-the-examples)
 - [Quick start](#quick-start)
   - [C# example](#c-example)
   - [Lua example](#lua-example)
 - [Features Introduction](#features-introduction)
   - [Context](#context)
-    - [Application Context(ApplicationContext)](#application-contextapplicationcontext)
-    - [Player Context(PlayerContext)](#player-contextplayercontext)
+    - [Application Context](#application-context)
+    - [Player Context](#player-context)
     - [Other Contexts](#other-contexts)
   - [Service Container](#service-container)
-    - [Service Registrar(IServiceRegistry)](#service-registrariserviceregistry)
+    - [Service Registry(IServiceRegistry)](#service-registryiserviceregistry)
     - [Service Locator(IServiceLocator)](#service-locatoriservicelocator)
     - [Service Bundle(IServiceBundle)](#service-bundleiservicebundle)
-  - [Preference(Preference)](#preferencepreference)
+  - [Application configuration(Preference)](#application-configurationpreference)
   - [Configuration(Properties File)](#configurationproperties-file)
-    - [Supported Numeric Types](#supported-numeric-types)
+    - [Supported Data Types](#supported-data-types)
     - [Array Delimiter](#array-delimiter)
-    - [Configuration File Example](#configuration-file-example)
+    - [Configuration File Combine](#configuration-file-combine)
+    - [A subset of Configuration File](#a-subset-of-configuration-file)
+    - [Example of Configuration File](#example-of-configuration-file)
   - [Internationalization and localization](#internationalization-and-localization)
     - [Directory Structure](#directory-structure)
-    - [Format of the localization file](#format-of-the-localization-file)
+    - [Format of the configuration file](#format-of-the-configuration-file)
     - [XML special characters](#xml-special-characters)
     - [Numeric types supported by XML](#numeric-types-supported-by-xml)
     - [Generate C# Code](#generate-c-code)
     - [Localized view components](#localized-view-components)
+    - [Localization Data Binder(LocalizedDataBinder)](#localization-data-binderlocalizeddatabinder)
     - [Data provider(IDataProvider)](#data-provideridataprovider)
     - [Get the device's current language](#get-the-devices-current-language)
     - [Usage example](#usage-example)
     - [Localization plugin supporting CSV format](#localization-plugin-supporting-csv-format)
   - [Logging system](#logging-system)
-  - [StreamingAssets catalog file reading (Android)](#streamingassets-catalog-file-reading-android)
+  - [StreamingAssets dirctory file reading (Android)](#streamingassets-dirctory-file-reading-android)
   - [Thread/Coroutine asynchronous results and asynchronous tasks](#threadcoroutine-asynchronous-results-and-asynchronous-tasks)
     - [AsyncResult](#asyncresult)
     - [ProgressResult](#progressresult)
     - [AsyncTask](#asynctask)
     - [ProgressTask](#progresstask)
     - [CoroutineTask](#coroutinetask)
+  - [Async & Await](#async-await)
+    - [async & await in C#](#async-await-in-c)
+    - [Coroutine from Task to Unity](#coroutine-from-task-to-unity)
+    - [async & await in Lua](#async-await-in-lua)
+    - [C\# call async function of Lua](#c-call-async-function-of-lua)
+    - [try/catch/finally of Lua](#trycatchfinally-of-lua)
   - [Thread/Coroutine Executor](#threadcoroutine-executor)
     - [Executors](#executors)
     - [Scheduled Task Executor(IScheduledExecutor)](#scheduled-task-executorischeduledexecutor)
@@ -108,8 +121,8 @@ Table of Contents
     - [Example](#example)
     - [Expand other encryption way](#expand-other-encryption-way)
 - [Layered architecture](#layered-architecture)
-  - [User Interface](#user-interface)
-  - [Application (Service)](#application-service)
+  - [View](#view)
+  - [Application layer (Service)](#application-layer-service)
   - [Domain Model](#domain-model)
   - [Infrastructure](#infrastructure)
 - [Contact information](#contact-information)
@@ -117,75 +130,99 @@ Table of Contents
 <!-- /code_chunk_output -->
 <div style="page-break-after: always;"></div>
 
-
 ## Overview
 
-**Requires Unity 2018.4 or higher**
+**Requires Unity 2018.4 or later**
 
-LoxodonFramework is a lightweight MVVM (Model-View-ViewModel) framework. It is specially designed for Unity3D game development. It refers to the MVVM design of WPF and Android. It provides data binding and localization of views and view models , A simple service container, configuration file component, thread tool component, application context and player context, asynchronous thread and coroutine task components, and other basic components. It also provides a framework for UI views. All code is designed based on the idea of object-oriented and interface-oriented, and almost all functions can be customized. In addition, performance optimization has been performed in the data binding part. On the platform that supports JIT, the delegation method is used for binding. On the platforms that do not support JIT, reflection is used by default, but it can be optimized by injecting the delegate function!
+LoxodonFramework is a light Model-View-ViewModel framework（MVVM）. It is specially designed for Unity3D game development and refers to the MVVM design of WPF and Android. It provides several basic components, such as data binding of View and ViewModel, localization, a light service container, configuration component, thread component, application context and player context, asynchronous thread and coroutine task components etc. It also provides a framework for UI views. All code is designed based on the concept of object-oriented and interface-oriented, and almost all functions can be customized. In addition, performance optimization has been performed in the data binding part. It provides binding method on the JIT supported platform and reflecting method as default on the JIT unsupported platform, but it can be optimized by injecting the delegate function.
 
-This framework is developed using C # language, and also supports XLua for development. XLua plugin is an option. If the project needs hot update, as long as the XLua plugin is installed, you can use Lua to develop the game completely.
+LoxodonFramework is developed through C# language, and also supports XLua development. Using Lua develop game project provides hot update after install the XLua plugin.
 
-This plugin is compatible with MacOSX, Windows, Linux, UWP, IOS and Android, etc., and is completely open source.
+This plugin is compatible with MacOSX, Windows, Linux, UWP, WebGL, IOS and Android etc. It's a completely open source plugin.
 
 **Tested platforms：**  
 
-- **PC/Mac/Linux**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
-- **IOS**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
-- **Android**  (.Net2.0 subset; .Net2.0; .Net4.x; .Net Standard 2.0; IL2CPP)  
+- **PC/Mac/Linux**  (.Net4.x; .Net Standard 2.0; IL2CPP)  
+- **IOS**  (.Net4.x; .Net Standard 2.0; IL2CPP)  
+- **Android**  (.Net4.x; .Net Standard 2.0; IL2CPP)  
 - **UWP(window10)** (.Net4.x; .Net Standard 2.0; IL2CPP)  
+- **WebGL**(.Net4.x;.Net Standard 2.0; IL2CPP)
 
 **Key features**
 
 - Supports multiple platforms, high scalability, and interface-oriented development;
-- Supports C # and Lua development;
-- Supports asynchronous results and asynchronous tasks of threads and coroutines, adopting Future/Promise design pattern;
-- Provides multi-threaded components, thread switching components and timed executors;
+- Supports UGUI and FaiyGUI;
+- Supports XLua, develops using Lua scripts completely(optional);
+- Supports async & await by both C# and Lua;
+- Supports try & catch & finally by Lua;
+- Supports asynchronous results and asynchronous tasks of threads and coroutines, adopting Future/Promise design model;
+- Provides multi-threaded components, thread switching components and timer executors;
 - Provides a messaging system that supports subscription and publishing;
 - Provides encrypted configuration files, supports object access, custom type converters, and extended functions;
 - Provides localization support, similar to Android's localization, supporting basic data types, arrays, and some value types of U3D;
-- Support global context and player context;
-- Provide a service container to support registration and deregistration services;
+- Supports global context and player context;
+- Provides a service container to support registration and de-registration services;
 - Provides universal UI controls such as AlertDialog, Loading, Toast, and supports custom appearance;
 - Provides UI view control and management functions;
-- Provide data binding function:
+- Provides data binding function:
     - Field binding, only supports OneTime mode, as it cannot support change notification;
-    - Property binding, support TwoWay two-way binding, automatic notification of value modification;
+    - Property binding, support Two-Way binding, automatic notification at value modification;
     - Common dictionary, list binding, does not support change notification;
-    - Support C # event binding;
-    - Support Unity3D's EventBase event binding;
-    - Support binding of static class properties and Field;
-    - Support method binding (including static methods);
+    - Supports C# event binding;
+    - Supports Unity3D EventBase binding;
+    - Supports binding of static class properties and Field;
+    - Supports method binding (including static methods);
     - Supports command binding, which can conveniently control the effective and invalid state of the button through command binding;
-    - Supports binding of observable attributes, dictionaries, and lists, supports change notifications, and changes to the view model automatically change the UI display;
-    - Support expression binding;
-    - Supports binding of interactive requests and interactive behaviors;
-    - Support type converter, you can convert the picture name to Sprite in the atlas;
+    - Supports binding of observable attributes, dictionaries, and lists; supports change notifications; and UI display can change automatically after view model change;
+    - Supports expression binding;
+    - Supports binding of interactive requests and behaviors;
+    - Supports type converter, you can convert the picture name to Sprite in the atlas;
     - You can customize and extend more binding types;
 
 ## Installation
 
+Loxodon.Framework keeps the orginal .unitypackage installation method since version 2.0, and add UPM installation method which requires Unity 2018.4.2 or later. New version also do some adjustments about Framework catalog structure and API, at the same time, import some new feature such as async/await/task etc. Please refer to below notes before updating.
+
+Installation notes: The third part warehouse is blocked by Unity which downloads from China zone, that shall get UPM installation fault. Unity China responses that it will be opened ASAP. Please adapt .unitypackage installation method while UPM installation fault, or use Unity which downloads from other zone.
+
+**Notes for updating from 1.x.x to 2.0**
+
+Please remove all existing files before updating from 1.x.x to 2.0, and follow the below sequence to install the new version. Tutouial and example can't be imported automatically, you can manually import them while it's necessary to you.
+
+**Loxodon.Framework.XLua** and **Loxodon.Framework.Bundle** are still released through the traditional method.
+
+**Incompatible modification:**
+
+* Modified IUIViewLocator interface and implementation, please adjust it while  inherite it's custom implementation.
+* Modified IDataProvider interface and implementation of the localization module. If there is no custom class, it will not be affected.
+* Multi-threading is provided in IAsyncTask and IProgressTask, but it's not supported in WebGL platform. It is not recommended to use them after version 2.0. They are changed to IAsyncResult and IProgressResult in new framework.
+* Async/Await and Task are provided in the new API, and no longer supports.NET 2.0.
+* Modified the function of Window, WindowManager and other classes, changed IAsyncTask to IAsyncResult.
+
+
 ### Install via OpenUPM (recommended)
 
-[OpenUPM](https://openupm.com/) can automatically manage dependencies, it is recommended to use it to install the framework.
+[OpenUPM](https://openupm.com/) is a open-source UPM package warehouse，which supports the third-party UPM package and manage dependencies automatically. It is recommended to adapt it as installation method.
 
-Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not installed please install them first.
+Requires [nodejs](https://nodejs.org/en/download/) and openupm-cli client through openupm method, please install them firstly.
 
-    # Install openupm-cli,please ignore if it is already installed.
-    npm install -g openupm-cli
+```
+#Install openupm-cli,please ignore if it is already installed.
+npm install -g openupm-cli
 
-    #Go to the root directory of your project
-    cd F:/workspace/New Unity Project
+#Go to the root directory of your project
+cd F:/workspace/New Unity Project
 
-    #Install loxodon-framework
-    openupm add com.vovgou.loxodon-framework
+#Install loxodon-framework
+openupm add com.vovgou.loxodon-framework
+```
 
-### Install via Packages/manifest.json
+### Install via modified Packages/manifest.json
 
-Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework" in the "dependencies" node.
+Modify the Packages/manifest.json file in your project, nodejs and openm-cli clients are not required.
+Find Packages/manifest.json file in your project root folder，add the third-party repository "package.openupm.com" configuration in "scopeRegistries" node and add "com.vovgou.loxodon-framework" in "dependencies" node. Save and switch to Unity window, then complete installation.
 
-Installing the framework in this way does not require nodejs and openm-cli.
-
+````
     {
       "dependencies": {
         ...
@@ -203,10 +240,13 @@ Installing the framework in this way does not require nodejs and openm-cli.
         }
       ]
     }
+````
 
 ### Install via git URL
 
-After Unity 2019.3.4f1 that support path query parameter of git package. You can add https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework#2.0.0-preview to Package Manager
+Unity provides git URL installation method for version 2019.3.4f1 or later.
+
+Add [https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework/Assets/LoxodonFramework) to UPM manager as below picture, installation will be completed after waiting a moment.
 
 ![](images/install_via_git.png)
 
@@ -217,35 +257,75 @@ Download [Loxodon.Framework2.x.x.unitypackage](https://github.com/vovgou/loxodon
 - [AssetStore](https://assetstore.unity.com/packages/tools/gui/loxodon-framework-77446)
 - [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
+
+### Import example
+
+* Import example by Package Manager for Untiy 2019 or later. Click "Import into Project" button and import example in Package Manager.
+
+* For Unity 2018, you can find Examples.unitypackage and Tutorials.unitypackage in folder Packages/Loxodon Framework/Package Resources/, then double-click to import example.
+
+<div style="page-break-after: always;"></div>
+
 ## Official Plugin(optional)
-
-- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.LocalizationsForCsv)
-
-    Support localization file format as csv file format, requires Unity2018.4 or later.
 
 - [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.XLua)
 
-    Loxodon.Framework's XLua plugin, it is a lua MVVM framework that supports mixed programming of lua and c # or you can use lua completely to write your entire game. See the next chapter for installation steps or check the documentation of [Loxodon.Framework.XLua](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.XLua)   
+	XLua plugin in Loxodon.Framework is a Lua MVVM framework, which supports mixed programming by Lua and C# in entire game. See the next chapter for installation steps or refer the documents in [Loxodon.Framework.XLua](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.XLua).
+
+
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.LocalizationsForCsv)
+
+	Support localization file as csv file, requires Unity2018.4 or later.  
 
 - [Loxodon Framework Bundle](http://u3d.as/NkT)
 
-    Loxodon.Framework.Bundle is a tool for loading and managing AssetBundle, as well as an asset redundancy analysis tool for AssetBundle. It can automatically manage complex dependencies between AssetBundles, and it maintains dependencies between AssetBundles through reference counting. You can either pre-load an AssetBundle and manage its release yourself, or you can directly load the resource directly through the asynchronous resource loading function. The resource loading function will automatically find the AB package where the resource is located, automatically load AB, and automatically use it after use. Release AB. It also supports weak caching. If the object template is already in the cache, there is no need to reopen AB. It supports multiple loading methods, WWW loading, UnityWebRequest loading, File loading, etc. (on Unity 5.6 and above, please do not use WWW loader, it will produce memory spikes). It provides a package interface for AssetBundle and supports encrypted AB packages (only sensitive resources are recommended to be encrypted because it will affect performance). At the same time, it also bypasses some bugs in earlier versions of Unity3D, such as multiple coroutines loading the same resource concurrently, which will cause errors in the android system. Its redundancy analysis is performed by unpacking the AssetBundle, which is more accurate than analyzing the redundancy in editor mode.
+	Loxodon.Framework.Bundle is a tool for loading and managing AssetBundle, as well as an asset redundancy analysis tool for AssetBundle. It can automatically manage complex dependencies between AssetBundles, and it maintains dependencies between AssetBundles through reference counting. You can either pre-load an AssetBundle and manage its release yourself, or you can directly load the resource directly through the asynchronous resource loading function. The resource loading function will automatically find the AB package where the resource is located, automatically load AB, and automatically use it after use. Release AB. It also supports weak caching. If the object template is already in the cache, there is no need to reopen AB. It supports multiple loading methods, WWW loading, UnityWebRequest loading, File loading, etc. (on Unity 5.6 and above, please do not use WWW loader, it will produce memory spikes). It provides a package interface for AssetBundle and supports encrypted AB packages (only sensitive resources are recommended to be encrypted because it will affect performance). At the same time, it also bypasses some bugs in earlier versions of Unity3D, such as multiple coroutines loading the same resource concurrently, which will cause errors in the android system. Its redundancy analysis is performed by unpacking the AssetBundle, which is more accurate than analyzing the redundancy in editor mode.
 
     ![](images/bundle.png)
 
-- [Loxodon Framework Log4Net](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.Log4Net)
+- [Loxodon Framework FairyGUI](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.FairyGUI)
 
-    Plug-in for printing logs in Unity using Log4Net, and remote debugging in LAN.
+	The framework already supports data binding for FairyGUI controls. Please download FairyGUI-unity and Loxodon Framework FairyGUI, then import them into your project.
+
+	Download them from below address.
+
+	* [FairyGUI-unity](https://github.com/fairygui/FairyGUI-unity)
+
+	* [Loxodon Framework FairyGUI](https://github.com/vovgou/loxodon-framework/releases)
+
+- [Loxodon Framework Log4Net](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Log4Net)
+
+	Plug-in for printing logs in Unity using Log4Net, and support remote debugging in LAN.
 
     ![](images/log4net.png)
 
+- [Loxodon Framework Obfuscation](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Obfuscation)
+
+	It's a data type and memory confused plug-in; supports ObfuscatedByte, ObfuscatedShort, ObfuscatedInt, ObfuscatedLong, ObfuscatedFloat, ObfuscatedDouble; prevents memory modifier to modify game data; supports all calculation operators; byte, short, int, long, float, double can automatic conversion between types during using.
+
+	Float and Double are confused and converted to Int and Long to do and/or calculation, make sure not lose precision. Using unsafe code for type converting, concerns over performance.
+
+	**Note: Please enable "Allow unsafe code" for Unity 2018 or later. example as below.**
+
+	    ObfuscatedInt length = 200;
+	    ObfuscatedFloat scale = 20.5f;
+	    int offset = 30;
+
+	    float value = (length * scale) + offset;
+
+- [Loxodon Framework Addressable](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Addressable)
+
+	It's function extend and support for Addressable Asset System.
+
+<div style="page-break-after: always;"></div>
 
 ## Lua plugin installation (optional)
 
-In this framework, the Lua language support is supported by plug-in extensions. It relies on Tencent's XLua project and the Loxodon.Framework.XLua plugin. You can find Loxodon.Framework.XLua in the project's LoxodonFramework / Docs / XLua directory. Plugin, it is optional and only needs to be installed for projects that need hot update and are developed in Lua language. The specific installation steps are as follows. To avoid errors, please strictly follow the steps below.
+In this framework, Lua language is supported by plug-in extensions. It relies on Tencent's XLua project and the Loxodon.Framework plugin. You can download [Loxodon.Framework.XLua.unitypackage](https://github.com/vovgou/loxodon-framework/releases) from Github, and import into your project. It is optional and only needs to be installed for projects that need hot update and are developed in Lua language. The specific installation steps are as follows.
 
-### Install XLua
-Download the latest version of XLua from the Xlua Github repository, you can use the source code version Source code.zip or xlua_v2.x.xx.zip version (xlua_v2.x.xx.zip version is recommended to avoid conflicts with XLua example class names). Please unzip the downloaded xlua and copy it into the current project.
+### XLua Installation
+
+Download the latest version of XLua from the Xlua Github repository, you can use the source code "Source code.zip" or xlua_v2.x.xx.zip version (xlua_v2.x.xx.zip version is recommended to avoid conflicts with XLua example class names). Please unzip the downloaded xlua and copy it into the current project.
 
 **Note: XLua has compatibility issues in Unity2018. In editor mode, please use .Net3.5 or .Net4.x. Do not use .Net Standard2.0, otherwise errors will occur. If you want to use .Net Standard2.0, please refer to xlua The FAQ addresses compatibility issues.**
 
@@ -259,24 +339,27 @@ Download the latest version of XLua from the Xlua Github repository, you can use
 
 Download [Loxodon.Framework.XLua.unitypackage](https://github.com/vovgou/loxodon-framework/releases) from github and import it into your Unity project.
 
-If there is a compilation error, please check whether the XLua Examples directory is imported. The InvokeLua.cs file in this directory defines the PropertyChangedEventArgs class. Because no namespace is used, class names will conflict. Please delete the Examples folder in the XLua directory or Add a namespace to the PropertyChangedEventArgs class in the InvokeLua.cs file.
+If there is a compilation error, please check whether the XLua Examples directory is imported. The InvokeLua.cs file in this directory defines the PropertyChangedEventArgs class. Because namespace is NOT used, class names will conflict. Please delete the Examples folder in the XLua directory or Add a namespace to the PropertyChangedEventArgs class in the InvokeLua.cs file.
 
-### Import the samples
-Find Examples.unitypackage in the "Assets/LoxodonFramework/XLua/Package Resources" folder and import it into the project.
+### Import the examples
+
+Find Examples.unitypackage file in the "LoxodonFramework/XLua/Package Resources/" folder and import it into the project.
+
+<div style="page-break-after: always;"></div>
 
 ## Quick start
 
-Create a view that displays an account information on the left and a form on the right. You can modify the account information on the left through the submit button. Now we will demonstrate how we do it through the frame view and data binding functions. The interface is as follows:
+Create a view which displays account information on the left and a form on the right. You can modify the account information on the left through the submit button. Now we will demonstrate how to do it through the frame view and data binding functions. The view is as follows:
 
 ![](images/DatabindingExample_01.png)
 
 ### C# example
 
-Add the viewscript component DatabindingExample to the root object of a UI view and assign the UI control to the corresponding property. In this example, the properties are defined by C # hard coding. Of course, you can also use the dynamic property table VariableArray to Dynamically define attributes. For details, see Lua's example. After the attributes are configured, the following figure is displayed.
+Add the viewscript component DatabindingExample to the root object of a UI view, assign the UI control to the corresponding property. In this example, the properties are defined by C # hard coding. Of course, you can also use the dynamic property table VariableArray to Dynamically define attributes. For details, refer to Lua example. The confirgured attributes are displayed as below screen.
 
 ![](images/DatabindingExample_03.png)
 
-Look at the code below. If we define the view model and the view script, how we bind the view to the view model.
+Look at the code below, which introduces how to define the view model and the view script, how to bind the view to the view model.
 
     /// <summary>
     /// AccountViewModel
@@ -421,14 +504,14 @@ Look at the code below. If we define the view model and the view script, how we 
 
         protected override void Awake()
         {
-            //获得应用上下文
+            //get application context
             ApplicationContext context = Context.GetApplicationContext();
 
-            //启动数据绑定服务
+            //launch data binding service
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
 
-            //初始化本地化服务
+            //initial localiztion service
             CultureInfo cultureInfo = Locale.GetCultureInfo();
             var provider = new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser())
             Localization.Current = Localization.Create(provider, cultureInfo);
@@ -437,7 +520,7 @@ Look at the code below. If we define the view model and the view script, how we 
 
         protected override void Start()
         {
-            //创建账号子视图
+            //create account sub-view
             AccountViewModel account = new AccountViewModel()
             {
                 ID = 1,
@@ -448,23 +531,23 @@ Look at the code below. If we define the view model and the view script, how we 
             };
             account.Address.Value = "beijing";
 
-            //创建数据绑定视图
+            //create data binding view
             DatabindingViewModel databindingViewModel = new DatabindingViewModel()
             {
                 Account = account
             };
 
-            //获得数据绑定上下文
+            //get data binding context
             IBindingContext bindingContext = this.BindingContext();
 
-            //将视图模型赋值到DataContext
+            //assign view model to DataContext
             bindingContext.DataContext = databindingViewModel;
 
-            //绑定UI控件到视图模型
+            //binding UI controller with view modle
             BindingSet<DatabindingExample, DatabindingViewModel> bindingSet;
             bindingSet = this.CreateBindingSet<DatabindingExample, DatabindingViewModel>();
 
-            //绑定左侧视图到账号子视图模型
+            //binding left-side view with account sub-view model
             bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).OneWay();
             bindingSet.Bind(this.password).For(v => v.text).To(vm => vm.Account.Password).OneWay();
             bindingSet.Bind(this.email).For(v => v.text).To(vm => vm.Account.Email).OneWay();
@@ -473,7 +556,7 @@ Look at the code below. If we define the view model and the view script, how we 
              vm.Account.Birthday.ToString("yyyy-MM-dd"), (DateTime.Now.Year - vm.Account.Birthday.Year))).OneWay();
             bindingSet.Bind(this.address).For(v => v.text).To(vm => vm.Account.Address).OneWay();
 
-            //绑定右侧表单到视图模型
+            //binding right-side form with view model
             bindingSet.Bind(this.errorMessage).For(v => v.text).To(vm => vm.Errors["errorMessage"]).OneWay();
             bindingSet.Bind(this.usernameEdit).For(v => v.text, v => v.onEndEdit).To(vm => vm.Username).TwoWay();
             bindingSet.Bind(this.usernameEdit).For(v => v.onValueChanged).To<string>(vm => vm.OnUsernameValueChanged);
@@ -483,7 +566,7 @@ Look at the code below. If we define the view model and the view script, how we 
             bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit);
             bindingSet.Build();
 
-            //绑定标题,标题通过本地化文件配置
+            //binding title， and title is configed through localized file
             BindingSet<DatabindingExample> staticBindingSet = this.CreateBindingSet<DatabindingExample>();
             staticBindingSet.Bind(this.title).For(v => v.text).To(() => Res.databinding_tutorials_title).OneTime();
             staticBindingSet.Build();
@@ -493,11 +576,11 @@ Look at the code below. If we define the view model and the view script, how we 
 
 ### Lua example
 
-In the Lua example, the LuaBehaviour script is a general-purpose script provided by the framework. We only need to write a Lua script bound to this script, as shown in DatabindingExample.lua in the figure below. In LuaBehaviour, to ensure commonality, all member attributes are also dynamically defined through the VariableArray attribute table, as shown in the following figure.
+In the Lua example, the LuaBehaviour script is a general-purpose script provided by the framework. We only need to write a Lua script which bound to LuaBehaviour script, as shown DatabindingExample.lua in the following figure. In LuaBehaviour, to ensure commonality, all member attributes are also dynamically defined through the VariableArray attribute table, as shown in the following figure.
 
 ![](images/DatabindingExample_02.png)
 
-In the Lua script DatabindingExample.lua, all the dynamic properties in the above figure are registered in the Lua environment. We can access all the properties through the self object. Please see the following code.
+In the Lua script DatabindingExample.lua, all the dynamic properties in the above figure are registered into the Lua environment. We can access all the properties through the self object. Please check the following code.
 
     require("framework.System")
 
@@ -507,12 +590,12 @@ In the Lua script DatabindingExample.lua, all the dynamic properties in the abov
     local ObservableDictionary = require("framework.ObservableDictionary")
 
     ---
-    --创建一个Account子视图模型
+    --creat an account sub-view model
     --@module AccountViewModel
     local AccountViewModel = class("AccountViewModel",ObservableObject)
 
     function AccountViewModel:ctor(t)
-        --执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
+        --applied father class ObservableObject‘s constructor. It's necessary, otherwise it can't listen to data change
         AccountViewModel.base(self).ctor(self,t)
 
         if not (t and type(t)=="table") then
@@ -526,12 +609,13 @@ In the Lua script DatabindingExample.lua, all the dynamic properties in the abov
     end
 
     ---
-    --创建一个数据绑定示例的视图模型
+    --create a view modle of data binding example
     --@module DatabindingViewModel
     local DatabindingViewModel = class("DatabindingViewModel",ObservableObject)
 
     function DatabindingViewModel:ctor(t)
-        --执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
+        --applied father class ObservableObject‘s constructor. It's necessary, otherwise it can't listen to data change
+
         DatabindingViewModel.base(self).ctor(self,t)
 
         if not (t and type(t)=="table") then
@@ -546,13 +630,13 @@ In the Lua script DatabindingExample.lua, all the dynamic properties in the abov
 
     function DatabindingViewModel:submit()
         if #self.username < 1 then
-            --注意C#字典类型的使用方式，通过set_Item或者get_Item 访问
+            --pay attention to C# dictionary operating method，accessed via set_Item or get_Item
             self.errors:set_Item("errorMessage","Please enter a valid username.")
             return
         end
 
         if #self.email < 1 then
-            --注意C#字典类型的使用方式，通过set_Item或者get_Item 访问
+            --pay attention to C# dictionary operating method，accessed via set_Item or get_Item
             self.errors:set_Item("errorMessage","Please enter a valid email.")
             return
         end
@@ -565,7 +649,7 @@ In the Lua script DatabindingExample.lua, all the dynamic properties in the abov
     end
 
     ---
-    --创建一个数据绑定视图,扩展DatabindingExample.cs 对象，这里的target是从C#脚本传过来的
+    --creat a data binding view, expand class of DatabindingExample.cs, and target is transfered from C# scripts.
     --@module DatabindingExample
     local M = class("DatabindingExample",target)
 
@@ -573,13 +657,13 @@ In the Lua script DatabindingExample.lua, all the dynamic properties in the abov
         local context = Context.GetApplicationContext()
         local container = context:GetContainer()
 
-        --初始化Lua的数据绑定服务，一般建议在游戏的C#启动脚本创建
+        --initial Lua data binding service, recommand to create it in C# start scripts of game.
         local bundle = LuaBindingServiceBundle(container)
         bundle:Start();
     end
 
     function M:start()
-        --初始化Account子视图模型
+        --initial Account sub-view model
         local account = AccountViewModel({
                 id = 1,
                 username = "test",
@@ -590,7 +674,7 @@ In the Lua script DatabindingExample.lua, all the dynamic properties in the abov
                 remember = true
             })
 
-        --初始化视图模型
+        --initial view model
         self.viewModel = DatabindingViewModel({
                 account = account,
                 username = "",
@@ -601,7 +685,7 @@ In the Lua script DatabindingExample.lua, all the dynamic properties in the abov
 
         self:BindingContext().DataContext = self.viewModel
 
-        --绑定UI控件到视图模型
+        --binding UI controller with view model
         local bindingSet = self:CreateBindingSet();
 
         bindingSet:Bind(self.username):For("text"):To("account.username"):OneWay()
@@ -623,171 +707,182 @@ In the Lua script DatabindingExample.lua, all the dynamic properties in the abov
 
     return M
 
+<div style="page-break-after: always;"></div>
+
 ## Features Introduction
 
 ### Context
 
-In many frameworks, we should often see the concept of context. It can be said that it is an environment related to the current code running. You can provide the environment data or services required by the current operation in the context. Here, according to the characteristics of game development, I provide the application context (ApplicationContext), player context (PlayerContext), and also support developers to create other contexts according to their own needs.
+In many frameworks, we shall face the concept of context. It is an environment related to the current running code. You can provide the environment data or service in the context which is required by the current operation. Loxodon-framework provides ApplicationContext and PlayerContext according to the characteristics of game development, and also support developers to create other contexts according to requirement.
 
-In the context, I created a service container (see the next chapter for an introduction to the service container) to store services related to the current context, and also created a dictionary to store data. Through Dispose () of the context, you can release all services registered in the context container. **However, it should be noted that the service must inherit the System.IDisposable interface, otherwise it cannot be released automatically.**
+In the context, Loxodon-framework created a service container (service container be refer to the next chapter) to store services related to the current context, and also created a dictionary to store data. Through Dispose() in the context, you can release all services registered in the context container. **However, it should be noted that the service must be inherited from the System.IDisposable interface, otherwise it cannot be released automatically.**
 
-#### Application Context(ApplicationContext)
+#### Application Context
 
-The application context is a global context, it is singleton, it mainly stores some data and services shared globally. All basic services, such as view positioning service, resource loading service, network connection service, localization service, configuration file service, Json / Xml parsing service, data binding service, etc. These are the basics that may be used throughout the game Services should be registered in the service container of the application context, which can be obtained through the application context.
+The application context is a global and gigleton context, which mainly stores data and service need be shared globally. All basic services, such as view positioning service, resource loading service, network connection service, localization service, configuration file service, Json/Xml parsing service, data binding service etc. These are the basics services in the integrated game and should be registered in the service container of the application context, which can be obtained through the application context.
 
-    //获得全局的应用上下文
+    //get application context
     ApplicationContext context = Context.GetApplicationContext();
 
-    //获得上下文中的服务容器
+    //get service container of context
     IServiceContainer container = context.GetContainer();
 
-    //初始化数据绑定服务，这是一组服务，通过ServiceBundle来初始化并注册到服务容器中
+    //initial data binding service，which is a set of services that are initialized and registed into service container through ServiceBundle
     BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
     bundle.Start();
 
-    //初始化IUIViewLocator，并注册到容器
+    //initial IUIViewLocator，and registed into container
     container.Register<IUIViewLocator>(new ResourcesViewLocator ());
 
-    //初始化本地化服务，并注册到容器中
+    //initial localization service, and registed into container
     CultureInfo cultureInfo = Locale.GetCultureInfo();
     var dataProvider = new ResourcesDataProvider("LocalizationExamples", new XmlDocumentParser());
     Localization.Current = Localization.Create(dataProvider, cultureInfo);
     container.Register<Localization>(Localization.Current);
 
-    //从全局上下文获得IUIViewLocator服务
+    //get IUIViewLocator service from context
     IUIViewLocator locator = context.GetService<IUIViewLocator>();
 
-    //从全局上下文获得本地化服务
+    //get localiztion service from context
     Localization localization = context.GetService<Localization>();
 
 
-#### Player Context(PlayerContext)
+#### Player Context
 
-The player context is only relevant to the currently logged-in game player. For example, after a game player Clark logs in to the game, his basic information in the game and related services should be stored in the player context. For example, the backpack service is responsible for pulling and synchronizing the player's backpack data, and caches the weapons, equipment, and props in the player's backpack. It is only relevant to the current player. When the player logs out and switches accounts, these data should be cleared And release. When we use the player context to store these services and values, we only need to call the PlayerContext.Dispose () function to release all data and services related to the current player.
+The player context is only relevant to the currently logged-in game player. For example, after a game player Clark logs in to the game, his basic information and related services in the game should be stored in the player context. Knapsack service is responsible for pulling and synchronizing the player's knapsack data, which caches the weapons, equipment, and props in the player's knapsack. It is only relevant to the current player. When the player logs out or switches accounts, these data should be released and cleared. When use the player context to store services and values, designer only need to call the PlayerContext.Dispose() function to release all data and services related to the current player.
 
-The player context inherits all the services and attributes of the global context by default, so all services and data in the global context can be obtained through the player context. When the player context registers the same service or attribute as the key value in the global context, It will be stored in the player context and will not overwrite the data stored in the global context. When accessed through the key, the data in the player context will be returned first. The global context will be searched only if it is not found in the player context.
+The player context inherits all the services and attributes of the global context by default, all global services and data can be obtained through the player context. When the player context registers the same service or attribute as the key value in the global context, It will be stored in the player context and will not overwrite the data stored in the global context. When accessed through the key, the data in the player context will be returned first. The global context will be searched only if it is not found in the player context.
 
-    //为玩家clark创建一个玩家上下文
+    //create a player context for Player clark
     PlayerContext playerContext = new PlayerContext("clark");
 
-    //获得玩家上下文中的服务容器
+    //get service container from player context
     IServiceContainer container = playerContext.GetContainer();
 
-    //将角色信息存入玩家上下文
+    //save roler information into player context
     playerContext.Set("roleInfo", roleInfo);
 
-    //初始化背包服务，注册到玩家上下文的服务容器中
+    //initial knapsack service, and registed it into service container of player context
     container.Register<IKnapsackService>(new KnapsackService());
 
-    //从通过玩家上下文获得在全局上下文注册的IViewLocator服务
+    //get ViewLocator service registed in overall context through player context
     IUIViewLocator locator = playerContext.GetService<IUIViewLocator>();
 
-    //从通过玩家上下文获得在全局上下文注册的本地化服务
+    //get Localization service registed in overall context through player context
     Localization localization = playerContext.GetService<Localization>();
 
-    //当用户clark退出登录时，注销玩家上下文，自动注销所有注册在当前玩家上下文中的服务。
+    //When player clark sign-out，dispose player context，automatic dispose all service register in current player context
     playerContext.Dispose();
 
 
 #### Other Contexts
 
-In general, in many game developments, we only need the global context and the player context to meet the requirements, but in some cases, we also need a context to store environmental data, such as in MMO games, enter a specific A copy of the gameplay, then I need to create an exclusive context for this copy. When the battle in the copy ends, when I exit the copy, I destroy this copy context to release resources.
+In general, global context and player context are enough form most game developments. But in some case, we still need a context to store environmental data, such as in MMO games, a specific game is loaded, then an exclusive context is created for this copy. After the copy is end, then that exclusive context is released resources.
 
-    //创建一个上下文，参数container值为null，在Context内部会自动创建
-    //参数contextBase值为playerContext，自动继承了playerContext中的服务和属性
+    //create a context，and context shall set parameter of container as null automaticly
+    //set parameter contextBase as playerContext，which inherit the service and property of playerContext automaticly
     Context context = new Context(null,playerContext);
 
-    //获得上下文中的服务容器
+    //get service container of context
     IServiceContainer container = context.GetContainer();
 
-    //注册一个战斗服务到容器中
+    //register a battle service into service container
     container.Register<IBattleService>(new BattleService());
 
 ### Service Container
-At the beginning of the project, I researched a lot of open source projects in C # 's control inversion and dependency injection (IoC / DI). At first I wanted to use Zenject as a service container. Later, because of the consideration of memory in mobile projects, Both CPU and CPU resources are quite valuable. I don't want to introduce such a large library to consume memory, and I don't want the performance loss caused by reflection. It is also inappropriate to force users to use IoC / DI. After all, not everyone likes it. I designed a simple service container to meet the most basic functions of service registration, deregistration, and reading.
 
-**Note: All registered services can be automatically released at IServiceContainer.Dispose () only if they inherit the System.IDisposable interface and implement the Dispose function.**
+At the beginning of this project, I learned a lot of open-source projects in C# control inversion and dependency injection(IoC/DI). At first, I plan to use Zenject as service container. Considered the memory and CPU resource are quite  valuable in mobile projects, I refused to adapt a heavy library to consume memory and waste performance caused by reflection. It is also inappropriate to force users to accept IoC/DI, After all, not everyone likes it. According above ideas, I designed a simple service container by myself to meet the most basic functions of service registration, deregistration, and reading.
 
-#### Service Registrar(IServiceRegistry)
+**Note: All registered services can be automatically released at IServiceContainer.Dispose() only if they inherit the System.IDisposable interface and implement the Dispose function.**
 
-Service registration is responsible for registering and unregistering services. It can register a service instance to the container according to the service type or name, or register a service factory to the container. Users can choose whether to register a service factory according to their needs. It is created For a singleton service, a new service instance is created every time.
+#### Service Registry(IServiceRegistry)
+
+Service registry is responsible for registering and unregistering services. It can register a service instance into the container according to the service type or name, or register a service factory into the container. Users can decide to register a service factory according requirement, create a singleton service or a new service instance every time.
 
     IServiceContainer container = ...
     IBinder binder = ...
     IPathParser pathParser = ...
 
-    //注册一个类型为IBinder的服务到容器中,可以通过container.Resolve<IBinder>() 或者
-    //container.Resolve("IBinder") 来访问这个服务，在容器中默认使用了typeof(IBinder).Name做为Key存储。   
+    // Register a service of type IBinder into the container, by using container.Resolve <IBinder>() or
+    // container.Resolve("IBinder") to access this service.
+    // By default, the container uses typeof(IBinder).name as the Key.
     container.Register<IBinder>(binder);
 
-    //如果需要注册多个IPathParser到容器中，请使用name参数区分
-    //在取值时通过name参数取值，如：container.Resolve("parser")
+    // If you need to register more than one IPathParser into the container,
+    // please use the name parameters to distinguish them and get value through name parameters,
+    // such as container.Resolve("parser")
     container.Register<IPathParser>("parser",pathParser);
     container.Register<IPathParser>("parser2",pathParser2);
 
 #### Service Locator(IServiceLocator)
 
-Services can be obtained through the service locator. The service locator can query the service according to the service name or type. When the service is registered by type, you can find the service by type or type name. When the service is registered with a specific name as the Key, You can only find services by service name.
+Services can be obtained through the service locator. The service locator can query the service according to the service name or type. While service is registered by type, query can be by type or type name; while service is registered by a specific name as the Key, query can only be by service name.
 
     IServiceContainer container = ...
 
-    //IBinder服务在上段代码中，以类型方式注册，所以可以通过类型或者名称方式查询服务
+    // The IBinder service was registered as a type in the previous section of code,
+    // so you can query the service by type or name
     IBinder binder = container.Resolve<IBinder>()；//or container.Resolve("IBinder")
 
-    //IPathParser在上段代码中以特定名称"parser"注册，则只能通过名称"parser"来查询服务
+    //IPathParser is registered with the specific name "parser" in the previous section of code,
+    //so the service can only be queried by the name "parser"
     IPathParser pathParser = container.Resolve("parser");
 
 #### Service Bundle(IServiceBundle)
 
-The role of ServiceBundle is to register and unregister a group of related services. For example, my data binding service is to register all data binding related services at one time through the ServiceBundle.Start () method. When the service is no longer needed, you can Use the ServiceBundle.Stop () method to unregister all services of the entire module (see the code below). This can be useful at certain times, such as starting and stopping all services for a module.
+The ServiceBundle is responsible to register and unregister a group of related services. For example, data binding service is to register all data binding related services at one time by the ServiceBundle.Start(). When the service is not useful, ServiceBundle.Stop() can unregister all services of the entire module (refer to below code). That is wonderful some times, such as starting or stopping all services of a module.
 
-    //初始化数据绑定模块，启动数据绑定服务,注册服务
+    // Initialize the data binding module, start the data binding service, register the service
     BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
     bundle.Start();
 
-    //停止数据绑定模块，注销所有数据绑定相关的服务
+    // Stop the data binding module and logout of all data binding related services
     bundle.Stop();
 
+### Application configuration(Preference)
 
-### Preference(Preference)
-Perference can be said to be Unity3d's PlayerPrefs, but I have extended, supplemented and standardized the functions of PlayerPrefs. In addition to storing basic data types such as boolean, int, float, and string, Perference can also store DateTime, Vector2, Vector3, Vector4, Color, Version, and any object type that JsonUtility can serialize. You can even customize the type yourself. Codec (ITypeEncoder) to extend any type you want to store. Perference supports encrypted data storage, and I have implemented two persistence methods. The first is to convert the data to a string and store it in Unity3D's PlayerPrefs. The second method is to store the files in binary mode. Generally, I use the file persistence method when testing the project, because I can directly delete the files in the Application.persistentDataPath directory to easily delete the configuration.
+Perference can be recognized as PlayerPrefs in Unity3d; but I do extend, supplement and standard for the PlayerPrefs functions. Except store basic data type, such as boolean/int/float/string etc., Perference can also store DateTime/Vector2/Vector3/Vector4/Color/Version and any object type which can be serialized by JsonUtility. You can even customize type encoder and decoder(ITypeEncoder) to extend any type which you wish to store. Perference supports encrypted data storage, and already implemented two persistence methods. The first is to convert the data to a string and store it in PlayerPrefs of Unity3D. The second is to store in file with binary. Generally, I favor the file persistence method at project testing stage, because I can directly delete the files in the folder of Application.persistentDataPath to easily erase the configuration.
 
-In addition to extending the above functions, Perference also extends the scope of configuration. Like Context in the previous article, it also includes global configuration and player configuration, and also supports the configuration of a local module. The global configuration can be used to store the current resource update version, the last logged-in user name and other application-related information; there can be multiple player configurations (if multiple accounts are logged in on one machine), and it can store a specific one The player's configuration information on the machine, such as the player's background music, sound effects, picture quality, distance and distance settings in the game, and so on.
+In addition to extending the above functions, Perference also extends the scope of configuration. Like Context in the previous intro, it provides global configuration and player configuration, and also supports the configuration for a partial module. The global configuration can be used to store the current resource update version, the last login accounts and other application-related information. The player configurations can be multiple(if multiple accounts are logged in at one machine), it can store a specific player's configuration information at this machine, such as the player's background music, sound effects, picture quality, visibility settings etc. in the game.
 
-Following my code, let's understand how it is used.
+Let me introduce how it works as below code.
 
-    //注册一个Preference的工厂，默认是PlayerPrefsPreferencesFactory工厂，只有使用File持久化才需要改为BinaryFilePreferencesFactory工厂
+    // register a Preference factory, the default is PlayerPrefsPreferencesFactory factory,
+    // only register the BinaryFilePreferencesFactory factory while need File persistent
     Preferences.Register(new BinaryFilePreferencesFactory());
 
-    //获得全局配置，如果不存在则自动创建
+    // Get the global configuration, or create it automatically if it does not exist
     Preferences globalPreferences = Preferences.GetGlobalPreferences();
 
-    //存储当前资源更新后的数据版本
+    // Stores the updated data version for the current resource
     globalPreferences.SetObject<Version>("DATA_VERSION",dataVersion);
 
-    //存储游戏最后成功登录的用户名，下次启动游戏时自动填写在账号输入框中
+    // Save the user name of the last successful login in the game,
+    // and fill it in the account input box automatically when starting the game at next time
     globalPreferences.SetString("username","clark");
 
-    //数据修改后调用Save函数保存数据
+    // Call the Save function to save the data after it has been modified
     globalPreferences.Save();
 
-    //根据key值"clark@zone5"获得配置，如果不存在则自动创建，这里的意思是获得游戏第5区名为clark的用户的配置信息
-    //在Preferences.GetPreferences()函数中，name只是一个存取的Key，你可以完全按自己的意思组合使用。
+    // Get the configuration based on the key value "clark@zone5". Or create it automatically if it  does not exist,.
+    // in the function Preferences.GetPreferences (), the name is just an access Key,
+    // you can use it completely according to its own meaning.
     Preferences userPreferences Preferences.GetPreferences("clark@zone5");
 
-    //设置游戏音乐、音效开关，并保存
+    // Set the game music, sound effect and save it
     userPreferences.SetBool("Music_Enable",true);
     userPreferences.SetBool("Sound_Enable",true);
     userPreferences.Save();
 
-In Preferences, although I have supported many data types, but there are always special needs that I cannot meet, then you can extend your type through ITypeEncoder; and if you have requirements for the security of configuration data, Then you can also use your own password to encrypt the data.
+Although Preferences already supports most data types, but you can keep extend yourself type through ITypeEncoder; if you have requirements for the security of configuration data, you can also use your own password to encrypt the data.
 
     /// <summary>
-    /// 自定义一个类型编码器
+    /// Customize a type encoder
     /// </summary>
     public class ColorTypeEncoder : ITypeEncoder
     {
-        private int priority = 900; //当一个类型被多个类型编码器支持时，优先级最高的有效(优先级在-999到999之间)
+        private int priority = 900;       	//When a type is supported by more than one type encoder,
+        	//the highest priority is valid (between -999 and 999).
 
         public int Priority
         {
@@ -802,7 +897,7 @@ In Preferences, although I have supported many data types, but there are always 
             return false;
         }
 
-        //将string类型转回对象类型
+        // exchange the string type to the object type
         public object Decode(Type type, string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -815,46 +910,44 @@ In Preferences, although I have supported many data types, but there are always 
             return null;
         }
 
-        //将对象转换为string来保存，因为PlayerPrefs只支持string类型的数据
+        // Convert the object to a String to save it, because PlayerPrefs only supports String data
         public string Encode(object value)
         {            
             return ColorUtility.ToHtmlStringRGBA((Color)value);
         }
     }
 
-
-    //默认使用AES128_CBC_PKCS7加密，当然你也可以自己实现IEncryptor接口，定义自己的加密算法。
+    // The default encryption is AES128_CBC_PKCS7, but you can also implement your own IEncryptor interface
+    // and define your own encryption algorithm.
     byte[] iv = Encoding.ASCII.GetBytes("5CyM5tcL3yDFiWlN");
     byte[] key = Encoding.ASCII.GetBytes("W8fnmqMynlTJXPM1");
 
     IEncryptor encryptor = new DefaultEncryptor(key, iv);
 
-    //序列化和反序列化类
+    // Serialize and deserialize classes
     ISerializer serializer = new DefaultSerializer();
 
-    //添加自定义的类型编码器
+    // Add a custom type encoder
     serializer.AddTypeEncoder(new ColorTypeEncoder());
 
-    //注册Preferences工厂
+    // Register for the Preferences factory
     BinaryFilePreferencesFactory factory = new BinaryFilePreferencesFactory(serializer, encryptor);
     Preferences.Register(factory);
 
-For more examples, see the Basic Tutorials.unity
+More examples can be found at Basic Tutorials.unity
 
 ### Configuration(Properties File)
 
-In game or application development, the configuration file is an indispensable thing. The configuration file is used to manage the configuration parameters of the game or application. Especially now that game development needs to access different platforms, there are many SDK configuration parameters, and different platforms. There are different access requirements and different upgrade and update strategies. Although these configurations can also inherit the Unity3D ScriptableObject class to create a configuration class, but because there are many access platforms, the parameters are not uniform, which will cause frequent changes as requirements change Modify these configuration classes. To avoid this, I use traditional configuration files to configure these parameters. A properties file meets all configuration requirements.
+The configuration file is an necessary part in game or application developmetn. It's used to manage the configuration parameters of the game or application, especially to support different platform, with several SDK configuration requirement. There are different access requirements, updating policy in different platform, which need to config different parameters. Although this configuration can inherit the class of ScriptableObject in Unity3D, but parameters are not uniform due to adapt much platform purpose. As result, the developers has to modify these parameters frequencly. To avoid above situation, I use traditional properties file to config paramters, and one properties file can cover all configuration requirement.
 
-#### Supported Numeric Types
+#### Supported Data Types
 
-All the following types and their array types are supported by default, and new data types can be supported through a custom type converter ITypeConverter.
+All below types are supported by default, and new data types can be supported through a custom type converter ITypeConverter.
 
-| Basic Type | Default Value | Description |
+| Type | Default Value | Description |
 | :------| ------: | :------: |
-| string | "" | String type |
-| boolean | false | Boolean type，flase or true |
-| sbyte | 0 | Signed byte, -127-128 |
-| byte | 0 | Unsigned byte, 0-255 |
+| sbyte | 0 | signed byte， -127-128 |
+| byte | 0 | unsigned byte, 0-255 |
 | short | 0 | short type |
 | ushort | 0 | Unsigned short |
 | int | 0 | Integer type |
@@ -874,11 +967,44 @@ All the following types and their array types are supported by default, and new 
 
 #### Array Delimiter
 
-As with the localized configuration in CSV format, the array is separated by commas, and commas between double quotes, single quotes, parentheses (), square brackets [], braces {}, and angle brackets <> are ignored If there are commas in the string of the array, please use double or single quotes to enclose the string.
+As with the localized configuration in CSV format, the array is separated by commas, and commas between double quotes, single quotes, parentheses (), square brackets [], braces {}, and angle brackets <> are ignored. If there are commas in the string of the array, please use double or single quotes to enclose the string.
 
-#### Configuration File Example
+#### Configuration File Combine
 
-The properties file format is as follows, configure everything with key = value, the comment text that starts with #, blank lines are ignored:
+Configuration file provides combine function which can combine multiple profiles into a single profile. While your developes a game which supports multiple platforms, and configuartion parameters are not uniformed. You can firstly creat an "application.properties.txt" as default, then creat an "application.android.properties.txt" for Android extend; and creat an "application.ios.properties.txt" for IOS extend. Only the different parts need be reconfiged in these extend files, the common parts can be left unconfigured and used directly from the default configuration file.
+
+Example is as follows. First load default configuration into combined configuration, then load special configuration related to current platform into combined configuration. The platform configuration shall be queried firstly, the default configuration shall be queried in the next.
+
+**Note: the later added configuration file has higher priority in combined configuration file.**
+
+    /* Create a composite configuration */
+    CompositeConfiguration configuration = new CompositeConfiguration();
+
+    /* Load the default configuration file */
+    string defaultText = FileUtil.ReadAllText(Application.streamingAssetsPath + "/application.properties.txt");
+    configuration.AddConfiguration(new PropertiesConfiguration(defaultText));
+
+    #if UNITY_EDITOR
+      string text = FileUtil.ReadAllText(Application.streamingAssetsPath + "/application.editor.properties.txt");
+    #elif UNITY_ANDROID
+      string text = FileUtil.ReadAllText(Application.streamingAssetsPath + "/application.android.properties.txt");
+    #elif UNIYT_IOS
+      string text = FileUtil.ReadAllText(Application.streamingAssetsPath + "/application.ios.properties.txt");
+    #endif
+
+    /* Loads the configuration file of the current platform */
+    configuration.AddConfiguration(new PropertiesConfiguration(text));
+
+    /* Register the configuration file into the container */
+    container.Register<IConfiguration>(configuration);
+
+#### A subset of Configuration File
+
+Except combin function, Configureation File also supports subset function. When using this function, set Key accoding function module and separate by dot. One Key refer to one subset of configuration file. Below example shows how to use it.
+
+#### Example of Configuration File
+
+The properties file format is as follows, configure everything with key = value, the comment text that starts with #, blank lines are ignored. In below code, I config four groups in updating module, which are local/develop/pre-release/release group. Application can locate the effective grop relation to the valve of "application.config-group", such as "application.config-group=local" in example. Using " application.local" can get local group subset, localConfig=config.Subset("application.local").
 
     #application config
     application.app.version = 1.0.0
@@ -911,24 +1037,24 @@ The properties file format is as follows, configure everything with key = value,
     application.release.password = loxodon.framework
     application.release.gateway =  172.217.161.78:8000 , 172.217.161.79:8000 , 172.217.161.80:8000
 
-Configuration file read example
+Configuration file load example
 
-    //初始化配置文件
+    //Initialize the configuration file
     TextAsset text = Resources.Load<TextAsset>("application.properties");
     IConfiguration conf = new PropertiesConfiguration(text.text);
 
-    //应用版本号
+    //Application version number
     Version appVersion = conf.GetVersion("application.app.version");
-    //数据版本号
+    //data version number
     Version dataVersion = conf.GetVersion("application.data.version");
 
-    //当前配置的组名
+    //The currently configured group name
     string groupName = conf.GetString("application.config-group");
 
-    //根据前缀获 application.local 得配置的子集
+    //Gets a subset of the configuration through prefix
     IConfiguration currentGroupConf = conf.Subset("application." + groupName);
 
-    //通过子集获配置信息
+    //Obtain configuration information through subsets
     string upgradeUrl = currentGroupConf.GetString("upgrade.url");
     string username = currentGroupConf.GetString("username");
     string password = currentGroupConf.GetString("password");
@@ -936,33 +1062,46 @@ Configuration file read example
 
 ### Internationalization and localization
 
-Internationalization and localization refer to software, applications, games, etc. that can be adapted to the language, regional differences, and technical needs of the target market. Therefore, in game development, in order to meet different market requirements, localization is an indispensable function. I referenced the Android localization design ideas and designed the localization module of this framework. The localization module is the same as any of the modules mentioned above. It can also be customized and can be extended freely. Let me introduce how to use the localization module.
+For software, application and game etc., Internationalization and localization are necessary functions in order to meet different market requirements during game development. I designed the localization module in LoxodonFramework refer to the localization concept in Android development. The localization module can be customized and extended same as the other modules. Let me introduce how to use the localization module.
 
 #### Directory Structure
 
-Localized files can be placed in the Resources directory, accessed through Unity3D's Resources, or placed into AssetBundle, loaded through AssetBundle, or you can put it anywhere and read it through custom IDataProvider. And these methods can exist at the same time. In this framework, I provide two data providers, DefaultDataProvider and AssetBundleDataProvider, to load localized data files in Resources and AssetBundle, respectively. Whether in Resources or AssetBundle, its directory structure and loading rules are the same. First, there must be a root directory of the localization configuration file, as shown in the LocalizationExamples directory in the following figure. Create directories for each language under the root directory, such as default, zh, zh-CN, zh-TW, zh-HK, en, en-US , En-CA, en-AU, and so on (for details, refer to the Name of the System.Globalization.CultureInfo class and TwoLetterISOLanguageName, such as zh-CN is the Name and zh is the TwoLetterISOLanguageName). The configuration in the default directory must be the most complete, it is the default language configuration, and it is required, while other directories are optional. The zh directory is a Chinese directory, zh-CN is a configuration directory in mainland China, zh-TW is a configuration directory in Taiwan, and zh-HK is a configuration directory in Hong Kong, China. From the priority of the configuration file (zh-CN | zh-TW | zh-HK)> en> default, the configuration with higher priority will overwrite the configuration with lower priority.
+Localized files can be saved under the Resources directory, accessed through Unity3D's Resources; or placed into AssetBundle, loaded through AssetBundle; even you can leave it anywhere and read it through customed IDataProvider. All these methods can exist at the same time, and later method shall cover the early method. In this framework, I provide two data providers, DefaultDataProvider and AssetBundleDataProvider, to load localized data files in Resources and AssetBundle respectively. Whatever in Resources or AssetBundle, the directory structure and loading policy are the same. First, there must be a root directory of the localization configuration file, as shown the LocalizationExamples directory in the following figure. After that, create sub-directories under the root directory for each language, such as default, zh, zh-CN, zh-TW, zh-HK, en, en-US, En-CA, en-AU, and so on (For details, refer to the Name of the System.Globalization.CultureInfo class and TwoLetterISOLanguageName. Such as zh-CN is the Name and zh is the TwoLetterISOLanguageName). The default directory must be the whole and default language configuration, and it is required, while other directories are optional. The zh directory is a Chinese directory, zh-CN is a configuration directory in mainland China, zh-TW is a configuration directory in Taiwan, and zh-HK is a configuration directory in Hong Kong, China. The priority of the configuration file is (zh-CN | zh-TW | zh-HK)> zh > default, and higher priority will overwrite the lower one.
 
-In each configuration file directory, the configuration file is recommended to be divided into multiple files according to the business module configuration. Do not write all the configurations in a text file, as shown in the following figure. The configuration is named after the module name.
+In each configuration file directory, the configuration file is recommended to be divided into multiple files according to the business module. Do not write all the configurations in a text file. As shown in the following figure, the global configuration is in application.xml file, and other configurations are named according the module name.
 
 ![](images/Localization_dir.png)
 
-#### Format of the localization file
+#### Format of the configuration file
 
-The localization file supports XML, Asset file (LocalizationSourceAsset) format and localized data source script by default. If necessary, you can also customize other IDocumentParser to support other formats, such as Json format, csv file format, binary format, or SQLite.
+The localization configuration file supports XML, Asset file (LocalizationSourceAsset) format and localized data source script by default. If necessary, you can also customize IDocumentParser to support other formats, such as Json format, csv format, binary format, or SQLite.
 
-Sprites, textures (Texture2D / Texture3D), fonts (Font), audio effects (AudioClip), video (VideoClip), etc. belong to UnityEngine.Object object resources can only be stored using the Asset file format or localized data source script storage. Other textual resources are recommended to be stored in XML or other text file formats.
+Sprites, textures (Texture2D / Texture3D), fonts (Font), audio effects (AudioClip), video (VideoClip), etc. which belongs to UnityEngine.Object resources can only be stored using the Asset file format or localized data source script. Other textual resources are recommended to be stored in XML or other text formats.
 
-- Localization SourceAsset File Format (LocalizationSourceAsset) The format of the Localization SourceAsset file is as shown below. You can configure multiple types of resources. Each file corresponds to a language resource. Its directory rules are completely the same as the XML method. The only difference is Is the file format. Files such as pictures and sounds take up more memory. Please split resources by business module. The configuration of the same module is in the same Asset file. Load it into memory before using it, and unload resources from memory after using it.
+- Localization DataSource Asset File Format (LocalizationSourceAsset)
 
-![](images/LocalizationSource1.png)
-![](images/LocalizationSource2.png)
+	The localization sourceAsset file format is as shown below, which can be configured multiple types of resources. Each file corresponds to a language resource. Its directory structure is completely the same as the XML method, except the file format. 
 
-- Localization SourceBehaviour The localization source source script is attached to the GameObject object and can be stored directly in Prefab or in the scene. It cannot be stored separately by language. All localized resources that support languages should be configured in the same In a script file. The LocalizationSourceBehaviour script comes with a DataProvider. When the script is run, the data is automatically loaded, and when the object is destroyed, the data is automatically unloaded. This method is particularly suitable for use with UIView. Localized data is automatically loaded when UIView is created, and localized data is released when UIView is closed. Compared with the Asset file format, it has the advantage that it can be used like a Unity object and can be dragged into the scene or prefab. There is no need to write a script to manage it. Its disadvantage is that data for multiple language versions will be loaded. Into memory, it will take up more memory. 
+	Files such as pictures and sounds take up more memory， please split resources by business module. The configuration of the same module is in the same Asset file. Load it into memory before using it, and release resources from memory after using it.
 
-![](images/LocalizationSource3.png)
-![](images/LocalizationSource4.png)
+	![](images/LocalizationSource1.png)
+	![](images/LocalizationSource2.png)
 
-- XML file format The XML file format can easily configure text-type data, but it cannot directly configure the resources of the UnityEngine.Object object. If you want to use XML to configure resources such as sounds, pictures, and fonts, you can only configure the file paths of resources such as sounds, pictures, and fonts in XML, and dynamically load these resources by changing the file path when you use them. Text type localization does not take up much memory, it is recommended to load all into memory when the game starts, and do not release them. The XML format is configured as follows:
+- Localization DataSource Script method (LocalizationSourceBehaviour)
+
+	The localization datasource script is attached to the GameObject object and can be stored directly in Prefab or in the scene. It cannot be stored separately by language, and all localized resources that support languages should be configured in the same script file. The LocalizationSourceBehaviour script comes with a DataProvider, the data is automatically loaded when the script is run, and the data is automatically unloaded when the object is destroyed. This method is particularly suitable for use with UIView. Localized data is automatically loaded when UIView is created, and localized data is released when UIView is closed. Compared with the Asset file format, it has the advantage that it can be used like an Unity object and can be dragged into the scene or prefab, and there is no need to write any script to manage it. Its disadvantage is that data for multiple language versions will be completely loaded into memory, and that will take up more memory. 
+
+	![](images/LocalizationSource3.png)
+	![](images/LocalizationSource4.png)
+
+- XML file format
+
+	The XML file format can easily configure text-type data, but it cannot directly configure the object resources of the UnityEngine.Object. If you wish to use XML to configure resources such as sounds, pictures, and fonts etc., you can only configure the file paths of resources such as sounds, pictures, and fonts in XML, and dynamically load these resources by changing the file path when you use them. 
+
+	The localization of text type does not spend too much memory, it is recommended to load all into memory when the game starts, and do not release them. 
+
+	The XML format is configured as follows:
+
 
       <!-- application.xml -->
       <?xml version="1.0" encoding="utf-8"?>
@@ -1000,13 +1139,13 @@ Sprites, textures (Texture2D / Texture3D), fonts (Font), audio effects (AudioCli
 
 #### XML special characters
 
-In the XML name, attributes, and content of this article, "<", ">", "&" and other characters cannot be used directly. If these characters appear in an XML tag, XML parsing will report an error. If we use The content must include these characters. There are two solutions. The first is to use escape characters. For example, the three characters in the preceding text can be replaced with "&amp;lt;", "&amp;gt;", and "&amp;amp;". The second way is to wrap the text content with tags &lt;![CDATA[]]&gt;, for example,&lt;![CDATA[&lt;color=#FF0000&gt;This is a test.&lt;/color&gt;]]&gt;, the text content it represents is "&lt;color=#FF0000&gt;This is a test &lt;/color&gt;". &lt;![CDATA[]]&gt; tags are generally recommended.
+In the name, attributes, and text content of XML, the characters of "<", ">", "&" etc. cannot be used directly. If these characters appear in an XML tag, XML parsing will report an error. While the text content must include these characters, there are two solutions. The first is to use escape characters. For example, the three characters in the preceding text can be replaced with "&amp;lt;", "&amp;gt;", and "&amp;amp;". The second way is to wrap the text content with tags &lt;![CDATA[]]&gt;, for example,&lt;![CDATA[&lt;color=#FF0000&gt;This is a test.&lt;/color&gt;]]&gt;, the text content it represents is "&lt;color=#FF0000&gt;This is a test &lt;/color&gt;". &lt;![CDATA[]]&gt; tags are generally recommended.
 
 **Escape character table**
 
 ![](images/xml_special_chars.png)
 
-**Example**
+**Example of escape character or <![CDATA[]]>**
 
     <?xml version="1.0" encoding="utf-8"?>
     <resources>
@@ -1019,7 +1158,7 @@ In the XML name, attributes, and content of this article, "<", ">", "&" and othe
 
 All the following types and their array types are supported by default, and new data types can be supported through a custom type converter ITypeConverter.
 
-The array type is expressed by adding a "-array" suffix after the basic type, as in the previous string array type: string-array, using &lt;item&gt;&lt;item&gt; between &lt;string-array&gt;&lt;/string-array&gt; to add array elements.
+The array type is expressed by adding a "-array" suffix after the basic type. Such as string array type: string-array, using &lt;item&gt;&lt;item&gt; between &lt;string-array&gt;&lt;/string-array&gt; to add array elements.
 
 | Basic Type | Default Value | Description |
 | :------| ------: | :------: |
@@ -1036,6 +1175,7 @@ The array type is expressed by adding a "-array" suffix after the basic type, as
 | char | ‘’ | Character type |
 | float | 0 | Float type |
 | double | 0 | Double type |
+| decimal | 0 | number type |
 | datetime | 1970-01-01T00:00:00 | Time type |
 | vector2 | (0,0) | Vector2 type,eg：(0,0) |
 | vector3 | (0,0,0) | Vector3 type,eg：(0,0,0) |
@@ -1045,9 +1185,9 @@ The array type is expressed by adding a "-array" suffix after the basic type, as
 
 #### Generate C# Code
 
-The properties of the localized configuration, similar to the Android configuration, can be used to generate a static class. If you are using the C # version of MVVM, you can use it this way. This adds a language compilation check mechanism to avoid errors. If you are programming in Lua, this is not recommended. You can use the Localization class directly.
+The properties of the localized configuration, similar to the Android configuration, can be used to generate a static class. It's recommended while you use the C# version of MVVM, this adds a language compilation check mechanism to avoid errors. It's not recommended while you are programing in Lua, you can use the Localization class directly.
 
-Right-click on the root directory of the localization configuration, and pop up the code generation menu as shown below. Click Localization Make, select the code directory and file name, and generate a C # static class.
+Right-click on the root directory of the localization configuration, and pop up the code generation menu as shown below. Click Localization Make, select the code directory and file name, and generate a C# static class.
 
 ![](images/Localization_Make.png)
 
@@ -1064,19 +1204,19 @@ Right-click on the root directory of the localization configuration, and pop up 
 
 #### Localized view components
 
-- **Localization of text**
+- **Text Localization**
 
-    Supports hanging a script on UnityEngine.UI.Text or UnityEngine.TextMesh object, and configuring the key of the localized string, it can automatically support multi-language switching. If it is just displaying text, it will not change with business logic. Support the use of this Way to configure. Of course, you can also update the text of Text or TextMesh through data binding. If you modify the text in the ViewModel, the text in the view changes accordingly.
+	Supports hanging a script on UnityEngine.UI.Text or UnityEngine.TextMesh object, and configuring the key of the localized string, it can automatically support multi-language switching. If it is just displaying text, it will not change with business logic. Support the use of this method to configure. Of course, you can also update the text of Text or TextMesh through data binding. If you modify the text in the ViewModel, the text in the view changes accordingly.
 
     ![](images/Localization_Text.png)
 
 - **Localization of images, sounds, videos, fonts, materials**
 
-    The localization of image, sound, video, font, and material resources is recommended to use Asset file configuration (LocalizationSourceAsset). The resource configuration of different language versions is classified by business module and configured in different Asset files. For example, when you need to access a business module, For UI, load the localized resources of the current language version of this module before displaying the UI.
+	The localization of image, sound, video, font, and material resources is recommended to use Asset file configuration (LocalizationSourceAsset). The resource configuration of different language versions is classified by business module and configured in different Asset files. For example, when you need to access the UI of a business module, load the localized resources of the current language version of this module before displaying the UI.
 
-    Of course, in addition to using the Asset file configuration method, you can also use XML and other text methods to configure the resource loading path in the XML file. When the language changes, the path of the picture or sound will also change, and the resource is loaded asynchronously through the view script , And then replace the resource. This method is very flexible, but you need to write your own code to implement the loading logic. Localized resources such as pictures, sounds, fonts can be placed in Resources or AssetBundle, or sprite atlas, etc. The script that meets all functions can only provide components that load sounds or pictures from Resources (such as: LocalizedAudioSourceInResources.cs). You can refer to my component for more ways.
+	Of course, except to using the Asset file configuration method, you can also use XML and other text methods to configure the resource loading path in the XML file. When the language changes, the path of the picture or sound will also change, and the resource is loaded asynchronously through the view script, then the resource is replaced. This method is very flexible, but you need to write your own code to implement the loading logic. Localized resources such as pictures, sounds, fonts can be placed in Resources or AssetBundle, or sprite atlas etc. I can't code a script to meet all functions, but I provides a component that load sounds or pictures from Resources (such as: LocalizedAudioSourceInResources.cs) as reference. You can refer to my component for more ways.
 
-    The following example is the code for loading sound effects using my Loxodon.Framework.Bundle plugin.
+	The following example is the code for loading sound effects using my Loxodon.Framework.Bundle plugin.
 
         [RequireComponent(typeof(AudioSource))]
         public class LocalizedAudioSource : AbstractLocalized<AudioSource>
@@ -1102,15 +1242,15 @@ Right-click on the root directory of the localization configuration, and pop up 
             }
         }
 
-    The following figure is an example of loading sound effects from Resources using LocalizedAudioSourceInResources.
+    The following figure is an example of loading sound effects from Resources using LocalizedAudioSourceInResources.
 
     ![](images/Localization_Audio.png)
 
 - **UI size and color localization**
 
-    The localization component supports types such as Rect, Color, and Vector2-4. In addition to the localization of pictures, sounds, and text, the size, position, and color of the UI view can also be localized. In particular, the localization of UI size can better adapt to the inconsistent requirements of different language text lengths.
+	The localization component supports types such as Rect, Color, and Vector2-4. In addition to the localization of pictures/sounds/text, the size/position/color of the UI view can also be localized. In particular, the localization of UI size can better adapt to the inconsistent requirements of different language text lengths.
 
-    The setting of RectTransform is related to the anchor point position. The following code is just an example. Please modify it according to your actual situation.
+	The setting of RectTransform is related to the anchor point position. The following code is just an example. Please modify it according to your actual situation.
 
         public class LocalizedRectTransform : AbstractLocalized<RectTransform>
         {
@@ -1146,56 +1286,81 @@ Right-click on the root directory of the localization configuration, and pop up 
           <rect name="button.position2">(100,100,200,60)</rect>
         </resources>
 
+#### Localization Data Binder(LocalizedDataBinder)
+
+Localized data binder can carry on the batch quantity of binding for the properites and localized data of Text, TextMesh, Image, RawImage, SpriteRenderer, AudioSource, VideoPlayer etc. It uses the data binding service to work, and it must be initialized before using data binding services. In a game with the above UI components, the components properties can be binding after add LocalizedDataBinder script in node. The specific binding method is shown in the below figure.
+
+![](images/LocalizedDataBinder.png)
+
+The following diagram shows a localized resource. It is configured in the method of Localization Source. Of course, you can also configure it in XML or CSV file format.
+
+![](images/LocalizationData.png)
+
 #### Data provider(IDataProvider)
 
-The localization component of the framework supports the use of multiple data formats to configure localized resources. They have different file formats, different directory structures, and even different file search rules. No matter how complicated the situation is, you can use the data provider ( IDataProvider) and document parser (IDocumentParser) to unify them, load data through the data provider, and parse resource files through the document parser. In the framework, I provide some default data loaders, which can be based on The directory rules mentioned in the article load localized data. If you need to support more data formats, or to customize file search rules and loading methods, please refer to my code to implement a custom data provider. The following code uses the default data provider to load the files in xml and asset format from the Resources / LocalizationTutorials / (the root directory of the tutorial localization resources, the directory structure is as shown in the figure below). All xml files and text files of the current language take up less memory, do not release them. The asset format file is loaded using the DefaultLocalizationSourceDataProvider. It is configured with a specific asset file name. It only loads files in the name list, and configures multimedia resources such as pictures and sounds in the asset file. After use, delete the DefaultLocalizationSourceDataProvider to uninstall the resources. 
+The localization component of the framework supports the use of multiple data formats to configure localized resources. They have different file formats, different directory structures, and even different file search rules. No matter how complicated the situation is, you can use the data provider (IDataProvider) and document parser (IDocumentParser) to unify them, load data through the data provider, and parse resource files through the document parser. In the framework, I provide some default data loaders, which can load localized data from Resources directory or AssetBundle based on the directory rules mentioned in the article. If you need to support more data formats, or to customize file search rules and loading methods, please refer to my code to implement a custom data provider. 
+
+The following code uses the default data provider to load the files in xml and asset format from the Resources/LocalizationTutorials/(the root directory of the tutorial localization resources, the directory structure is as shown in the figure below). All xml files of the current language in directory shanll be loaded by DefaultDataProvide, and do not need to release them due to less memory taken. The asset format file is loaded using the DefaultLocalizationSourceDataProvider. It is configured function need provide  a specific asset file name list. And it only loads files in the name list, and configures multimedia resources such as pictures and sounds in the asset file. Please rember to release local resources through delete DefaultLocalizationSourceDataProvider from Localization. 
 ![](images/Localization_dir2.png)
 
     var localization = Localization.Current;
-    localization.CultureInfo = new CultureInfo("en-US"); //设置语言
-    //添加一个默认的XML数据加载器，从Resources/LocalizationTutorials 目录中加载本地化资源
-    //按（zh-CN|zh-TW|zh-HK) > zh > default 的规则加载文件，如果不满足要求可以自定义数据加载器
-    //文本资源不占用太多内存，默认加载当前语言的所有xml文件   
+    localization.CultureInfo = new CultureInfo("en-US"); // set language
+
+    // Add a default XML data loader, load the localized Resources
+    // from the Resources/LocalizationTutorials directory
+
+    // Load file according to the ruler of （zh-CN|zh-TW|zh-HK) > zh > default
+    // if it doesn't meet requirement, you can customize the data loader
+
+    // Text resources don't take up much memory,
+    // and all XML files for the current language are loaded by default
     localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
 
-    //添加一个Asset数据的加载器，从Resources/LocalizationExamples 目录中加载名为login.asset的资源
-    //Asset类型的资源请在使用前加载，并且在不需要的时候释放它们
+    // To add an Asset data loader,
+    // and load resource login.asset from the Resources/LocalizationExamples directory
+
+    // Asset type resources should be loaded before use and released when they are not needed
     var provider = new DefaultLocalizationSourceDataProvider("LocalizationTutorials","LocalizationModule.asset");
     localization.AddDataProvider(provider);
 
-    //当数据不在被使用时，删除数据加载器，同时释放内存
+    // When the data is no longer in use, the data loader is removed and memory is freed
     localization.RemoveDataProvider(provider);
 
 #### Get the device's current language
 
-In the older version of Unity3D, CultureInfo.CurrentCulture is invalid. The English language information is obtained no matter on the PC or mobile device. So I provide the Locale tool for Unity SystemLanguage to CultureInfo, which can be obtained through Locale.GetCultureInfo () The current language information is obtained through Locale.CultureInfo GetCultureInfoByLanguage (SystemLanguage.Chinese). In the Unity 2018 version, when using the .net standard 2.0, I tested it on an Android phone. CultureInfo.CurrentCulture is valid, so students who use the 2018 version can use CultureInfo.CurrentCulture to get the language information of the current system.
+In the older version of Unity3D, CultureInfo.CurrentCulture is invalid. Only the English language information can be obtained no matter on the PC or mobile device. So I provide the Locale tool to transfer from SystemLanguage to CultureInfo in Unity. The current language information can be obtained through Locale.GetCultureInfo (). And Chinese CultureInfor can be obtained through Locale.CultureInfo GetCultureInfoByLanguage(SystemLanguage.Chinese). 
+
+In the Unity 2018 with .net standard 2.0, CultureInfo.CurrentCulture is valid while I tested it on an Android phone. You can use CultureInfo.CurrentCulture to get the current system language information with Unity 2018.
 
 #### Usage example
 
-The previous article introduced some functions of localized components. Here we use examples to understand the use of localized components.
+The previous article introduced some functions of localized components. Here we use an examples to understand the use of localized components.
 
 The following example is how to use the localization function in C # code, get the localized string through the generated C# static class R or through the Localization class.
 
     var localization = Localization.Current;
-    localization.CultureInfo = CultureInfo.CurrentCulture; //设置语言,老版本用Locale.GetCultureInfo()
+    localization.CultureInfo = CultureInfo.CurrentCulture;
+    // set language, old version can use Locale.GetCultureInfo()
     localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
 
-    //通过Localization的成员方法调用
+    // A member method call via Localization
     string errorMessage = localization.GetText("login.validation.username.error", "Please enter a valid username.");
 
-    //通过生成的静态代码调用（Loxodon/Localization Make 生成C#代码，看上文生成C#代码章节）
+    // Call via generated static code (Loxodon/Localization Make generates C# code,
+    // see Generating C# code section above)
     string loadingMessage = R.startup_progressbar_tip_loading;
 
-    //获得本地化配置的子集，通过子集访问
+    // Get a subset of the localized configuration, accessed through the subset
     ILocalization localizationSubset = localization.Subset("login");
     errorMessage = localizationSubset.GetText("validation.username.error", "Please enter a valid username.");
 
-    //通过数据绑定使用，请使用localization.GetValue()获得ObservableProperty，支持值改变的通知
+    // For data binding use, use localize.getValue () to get an ObservableProperty
+    // that supports notification of value changes
     bindingSet.Bind(target).For(v=>v.text)
         .ToValue(localization.GetValue("login.validation.username.error")).OneWay();
 
 
-Using localized configuration with UI components, let's simulate a scenario of language switching in a game to understand the use of localized modules. In the figure below, the English in the red wireframe is loaded and modified through the localization service. It uses the LocalizedText component hanging on the Text object to switch between Chinese and English.
+Using localized configuration with UI components, let's simulate a scenario of language switching in a game to understand the use of localized modules. In the below figure, the English in the red wireframe is loaded and modified through the localization service. It uses the LocalizedText component hanging on the Text object to switch between Chinese and English.
 
 ![](images/Localization_Example.png)
 
@@ -1209,14 +1374,15 @@ Using localized configuration with UI components, let's simulate a scenario of l
         {
             CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
 
-            //创建一个数据提供器，从LocalizationTutorials目录中加载本地化文件
+            // Create a data provider and load the localization file
+            // from the LocalizationTutorials directory
             var dataProvider = new DefaultDataProvider ("LocalizationTutorials", new XmlDocumentParser ())；
 
-            //创建一个本地化服务
+            // Create a localized service
             Localization.Current = Localization.Create (dataProvider, cultureInfo);
             this.localization = Localization.Current;
 
-            //监听下拉列表的改变，在英文和中文间切换
+            // Listen for changes in the drop-down list and switch between English and Chinese
             this.dropdown.onValueChanged.AddListener (OnValueChanged);
         }
 
@@ -1224,15 +1390,15 @@ Using localized configuration with UI components, let's simulate a scenario of l
         {
             switch (value) {
             case 0:
-                //设置本地化服务当前语言为英文
+                // Set the current language of the localization service to English
                 this.localization.CultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
                 break;
             case 1:
-                //设置本地化服务当前语言为中文
+                // Set the current language of the localization service to Chinese
                 this.localization.CultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.ChineseSimplified);
                 break;
             default:
-                //设置本地化服务当前语言为英文
+                // Set the current language of the localization service to English
                 this.localization.CultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
                 break;
             }
@@ -1246,7 +1412,7 @@ Using localized configuration with UI components, let's simulate a scenario of l
 
 The localization file configuration is as follows:
 
-    <!-- 英文版 -->
+    <!-- English Ver -->
     <?xml version="1.0" encoding="utf-8"?>
     <resources>
         <string name="app.name">LoxodonFramework</string>
@@ -1256,7 +1422,7 @@ The localization file configuration is as follows:
             people reading can be put to death.</string>
     </resources>
 
-    <!-- 中文版 -->
+    <!-- Chinese Ver -->
     <?xml version="1.0" encoding="utf-8"?>
     <resources>
         <string name="app.name">LoxodonFramework</string>
@@ -1266,13 +1432,13 @@ The localization file configuration is as follows:
     </resources>
 
 
-For more examples, see the Localization Tutorials.unity
+For more examples, refer to the Localization course in Tutorials.unity
 
 #### Localization plugin supporting CSV format
 
-If you are accustomed to using Excel, you can download my CSV plug-in, which supports reading the localized configuration of the CSV file format, but requires that the Unity version is above 2018 and supports .net 4.x or .net standard 2.0.
+If you are accustomed to using Excel, welcome to download my CSV plug-in, which supports CSV filereading with localized configuration. This plugin requires that the Unity version is above 2018 and supports .net 4.x or .net standard 2.0.
 
-Download：[Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework/releases)
+Download address：[Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework/releases)
 
 **The configuration file format is as follows**
 
@@ -1283,13 +1449,21 @@ Download：[Loxodon Framework Localization For CSV](https://github.com/vovgou/lo
 - zh:Chinese configuration, the value of zh is taken from CultureInfo.TwoLetterISOLanguageName, if the field is empty, the default configuration is used
 - zh-CN：China, Simplified Chinese configuration, zh-CN takes value from CultureInfo.Name, if the field is empty, the configuration of zh is used
 
-Only the key column and the type column must exist. Others can be added or omitted according to the actual situation.
+Only the key column and the type column are necessary, others can be added or omitted according to the actual situation.
 
-**The localization query rules for values are queried based on the TwoLetterISOLanguageName and Name fields of the System.Globalization.CultureInfo class. Query by CultureInfo.Name first. If it does not exist, use CultureInfo.TwoLetterISOLanguageName to query, then the default value will be used. For example, if the current language is zh-CN, the configuration of zh-CN will be used first. If the -CN column or zh-CN configuration is empty, the configuration of the zh column is used. If the zh column does not exist or the field is empty, the configuration of the default column is used.**
+**The localization query rules for values are queried based on the TwoLetterISOLanguageName and Name fields of the System.Globalization.CultureInfo class. Query by CultureInfo.Name first. If it does not exist, use CultureInfo.TwoLetterISOLanguageName to query, then the default value will be used.
+
+For example, suppose the current language is zh-CN, the configuration of zh-CN will be used first. If the -CN column or zh-CN configuration is empty, the configuration of the zh column is used. If the zh column does not exist or the field is empty, the configuration of the default column is used.**
 
 ![](images/csv.png)
 
-**Support for type and array representation**
+**File encoding**
+
+If file contents Chinese, please make sure use UTF-8 encoding for CSV file. otherwise
+
+If the file contains Chinese, please make sure that the CSV file using the utf-8 encoding, otherwise when the file conversion may be garbled words. While use the WPS export Xls file to CSV file, please review whether coding format for utf-8 encoding (can use notepad or EditPlus viewer).
+
+**Supported type and array representation**
 
 The CSV configuration also supports all the basic data types supported by the XML configuration in the previous section. The only difference is that the CSV file uses a comma separator to support the array type, as shown in the following table.
 
@@ -1302,11 +1476,11 @@ The CSV configuration also supports all the basic data types supported by the XM
 | positions | vector3-array | (0,1,1.2),(2,2,0),(1.3,0.5,5) |
 | colors | color-array | #FF0000,#00FF00 |
 
-**XML and CSV conversion**
+**Conversion between XML and CSV**
 
-The XML configuration file and the CSV configuration file can be converted to each other, but you need to pay attention to the configuration of the array type. In the CSV, "," is used for division, and in XML, it is used to identify the division. "There may be an error converting to csv file format.
+The XML configuration file and the CSV configuration file can be converted to each other, but you need to pay attention to the configuration of the array type. In the CSV, "," is used for division, and it is used to identify the division in XML. There may be an error while converting from "," to csv file format.
 
-Select the root directory of the XML configuration file, right-click and select the Loxodon / Xml To Csv command, all xml files in the directory will be automatically converted into csv format files, and different language versions in XML will be combined into the same csv file. Similarly, the CSV file can also be converted into an XML file. If the CSV file contains configuration versions in multiple languages, it will be split into multiple XML files.
+Select the root directory of the XML configuration file, right-click and select the Loxodon/Xml To Csv command, all xml files in the directory will be automatically converted into csv format files, and different language versions in XML will be combined into the same csv file. Similarly, the CSV file can also be converted into an XML file. If the CSV file contains configuration versions in multiple languages, it will be split into multiple XML files.
 
 ![](images/xml2csv.png)
 
@@ -1314,31 +1488,43 @@ Generate csv file as follows
 
 ![](images/xml2csv2.png)
 
+**Sample of file**
+
+CSV source file
+
+![](images/csv_source.png)
+
+Localized Chinese file while is converted to XML file format (the newline character after World of Warcraft, Starcraft, Age of Empires still exists, but is not visible).
+
+![](images/csv2xml.png)
+
+
 ### Logging system
 
-The framework provides a scalable logging system, which supports ALL, DEBUG, INFO, WARN, ERROR, FATAL and other levels. Different levels of log printing can be used during the development phase and release of the project.
+The framework provides a scalable logging system, which supports ALL, DEBUG, INFO, WARN, ERROR, FATAL and other levels. Different levels of log can be used to print during the development phase and release of the project.
 
-Logging system I provide a debug version of Unity3D, which basically meets general development and debugging needs, but if more powerful logging functions are needed, such as printing logs to a file system, mobile terminals printing logs to a computer via a LAN, etc. You can download my log plugin [Loxodon.Framework.Log4Net](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.Log4Net), which is a plugin implemented with Log4Net, which is very powerful.
+I provide a debug version of Logging system in Unity3D, which basically meets general development and debugging needs, but if more powerful logging functions are needed, such as printing logs to a file system, mobile terminals printing logs to a computer via a LAN, etc. You can download my log plugin [Loxodon.Framework.Log4Net](https://github.com/vovgou/loxodon-framework.git?path=Loxodon.Framework.Log4Net), which is a plugin implemented under Log4Net, which is very powerful.
 
 Example of using the default logging system
 
-    //设置默认日志系统的日志级别，默认日志工厂自动初始化
+    // Set the logging level of the default logging system.
+    // Default log factories are automatically initialized
     LogManager.Default.Level = Level.DEBUG
 
-    //如果是一个自定义的日志实现，可以如下方式来初始化
+    // If it is a custom logging implementation, it can be initialized as follows
     DefaultLogFactory factory = new DefaultLogFactory();
     factory.Level = Level.ALL
     LogManager.Registry(factory)
 
-    //为类AsyncResult，定义一个ILog
+    // Define an ILOG for class AsyncResult
     private static readonly ILog log = LogManager.GetLogger(typeof(AsyncResult));
 
-    //打印日志
+    // Print log
     log.DebugFormat("My name is {0}",name)
 
-### StreamingAssets catalog file reading (Android)
+### StreamingAssets dirctory file reading (Android)
 
-On the Android platform, the StreamingAssets directory is in the apk compressed package, so it cannot be accessed directly through the API of the C # file system. Please use my Loxodon.Framework.Utilities.FileUtil to replace the C # File class to read the file. I provide JNI to call the java interface to access it. The specific implementation is in FileUtil.Android.cs. File, unable to read resources in obb file. If the obb package is split, use the implementation in FileUtil.Compression.cs or FileUtil.IonicZip.cs. FileUtil.Compression.cs uses the native decompression function in .net standard 2.0 to implement. It needs Unity2018 and above. FileUtil.IonicZip.cs is implemented using IonicZip's compression library. Please use this version of the .net 3.5 library. To use this version, you need to find IonicZip.dll in your project and configure the macro definition IONIC_ZIP in the Unity project.
+On the Android platform, the StreamingAssets directory is in the apk compressed package, so it cannot be accessed directly through the API of the C # file system. Loxodon.Framework.Utilities.FileUtil can be used to replace the C # File class to read these files. I also provide JNI to call the java interface to access it. The specific implementation is in FileUtil.Android.cs. File, but it can only read resources in apk file and can not read resources in obb file. If the obb package is split, use the implementation in FileUtil.Compression.cs or FileUtil.IonicZip.cs. FileUtil.Compression.cs uses the native decompression function in .net standard 2.0 to implement, which needs Unity2018 or above. FileUtil.IonicZip.cs is implemented using IonicZip's compression library, and please choose this version under the .net 3.5 library. To use this version, you need to find and copy IonicZip.dll in your project and configure the macro definition IONIC_ZIP in the Unity project.
 
 ### Thread/Coroutine asynchronous results and asynchronous tasks
 
@@ -1353,59 +1539,63 @@ Using AsyncResult, let's create a coroutine task that can be canceled, and obtai
 
         protected IEnumerator Start ()
         {
-            //********启动任务，同步方式调用示例***********//
+            //********Start the task and invoke the example synchronously***********//
             IAsyncResult<bool> result = StartTask();
 
-            //等待任务完成，result.WaitForDone ()函数返回一个迭代器IEnumerator
+            // Waiting for the task to complete,
+            // the result.waitForDone () function returns an iterator, iEnumerator
             yield return result.WaitForDone ();
 
             if(r.Exception !=null)
             {
-                Debug.LogFormat("任务执行失败：{0}",r.Exception);
+                Debug.LogFormat("Task fault：{0}",r.Exception);
             }
             else
             {    
-                Debug.LogFormat("任务执行成功 result = {0}",r.Result);
+                Debug.LogFormat("Task success result = {0}",r.Result);
             }
 
 
-            //********启动任务，回调方式调用示例***********//
+            //********Start the task and invoke the example with a callback***********//
             result = StartTask();
             result.Callbackable().OnCallback((r) =>
             {
                 if(r.Exception !=null)
                 {
-                    Debug.LogFormat("任务执行失败：{0}",r.Exception);
+                    Debug.LogFormat("Task fault：{0}",r.Exception);
                 }
                 else
                 {    
-                    Debug.LogFormat("任务执行成功 result = {0}",r.Result);
+                    Debug.LogFormat("Task success result = {0}",r.Result);
                 }
             });
 
         }
 
-        //创建一个任务
+        // Creat a task
         public IAsyncResult<bool> StartTask()
         {
-            //创建一个异步结果，参数cancelable = true，支持取消操作
+            // Create an asynchronous result with cancelable = true that supports cancellation
             AsyncResult<bool> result = new AsyncResult<bool> (true);
 
-            //启动任务
+            // Task start
             this.StartCoroutine (DoTask (result));
 
             return result;
         }
 
         /// <summary>
-        /// 模拟一个任务
+        /// Simulate a task
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
         protected IEnumerator DoTask (IPromise<bool> promise)
         {
             for (int i = 0; i < 20; i++) {
-                //如果外部调用了AsyncResult.Cancel()函数，则这里的IsCancellationRequested = true，请求取消任务
+
+                // If the asyncResult.cancel () function is called externally,
+                // then IsCancellationRequested = true here,
+                // requesting the cancellation of the task
                 if (promise.IsCancellationRequested) {        
                     promise.SetCancelled ();
                     yield break;
@@ -1413,7 +1603,7 @@ Using AsyncResult, let's create a coroutine task that can be canceled, and obtai
                 yield return new WaitForSeconds (0.5f);
             }
 
-            //执行完成必须设置结果
+            // The result must be set when the execution is complete
             promise.SetResult (true);
         }
     }
@@ -1423,7 +1613,7 @@ Using AsyncResult, let's create a coroutine task that can be canceled, and obtai
 The ProgressResult is similar to the AsyncResult function, except that the task progress is increased. Let me take an example.
 
     /// <summary>
-    /// 任务进度
+    /// Task schedule
     /// </summary>
     public class Progress
     {
@@ -1437,16 +1627,16 @@ The ProgressResult is similar to the AsyncResult function, except that the task 
     {
         protected void Start()
         {
-            //开始一个任务
+            // start a task
             IProgressResult<Progress, string> result = StartTask();
 
-            //打印任务进度
+            // print task schedule
             result.Callbackable().OnProgressCallback(progress =>
             {
                 Debug.LogFormat("Percentage: {0}% ", progress.Percentage);
             });
 
-            //监听任务结果
+            // listen task result
             result.Callbackable().OnCallback(r =>
             {
                 Debug.LogFormat("IsDone:{0} Result:{1}", r.IsDone, r.Result);
@@ -1463,7 +1653,7 @@ The ProgressResult is similar to the AsyncResult function, except that the task 
         }
 
         /// <summary>
-        /// 模拟一个有进度的任务
+        /// Simulate a progressive task
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
@@ -1489,7 +1679,7 @@ The ProgressResult is similar to the AsyncResult function, except that the task 
                 yield return new WaitForSeconds(0.01f);
             }
 
-            //执行完成必须设置结果
+            // The result must be set when the execution is complete
             promise.SetResult(buf.ToString());
         }
 
@@ -1505,33 +1695,33 @@ An asynchronous task is an encapsulation of a thread task or a coroutine task. P
         {
             AsyncTask task = new AsyncTask(DoTask(), true);
 
-            /* 开始任务 */
+            /* Start task */
             task.OnPreExecute(() =>
             {
-                //任务执行前调用
+                // Invoked before the task executes
                 Debug.Log("The task has started.");
             }).OnPostExecute(() =>
             {
-                //任务成功执行后调用
+                // Invoked after the task executes
                 Debug.Log("The task has completed.");/* only execute successfully */
             }).OnError((e) =>
             {
-                //任务执行失败调用
+                // The task failed to execute the call
                 Debug.LogFormat("An error occurred:{0}", e);
             }).OnFinish(() =>
             {
-                //任务执行完毕，无论成功失败，都会调用
+                // When the task completes, it will be called whether it succeeds or fails
                 Debug.Log("The task has been finished.");/* completed or error or canceled*/
             }).Start();
 
-            //等待任务结束
+            // wait task finish
             yield return task.WaitForDone();
 
             Debug.LogFormat("IsDone:{0} IsCanceled:{1} Exception:{2}", task.IsDone, task.IsCancelled, task.Exception);
         }
 
         /// <summary>
-        /// 模拟一个任务的执行
+        /// Simulate the execution of a task
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
@@ -1553,30 +1743,30 @@ ProgressTask is similar to AsyncTask in that it only increases the task progress
     {
         protected IEnumerator Start()
         {
-            //创建一个任务，这个任务将在一个后台线程中执行
+            // Create a task that will be executed in a background thread
             ProgressTask<float, string> task = new ProgressTask<float, string>(
                     new Action<IProgressPromise<float, string>>(DoTask), false, true);
 
-            /* 开始一个任务 */
+            /* Start a task */
             task.OnPreExecute(() =>
             {
-                //在任务执行前调用
+                // Called before the task executes
                 Debug.Log("The task has started.");
             }).OnPostExecute((result) =>
             {
-                //在任务成功执行后调用
+                // Called after successful execution of the task
                 Debug.LogFormat("The task has completed. result:{0}", result);/* only execute successfully */
             }).OnProgressUpdate((progress) =>
             {
-                //任务执行的进度
+                // The progress of task execution
                 Debug.LogFormat("The current progress:{0}%", (int)(progress * 100));
             }).OnError((e) =>
             {
-                //在任务执行失败后调用
+                // Called after the task failed to execute
                 Debug.LogFormat("An error occurred:{0}", e);
             }).OnFinish(() =>
             {
-                //任务执行完毕，无论成功失败，都会调用
+                // When the task completes, it will be called whether it succeeds or fails
                 Debug.Log("The task has been finished.");/* completed or error or canceled*/
             }).Start();
 
@@ -1586,7 +1776,8 @@ ProgressTask is similar to AsyncTask in that it only increases the task progress
         }
 
         /// <summary>
-        /// 模拟一个任务，这不是一个迭代器，这将会在一个后台线程中执行
+        /// To simulate a task, this is not an iterator,
+        /// this will be executed in a background thread
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
@@ -1672,7 +1863,259 @@ Before C # 4.0, you needed to perform a complex asynchronous operation, generall
 
     }
 
-For more examples, see the Basic Tutorials.unity
+For more examples, refer to the Basic Tutorials.unity
+
+### Async & Await
+
+#### async & await in C#
+
+Since the release of Unity2017, it is already possible to use the new C# features of async and await using.NET 4.x or.NET Standard 2.0 libraries. The framework extends the GetAwaiter() function for iEnumerator, YieldinFormaldefference, CustomYieldinFormaldefference, AsyncOperation, IAsyncResult, CoroutInetAsk and so on to support the async-await feature. Also add WaitForMainThread and WaitForBackgroundThread classes to switch worker threads for code fragments.
+
+Example one: async and await using method
+
+    public class AsyncAndAwaitExample : MonoBehaviour
+    {
+        async void Start()
+        {
+            await new WaitForSeconds(2f);
+            Debug.Log("WaitForSeconds  End");
+
+            await Task.Delay(1000);
+            Debug.Log("Delay  End");
+
+            UnityWebRequest www = UnityWebRequest.Get("http://www.baidu.com");
+            await www.SendWebRequest();
+            Debug.Log(www.downloadHandler.text);
+
+            int result = await Calculate();
+            Debug.LogFormat("Calculate Result = {0} Calculate Task End", result);
+
+            await new WaitForSecondsRealtime(1f);
+            Debug.Log("WaitForSecondsRealtime  End");
+
+            await DoTask(5);
+            Debug.Log("DoTask End");
+        }
+
+        IAsyncResult<int> Calculate()
+        {
+            return Executors.RunAsync<int>(() =>
+            {
+                Debug.LogFormat("Calculate Task ThreadId:{0}", Thread.CurrentThread.ManagedThreadId);
+                int total = 0;
+                for (int i = 0; i < 20; i++)
+                {
+                    total += i;
+                    try
+                    {
+                        Thread.Sleep(100);
+                    }
+                    catch (Exception) { }
+                }
+                return total;
+            });
+        }
+
+        IEnumerator DoTask(int n)
+        {
+            yield return new WaitForSeconds(1f);
+
+            for (int i = 0; i < n; i++)
+            {
+                yield return null;
+            }
+        }
+    }
+
+Example two: Within the function, the main thread and background thread can be switched between WaitForBackgroundThread and WaitForMainThread, and different code fragments can be executed in different threads.
+
+    using Loxodon.Framework.Asynchronous;
+    //Extends the namespace in which the GetAwaiter() function resides
+
+    using System.Threading;
+    using System.Threading.Tasks;
+    public class AsyncAndAwaitSwitchThreadsExample : MonoBehaviour
+    {
+        async void Start()
+        {
+            //Unity Thread
+            Debug.LogFormat("1. ThreadID:{0}",Thread.CurrentThread.ManagedThreadId);
+
+            await new WaitForBackgroundThread();
+
+            //Background Thread
+            Debug.LogFormat("2.After the WaitForBackgroundThread.ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
+
+            await new WaitForMainThread();
+
+            //Unity Thread
+            Debug.LogFormat("3.After the WaitForMainThread.ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
+
+            await Task.Delay(3000).ConfigureAwait(false);
+
+            //Background Thread
+            Debug.LogFormat("4.After the Task.Delay.ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
+
+            await new WaitForSeconds(1f);
+
+            //Unity Thread
+            Debug.LogFormat("5.After the WaitForSeconds.ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
+        }
+    }
+
+See Async & Await Tutorials. Unity for more examples
+
+#### Coroutine from Task to Unity
+
+The framework extends the AsCoroutine() function for tasks to support the coroutine from Task to Unity. See the below example.
+
+    using Loxodon.Framework.Asynchronous;
+    //Extends the namespace in which the AsCoroutine() function resides
+    public class TaskToCoroutineExample : MonoBehaviour
+    {
+        IEnumerator Start()
+        {
+            Task task = Task.Run(() =>
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    try
+                    {
+                        Thread.Sleep(200);
+                    }
+                    catch (Exception) { }
+
+                    Debug.LogFormat("Task ThreadId:{0}", Thread.CurrentThread.ManagedThreadId);
+                }
+            });
+
+            yield return task.AsCoroutine();
+            Debug.LogFormat("Task End,Current Thread ID:{0}", Thread.CurrentThread.ManagedThreadId);
+
+            yield return Task.Delay(1000).AsCoroutine();
+            Debug.LogFormat("Delay End");
+        }
+    }
+
+#### async & await in Lua
+
+In order to keep Lua development in sync with C# development, I have also added support for async & await in Lua, and made sure that C# and Lua can call each other.
+
+Async is a function in Lua, which can only take one input parameter and must be a function. Async wraps the input function as a Lua coroutine and returns a wrapped function. An async input function can be either an argument or a no-argument function. The function can have one or more return values or no return values.
+
+Await is a function in Lua. The input parameter of await must be an AsyncTask object, or any asynchronous result that implements getAwaiter() function. Both C# objects and Lua objects are supported, so the input parameters of await can be from not only Task and UniTask in C# but also asynchronous rusults in  Unity. The await function shanll listens for the callback of the asynchronous result and suspends the current coroutine. When the asynchronous task completes, the callback will trigger the coroutine to continue execution. Await also supports asynchronous results with no return value, single return value or multiple return values.
+
+The Async & await function is defined in the AsyncTask module, and which can be used after the AsyncTask module is imported in the Lua file via require.
+
+For an example, the following Lua class is hanged under LuabeHaviour and automatically call the start function through LuabeHaviour.
+
+    require("framework.System")     
+    local AsyncTask = require("framework.AsyncTask")
+    -- Import the AsyncTask module and import the async, await, and try functions
+
+    local M=class("Example",target)    
+
+    -- Define the position function with input parameter xyz
+    -- and return the AsyncTask asynchronous object
+    -- Async supports functions with multiple return values
+    M.position = async(function(x,y,z)
+		return x/1000.0,y/1000.0,z/1000.0
+	end)
+
+    M.start = async(function(self)		
+		await(AsyncTask.Delay(1000)) --Delay 1000 milliseconds
+
+		local x,y,z = await(M.position(1200,500,240))
+		-- Call position function asynchronously, returning x,y, and z
+
+		printf("x=%s y=%s z=%s",x,y,z)		
+
+		-- call Resources.LoadAsync asynchronously
+		local goTemplate = await(CS.UnityEngine.Resources.LoadAsync("Prefabs/Cube",typeof(CS.UnityEngine.GameObject)))
+
+		local go = GameObject.Instantiate(goTemplate)
+
+		go.transform.localPosition = CS.UnityEngine.Vector3.zero;
+	end)
+
+#### C\# call async function of Lua
+
+I have implemented the Iluatask interface in C#, which can automatically convert from the AsyncTask object to Iluatask object.
+
+Start() returns an AsyncTask Lua object. refer the below C# code.
+
+    public class LuaBehaviour : MonoBehaviour, ILuaExtendable
+    {
+        protected LuaTable metatable;
+        protected Func<MonoBehaviour, ILuaTask> onStart;
+
+        protected virtual void Awake()
+        {
+            ...
+
+            metatable = (LuaTable)result[0];
+            // Call start function of Lua.
+            // This function can be either an asynchronous function wrapped by async or a normal function
+            onStart = metatable.Get<Func<MonoBehaviour, ILuaTask>>("start");
+        }
+
+        protected virtual async void Start()
+        {
+            if (onStart != null)
+            {
+                // if start is an asynchronous function wrapped by async,
+                // it will return the Iluatask object, otherwise it will return null
+                ILuaTask task = onStart(this);
+                if (task != null)
+                    await task;
+            }
+        }
+    }
+
+#### try/catch/finally of Lua
+
+In conjunction with async and await, we wrap Lua's xpcall functions with a try function to catch exceptions in Lua's functions.
+
+The input parameters of the try function are a Lua table with the following structure: t[0] is the main function, t.Catch is the catch function, and t.fupward is the finally function.
+
+
+	{
+		function()
+			--this is main function.
+		end,
+		catch=function(e)
+			--this is catch function
+		end,
+		finally =function()
+			--this is finally function
+		end			
+	}
+
+example of try/catch
+
+    local position = async(function(x,y,z)
+
+        --try is a function. If the return value is required, add return before try;
+        --Otherwise, the return is not required to be added.
+
+		return try{
+			function()
+				--this is main function.
+				error("This a test,throw an exception")				
+				return x/1000.0,y/1000.0,z/1000.0
+			end,
+			catch=function(e)
+				--this is catch function
+				printf("Catch exception:%s",e)
+				return 0,0,0 --The default value is returned when an exception occurs
+			end,
+			finally =function()
+				--this is finally function
+				print("Execute the finally block")
+			end			
+		}		
+	end)
+
 
 ### Thread/Coroutine Executor
 
@@ -1685,30 +2128,31 @@ In the development of Unity3d logic scripts, multi-threading is not supported. A
 
         IEnumerator Start()
         {
-            //在后台线程中异步运行一个任务
+            //Run a task asynchronously in a background thread
             Executors.RunAsync(() =>
             {
                 Debug.LogFormat("RunAsync ");
             });
 
-            //在后台线程中异步运行一个任务
+            //Run a task asynchronously in a background thread
             Executors.RunAsync(() =>
             {
-                //睡眠1000毫秒
+                //sleep 1000 micro second
                 Thread.Sleep(1000);
 
-                //从后台线程切换到主线程中，
-                //waitForExecution = true，当前函数直到主线程执行完后才返回
+                //Switch from the background thread to the main thread,
+                //waitForExecution = true，the current function can be return
+                //until main thread execute complete
                 Executors.RunOnMainThread(() =>
                 {
                     Debug.LogFormat("RunOnMainThread Time:{0} frame:{1}", Time.time, Time.frameCount);
                 }, true);
             });
 
-            //运行一个协程任务
+            //Run a coroutine task
             IAsyncResult result = Executors.RunOnCoroutine(DoRun());
 
-            //等待任务完成
+            //waiting for task complete
             yield return result.WaitForDone();
         }
 
@@ -1726,11 +2170,12 @@ In the development of Unity3d logic scripts, multi-threading is not supported. A
 
 In this framework, a threaded timed task executor (ThreadScheduledExecutor) and a Unity3D coroutine timed task executor (CoroutineScheduledExecutor) are provided. Below we take the threaded timed task executor as an example to introduce its usage.
 
-    //创建并启动一个线程的定时任务执行器
+    //Creates and starts a thread's timer task executor
     var scheduled = new ThreadScheduledExecutor();
     scheduled.Start();
 
-    //延时1000毫秒后执行，以固定频率，每隔2000毫秒，打印一句“This is a test.”
+    //After a delay of 1000 micro seconds,
+    //print "This is a test." every 2000 micro seconds at a fixed frequency.
     IAsyncResult result = scheduled.ScheduleAtFixedRate(() =>
     {
         Debug.Log("This is a test.");
@@ -1739,12 +2184,12 @@ In this framework, a threaded timed task executor (ThreadScheduledExecutor) and 
 
 #### Interceptable Enumerator(InterceptableEnumerator)
 
-In Unity3D coroutines, if an exception occurs, it is impossible to catch the exception. Try catch is not allowed to use across yield, finally cannot ensure that the code block can still be executed when the coroutine ends abnormally, so it is often impossible to know a coroutine. It is not convenient to find the cause if the program execution ends normally. According to the principle that the Unity3D coroutine is an iterator, I designed a interceptable iterator that can inject code blocks during the execution of the coroutine and catch exceptions. Using InterceptableEnumerator to wrap the original iterator, you can capture the execution exception of the coroutine code, and no matter whether the coroutine ends normally, you can insert a code block before the coroutine exits, ensuring that this code block will definitely be at the end of the coroutine. carried out. In my Executors, I use the InterceptableEnumerator to ensure that the task ends normally. No matter whether the coroutine is executed successfully or abnormally, I can set the result of the AsyncResult by registering the Finally block. Ensure that AsyncResult.IsDone is equal to true, which will not cause the task Stuck.
+In Unity3D coroutines, if an exception occurs, it is impossible to catch the exception. Try catch is not allowed to be used across yield, finally cannot ensure that the code block can still be executed when the coroutine ends abnormally, so it is often impossible to know a coroutine. It is not convenient to find the cause if the program execution ends normally. According to the principle that the Unity3D coroutine is an iterator, I designed a interceptable iterator that can inject code blocks during the execution of the coroutine and catch exceptions. Using InterceptableEnumerator to wrap the original iterator, you can capture the execution exception of the coroutine code, and no matter whether the coroutine ends normally, you can insert a code block before the coroutine exits, ensuring that this code block will definitely be at the end of the coroutine. carried out. In my Executors, I use the InterceptableEnumerator to ensure that the task ends normally. No matter whether the coroutine is executed successfully or abnormally, I can set the result of the AsyncResult by registering the Finally block. Ensure that AsyncResult.IsDone is equal to true, which will not cause the task Stuck.
 
 InterceptableEnumerator supports conditional statement blocks. You can insert a conditional statement block outside to control the coroutine logic or abort the coroutine. Exception statement block, you can catch coroutine exceptions, Finally statement block, to ensure that the end of the coroutine will call this statement block. Let's take a look at an example.
 
     /// <summary>
-    /// 这是一个迭代器的包装函数
+    /// This is the wrapper function for an iterator
     /// </summary>
     protected static InterceptableEnumerator WrapEnumerator(IEnumerator routine, IPromise promise)
     {
@@ -1754,10 +2199,13 @@ InterceptableEnumerator supports conditional statement blocks. You can insert a 
         else
             enumerator = new InterceptableEnumerator(routine);
 
-        //注册一个条件语句块，如果任务取消，IsCancellationRequested = true，则结束任务
+        //Registers a conditional statement block, and if the task is canceled,
+        //isCancellationRequested = true, then terminates the task
         enumerator.RegisterConditionBlock(() => !(promise.IsCancellationRequested));
 
-        //注册一个异常捕获语句块，如果协程执行错误，则将异常赋值到任务结果，并打印错误
+        //Registrates an exception-catching statement block
+        //that assigns the exception to the task result and prints the error
+        //if the coroutine executes an error
         enumerator.RegisterCatchBlock(e =>
         {
             if (promise != null)
@@ -1767,7 +2215,7 @@ InterceptableEnumerator supports conditional statement blocks. You can insert a 
                 log.Error(e);
         });
 
-        //注册一个Finally语句块，确保任务能够正常结束退出
+        //Register a Finally block to ensure that the task can exit properly
         enumerator.RegisterFinallyBlock(() =>
         {
             if (promise != null && !promise.IsDone)
@@ -1793,25 +2241,26 @@ Messenger is used for communication between application modules. It provides the
         private IDisposable chatroomSubscription;
         private void Start()
         {
-            //获得默认的Messenger
+            //get default Messenger
             Messenger messenger = Messenger.Default;
 
-            //订阅一个消息,确保subscription是成员变量，否则subscription被GC回收时会自动退订消息
+            //Subscribe to a message, ensuring that Subscription is a member variable,
+            //otherwise it will automatically unsubscribe when it is collected by GC
             subscription = messenger.Subscribe((PropertyChangedMessage<string> message) =>
             {
                 Debug.LogFormat("Received Message:{0}", message);
             });
 
-            //发布一个属性名改变的消息
+            //Publish a message about a property name change
             messenger.Publish(new PropertyChangedMessage<string>("clark", "tom", "Name"));
 
-            //订阅聊天频道"chatroom1"的消息
+            //Subscribe to the chat channel "ChatRoom1"
             chatroomSubscription = messenger.Subscribe("chatroom1", (string message) =>
              {
                  Debug.LogFormat("Received Message:{0}", message);
              });
 
-            //向聊天频道"chatroom1"发布一条消息
+            //send a message to chat channel "chatroom1"
             messenger.Publish("chatroom1", "hello!");
         }
 
@@ -1819,14 +2268,14 @@ Messenger is used for communication between application modules. It provides the
         {
             if (this.subscription != null)
             {
-                //退订消息
+                //Unsubscribe message
                 this.subscription.Dispose();
                 this.subscription = null;
             }
 
             if (this.chatroomSubscription != null)
             {
-                //退订消息
+                //Unsubscribe message
                 this.chatroomSubscription.Dispose();
                 this.chatroomSubscription = null;
             }
@@ -1848,21 +2297,22 @@ Let's take a look at the usage example of ObservableDictionary. When we need to 
         protected void Start()
         {
     #if UNITY_IOS
-            //在IOS中，泛型类型的字典，需要提供IEqualityComparer<TKey>，否则可能JIT异常
+            //In IOS, the generic type dictionary needs to provide the iEqualityComparer <TKey>,
+            //otherwise it may be a JIT exception
             this.dict = new ObservableDictionary<int, Item>(new IntEqualityComparer());
     #else
             this.dict = new ObservableDictionary<int, Item>();
     #endif
             dict.CollectionChanged += OnCollectionChanged;
 
-            //添加Item
+            //add Item
             dict.Add(1, new Item() { Title = "title1", IconPath = "xxx/xxx/icon1.png", Content = "this is a test." });
             dict.Add(2, new Item() { Title = "title2", IconPath = "xxx/xxx/icon2.png", Content = "this is a test." });
 
-            //删除Item
+            //delete Item
             dict.Remove(1);
 
-            //清除字典
+            //remove dictionary
             dict.Clear();
         }
 
@@ -1875,7 +2325,7 @@ Let's take a look at the usage example of ObservableDictionary. When we need to 
             }
         }
 
-        //集合改变事件
+        //Set changing event
         protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
         {
             switch (eventArgs.Action)
@@ -1919,35 +2369,39 @@ Data binding is the key technology of MVVM. It is used to bind and connect the v
 
 The data binding service is a basic component. We can start the data binding service in the game initialization script and register all the components in the service container of the global context. If a friend wants to use third-party IoC components, such as Autofac, Zenject, etc., then they need to refer to the code of the BindingServiceBundle and create all the classes initialized in the OnStart function with other containers.
 
-    //获得全局上下文
+    //Obtain the global context
     ApplicationContext context = Context.GetApplicationContext();
 
-    //初始化数据绑定服务
+    //Initialize the data binding service
     BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
     bindingService.Start();
 
 If the Lua plugin is installed, when writing a game in Lua, the data binding service is initialized as follows. LuaBindingServiceBundle adds components that support Lua objects.
 
-    //获得全局上下文
+    //Obtain the global context
     ApplicationContext context = Context.GetApplicationContext();
 
-    //初始化数据绑定服务
+    //Initialize the data binding service
     LuaBindingServiceBundle bundle = new LuaBindingServiceBundle(context.GetContainer());
     bundle.Start();
 
 #### Data binding example
 
-    //创建一个数据绑定集合，泛型参数DatabindingExample是视图，AccountViewModel是视图模型
+    //Create a data binding collection with the generic parameter
+    //DatabindingExample for the view and AccountViewModel for the view model
     BindingSet<DatabindingExample, AccountViewModel> bindingSet;
     bindingSet = this.CreateBindingSet<DatabindingExample, AccountViewModel>();
 
-    //绑定Text.text属性到Account.Username上，OneWay是单向,将Account.Username的值赋值到UI控件
+    //Bind the property of Text.text to Account.Username. OneWay is one-way.
+    //Assign the value of Account.Username to the UI control
     bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).OneWay();
 
-    //绑定InputField.text到Username属性，双向绑定，修改Username，自动更新InputField控件，修改InputField自动更新Username属性
+    // Bind the property of Username by InputField.text, bind in both ways,
+    // modify Username, automatically update InputField control,
+    // modify InputField automatically update Username property
     bindingSet.Bind(this.usernameEdit).For(v => v.text, v => v.onEndEdit).To(vm => vm.Username).TwoWay();
 
-    //绑定Button到视图模型的OnSubmit方法，方向属性无效
+    //Bind Button to the OnSubmit method of view model. The direction property is invalid
     bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit);
 
     bindingSet.Build();
@@ -1974,7 +2428,7 @@ If the Lua plugin is installed, when writing a game in Lua, the data binding ser
 
 In general, basic data types are automatically converted when the field type of the view control is inconsistent with the field type of the view model, unless a custom type converter is required to support it. However, when you modify the picture or atlas on the view control through the picture path, picture name, or atlas name saved in the view model, you must use a type converter to convert it.
 
-    //加载一个精灵图集
+    //Load a Sprite atlas
     Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
     foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures"))
     {
@@ -1982,16 +2436,20 @@ In general, basic data types are automatically converted when the field type of 
             sprites.Add(sprite.name, sprite);
     }
 
-    //创建一个支持精灵名称到Sprite的转换器
+    //Create a converter that supports the Sprite name to the Sprite
     var spriteConverter = new SpriteConverter(sprites)；
 
-    //获得转换器注册服务，它在数据绑定服务启动时会自动创建并注入上下文容器中
+    //Obtain the converter registration service, which is automatically created and injected
+    //into the context container when the data binding service starts
     IConverterRegistry converterRegistry = context.GetContainer().Resolve<IConverterRegistry>();
 
-    //注册精灵转换器
+    //Register Sprite Converter
     converterRegistry.Register("spriteConverter",spriteConverter);
 
-    //通过视图模型Icon，修改精灵名称，通过spriteConverter转换为对应的Sprite，赋值到图片的sprite属性上。
+    //Using the view model Icon, change the Sprite name,
+    //convert it to the corresponding Sprite through the SpriteConverter,
+    //and assign the value to the Sprite property of the image.
+
     bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();
 
 For more examples, see the ListView And Sprite Databinding Tutorials.unity
@@ -2002,10 +2460,12 @@ For more examples, see the ListView And Sprite Databinding Tutorials.unity
 
     Property and Field binding is very simple, see the example directly
 
-      //C#，单向绑定
+      //C#，one-way bindiung
       bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).OneWay();
 
-      //C#，双向绑定，双向绑定时视图对象必须支持视图改变的事件，如“onEndEdit”，必须在For函数中配置
+      //C# Bidirectional binding. When bidirectional binding occurs,
+      // the view object must support events that change the view,
+      // such as "onEndEdit", which must be configured in the For function
       bindingSet.Bind(this.usernameEdit).For(v => v.text, v => v.onEndEdit).To(vm => vm.Username).TwoWay();
 
       //C#，非拉姆达表达式的方式
@@ -2161,7 +2621,7 @@ In some views, you may need to dynamically create binding relationships and dyna
     bindingSet.Bind(this.username).For(v => v.text).To(vm => vm.Account.Username).WithScopeKey(scopeKey).OneWay();
     bindingSet.Bind(this.submit).For(v => v.onClick).To(vm => vm.OnSubmit()).WithScopeKey(scopeKey);
 
-    //通过Scope Key移除绑定
+    //Remove bindings by Scope Key
     this.ClearBindings(scopeKey); //or this.BindingContext().Clear(scopeKey)
 
 
@@ -2285,12 +2745,13 @@ During the development of the UI, the view script often needs to access and cont
 
 ![](images/Variable_UI.png)
 
-    //C#，访问变量
+    //C#，Access to the variable
     Color color = this.variables.Get<Color>("color");
     InputField usernameInput = this.variables.Get<InputField>("username");
     InputField emailInput = this.variables.Get<InputField>("email");
 
-    --Lua，可以直接通过self来访问变量，跟当前Lua表中的成员属性一样
+    --Lua, You can access variables directly through self,
+    --just as you can access member properties in the current Lua table
     printf("vector:%s",self.vector:ToString())
     printf("color:%s",self.color:ToString())
     printf("username:%s",self.username.text)
@@ -2301,10 +2762,11 @@ During the development of the UI, the view script often needs to access and cont
 
 The UI view locator is a service for querying and loading UI views. It provides services for loading UI views synchronously and asynchronously. Depending on the project, you can customize its functionality. You can load views from Resources, you can also load views from an AssetBundle, or both.
 
-    //C#，创建一个默认的视图定位器，它支持从Resources中加载视图，如果要从AssetBundle中加载，需要自己实现
+    //C#, Create a default view locator that supports loading views from Resources.
+    //If you want to load views from AssetBundle, you need to implement it by yourself
     IUIViewLocator locator = new DefaultUIViewLocator()
 
-    //通过UI视图定位器，根据一个UI路径名加载一个Loading的窗口视图
+    //Loads a Loading window view with a UI pathname through the UI view locator
     var window = locator.LoadWindow<LoadingWindow>("UI/Loading");
     window.Show();
 
@@ -2375,7 +2837,7 @@ Using DoTween to customize a Lua animation
     require("framework.System")
 
     ---
-    --模块
+    --module
     --@module AlphaAnimation
     local M=class("AlphaAnimation",target)
 
@@ -2396,10 +2858,11 @@ The following uses AlertDialog as an example to introduce their usage.
 
 ![](images/AlertDialog.png)
 
-    //对话框视图默认目录路径是UI/AlertDialog，可以通过如下方式修改视图路径
+    //The default directory path for a dialog view is UI/AlertDialog.
+    //You can modify the view path as follows
     AlertDialog.ViewName = "Your view directory/AlertDialog";
 
-    //C#，打开一个对话框窗口
+    //C#，Opens a dialog window
     AlertDialog.ShowMessage("This is a dialog test.", "Interation Example", "Yes", null, "No", true,
     result =>
     {
@@ -2418,7 +2881,7 @@ The following uses AlertDialog as an example to introduce their usage.
 
     In UI development, we often find that a UI interface can be divided into many areas, such as the Top bar, the left bar, the right bar, the Bottom bar, the content area, etc., and some parts can be shared between multiple UI interfaces. of. Based on these characteristics, I can make different areas into different views. When the final interface is displayed, the view group is assembled into a complete view. This not only helps to improve the reuse of the code, but also greatly reduces the code. Coupling and complexity. **The important point is that we can use this design idea to design the novice guidance system for the game. Only when the interface needs to display guidance, the guidance interface is dynamically inserted into the current interface. The novice guidance logic is completely separated from the normal game logic to avoid a high degree of coupling between the guidance logic and the game logic.**
 
-    Similarly, in the game scene view, we can also split complex views into large and small view groups and subviews, and dynamically add and delete subviews during the game. For example, a game character is a subview in the scene. When the character enters the field of view, the view is added, and when it disappears from the field of view, the view is deleted.
+    Similarly, in the game scene view, we can also split complex views into large and small view groups and subviews, and dynamically add and delete subviews during the game. For example, a game character is a subview in the scene. When the character enters the field of view, the view is added, and when it disappears from the field of view, the view is deleted.
 
     Taking the King Glory daily activity interface as an example, it can be split into a top menu bar, a left menu bar, and a content area. The menu bar view can be reused. You only need to change the view of the content area each time.
 
@@ -2428,7 +2891,7 @@ The following uses AlertDialog as an example to introduce their usage.
 
     Window is the root container of a UI interface view (IUIViewGroup, IUIView). It is also a controller. It is responsible for creating, destroying, displaying, and hiding window views. It is responsible for managing the life cycle of views and view models. Window interaction, etc.
 
-      //C#，创建窗口
+      //C#，creat a window
       public class ExampleWindow : Window
       {
           public Text progressBarText;
@@ -2459,13 +2922,13 @@ The following uses AlertDialog as an example to introduce their usage.
           }
       }
 
-      --Lua,创建窗口
+      --Lua, create a window
       require("framework.System")
 
       local ExampleViewModel = require("LuaUI.Startup.ExampleViewModel")
 
       ---
-      --模块
+      --module
       --@module ExampleWindow
       local M=class("ExampleWindow",target)
 
@@ -2496,11 +2959,11 @@ The following uses AlertDialog as an example to introduce their usage.
 
     The window container is both a window manager and a window. In the window container, you can add and delete child windows, manage child windows, and also display and hide like a normal window. Take our MMO game. Generally, a main window container named "Main" and a "Battle" window container are created. All window views opened in the main interface will be placed in the Main container, but when you enter a certain When there are two battle copies, the Main container will be hidden and the "Battle" container will be displayed. All UI windows in the battle copy will be managed by the Battle container. When exiting the copy, you only need to close the Battle container and set the Main container to be visible. Restores the hierarchical relationship of windows in the Main container.
 
-      //C#，创建一个MAIN容器，默认会在全局窗口管理器中创建
+      //C#，Create a MAIN container, which by default is created in the global window manager
       WindowContainer winContainer = WindowContainer.Create("MAIN");
       IUIViewLocator locator = context.GetService<IUIViewLocator>();
 
-      //在MAIN容器中打开一个窗口
+      //Open a window in the MAIN container
       StartupWindow window = locator.LoadWindow<StartupWindow>(winContainer, "UI/Startup/Startup");
       ITransition transition = window.Show()    
 
@@ -2524,10 +2987,11 @@ Take a look at the following code example, using an interactive request to open 
 
         public InteractionExampleViewModel()
         {
-            //创建一个交互请求，这个交互请求的作用就是向控制层(InteractionExample)发送一个打开对话窗的通知
+            // Create an interaction request that sends an open dialog notification
+            // to the control layer (InteractionExample)
             this.alertDialogRequest = new InteractionRequest<DialogNotification>(this);
 
-            //创建一个打响应按钮事件的命令
+            // Creates a command to press the response button event
             this.openAlertDialog = new SimpleCommand(Click);
         }
 
@@ -2537,32 +3001,36 @@ Take a look at the following code example, using an interactive request to open 
 
         public void Click()
         {
-            //设置命令的Enable为false，通过数据绑定解耦，间接将视图层按钮设置为不可点击状态
+            // Set command Enable to false, decouple by data binding,
+            // and indirectly make view-layer buttons unclickable
             this.openAlertDialog.Enabled = false;
 
-            //创建一个对话框通知
+            // Create a dialog notification
             DialogNotification notification = new DialogNotification("Interation Example",
                 "This is a dialog test.", "Yes", "No", true);
 
-            //创建一个回调函数，此回调函数会在AlertDialog对话框关闭时调用
+            // Create a callback function
+            // that will be called when the AlertDialog dialog is closed
             Action<DialogNotification> callback = n =>
             {
-                //设置命令的Enable为true，通过绑定会自动恢复按钮的点击状态
+                // Set the Enable of the command to true,
+                // and the button will be automatically restored by binding
                 this.openAlertDialog.Enabled = true;
 
                 if (n.DialogResult == AlertDialog.BUTTON_POSITIVE)
                 {
-                    //对话框Yes按钮被按下
+                    // The YES button of the dialog box is pressed
                     Debug.LogFormat("Click: Yes");
                 }
                 else if (n.DialogResult == AlertDialog.BUTTON_NEGATIVE)
                 {
-                    //对话框No按钮被按下
+                    // The NO button of the dialog box is pressed
                     Debug.LogFormat("Click: No");
                 }
             };
 
-            //交互请求向View层OnOpenAlert函数发送通知
+            // The interactive request sends a notification
+            // to the View layer onOpenAlert function
             this.alertDialogRequest.Raise(notification, callback);
         }
     }
@@ -2575,44 +3043,52 @@ Take a look at the following code example, using an interactive request to open 
             InteractionExampleViewModel viewModel = new InteractionExampleViewModel();
             this.SetDataContext(viewModel);
 
-            //创建一个bindingSet
+            // create a bindingSet
             BindingSet<InteractionExample, InteractionExampleViewModel> bindingSet;
             bindingSet = this.CreateBindingSet<InteractionExample, InteractionExampleViewModel>();
 
-            //绑定本视图的OnOpenAlert函数到视图模型的交互请求AlertDialogRequest，当交互请求触发时，自动调用OnOpenAlert函数
+            // Bind the onOpenAlert function of this view to the interactive
+            // request AlertDialogRequest of the viewmodel.
+            // When the interactive request is triggered,
+            // the onOpenAlert function will be called automatically
+
             bindingSet.Bind().For(v => this.OnOpenAlert(null, null)).To(vm => vm.AlertDialogRequest);
 
-            //绑定按钮的onClick事件到视图模型的OpenAlertDialog命令上
+            // Bind the onClick event of the button
+            // to the OpenAlertDialog command in the viewmodel
             bindingSet.Bind(this.openAlert).For(v => v.onClick).To(vm => vm.OpenAlertDialog);
 
             bindingSet.Build();
         }
 
-        //创建和打开对话框的函数，通过交互请求触发
+        // Functions that create and open dialogs, triggered by interactive requests
         private void OnOpenAlert(object sender, InteractionEventArgs args)
         {
-            //收到视图模型层交互请求alertDialogRequest发来的通知
+            // Receive notification from AlertDialogRequest for viewmodel layer interaction
 
-            //得到通知数据
+            // Get notification data
             DialogNotification notification = args.Context as DialogNotification;
 
-            //得到AlertDialog窗口关闭时的回调函数
+            // Gets the callback function when the AlertDialog window is closed
             var callback = args.Callback;
 
             if (notification == null)
                 return;
 
-            //创建一个对话窗
+            // Create a dialog window
             AlertDialog.ShowMessage(notification.Message, notification.Title, notification.ConfirmButtonText,
                 null,
                 notification.CancelButtonText,
                 notification.CanceledOnTouchOutside,
                 (result) =>
                 {
-                    //将对话窗按钮事件响应结果赋值到notification，传递到视图模型层使用
+                    // Assign the result of the dialog button event response to
+                    // the Notification and pass it to the viewmodel layer for use
                     notification.DialogResult = result;
 
-                    //对话窗关闭时，调用交互请求中设置的回调函数，通知视图模型层处理后续逻辑
+                    // When the dialog window closes, the callback function
+                    // set in the interaction request is invoked to inform
+                    // the viewmodel layer to process the subsequent logic
                     if (callback != null)
                         callback();
                 });
@@ -2625,21 +3101,21 @@ For more examples, see the Interaction Tutorials.unity
 
 InteractionAction is used in conjunction with InteractionRequest. An interaction request is initiated by an interaction request. The interaction task is used to complete the interaction task. It is an extension of the view method binding to the interaction request in the previous section. Generally speaking, using method binding to an interaction request Yes, but for some common functions, such as requesting to open or close a Loading window, you can use InteractionAction to facilitate code reuse. In different views, you only need to create a LoadingInteractionAction instance to complete the opening function of the Loading window. See the example below to enable Loading
 
-    //在ViewModel中创建一个交互请求
+    // Create an interaction request in the ViewModel
     this.loadingRequest = new InteractionRequest<VisibilityNotification>();
 
-    //在ViewModel中创建一个显示Loading窗口的命令，通过命令调用交互请求打开一个Loading界面
+    // Create a command to display the Loading window in the ViewModel,
+    // and open a Loading interface through the command call interaction request
     this.ShowLoading = new SimpleCommand(() =>
     {
         VisibilityNotification notification = new VisibilityNotification(true);
         this.loadingRequest.Raise(notification);
     });
 
-
-    //在View中创建一个交互请求LoadingInteractionAction
+    // Create an interactive request LoadingInterActionAction in the View
     this.loadingInteractionAction = new LoadingInteractionAction();
 
-    //绑定InteractionAction到InteractionRequest
+    // Bind InteractionAction to InteractionRequest
     bindingSet.Bind().For(v => v.loadingInteractionAction).To(vm => vm.LoadingRequest);
 
 For more examples, see the Interaction Tutorials.unity
@@ -2671,7 +3147,7 @@ First we create a ListView control, and use this control to listen for changes i
 
         public ItemClickedEvent OnSelectChanged = new ItemClickedEvent();
 
-        //装备集合，通过数据绑定赋值
+        // Equipment collection, assigned via data binding
         public ObservableList<ListItemViewModel> Items
         {
             get { return this.items; }
@@ -2693,7 +3169,8 @@ First we create a ListView control, and use this control to listen for changes i
         }
 
         /// <summary>
-        /// 监听装备集合的改变，自动更新装备列表界面
+        /// Monitor the change of equipment set
+        /// and update the equipment list interface automatically
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -2806,7 +3283,7 @@ Then create an Item view ListItemView of the equipment list, which is responsibl
 
         protected override void Start()
         {
-            //绑定Item上的视图元素
+            // Bind the view element on the Item
             BindingSet<ListItemView, ListItemViewModel> bindingSet = this.CreateBindingSet<ListItemView, ListItemViewModel>();
             bindingSet.Bind(this.title).For(v => v.text).To(vm => vm.Title).OneWay();
             bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();
@@ -3050,7 +3527,8 @@ First, we implement a sprite asynchronous loader and hang it on the Image contro
         }
 
         /// <summary>
-        /// 异步加载精灵，为了效果明显，在加载器等待了一秒钟
+        /// Load the Sprite asynchronously,
+        /// wait a second in the loader for the effect to be obvious
         /// </summary>
         /// <returns></returns>
         IEnumerator LoadSprite()
@@ -3119,6 +3597,8 @@ Then create the view and view model code of the sample interface as follows.
 
 For more examples, see the Databinding for Asynchronous Loading Sprites Tutorials.unity
 
+<div style="page-break-after: always;"></div>
+
 ## Lua
 
 ### Modules and inheritance
@@ -3127,29 +3607,30 @@ Using Lua's original table inheritance, the concepts of classes (modules) and in
 
 With the following code example, let's see how to define modules and inherit modules.
 
-    -- 定义一个名为 Animal 的基类
+    -- Define a base class called Animal
     local Animal = class("Animal")
 
-    -- Animal类的构造函数，通过Animal()来创建Animal类的实例，同时会调用这个构造函数
+    -- Creates an instance of Animal from Animal(), and calls this constructor
     function Animal:ctor(...)
     end
 
-    -- 为Animal定义一个walk()的方法
+    -- Define a walk() method for Animal
     function Animal:walk()
         print("animal walk")
     end
 
-    -- 为Animal定义一个run()方法
+    -- Define a run() method for Animal
     function Animal:run()
         print("animal run")
     end
 
-    -- 定义一个名为Cat的类，它继承了Animal类
+    -- Define a class named Cat that inherits from the Animal class
     local Cat = class("Cat",Animal)
 
-    -- Cat类的构造函数
+    -- The constructor of the Cat class
     function Cat:ctor()
-        -- 重载了构造函数，会覆盖父类构造函数，通过如下显示的调用父类构造函数
+        -- When the constructor is overloaded,
+        -- the superclass constructor is overridden and called as shown below
         Cat.super.ctor(self)
         self.age = 5
     end
@@ -3158,31 +3639,33 @@ In addition to Lua, modules can also inherit C # classes, and of course static c
 
 **Note: The function of the parent class must be called using the module name, not self**
 
-    M.super.Get(self,name,cascade) --正确
+    M.super.Get(self,name,cascade) --correct
 
-    self.super.Get(self,name,cascade) --错误
+    self.super.Get(self,name,cascade) --wrong
 
-    M.super:Get(name,cascade) --错误
+    M.super:Get(name,cascade) --wrong
 
 Lua inherits C # class Loxodon.Framework.Contexts.Context, adds GetName () function, and overrides Context.Get (string name, bool cascade) function.
 
-    -- 定义一个继承C#类Context的模块，推荐模块的变量名默认都使用M
+    -- Define a module that extends from C# class Context.
+    -- It is recommended that the variable names of modules be M by default
     local M = class("LuaContext",CS.Loxodon.Framework.Contexts.Context)
 
-    -- 新增一个函数
+    -- Add a new function
     function M:GetName()
 
-        --代码省略
+        -- The code is omitted
 
     end
 
-    -- 重写父类的函数，调用父类的函数
+    -- Overrides the functions of the parent class and calls the functions of the parent class
+
     function M:Get(name,cascade)    
-        -- 调用父类的函数
+        -- Call the function of the parent class
         local ret = M.super.Get(self,name,cascade)
         if ret then return ret end
 
-        --代码省略
+        -- The code is omitted
 
     end
 
@@ -3191,6 +3674,9 @@ Lua inherits C # class Loxodon.Framework.Contexts.Context, adds GetName () funct
 A MonoBehaviour script cannot be inherited, but its instance can be extended by Lua. Using the class function, we can add new properties and methods to it. Unlike C # class inheritance, the second parameter of class is an instance of a C # class. Look at the Lua example, the C # script LuaLauncher extension code.
 
 The "target" object is in the C # script LuaLauncher. When initializing the lua script environment, it injects its own instance into the lua environment. In all extension scripts of this framework, the "target" variable name is used uniformly. Follow this rule.
+
+Attention
+After Lua inherit a C# class or Lua expandes the MonoBehaviour instance, C# examples and Lua module corresponding examples are the same object in Lua runtime. You got the MonoBehaviour instance objects, not only have access to all functions and attributes of MonoBehaviour, at the same time can also visit the Lua script extension functions and attributes
 
 C# code, part of LuaLauncher script to initialize lua execution environment.
 
@@ -3202,7 +3688,7 @@ C# code, part of LuaLauncher script to initialize lua execution environment.
     scriptEnv.SetMetaTable(meta);
     meta.Dispose();
 
-    //将this注入到lua环境表中，这里请统一使用target变量名
+    // Inject this into the Lua environment table, using the unify target variable name
     scriptEnv.Set("target", this);
 
     string scriptText = "";
@@ -3232,35 +3718,41 @@ Extend LuaLauncher script function through lua, awake, enable, disable, start, d
     local WindowContainer = CS.Loxodon.Framework.Views.WindowContainer
     local Context = CS.Loxodon.Framework.Contexts.Context
     ---
-    --Launcher 模块，参数target是约定的，请不要修改。
+    --Launcher module, the target parameter is agreed, please do not change.
     --@module Launcher
     local M=class("Launcher",target)
 
     function M:start()
-        -- 获得应用上下文，一个游戏建议创建应用上下文和玩家上下文。
-        -- 全局的服务都放入应用上下文中，如账号服务，网络组件，配置服务等基础组件和服务
-        -- 只与某个玩家相关的如背包服务、装备服务、角色服务都放入玩家上下文，当登出游戏可以统一释放
+        -- To get an application context,
+        -- one game suggests creating an application context and a player context.
+        -- Global services are placed in the application context,
+        -- such as account services, network components, configuration services,
+        -- and other basic components and services
+        -- Items that are only relevant to a player, such as knapsack services,
+        -- equipment services, and character services, are placed in the player's context
+        -- and can be released when logged out of the game
         local context = Context.GetApplicationContext()
 
-        -- 从应用上下文获得一个视图定位器
+        -- Get a view locator from the application context
         local locator = context:GetService("IUIViewLocator")
 
-        -- 创建一个名为MAIN的窗口容器
+        -- Create a window container named MAIN
         local winContainer = WindowContainer.Create("MAIN")
 
-        -- 通过视图定位器，加载一个启动窗口视图
+        -- Load a startup window view through the view locator
         local window = locator:LoadWindow(winContainer, "LuaUI/Startup/Startup")
 
-        --创建窗口
+        -- Create a window
         window:Create()
 
-        --显示窗口，返回一个transition对象，窗口显示一般会有窗口动画，所以是一个持续过程的操作
+        -- display window returns a Transition object.
+        -- Window displays are usually animated Windows, so they are an ongoing process
         local transition = window:Show()
 
-        --监听显示窗口过程的窗口状态
+        -- Listens the window state of the display window procedure
         transition:OnStateChanged(function(w,state) print("Window:"..w.Name.." State:"..state:ToString()) end)
 
-        --监听窗口显示完成事件        
+        -- The listening window displays completion events       
         transition:OnFinish(function() print("OnFinished")  end)
     end
 
@@ -3275,12 +3767,13 @@ To meet the requirements of MVVM data binding, Lua's Table can trigger the notif
     local ObservableObject = require("framework.ObservableObject")
 
     ---
-    --创建一个Account视图模型
+    --Create an Account view model
     --@module AccountViewModel
     local M = class("AccountViewModel",ObservableObject)
 
     function M:ctor(t)
-        --执行父类ObservableObject的构造函数，这个重要，否则无法监听数据改变
+        --Execute the constructor of the parent observableObject.
+        --This is important, otherwise you cannot listen for data changes
         M.base(self).ctor(self)
 
         self.id = 0
@@ -3304,25 +3797,27 @@ XLua provides us with a function util.cs_generator () that creates an iterator (
 The following doLoad function simulates a loading task, executes a loop from 1 to 50, uses the lua coroutine yield method, and sleeps for 0.1 seconds each time.
 
     ---
-    -- 模拟一个加载任务
+    --Simulate a load task
     function M:doLoad(promise)
         print("task start")
 
         for i = 1, 50 do
-            --如果有取消请求，即调用了ProgressResult的Cancel()函数，则终止任务
+            --If there is a Cancel request, that is, the function Cancel() of progressResult is called, then the task is terminated
             if promise.IsCancellationRequested then
                 break
             end
 
-            promise:UpdateProgress(i/50) --更新任务进度        
+            promise:UpdateProgress(i/50) --Update task progress        
 
-            --这里coroutine.yield中可以不传入参数，则表示是每帧执行一次，
-            --也可以传入所有继承了YieldInstruction的参数，如:UnityEngine.WaitForSeconds(0.1)
-            --还可以传入一个IEnumerator对象，如：AsyncResult.WaitForDone()
-            coroutine.yield(CS.UnityEngine.WaitForSeconds(0.1))--等待0.1秒
+            --You can input no parameter in the coroutine.yield,
+            --which means that it is executed once per frame.
+            --You can also input all inherited YieldInstruction parameters,
+            --such as: UnityEngine. WaitForSeconds (0.1);
+            --You can also input an IEnumerator object, such as AsyncResult.WaitForDone()
+            coroutine.yield(CS.UnityEngine.WaitForSeconds(0.1))--wait 0.1 second
         end    
         promise:UpdateProgress(1)
-        promise:SetResult()    --设置任务执行完成
+        promise:SetResult()    --Set the task to be completed
         print("task end")
     end
 
@@ -3337,17 +3832,21 @@ In Lua, the C # Executors class is extended, and two functions RunLuaOnCoroutine
 
     local Executors = require("framework.Executors")
 
-    --前一个示例中，我们也可以如下方式执行doLoad函数
+    --In the previous example, we could also execute the DOLOAD function as follows
     local result = ProgressResult(true)
     Executors.RunLuaOnCoroutineNoReturn(function(r) self:doLoad(r) end,result)
 
-    --或者使用下面方式执行，它与前面的方式是等价的，self.doLoad 是需要执行的函数，self和result是doLoad函数的参数
-    --Executors.RunLuaOnCoroutineNoReturn(self.doLoad,self,result)
+    --or use the below method, it's equal to the above method.
+    --Self.doLoad is the function that needs to be executed.
+    --Self and result are the arguments to the doLoad function
+    Executors.RunLuaOnCoroutineNoReturn(self.doLoad,self,result)
     return result
 
 Define and execute a coroutine function as a closure.
 
-    --执行一个协程并且返回一个IAsyncResult。传入一个过期时间duration（单位秒），执行duration秒后协程退出
+    --Executes a coroutine and returns an IAsyncResult.
+    --An expiration time, duration (in seconds) is passed, and the coroutine exits after duration is executed
+
 	return Executors.RunLuaOnCoroutine(function(duration)
 			local wait = CS.UnityEngine.WaitForSeconds(0.05)
 			local startTime = Time.realtimeSinceStartup
@@ -3362,14 +3861,14 @@ For more information about Lua coroutines, see framework.Executors and examples 
 
 The framework provides a Lua version of the logging system. The underlying layer still uses Loxodon.Log.ILog to provide services, but functions are repackaged in Lua. It supports multiple levels of DEBUG, INFO, WARN, ERROR, and FATAL. The level of log printing can be set in the code or configuration file (if log4net is used). At the same time, it also supports displaying the file path and line number of the log, which is convenient for code debugging.
 
-    --如果使用默认的日志工厂，可以如下设置日志打印的级别
-    --如果使用log4net，请在log4net配置文件中设置日志打印的级别
+    --If you use the default log factory, you can set the printing log level as follows
+    --If you use Log4Net, you can set the printing log level in the Log4Net configuration file
     CS.Loxodon.Log.LogManager.Default.Level = CS.Loxodon.Log.Level.INFO
 
-    --初始化日志系统
+    --Initialize the logging system
     local logger = require("framework.Logger").GetLogger()
 
-    --打印日志
+    --printing log
     logger:debug("This is a test.")
     logger:info("This is a test.")
 
@@ -3409,11 +3908,12 @@ In the following example, in Editor mode, a Lua file with the extension ".lua.tx
     var luaEnv = LuaEnvironment.LuaEnv;
 
     #if UNITY_EDITOR
-        //开发模式，从本地目录加载lua源码
+        //Development mode to load Lua source code from a local directory
         luaEnv.AddLoader(new FileLoader(Application.dataPath + "/LuaScripts/", ".lua"));
         luaEnv.AddLoader(new FileLoader(Application.dataPath + "/LuaScripts/", ".lua.txt"));
     #else
-        //真机模式，从persistentDataPath或者streamingAssetsPath目录加载lua的bytecode.
+        //True machine mode to load Lua's bytecode from the PersistentDataPath
+        //or StreamingAssetsPath directory.
         var key = Encoding.ASCII.GetBytes("E4YZgiGQ0aqe5LEJ");
         var iv = Encoding.ASCII.GetBytes("5Hh2390dQlVh0AqC");
         var decryptor = new RijndaelCryptograph(128,key, iv);
@@ -3451,17 +3951,16 @@ For example, if you add the following code, you can see the interface as shown i
 
 ![](images/LuaPrecompileWizard2.png)
 
+
 ## Layered architecture
 
 Generally speaking, in order to reduce the complexity of project development, the complex business is decomposed, divided and conquered, and a classification and layered solution will be adopted. Divided from the vertical direction, a complex project can be composed of multiple subsystems, and a subsystem can be composed of multiple business modules. From the horizontal direction, the three-tier architecture can be divided into the presentation layer, the domain layer, and the base layer, and the four-tier architecture can be divided into the presentation layer, the application layer, the domain layer, and the base layer. Generally speaking, you should choose according to the specific situation and complexity of your project. You can find related articles or books on the Internet. If you are interested in DDD programming, you can learn about the knowledge of "Domain Driven Design (DDD Programming)". I won't go into too much detail here, but I just combine it MVVM framework, briefly explain how a game client project should be layered.
 
 **Please refer to the directory structure of my project examples**
 
-### User Interface
-
 The presentation layer is the layer responsible for presenting information to the user and receiving user input. Combined with the MVVM framework, it can be divided into view layer / control layer (similar to Android's Activity class, view and control are combined in one class), and view model layer.
 
-- View
+### View
 
   The view layer generally includes windows, view scripts, UI controls, animation scripts, view resources, and other view layer auxiliary tools, such as view locators. Specifically, you can abstract and plan according to your own project situation.
 
@@ -3486,7 +3985,6 @@ The presentation layer is the layer responsible for presenting information to th
     Interaction behavior. This is an abstraction for window and view creation code reuse. It encapsulates some frequently used interface creation code as interaction behavior.
 
 - ViewModel
-  - ViewModel
 
     The view model layer contains all the view models and subview models. Generally, the view models of Window and View are paired one by one. A window must have a view model, and the subviews under a window should generally have corresponding subviews. model. However, pure view object-encapsulated subview models, such as UserInfoVM, can be shared by multiple views, and when the UserInfoVM property changes, multiple interfaces bound to it will change at the same time.
 
@@ -3498,7 +3996,7 @@ The presentation layer is the layer responsible for presenting information to th
 
     View model locator, which is used to manage the shared sub-view model, or to save the window view model (such as the window is closed but the view model is not destroyed, the next time you open the window, you can use it to restore the window state). This layer is not necessary, it can be omitted or replaced with another solution.
 
-### Application (Service)
+### Application layer (Service)
 
 The application layer is mainly used to express user use cases and coordinate the behavior between objects in different domains. If the design concept of the DDD congestion model is adopted, it is only a very thin layer. It exists as a bridge between the presentation layer and the domain layer, and provides services for the presentation layer through application services. If the design idea of the traditional anemia model is adopted, it should include all the business logic processing. I don't know much about DDD programming among the students who use the framework, so here I recommend the design idea of the traditional anemia model to develop the game. In my project example, it corresponds to the Services layer.
 
@@ -3523,6 +4021,7 @@ The domain layer is responsible for the expression and processing of business lo
 ### Infrastructure
 
 The base layer contains the framework, database access components, network components, Log components, Protobuf components, public helper classes and methods.
+
 
 ## Contact information
 Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
