@@ -31,6 +31,7 @@ namespace Loxodon.Framework.Net.Connection
 {
     public class BinaryWriter : IDisposable
     {
+        private const int DEFAULT_BUFFER_SIZE = 4192;
         private Stream output;
         private bool leaveOpen;
         private bool isBigEndian;
@@ -45,7 +46,7 @@ namespace Loxodon.Framework.Net.Connection
             this.output = output;
             this.leaveOpen = leaveOpen;
             this.isBigEndian = isBigEndian;
-            this.buffer = new byte[8];
+            this.buffer = new byte[DEFAULT_BUFFER_SIZE];
         }
 
         public virtual Stream BaseStream { get { return this.output; } }
@@ -215,6 +216,27 @@ namespace Loxodon.Framework.Net.Connection
         public virtual Task WriteAsync(byte[] buffer, int offset, int count)
         {
             return output.WriteAsync(buffer, offset, count);
+        }
+
+        public virtual async Task WriteAsync(IByteBuffer buffer, int count)
+        {
+            if (buffer is ByteBuffer buf)
+            {
+                int offset = buf.ArrayOffset + buf.ReaderIndex;
+                await output.WriteAsync(buf.Array, offset, count);
+                buf.ReaderIndex += count;
+            }
+            else
+            {
+                int n = 0;
+                while (n < count)
+                {
+                    int len = Math.Min(this.buffer.Length, count - n);
+                    buffer.ReadBytes(this.buffer, 0, len);
+                    await output.WriteAsync(this.buffer, 0, len);
+                    n += len;
+                }
+            }
         }
 
         public virtual void Flush()

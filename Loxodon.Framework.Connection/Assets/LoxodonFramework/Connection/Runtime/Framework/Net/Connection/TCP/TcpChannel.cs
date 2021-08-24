@@ -54,6 +54,27 @@ namespace Loxodon.Framework.Net.Connection
             this.adaptiveAddressFamily = false;
         }
 
+        public TcpChannel(ICodecFactory<IMessage> codecFactory) : this(codecFactory, null)
+        {
+        }
+
+        public TcpChannel(ICodecFactory<IMessage> codecFactory, IHandshakeHandler handshakeHandler) : base(codecFactory, handshakeHandler)
+        {
+        }
+
+        public TcpChannel(AddressFamily family, ICodecFactory<IMessage> codecFactory) : this(family, codecFactory, null)
+        {
+        }
+
+        public TcpChannel(AddressFamily family, ICodecFactory<IMessage> codecFactory, IHandshakeHandler handshakeHandler) : base(codecFactory, handshakeHandler)
+        {
+            if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
+                throw new ArgumentException("family");
+
+            this.family = family;
+            this.adaptiveAddressFamily = false;
+        }
+
         public override bool Connected { get { return client != null ? client.Connected && connected : false; } }
 
         public override async Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken)
@@ -190,6 +211,12 @@ namespace Loxodon.Framework.Net.Connection
                 var stream = await this.WrapStream(client.GetStream());
                 reader = new BinaryReader(stream, false, IsBigEndian);
                 writer = new BinaryWriter(stream, false, IsBigEndian);
+
+                if (this.codecFactory != null)
+                {
+                    this.decoder = this.codecFactory.CreateDecoder();
+                    this.encoder = this.codecFactory.CreateEncoder();
+                }
 
                 if (handshakeHandler != null)
                     await handshakeHandler.OnHandshake(this);

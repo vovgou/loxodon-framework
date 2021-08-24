@@ -41,6 +41,7 @@ namespace Loxodon.Framework.Net.Connection
         protected BinaryReader reader;
         protected BinaryWriter writer;
 
+        protected ICodecFactory<IMessage> codecFactory;
         protected IMessageDecoder<IMessage> decoder;
         protected IMessageEncoder<IMessage> encoder;
 
@@ -50,6 +51,11 @@ namespace Loxodon.Framework.Net.Connection
         protected RemoteCertificateValidationCallback remoteCertificateValidationCallback;
         protected IHandshakeHandler handshakeHandler;
 
+        public ChannelBase(ICodecFactory<IMessage> codecFactory, IHandshakeHandler handshakeHandler)
+        {
+            this.codecFactory = codecFactory ?? throw new ArgumentNullException("codecFactory");
+            this.handshakeHandler = handshakeHandler;
+        }
         public ChannelBase(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler)
         {
             this.decoder = decoder ?? throw new ArgumentNullException("decoder");
@@ -130,12 +136,18 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual Task<IMessage> ReadAsync()
         {
-            return decoder.Decode(reader);
+            lock (reader)
+            {
+                return decoder.Decode(reader);
+            }
         }
 
         public virtual Task WriteAsync(IMessage message)
         {
-            return encoder.Encode(message, writer);
+            lock (writer)
+            {
+                return encoder.Encode(message, writer);
+            }
         }
 
         public abstract Task Close();

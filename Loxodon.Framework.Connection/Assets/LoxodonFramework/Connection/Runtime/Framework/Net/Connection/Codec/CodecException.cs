@@ -23,41 +23,29 @@
  */
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Net.Connection
 {
-    public class TaskTimeoutOrCompletionSource<TResult> : TaskCompletionSource<TResult>
+    public class CodecException : Exception
     {
-
-        private long endTime;
-        private CancellationToken cancellationToken;
-        public TaskTimeoutOrCompletionSource(int timeoutMilliseconds, CancellationToken cancellationToken)
+        public CodecException()
         {
-            this.cancellationToken = cancellationToken;
-            this.endTime = DateTime.Now.Ticks + timeoutMilliseconds * TimeSpan.TicksPerMillisecond;
         }
 
-        public TimeSpan Delay { get { return TimeSpan.FromTicks(endTime - DateTime.Now.Ticks); } }
-
-        public bool IsTimeout { get { return (endTime - DateTime.Now.Ticks) <= 0; } }
-
-        public bool IsCanceled { get { return cancellationToken.IsCancellationRequested; } }
-
-        public void SetTimeout()
+        public CodecException(string message) : base(message)
         {
-            this.SetException(new TimeoutException("The operation has timed out."));
         }
 
-        public bool TrySetTimeout()
+        public CodecException(string message, Exception exception) : base(message, exception)
         {
-            return this.TrySetException(new TimeoutException("The operation has timed out."));
         }
 
-        public new bool TrySetCanceled()
+        public CodecException(string format, params object[] arguments) : base(string.Format(format, arguments))
         {
-            return TrySetCanceled(cancellationToken);
+        }
+
+        public CodecException(Exception exception, string format, params object[] arguments) : base(string.Format(format, arguments), exception)
+        {
         }
     }
 }

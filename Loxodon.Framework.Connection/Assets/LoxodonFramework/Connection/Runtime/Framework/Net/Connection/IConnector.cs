@@ -39,8 +39,8 @@ namespace Loxodon.Framework.Net.Connection
         /// <summary>
         /// Whether to automatically reconnect to the server when the connection is abnormal, 
         /// it only tries to reconnect once, if the connection to the server fails, it will not try again
-        /// </summary>
-        bool AutoReconnect { get; set; }
+        /// </summary> 
+        bool AutoReconnect { get; set; }        
 
         /// <summary>
         /// Connects the Client to the specified port on the specified host.

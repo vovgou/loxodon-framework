@@ -31,6 +31,7 @@ namespace Loxodon.Framework.Net.Connection
 {
     public class BinaryReader : IDisposable
     {
+        private const int DEFAULT_BUFFER_SIZE = 4192;
         private Stream input;
         private bool leaveOpen;
         private bool isBigEndian;
@@ -45,7 +46,7 @@ namespace Loxodon.Framework.Net.Connection
             this.input = input;
             this.leaveOpen = leaveOpen;
             this.isBigEndian = isBigEndian;
-            this.buffer = new byte[8];
+            this.buffer = new byte[DEFAULT_BUFFER_SIZE];
         }
 
         public virtual Stream BaseStream { get { return this.input; } }
@@ -156,6 +157,40 @@ namespace Loxodon.Framework.Net.Connection
                 n += len;
             }
             return n;
+        }
+
+        public virtual async Task<int> Read(IByteBuffer buffer, int count)
+        {
+            if (buffer is ByteBuffer buf)
+            {
+                buf.EnsureWritable(count);
+                int n = 0;
+                int offset = buf.ArrayOffset + buf.WriterIndex;
+                while (n < count)
+                {
+                    int len = await this.input.ReadAsync(buf.Array, offset + n, count - n);
+                    if (len <= 0)
+                        throw new IOException("Stream is closed.");
+
+                    n += len;
+                }
+                buf.WriterIndex += n;
+                return n;
+            }
+            else
+            {
+                int n = 0;
+                while (n < count)
+                {
+                    int len = await this.input.ReadAsync(this.buffer, 0, Math.Min(this.buffer.Length, count - n));
+                    if (len <= 0)
+                        throw new IOException("Stream is closed.");
+
+                    buffer.Write(this.buffer, 0, len);
+                    n += len;
+                }
+                return n;
+            }
         }
 
         [SecuritySafeCritical]
