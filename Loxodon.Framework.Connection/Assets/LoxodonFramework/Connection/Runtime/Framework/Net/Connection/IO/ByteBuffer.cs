@@ -55,6 +55,10 @@ namespace Loxodon.Framework.Net.Connection
             this.isBigEndian = isBigEndian;
         }
 
+        public ByteBuffer(byte[] array, bool isBigEndian = true) : this(array, 0, array.Length, isBigEndian)
+        {
+        }
+
         public ByteBuffer(byte[] array, int offset, int length, bool isBigEndian = true)
         {
             this.array = array;
@@ -524,15 +528,15 @@ namespace Loxodon.Framework.Net.Connection
                     break;
                 case 2:
                     this.Set(index, (short)value);
-                    this.Set(index, GetByte(index) | 0x40);
+                    this.Set(index, (byte)(GetByte(index) | 0x40));
                     break;
                 case 4:
                     this.Set(index, (int)value);
-                    this.Set(index, GetByte(index) | 0x80);
+                    this.Set(index, (byte)(GetByte(index) | 0x80));
                     break;
                 case 8:
                     this.Set(index, value);
-                    this.Set(index, GetByte(index) | 0xc0);
+                    this.Set(index, (byte)(GetByte(index) | 0xc0));
                     break;
                 default:
                     throw new ArgumentException(nameof(value));
@@ -831,15 +835,15 @@ namespace Loxodon.Framework.Net.Connection
                     break;
                 case 2:
                     this.Set(index, (short)value);
-                    this.Set(index, GetByte(index) | 0x40);
+                    this.Set(index, (byte)(GetByte(index) | 0x40));
                     break;
                 case 4:
                     this.Set(index, (int)value);
-                    this.Set(index, GetByte(index) | 0x80);
+                    this.Set(index, (byte)(GetByte(index) | 0x80));
                     break;
                 case 8:
                     this.Set(index, value);
-                    this.Set(index, GetByte(index) | 0xc0);
+                    this.Set(index, (byte)(GetByte(index) | 0xc0));
                     break;
                 default:
                     throw new ArgumentException(nameof(value));
