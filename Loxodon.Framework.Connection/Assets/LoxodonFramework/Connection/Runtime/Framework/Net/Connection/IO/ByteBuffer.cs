@@ -347,25 +347,18 @@ namespace Loxodon.Framework.Net.Connection
         public virtual long GetVariableInt(int index)
         {
             int len = ReadVariableIntLength(GetByte(index));
-            switch (len)
-            {
-                case 1:
-                    return GetByte(index);
-                case 2:
-                    return GetInt16(index) & 0x3fff;
-                case 4:
-                    return GetInt32(index) & 0x3fffffff;
-                case 8:
-                    return GetInt64(index) & 0x3fffffffffffffffL;
-                default:
-                    throw new ArgumentException();
-            }
+            return GetVariableInt(index, len);
         }
 
-        //public virtual long Get7BitEncodeLong(int index)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public virtual long Get7BitEncodedInt(int index)
+        {
+            long value;
+            if (this.isBigEndian)
+                this.Get7BitEncodedIntBE(index, out value);
+            else
+                this.Get7BitEncodedIntLE(index, out value);
+            return value;
+        }
 
         public virtual IByteBuffer GetBytes(int index, byte[] destination)
         {
@@ -518,36 +511,20 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual IByteBuffer SetVariableInt(int index, long value)
         {
-            this.CheckIndex(index, 1);
-            int length = GetVariableIntLength(value);
-            this.CheckIndex(index, length);
-            switch (length)
-            {
-                case 1:
-                    this.Set(index, (byte)value);
-                    break;
-                case 2:
-                    this.Set(index, (short)value);
-                    this.Set(index, (byte)(GetByte(index) | 0x40));
-                    break;
-                case 4:
-                    this.Set(index, (int)value);
-                    this.Set(index, (byte)(GetByte(index) | 0x80));
-                    break;
-                case 8:
-                    this.Set(index, value);
-                    this.Set(index, (byte)(GetByte(index) | 0xc0));
-                    break;
-                default:
-                    throw new ArgumentException(nameof(value));
-            }
+            int len = GetVariableIntLength(value);
+            SetVariableInt(index, value, len);
             return this;
         }
 
-        //public virtual IByteBuffer Set7BitEncodeLong(int index, long value)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public virtual IByteBuffer Set7BitEncodedInt(int index, long value)
+        {
+            int len = Get7BitEncodedLength(value);
+            if (isBigEndian)
+                Set7BitEncodedIntBE(index, value, len);
+            else
+                Set7BitEncodedIntLE(index, value, len);
+            return this;
+        }
 
         public virtual IByteBuffer Set(int index, byte[] src)
         {
@@ -586,13 +563,9 @@ namespace Loxodon.Framework.Net.Connection
         {
             this.CheckSrcIndex(index, length, srcIndex, src.Capacity);
             if (src is ByteBuffer buf)
-            {
                 this.Set(index, buf.Array, buf.ArrayOffset + srcIndex, length);
-            }
             else
-            {
                 src.GetBytes(srcIndex, this.array, this.offset + index, length);
-            }
             return this;
         }
 
@@ -659,48 +632,23 @@ namespace Loxodon.Framework.Net.Connection
             this.CheckReadableBytes(1);
             int len = ReadVariableIntLength(GetByte(index));
             this.CheckReadableBytes(len);
-            long value = 0;
-            switch (len)
-            {
-                case 1:
-                    value = GetByte(index);
-                    this.readerIndex += 1;
-                    break;
-                case 2:
-                    value = GetInt16(index) & 0x3fff;
-                    this.readerIndex += 2;
-                    break;
-                case 4:
-                    value = GetInt32(index) & 0x3fffffff;
-                    this.readerIndex += 4;
-                    break;
-                case 8:
-                    value = GetInt64(index) & 0x3fffffffffffffffL;
-                    this.readerIndex += 8;
-                    break;
-                default:
-                    throw new ArgumentException();
-            }
+            long value = GetVariableInt(index, len);
+            this.readerIndex += len;
             return value;
         }
 
-        //#pragma warning disable CS0675
-        //        public virtual long Read7BitEncodeLong()
-        //        {
-        //            long value = 0;
-        //            byte count = 0;
-        //            byte b;
-        //            do
-        //            {
-        //                b = ReadByte();
-        //                if (++count == 9 && ((value >> 57 != 0) || ((b & 0x80) != 0)))
-        //                    throw new CodecException("This number is more than 64 bits.");
-
-        //                value = (value << 7) | (b & 0x7F);
-        //            } while ((b & 0x80) != 0 && count < 9);
-        //            return value;
-        //        }
-        //#pragma warning restore CS0675
+        public virtual long Read7BitEncodedInt()
+        {
+            long value;
+            int len;
+            int index = this.readerIndex;
+            if (isBigEndian)
+                len = Get7BitEncodedIntBE(index, out value);
+            else
+                len = Get7BitEncodedIntLE(index, out value);
+            this.readerIndex += len;
+            return value;
+        }
 
         public virtual IByteBuffer ReadBytes(int length)
         {
@@ -825,46 +773,26 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual IByteBuffer WriteVariableInt(long value)
         {
-            int length = GetVariableIntLength(value);
-            this.EnsureWritable0(length);
+            int len = GetVariableIntLength(value);
+            this.EnsureWritable0(len);
             int index = this.writerIndex;
-            switch (length)
-            {
-                case 1:
-                    this.Set(index, (byte)value);
-                    break;
-                case 2:
-                    this.Set(index, (short)value);
-                    this.Set(index, (byte)(GetByte(index) | 0x40));
-                    break;
-                case 4:
-                    this.Set(index, (int)value);
-                    this.Set(index, (byte)(GetByte(index) | 0x80));
-                    break;
-                case 8:
-                    this.Set(index, value);
-                    this.Set(index, (byte)(GetByte(index) | 0xc0));
-                    break;
-                default:
-                    throw new ArgumentException(nameof(value));
-            }
-            this.writerIndex += length;
+            this.SetVariableInt(index, value, len);
+            this.writerIndex += len;
             return this;
         }
 
-        //public virtual IByteBuffer Write7BitEncodeLong(long value)
-        //{
-        //    int len = Get7BitEncodeLength(value);
-        //    int index = writerIndex + len;
-        //    Set(--index, (byte)(value & 0x7F));
-        //    for (int i = 1; i < len; i++)
-        //    {
-        //        value >>= 7;
-        //        Set(--index, (byte)(value | 0x80));
-        //    }
-        //    this.writerIndex += len;
-        //    return this;
-        //}
+        public virtual IByteBuffer Write7BitEncodedInt(long value)
+        {
+            int len = Get7BitEncodedLength(value);
+            this.EnsureWritable0(len);
+            int index = this.writerIndex;
+            if (this.isBigEndian)
+                Set7BitEncodedIntBE(index, value, len);
+            else
+                Set7BitEncodedIntLE(index, value, len);
+            this.writerIndex += len;
+            return this;
+        }
 
         public virtual IByteBuffer Write(IByteBuffer src)
         {
@@ -913,50 +841,153 @@ namespace Loxodon.Framework.Net.Connection
             return slice;
         }
 
-        //public static int Get7BitEncodeLength(long value)
-        //{
-        //    if (value <= 0x7F)
-        //    {
-        //        return 1;
-        //    }
-        //    if (value <= 0x3FFF)
-        //    {
-        //        return 2;
-        //    }
-        //    if (value <= 0x1FFFFF)
-        //    {
-        //        return 3;
-        //    }
-        //    if (value <= 0xFFFFFFF)
-        //    {
-        //        return 4;
-        //    }
-        //    if (value <= 0x7FFFFFFF)
-        //    {
-        //        return 5;
-        //    }
-        //    if (value <= 0x3FFFFFFFFFFL)
-        //    {
-        //        return 6;
-        //    }
-        //    if (value <= 0x1FFFFFFFFFFFFL)
-        //    {
-        //        return 7;
-        //    }
-        //    if (value <= 0xFFFFFFFFFFFFFFL)
-        //    {
-        //        return 8;
-        //    }
-        //    if (value <= 0x7FFFFFFFFFFFFFFFL)
-        //    {
-        //        return 9;
-        //    }
-        //    throw new ArgumentException(nameof(value));
-        //}
+        protected virtual long GetVariableInt(int index, int len)
+        {
+            switch (len)
+            {
+                case 1:
+                    return GetByte(index);
+                case 2:
+                    return GetInt16(index) & 0x3fff;
+                case 4:
+                    return GetInt32(index) & 0x3fffffff;
+                case 8:
+                    return GetInt64(index) & 0x3fffffffffffffffL;
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        protected virtual void SetVariableInt(int index, long value, int len)
+        {
+            switch (len)
+            {
+                case 1:
+                    this.Set(index, (byte)value);
+                    break;
+                case 2:
+                    this.Set(index, (short)value);
+                    this.Set(index, (byte)(GetByte(index) | 0x40));
+                    break;
+                case 4:
+                    this.Set(index, (int)value);
+                    this.Set(index, (byte)(GetByte(index) | 0x80));
+                    break;
+                case 8:
+                    this.Set(index, value);
+                    this.Set(index, (byte)(GetByte(index) | 0xc0));
+                    break;
+                default:
+                    throw new ArgumentException(nameof(value));
+            }
+        }
+
+        protected virtual int Get7BitEncodedIntLE(int index, out long value)
+        {
+            int count = 0;
+            byte b;
+            value = 0;
+            do
+            {
+                if (count++ == 9)  // 9 bytes max per Int64, shift += 7
+                    throw new FormatException("More than 63 bit");
+
+                b = GetByte(index++);
+                value |= (long)((b & 0x7F) << 7);
+            } while ((b & 0x80) != 0);
+            return count;
+        }
+
+        protected virtual int Get7BitEncodedIntBE(int index, out long value)
+        {
+            int count = 0;
+            byte b;
+            value = 0;
+            do
+            {
+                if (count++ == 9)
+                    throw new FormatException("More than 63 bit");
+
+                b = GetByte(index++);
+                value = (value << 7) | (long)(b & 0x7F);
+            } while ((b & 0x80) != 0);
+            return count;
+        }
+
+        protected virtual void Set7BitEncodedIntLE(int index, long value, int len)
+        {
+            ulong v = (ulong)value;
+            while (v >= 0x80)
+            {
+                Set(index++, (byte)(v | 0x80));
+                v >>= 7;
+            }
+            Set(index++, (byte)v);
+        }
+
+        protected virtual void Set7BitEncodedIntBE(int index, long value, int len)
+        {
+            ulong v = (ulong)value;
+            index += len;
+            Set(--index, (byte)(v & 0x7F));
+            while (v >= 0x80)
+            {
+                v >>= 7;
+                Set(--index, (byte)(v | 0x80));
+            }
+        }
+
+        public static int Get7BitEncodedLength(long value)
+        {
+            if (value < 0)
+                throw new ArgumentException(string.Format("value: {0} ,expected: 0 <= value <= 0x7FFFFFFFFFFFFFFFL", value));
+
+            if (value <= 0x7F)
+            {
+                return 1;
+            }
+            if (value <= 0x3FFF)
+            {
+                return 2;
+            }
+            if (value <= 0x1FFFFF)
+            {
+                return 3;
+            }
+            if (value <= 0xFFFFFFF)
+            {
+                return 4;
+            }
+            if (value <= 0x7FFFFFFF)
+            {
+                return 5;
+            }
+            if (value <= 0x3FFFFFFFFFFL)
+            {
+                return 6;
+            }
+            if (value <= 0x1FFFFFFFFFFFFL)
+            {
+                return 7;
+            }
+            if (value <= 0xFFFFFFFFFFFFFFL)
+            {
+                return 8;
+            }
+            if (value <= 0x7FFFFFFFFFFFFFFFL)
+            {
+                return 9;
+            }
+
+            throw new ArgumentException(string.Format("value: {0} ,expected: 0 <= value <= 0x7FFFFFFFFFFFFFFFL", value));
+        }
 
 
         public static int GetVariableIntLength(long value)
         {
+            if (value < 0)
+                throw new ArgumentException(string.Format("value: {0} ,expected: 0 <= value <= 4611686018427387903L", value));
+
             if (value <= 63)
             {
                 return 1;
@@ -973,7 +1004,8 @@ namespace Loxodon.Framework.Net.Connection
             {
                 return 8;
             }
-            throw new ArgumentException(nameof(value));
+
+            throw new ArgumentException(string.Format("value: {0} ,expected: 0 <= value <= 4611686018427387903L", value));
         }
 
         public static int ReadVariableIntLength(byte b)

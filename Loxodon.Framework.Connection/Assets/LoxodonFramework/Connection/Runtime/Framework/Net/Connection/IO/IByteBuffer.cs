@@ -80,7 +80,7 @@ namespace Loxodon.Framework.Net.Connection
 
         long GetVariableInt(int index);
 
-        //long Get7BitEncodeLong(int index);
+        long Get7BitEncodedInt(int index);
 
         IByteBuffer GetBytes(int index, byte[] destination);
 
@@ -126,7 +126,7 @@ namespace Loxodon.Framework.Net.Connection
 
         IByteBuffer SetVariableInt(int index, long value);
 
-        //IByteBuffer Set7BitEncodeLong(int index, long value);
+        IByteBuffer Set7BitEncodedInt(int index, long value);
 
         byte ReadByte();
 
@@ -148,7 +148,7 @@ namespace Loxodon.Framework.Net.Connection
 
         long ReadVariableInt();
 
-        //long Read7BitEncodeLong();
+        long Read7BitEncodedInt();
 
         IByteBuffer ReadBytes(int length);
 
@@ -196,6 +196,6 @@ namespace Loxodon.Framework.Net.Connection
 
         IByteBuffer WriteVariableInt(long value);
 
-        //IByteBuffer Write7BitEncodeLong(long value);
+        IByteBuffer Write7BitEncodedInt(long value);
     }
 }

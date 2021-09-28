@@ -34,51 +34,55 @@ namespace Loxodon.Framework.Examples
     public class DefaultDecoder : IMessageDecoder<IMessage>
     {
         protected readonly SemaphoreSlim readLock = new SemaphoreSlim(1, 1);
-
+        protected ByteBuffer buffer = new ByteBuffer();
         public async Task<IMessage> Decode(BinaryReader reader)
         {
             await readLock.WaitAsync();
             try
             {
                 int count = await reader.ReadInt32();
-                MessageType messageType = (MessageType)await reader.ReadByte();
+
+                buffer.Clear();
+                await reader.Read(buffer, count);
+
+                MessageType messageType = (MessageType)buffer.ReadByte();
                 switch (messageType)
                 {
                     case MessageType.Notification:
                         {
                             Notification notification = new Notification();
-                            notification.CommandID = await reader.ReadInt32();
-                            notification.Sequence = await reader.ReadUInt32();
-                            notification.ContentType = await reader.ReadInt16();
+                            notification.CommandID = buffer.ReadInt32();
+                            notification.Sequence = buffer.ReadUInt32();
+                            notification.ContentType = buffer.ReadInt16();
 
-                            byte[] buffer = new byte[count - 11];
-                            await reader.Read(buffer, 0, buffer.Length);
-                            notification.Content = buffer;
+                            byte[] data = new byte[count - 11];
+                            buffer.ReadBytes(data, 0, data.Length);
+                            notification.Content = data;
                             return notification;
                         }
                     case MessageType.Response:
                         {
                             Response response = new Response();
-                            response.Status = await reader.ReadInt32();
-                            response.Sequence = await reader.ReadUInt32();
-                            response.ContentType = await reader.ReadInt16();
+                            response.Status = buffer.ReadInt32();
+                            response.Sequence = buffer.ReadUInt32();
+                            response.ContentType = buffer.ReadInt16();
 
-                            byte[] buffer = new byte[count - 11];
-                            await reader.Read(buffer, 0, buffer.Length);
-                            response.Content = buffer;
+                            byte[] data = new byte[count - 11];
+                            buffer.ReadBytes(data, 0, data.Length);
+                            response.Content = data;
                             return response;
                         }
                     case MessageType.Request:
                         {
                             //客户端解码器不需要解码Request类型
                             Request request = new Request();
-                            request.CommandID = await reader.ReadInt32();
-                            request.Sequence = await reader.ReadUInt32();
-                            request.ContentType = await reader.ReadInt16();
+                            request.CommandID = buffer.ReadInt32();
+                            request.Sequence = buffer.ReadUInt32();
+                            request.ContentType = buffer.ReadInt16();
 
-                            byte[] buffer = new byte[count - 11];
-                            await reader.Read(buffer, 0, buffer.Length);
-                            request.Content = buffer;
+                            byte[] data = new byte[count - 11];
+                            buffer.ReadBytes(data, 0, data.Length);
+                            request.Content = data;
                             return request;
                         }
                 }

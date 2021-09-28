@@ -142,7 +142,11 @@ namespace Loxodon.Framework.Examples
                             response.Status = 200;
                             response.Sequence = request.Sequence;//必须与请求配对
                             response.ContentType = 0;
-                            response.Content = Encoding.UTF8.GetBytes("The server responds to the client");
+
+                            if(request.CommandID==0)
+                                response.Content = Encoding.UTF8.GetBytes("pong");
+                            else
+                                response.Content = Encoding.UTF8.GetBytes("The server responds to the client");
 
                             //写入一条消息
                             await encoder.Encode(response, writer);

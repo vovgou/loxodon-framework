@@ -33,6 +33,7 @@ namespace Loxodon.Framework.Net.Connection
 {
     public class TcpChannel : ChannelBase
     {
+        private const int DEFAULT_TIMEOUT = 5000;
         protected readonly SemaphoreSlim connectLock = new SemaphoreSlim(1, 1);
         protected TcpClient client;
         protected AddressFamily family = AddressFamily.InterNetwork;
@@ -79,6 +80,9 @@ namespace Loxodon.Framework.Net.Connection
 
         public override async Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken)
         {
+            if (timeoutMilliseconds <= 0)
+                timeoutMilliseconds = DEFAULT_TIMEOUT;
+
             if (!await connectLock.WaitAsync(timeoutMilliseconds, cancellationToken))
                 throw new TimeoutException();
             try

@@ -132,6 +132,9 @@ namespace Loxodon.Framework.Net.Connection
         public async Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken)
         {
             ValidateDisposed();
+            if (timeoutMilliseconds <= 0)
+                timeoutMilliseconds = DEFAULT_TIMEOUT;
+
             if (!await connectLock.WaitAsync(timeoutMilliseconds, cancellationToken))
                 throw new TimeoutException();
             try
@@ -211,7 +214,7 @@ namespace Loxodon.Framework.Net.Connection
             }
         }
 
-        public async Task Shutdown()
+        public virtual async Task Shutdown()
         {
             await connectLock.WaitAsync();
             try
