@@ -223,7 +223,7 @@ Create a view and view model of the progress bar.
 
     	![](docs/images/LuaPrecompileWizard.png)
 
-- [Loxodon Framework Bundle](http://u3d.as/NkT)
+- [Loxodon Framework Bundle](https://assetstore.unity.com/packages/slug/87419)
 
     Loxodon Framework Bundle is an AssetBundle manager.It provides a functionality that can automatically manage/load an AssetBundle and its dependencies from local or remote location.Asset Dependency Management including BundleManifest that keep track of every AssetBundle and all of their dependencies. An AssetBundle Simulation Mode which allows for iterative testing of AssetBundles in a the Unity editor without ever building an AssetBundle.
 
