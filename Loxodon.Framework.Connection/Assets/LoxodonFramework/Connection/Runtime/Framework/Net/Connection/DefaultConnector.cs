@@ -250,6 +250,7 @@ namespace Loxodon.Framework.Net.Connection
                 }
                 this.promises.Clear();
             }
+            catch (Exception) { }
             finally
             {
                 connectLock.Release();
@@ -313,11 +314,15 @@ namespace Loxodon.Framework.Net.Connection
 
         protected virtual async Task DoDisconnect()
         {
-            if (this.channel != null && this.channel.Connected)
+            try
             {
-                await channel.Close();
-                OnDisconnected();
+                if (this.channel != null && this.channel.Connected)
+                {
+                    await channel.Close();
+                    OnDisconnected();
+                }
             }
+            catch (Exception) { }
         }
 
         protected virtual void OnDisconnected()
@@ -407,22 +412,29 @@ namespace Loxodon.Framework.Net.Connection
                 }
                 catch (Exception e)
                 {
-                    if (this.State != ConnectionState.Connected)
-                        return;
-
-                    OnIOException(e);
-                    this.eventArgsSubject.Publish(ConnectionEventArgs.ExceptionEventArgs);
-                    await DoDisconnect();
-                    if (this.State != ConnectionState.Connected)
-                        return;
-
-                    if (!AutoReconnect)
+                    try
                     {
-                        this.State = ConnectionState.Exception;
-                        return;
-                    }
+                        if (this.State != ConnectionState.Connected)
+                            continue;
 
-                    await Reconnect();
+                        OnIOException(e);
+                        this.eventArgsSubject.Publish(ConnectionEventArgs.ExceptionEventArgs);
+                        await DoDisconnect();
+                        if (this.State != ConnectionState.Connected)
+                            continue;
+
+                        if (!AutoReconnect)
+                        {
+                            this.State = ConnectionState.Exception;
+                            continue;
+                        }
+
+                        await Reconnect();
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
                 }
             }
         }
@@ -462,14 +474,18 @@ namespace Loxodon.Framework.Net.Connection
                 }
                 catch (Exception) { }
 
-                lock (stateLock)
+                try
                 {
-                    int count = promises.Count;
-                    if (count <= 0 && (!State.Equals(ConnectionState.Connected)))
-                        Monitor.Wait(stateLock);
-                    else
-                        Monitor.Wait(stateLock, timeoutMilliseconds / 2);
+                    lock (stateLock)
+                    {
+                        int count = promises.Count;
+                        if (count <= 0 && (!State.Equals(ConnectionState.Connected)))
+                            Monitor.Wait(stateLock);
+                        else
+                            Monitor.Wait(stateLock, timeoutMilliseconds / 2);
+                    }
                 }
+                catch (Exception) { }
             }
         }
 
