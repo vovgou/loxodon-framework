@@ -34,6 +34,7 @@ namespace Loxodon.Framework.Net.Connection
         private TimeSpan readerIdleTime;
         private TimeSpan writerIdleTime;
         private TimeSpan allIdleTime;
+        private TimeSpan waitTimeout;
 
         private long readerIdleCheckTime;
         private long writerIdleCheckTime;
@@ -69,6 +70,16 @@ namespace Loxodon.Framework.Net.Connection
             this.enableReaderIdle = this.readerIdleTime.Ticks > 0;
             this.enableWriterIdle = this.writerIdleTime.Ticks > 0;
             this.enableAllIdle = this.allIdleTime.Ticks > 0;
+
+            waitTimeout = TimeSpan.FromSeconds(60);
+            if (enableReaderIdle && waitTimeout > readerIdleTime)
+                waitTimeout = readerIdleTime;
+
+            if (enableWriterIdle && waitTimeout > writerIdleTime)
+                waitTimeout = writerIdleTime;
+
+            if (enableAllIdle && waitTimeout > allIdleTime)
+                waitTimeout = allIdleTime;
 
             Init();
         }
@@ -145,7 +156,6 @@ namespace Loxodon.Framework.Net.Connection
                          {
                              if (connected)
                              {
-                                 TimeSpan waitTimeout = TimeSpan.FromTicks(Math.Min(Math.Min(readerIdleCheckTime, writerIdleCheckTime), allIdleCheckTime) - ticks);
                                  if (waitTimeout.Ticks > 0)
                                      Monitor.Wait(syncLock, waitTimeout);
                              }

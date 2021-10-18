@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-connection",
   "displayName": "Loxodon Framework Connection",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "unity": "2018.4",
   "description": "This is a network component, using TCP protocol to connect to the server by default.",  
   "license": "MIT",

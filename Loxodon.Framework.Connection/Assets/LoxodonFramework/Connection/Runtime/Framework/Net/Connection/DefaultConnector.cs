@@ -317,10 +317,9 @@ namespace Loxodon.Framework.Net.Connection
             try
             {
                 if (this.channel != null && this.channel.Connected)
-                {
                     await channel.Close();
-                    OnDisconnected();
-                }
+
+                OnDisconnected();
             }
             catch (Exception) { }
         }

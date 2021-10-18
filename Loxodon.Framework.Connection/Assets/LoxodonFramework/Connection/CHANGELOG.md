@@ -1,6 +1,9 @@
 # Changelog
 
 Requires Unity 2018.4 or higher.
+## [2.1.3] - 2021-10-15
+### Fixed the bug that the message could not be received after the connector was reconnected
+### Fixed a bug in the IdleStateMonitor
 
 ## [2.1.1] - 2021-08-24
 ### Added IByteBuffer.
