@@ -60,7 +60,7 @@ namespace Loxodon.Framework.Examples
             //----------------------
 
             //创建TcpChannel，如果游戏协议没有定义握手消息，那么HandshakeHandler可以为null
-            var channel = new TcpChannel(new DefaultDecoder(), new DefaultEncoder(), new HandshakeHandler());
+            var channel = new TcpChannel(new DefaultDecoder(), new DefaultEncoder());
             channel.NoDelay = true;
             channel.IsBigEndian = true;//默认使用大端字节序，一般网络字节流用大端
 
@@ -77,9 +77,12 @@ namespace Loxodon.Framework.Examples
                  return false;
              });
 
+            //HandshakeHandler 不要放在Channel中，请放入Connector中，这样更合理
+            IHandshakeHandler handshakeHandler = new HandshakeHandler();
+
             //每个20秒空闲则触发空闲事件，并且每隔20秒触发一次,时间为0则关闭空闲事件，首次空闲First为true。示例中只开启了读写都空闲的事件
             IdleStateMonitor idleStateMonitor = new IdleStateMonitor(TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(20f));
-            connector = new DefaultConnector<Request, Response, Notification>(channel, idleStateMonitor);
+            connector = new DefaultConnector<Request, Response, Notification>(channel, idleStateMonitor, handshakeHandler);
             connector.AutoReconnect = true;//开启自动重连，只重连一次，失败后不再重试，建议使用心跳包保证连接可用
 
             //订阅事件,收到ConnectionEventArgs参数

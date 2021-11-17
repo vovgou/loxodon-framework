@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using Loxodon.Log;
 
 namespace Loxodon.Framework.Messaging
 {
@@ -33,8 +32,6 @@ namespace Loxodon.Framework.Messaging
     /// </summary>
     public class Messenger : IMessenger
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(Messenger));
-
         public static readonly Messenger Default = new Messenger();
 
         private readonly ConcurrentDictionary<Type, SubjectBase> notifiers = new ConcurrentDictionary<Type, SubjectBase>();
@@ -165,16 +162,8 @@ namespace Loxodon.Framework.Messaging
             Type messageType = message.GetType();
             foreach (var kv in notifiers)
             {
-                try
-                {
-                    if (kv.Key.IsAssignableFrom(messageType))
-                        kv.Value.Publish(message);
-                }
-                catch (Exception e)
-                {
-                    if (log.IsWarnEnabled)
-                        log.Warn(e);
-                }
+                if (kv.Key.IsAssignableFrom(messageType))
+                    kv.Value.Publish(message);
             }
         }
 
@@ -214,16 +203,8 @@ namespace Loxodon.Framework.Messaging
             Type messageType = message.GetType();
             foreach (var kv in dict)
             {
-                try
-                {
-                    if (kv.Key.IsAssignableFrom(messageType))
-                        kv.Value.Publish(message);
-                }
-                catch (Exception e)
-                {
-                    if (log.IsWarnEnabled)
-                        log.Warn(e);
-                }
+                if (kv.Key.IsAssignableFrom(messageType))
+                    kv.Value.Publish(message);
             }
         }
     }

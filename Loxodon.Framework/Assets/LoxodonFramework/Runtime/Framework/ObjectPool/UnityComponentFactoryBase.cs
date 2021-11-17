@@ -50,17 +50,17 @@ namespace Loxodon.Framework.ObjectPool
         {
             return true;
         }
+    }
 
-        class PooledUnityObject : MonoBehaviour, IPooledObject
+    class PooledUnityObject : MonoBehaviour, IPooledObject
+    {
+        internal IObjectPool pool;
+        internal object target;
+
+        public void Free()
         {
-            internal IObjectPool<T> pool;
-            internal T target;
-
-            public void Free()
-            {
-                if (pool != null)
-                    pool.Free(this.target);
-            }
+            if (pool != null)
+                pool.Free(this.target);
         }
     }
 }

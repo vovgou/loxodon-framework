@@ -120,14 +120,19 @@ namespace Loxodon.Framework.Net.Connection
 
                     if (this.context != null)
                     {
-                        context.Post(state => action(message), null);
+                        context.Post(state => action((T)state), message);
                     }
                     else
                     {
                         action(message);
                     }
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+#if DEBUG
+                    throw;
+#endif
+                }
             }
 
             public ISubscription<T> Filter(Predicate<T> filter)

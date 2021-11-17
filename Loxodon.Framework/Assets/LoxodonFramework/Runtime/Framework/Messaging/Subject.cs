@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+using Loxodon.Log;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -75,6 +76,8 @@ namespace Loxodon.Framework.Messaging
 
         class Subscription : ISubscription<T>
         {
+            private static readonly ILog log = LogManager.GetLogger(typeof(Subscription));
+
             private Subject<T> subject;
             private Action<T> action;
             private SynchronizationContext context;
@@ -93,11 +96,19 @@ namespace Loxodon.Framework.Messaging
                 try
                 {
                     if (this.context != null)
-                        context.Post(state => action(message), null);
+                        context.Post(state => action((T)state), message);
                     else
                         action(message);
                 }
-                catch (Exception) { }
+                catch (Exception e)
+                {
+#if DEBUG
+                    throw;
+#else
+                    if (log.IsWarnEnabled)
+                        log.Warn(e);
+#endif
+                }
             }
 
             public ISubscription<T> ObserveOn(SynchronizationContext context)
@@ -125,7 +136,7 @@ namespace Loxodon.Framework.Messaging
                     context = null;
                     action = null;
                     subject = null;
-                    
+
                 }
                 catch (Exception) { }
                 disposed = true;

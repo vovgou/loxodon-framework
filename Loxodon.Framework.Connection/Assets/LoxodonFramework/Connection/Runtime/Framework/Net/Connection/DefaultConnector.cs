@@ -38,7 +38,7 @@ namespace Loxodon.Framework.Net.Connection
         protected readonly SemaphoreSlim connectLock = new SemaphoreSlim(1, 1);
         protected readonly Subject<EventArgs> eventArgsSubject = new Subject<EventArgs>();
         protected readonly Subject<TNotification> notificationSubject = new Subject<TNotification>();
-        protected readonly ConcurrentDictionary<TRequest, RequestTaskTimeoutOrCompletionSource> promises = new ConcurrentDictionary<TRequest, RequestTaskTimeoutOrCompletionSource>();
+        protected readonly ConcurrentDictionary<IRequest, RequestTaskTimeoutOrCompletionSource> promises = new ConcurrentDictionary<IRequest, RequestTaskTimeoutOrCompletionSource>();
         protected string hostname;
         protected int port;
         protected int connTimeoutMilliseconds;
@@ -49,15 +49,42 @@ namespace Loxodon.Framework.Net.Connection
         protected ConnectionState state = ConnectionState.Closed;
         protected IChannel<IMessage> channel;
         protected IdleStateMonitor idleStateMonitor;
-        public DefaultConnector(IChannel<IMessage> channel) : this(channel, null)
+        protected IHandshakeHandler handshakeHandler;
+        public DefaultConnector(IChannel<IMessage> channel) : this(channel, null, null)
         {
         }
 
-        public DefaultConnector(IChannel<IMessage> channel, IdleStateMonitor idleStateMonitor)
+        public DefaultConnector(IChannel<IMessage> channel, IdleStateMonitor idleStateMonitor) : this(channel, idleStateMonitor, null)
+        {
+        }
+
+        public DefaultConnector(IChannel<IMessage> channel, IHandshakeHandler handshakeHandler) : this(channel, null, handshakeHandler)
+        {
+        }
+
+        public DefaultConnector(IChannel<IMessage> channel, IdleStateMonitor idleStateMonitor, IHandshakeHandler handshakeHandler)
         {
             this.channel = channel ?? throw new ArgumentNullException(nameof(channel));
+            this.handshakeHandler = handshakeHandler;
             this.idleStateMonitor = idleStateMonitor ?? new IdleStateMonitor(TimeSpan.FromSeconds(30.0));
             this.idleStateMonitor.IdleStateChanged += OnIdleStateChanged;
+        }
+
+        public DefaultConnector(IChannelFactory channelFactory, IHandshakeHandler handshakeHandler) : this(channelFactory, null, handshakeHandler)
+        {
+        }
+
+        public DefaultConnector(IChannelFactory channelFactory, IdleStateMonitor idleStateMonitor) : this(channelFactory, idleStateMonitor, null)
+        {
+        }
+
+        public DefaultConnector(IChannelFactory channelFactory, IdleStateMonitor idleStateMonitor, IHandshakeHandler handshakeHandler)
+        {
+            this.channel = channelFactory.CreateChannel();
+            this.handshakeHandler = handshakeHandler;
+            this.idleStateMonitor = idleStateMonitor ?? new IdleStateMonitor(TimeSpan.FromSeconds(30.0));
+            this.idleStateMonitor.IdleStateChanged += OnIdleStateChanged;
+
         }
 
         public virtual int TimeoutMilliseconds
@@ -92,10 +119,16 @@ namespace Loxodon.Framework.Net.Connection
                     if (this.state == value)
                         return;
 
-                    ConnectionState oldState = this.state;
-                    this.state = value;
-                    this.OnStateChanged(oldState, value);
-                    Monitor.PulseAll(stateLock);
+                    try
+                    {
+                        ConnectionState oldState = this.state;
+                        this.state = value;
+                        this.OnStateChanged(oldState, value);
+                    }
+                    finally
+                    {
+                        Monitor.PulseAll(stateLock);
+                    }
                 }
             }
         }
@@ -291,7 +324,7 @@ namespace Loxodon.Framework.Net.Connection
         {
             ValidateDisposed();
             ValidateConnected();
-            return await this.DoSend(request, timeoutMilliseconds, cancellationToken);
+            return (TResponse)await this.DoSend(request, timeoutMilliseconds, cancellationToken);
         }
 
         public virtual async Task Send(TNotification notification)
@@ -304,7 +337,15 @@ namespace Loxodon.Framework.Net.Connection
         protected virtual async Task DoConnect(CancellationToken cancellationToken)
         {
             await channel.Connect(hostname, port, connTimeoutMilliseconds, cancellationToken);
+            await DoHandshake(channel, cancellationToken);
             OnConnected();
+        }
+
+        protected virtual async Task DoHandshake(IChannel<IMessage> channel, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (handshakeHandler != null)
+                await handshakeHandler.OnHandshake(channel);
         }
 
         protected virtual void OnConnected()
@@ -329,7 +370,7 @@ namespace Loxodon.Framework.Net.Connection
             idleStateMonitor?.OnDisconnected();
         }
 
-        protected virtual Task<TResponse> DoSend(TRequest request, int timeoutMilliseconds, CancellationToken cancellationToken)
+        protected virtual Task<IResponse> DoSend(IRequest request, int timeoutMilliseconds, CancellationToken cancellationToken)
         {
             int timeout = Math.Max(timeoutMilliseconds, DEFAULT_TIMEOUT);
             RequestTaskTimeoutOrCompletionSource promise = new RequestTaskTimeoutOrCompletionSource(request, timeout, cancellationToken);
@@ -516,15 +557,15 @@ namespace Loxodon.Framework.Net.Connection
         #endregion
 
         #region RequestTaskTimeoutOrCompletionSource Support
-        protected class RequestTaskTimeoutOrCompletionSource : TaskTimeoutOrCompletionSource<TResponse>
+        protected class RequestTaskTimeoutOrCompletionSource : TaskTimeoutOrCompletionSource<IResponse>
         {
-            private TRequest request;
-            public RequestTaskTimeoutOrCompletionSource(TRequest request, int timeoutMilliseconds, CancellationToken cancellationToken) : base(timeoutMilliseconds, cancellationToken)
+            private IRequest request;
+            public RequestTaskTimeoutOrCompletionSource(IRequest request, int timeoutMilliseconds, CancellationToken cancellationToken) : base(timeoutMilliseconds, cancellationToken)
             {
                 this.request = request;
             }
 
-            public TRequest Request { get { return this.request; } }
+            public IRequest Request { get { return this.request; } }
 
             public uint Sequence { get { return this.request.Sequence; } }
         }

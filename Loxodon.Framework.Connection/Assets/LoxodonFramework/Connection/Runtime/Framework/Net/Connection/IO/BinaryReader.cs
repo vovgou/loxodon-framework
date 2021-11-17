@@ -135,18 +135,21 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual async Task<float> ReadSingle()
         {
+            CheckDisposed();
             uint value = await ReadUInt32();
             return ToSingle(value);
         }
 
         public virtual async Task<double> ReadDouble()
         {
+            CheckDisposed();
             ulong value = await ReadUInt64();
             return ToDouble(value);
         }
 
         public virtual async Task<int> Read(byte[] buffer, int offset, int count)
         {
+            CheckDisposed();
             int n = 0;
             while (n < count)
             {
@@ -161,6 +164,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual async Task<int> Read(IByteBuffer buffer, int count)
         {
+            CheckDisposed();
             if (buffer is ByteBuffer buf)
             {
                 buf.EnsureWritable(count);
@@ -203,6 +207,12 @@ namespace Loxodon.Framework.Net.Connection
         protected unsafe double ToDouble(ulong value)
         {
             return *((double*)&value);
+        }
+
+        protected void CheckDisposed()
+        {
+            if (disposedValue)
+                throw new ObjectDisposedException(nameof(BinaryReader));
         }
 
         #region IDisposable Support

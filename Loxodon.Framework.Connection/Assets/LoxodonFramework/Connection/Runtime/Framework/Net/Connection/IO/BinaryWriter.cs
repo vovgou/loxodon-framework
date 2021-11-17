@@ -59,11 +59,13 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual void Write(byte value)
         {
+            CheckDisposed();
             output.WriteByte(value);
         }
 
         public virtual void Write(ushort value)
         {
+            CheckDisposed();
             if (isBigEndian)
             {
                 buffer[1] = (byte)value;
@@ -79,6 +81,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual void Write(short value)
         {
+            CheckDisposed();
             if (isBigEndian)
             {
                 buffer[1] = (byte)value;
@@ -94,6 +97,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual void Write(uint value)
         {
+            CheckDisposed();
             if (isBigEndian)
             {
                 buffer[3] = (byte)value;
@@ -113,6 +117,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual void Write(int value)
         {
+            CheckDisposed();
             if (isBigEndian)
             {
                 buffer[3] = (byte)value;
@@ -132,6 +137,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual void Write(ulong value)
         {
+            CheckDisposed();
             if (isBigEndian)
             {
                 buffer[7] = (byte)value;
@@ -159,6 +165,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual void Write(long value)
         {
+            CheckDisposed();
             if (isBigEndian)
             {
                 buffer[7] = (byte)value;
@@ -186,6 +193,8 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual void Write(float value)
         {
+            CheckDisposed();
+
             uint tmpValue = ToUInt32(value);
             buffer[0] = (byte)tmpValue;
             buffer[1] = (byte)(tmpValue >> 8);
@@ -196,6 +205,8 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual void Write(double value)
         {
+            CheckDisposed();
+
             ulong tmpValue = ToUInt64(value);
             buffer[0] = (byte)tmpValue;
             buffer[1] = (byte)(tmpValue >> 8);
@@ -210,16 +221,21 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual void Write(byte[] buffer, int offset, int count)
         {
+            CheckDisposed();
             output.Write(buffer, offset, count);
         }
 
         public virtual Task WriteAsync(byte[] buffer, int offset, int count)
         {
+            CheckDisposed();
+
             return output.WriteAsync(buffer, offset, count);
         }
 
         public virtual async Task WriteAsync(IByteBuffer buffer, int count)
         {
+            CheckDisposed();
+
             if (buffer is ByteBuffer buf)
             {
                 int offset = buf.ArrayOffset + buf.ReaderIndex;
@@ -241,11 +257,13 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual void Flush()
         {
+            CheckDisposed();
             output.Flush();
         }
 
         public virtual Task FlushAsync()
         {
+            CheckDisposed();
             return output.FlushAsync();
         }
 
@@ -259,6 +277,12 @@ namespace Loxodon.Framework.Net.Connection
         protected unsafe ulong ToUInt64(double value)
         {
             return *(ulong*)&value;
+        }
+
+        protected void CheckDisposed()
+        {
+            if (disposedValue)
+                throw new ObjectDisposedException(nameof(BinaryWriter));
         }
 
         #region IDisposable Support

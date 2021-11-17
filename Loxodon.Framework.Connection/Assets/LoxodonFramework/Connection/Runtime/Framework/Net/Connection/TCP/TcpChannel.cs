@@ -38,14 +38,25 @@ namespace Loxodon.Framework.Net.Connection
         protected TcpClient client;
         protected AddressFamily family = AddressFamily.InterNetwork;
         protected bool adaptiveAddressFamily = true;
-        public TcpChannel(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder) : this(decoder, encoder, null)
+        public TcpChannel(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder) : base(decoder, encoder)
         {
         }
 
+        [Obsolete("Please move the handshake handler to the DefaultConnector.")]
         public TcpChannel(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler) : base(decoder, encoder, handshakeHandler)
         {
         }
 
+        public TcpChannel(AddressFamily family, IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder) : base(decoder, encoder)
+        {
+            if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
+                throw new ArgumentException("family");
+
+            this.family = family;
+            this.adaptiveAddressFamily = false;
+        }
+
+        [Obsolete("Please move the handshake handler to the DefaultConnector.")]
         public TcpChannel(AddressFamily family, IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler) : base(decoder, encoder, handshakeHandler)
         {
             if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
@@ -55,18 +66,25 @@ namespace Loxodon.Framework.Net.Connection
             this.adaptiveAddressFamily = false;
         }
 
-        public TcpChannel(ICodecFactory<IMessage> codecFactory) : this(codecFactory, null)
+        public TcpChannel(ICodecFactory<IMessage> codecFactory) : base(codecFactory)
         {
         }
 
+        [Obsolete("Please move the handshake handler to the DefaultConnector.")]
         public TcpChannel(ICodecFactory<IMessage> codecFactory, IHandshakeHandler handshakeHandler) : base(codecFactory, handshakeHandler)
         {
         }
 
-        public TcpChannel(AddressFamily family, ICodecFactory<IMessage> codecFactory) : this(family, codecFactory, null)
+        public TcpChannel(AddressFamily family, ICodecFactory<IMessage> codecFactory) : base(codecFactory)
         {
+            if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
+                throw new ArgumentException("family");
+
+            this.family = family;
+            this.adaptiveAddressFamily = false;
         }
 
+        [Obsolete("Please move the handshake handler to the DefaultConnector.")]
         public TcpChannel(AddressFamily family, ICodecFactory<IMessage> codecFactory, IHandshakeHandler handshakeHandler) : base(codecFactory, handshakeHandler)
         {
             if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
@@ -222,8 +240,10 @@ namespace Loxodon.Framework.Net.Connection
                     this.encoder = this.codecFactory.CreateEncoder();
                 }
 
+#pragma warning disable CS0618 
                 if (handshakeHandler != null)
                     await handshakeHandler.OnHandshake(this);
+#pragma warning restore CS0618 
                 this.connected = true;
             }
             catch (Exception)

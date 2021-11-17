@@ -122,6 +122,16 @@ namespace Loxodon.Framework.ObjectPool
             factory.Destroy(obj);
         }
 
+        object IObjectPool.Allocate()
+        {
+            return Allocate();
+        }
+
+        void IObjectPool.Free(object obj)
+        {
+            Free((T)obj);
+        }
+
         protected virtual void Clear()
         {
             for (var i = 0; i < entries.Length; i++)

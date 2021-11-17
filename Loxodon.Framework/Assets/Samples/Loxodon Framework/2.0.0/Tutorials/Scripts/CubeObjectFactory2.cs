@@ -22,37 +22,40 @@
  * SOFTWARE.
  */
 
-using System;
+using Loxodon.Framework.ObjectPool;
+using UnityEngine;
 
-namespace Loxodon.Framework.ObjectPool
+namespace Loxodon.Framework.Examples
 {
-    public interface IObjectPool : IDisposable
+    public class CubeObjectFactory2 : UnityComponentFactoryBase<MeshRenderer>
     {
-        /// <summary>
-        /// Gets an object from the pool if one is available, otherwise creates one.
-        /// </summary>
-        /// <returns></returns>
-        object Allocate();
+        private GameObject template;
+        private Transform parent;
+        public CubeObjectFactory2(GameObject template, Transform parent)
+        {
+            this.template = template;
+            this.parent = parent;
+        }
 
-        /// <summary>
-        /// Return an object to the pool,if the number of objects in the pool is greater than or equal to the maximum value, the object is destroyed.
-        /// </summary>
-        /// <param name="obj"></param>
-        void Free(object obj);
-    }
+        protected override MeshRenderer Create()
+        {
+            Debug.LogFormat("Create a cube.");
+            GameObject go = Object.Instantiate(this.template, parent);
+            return go.GetComponent<MeshRenderer>();
+        }
 
-    public interface IObjectPool<T> : IObjectPool, IDisposable where T : class
-    {
-        /// <summary>
-        /// Gets an object from the pool if one is available, otherwise creates one.
-        /// </summary>
-        /// <returns></returns>
-        new T Allocate();
+        public override void Reset(MeshRenderer obj)
+        {
+            obj.gameObject.SetActive(false);
+            obj.gameObject.name = "Cube Idle";
+            obj.transform.position = Vector3.zero;
+            obj.transform.rotation = Quaternion.Euler(Vector3.zero);
+        }
 
-        /// <summary>
-        /// Return an object to the pool,if the number of objects in the pool is greater than or equal to the maximum value, the object is destroyed.
-        /// </summary>
-        /// <param name="obj"></param>
-        void Free(T obj);
+        public override void Destroy(MeshRenderer obj)
+        {
+            base.Destroy(obj);
+            Debug.LogFormat("Destroy a cube.");
+        }
     }
 }

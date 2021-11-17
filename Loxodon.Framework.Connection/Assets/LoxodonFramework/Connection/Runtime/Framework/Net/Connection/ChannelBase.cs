@@ -49,18 +49,38 @@ namespace Loxodon.Framework.Net.Connection
         protected X509Certificate cert;
         protected bool secure;
         protected RemoteCertificateValidationCallback remoteCertificateValidationCallback;
+        [Obsolete("The handshake handler moved to Connector")]
         protected IHandshakeHandler handshakeHandler;
 
+        [Obsolete("Please move the handshake handler to the DefaultConnector.")]
         public ChannelBase(ICodecFactory<IMessage> codecFactory, IHandshakeHandler handshakeHandler)
         {
             this.codecFactory = codecFactory ?? throw new ArgumentNullException("codecFactory");
             this.handshakeHandler = handshakeHandler;
         }
+
+        [Obsolete("Please move the handshake handler to the DefaultConnector.")]
         public ChannelBase(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler)
         {
             this.decoder = decoder ?? throw new ArgumentNullException("decoder");
             this.encoder = encoder ?? throw new ArgumentNullException("encoder");
             this.handshakeHandler = handshakeHandler;
+
+            this.ReceiveBufferSize = RECEIVE_BUFFER_SIZE;
+            this.SendBufferSize = SEND_BUFFER_SIZE;
+            this.NoDelay = true;
+            this.IsBigEndian = true;
+        }
+
+        public ChannelBase(ICodecFactory<IMessage> codecFactory)
+        {
+            this.codecFactory = codecFactory ?? throw new ArgumentNullException("codecFactory");
+        }
+
+        public ChannelBase(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder)
+        {
+            this.decoder = decoder ?? throw new ArgumentNullException("decoder");
+            this.encoder = encoder ?? throw new ArgumentNullException("encoder");
 
             this.ReceiveBufferSize = RECEIVE_BUFFER_SIZE;
             this.SendBufferSize = SEND_BUFFER_SIZE;
@@ -136,18 +156,18 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual Task<IMessage> ReadAsync()
         {
-            lock (reader)
-            {
-                return decoder.Decode(reader);
-            }
+            if (reader == null)
+                throw new IOException("The channel is not connected.");
+
+            return decoder.Decode(reader);
         }
 
         public virtual Task WriteAsync(IMessage message)
         {
-            lock (writer)
-            {
-                return encoder.Encode(message, writer);
-            }
+            if (writer == null)
+                throw new IOException("The channel is not connected.");
+
+            return encoder.Encode(message, writer);
         }
 
         public abstract Task Close();
