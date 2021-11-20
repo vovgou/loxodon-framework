@@ -1,0 +1,28 @@
+name: Publish To NPMJS
+
+on:
+  workflow_dispatch: 
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    name: 'publish npm'
+
+    environment: npm
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
+
+      - name: 'Publish to the npm registry'
+        uses: primer/publish@3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        with:
+          default_branch: 'master'
