@@ -26,9 +26,6 @@
   },
   "category": "GUI",
   "relatedPackages": {},
-  "publishConfig": {
-    "registry": "https://package.openupm.com"
-  },
   "samples": [
     {
       "displayName": "Examples",
