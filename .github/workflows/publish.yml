@@ -6,19 +6,23 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-
     name: 'publish npm'
-
     environment: npm
-
     steps:
       - uses: actions/checkout@v2
 
-      - name: 'Publish to the npm registry'
-        uses: primer/publish@3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      - name: Set up Node.js
+        uses: actions/setup-node@master
         with:
-          default_branch: 'master'
-          dir: Loxodon.Framework/Assets/LoxodonFramework
+          node-version: 12.13.0
+          registry-url: https://registry.npmjs.org/
+          
+      - name: npm publish
+        run: |
+          cd %GITHUB_WORKSPACE%/Loxodon.Framework/Assets/LoxodonFramework
+          npm config set //registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN
+          npm run trypublish
+        env:
+          CI: true
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        
