@@ -19,7 +19,7 @@ jobs:
           
       - name: npm publish
         run: |
-          cd %GITHUB_WORKSPACE%/Loxodon.Framework/Assets/LoxodonFramework
+          cd $GITHUB_WORKSPACE/Loxodon.Framework/Assets/LoxodonFramework
           npm config set //registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN
           npm run trypublish
         env:
