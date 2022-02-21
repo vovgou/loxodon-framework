@@ -38,7 +38,7 @@ Installing the framework in this way does not require nodejs and openm-cli.
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
-        "com.vovgou.loxodon-framework-ilruntime": "2.2.7"
+        "com.vovgou.loxodon-framework-ilruntime": "2.3.0"
       },
       "scopedRegistries": [
         {
