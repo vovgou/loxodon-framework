@@ -59,6 +59,9 @@ namespace Loxodon.Framework.Editors
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
+            if (property.serializedObject.isEditingMultipleObjects)
+                return 40;
+
             float height = base.GetPropertyHeight(property, label) + 60;
             var variables = property.FindPropertyRelative("variables");
             for (int i = 0; i < variables.arraySize; i++)
@@ -68,6 +71,12 @@ namespace Loxodon.Framework.Editors
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            if (property.serializedObject.isEditingMultipleObjects)
+            {
+                EditorGUI.HelpBox(position,"Components that are only on of the selected objects cannot be multi-edited", MessageType.Warning);
+                return;
+            }
+
             var list = GetList(property.FindPropertyRelative("variables"));
             list.DoList(position);
         }
