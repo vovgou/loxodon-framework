@@ -17,9 +17,72 @@ jobs:
           node-version: 12.13.0
           registry-url: https://registry.npmjs.org/
           
-      - name: npm publish
+      - name: Publish Loxodon.Framework
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework/Assets/LoxodonFramework
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
+      - name: Publish Loxodon.Framework.Addressable
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Addressable/Assets/LoxodonFramework/Addressable
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          
+      - name: Publish Loxodon.Framework.Connection
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Connection/Assets/LoxodonFramework/Connection
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          
+      - name: Publish Loxodon.Framework.FairyGUI
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.FairyGUI/Assets/LoxodonFramework/FairyGUI
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          
+      - name: Publish Loxodon.Framework.ILRuntime
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.ILRuntime/Assets/LoxodonFramework/ILRuntime
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          
+      - name: Publish Loxodon.Framework.LocalizationsForCsv
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.LocalizationsForCsv/Assets/LoxodonFramework/LocalizationsForCsv
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          
+      - name: Publish Loxodon.Framework.Log4Net
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Log4Net/Assets/LoxodonFramework/Log4Net
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          
+      - name: Publish Loxodon.Framework.Obfuscation
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Obfuscation/Assets/LoxodonFramework/Obfuscation
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
