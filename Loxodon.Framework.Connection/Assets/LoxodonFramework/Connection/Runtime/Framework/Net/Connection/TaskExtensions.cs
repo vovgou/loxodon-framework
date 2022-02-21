@@ -64,11 +64,11 @@ namespace Loxodon.Framework.Net.Connection
         {
             using (var timeoutCancellationTokenSource = new CancellationTokenSource())
             {
-                var completedTask = await Task.WhenAny(task, Task.Delay(timeoutMilliseconds, timeoutCancellationTokenSource.Token));
+                var completedTask = await Task.WhenAny(task, Task.Delay(timeoutMilliseconds, timeoutCancellationTokenSource.Token)).ConfigureAwait(false);
                 if (completedTask == task)
                 {
                     timeoutCancellationTokenSource.Cancel();
-                    await task;
+                    await task.ConfigureAwait(false);
                     return;
                 }
 

@@ -101,7 +101,7 @@ namespace Loxodon.Framework.Net.Connection
             if (timeoutMilliseconds <= 0)
                 timeoutMilliseconds = DEFAULT_TIMEOUT;
 
-            if (!await connectLock.WaitAsync(timeoutMilliseconds, cancellationToken))
+            if (!await connectLock.WaitAsync(timeoutMilliseconds, cancellationToken).ConfigureAwait(false))
                 throw new TimeoutException();
             try
             {
@@ -228,9 +228,9 @@ namespace Loxodon.Framework.Net.Connection
                         throw lastex;
 
                     throw new SocketException((int)SocketError.NotConnected);
-                }, cancellationToken);
+                }, cancellationToken).ConfigureAwait(false);
 
-                var stream = await this.WrapStream(client.GetStream());
+                var stream = await this.WrapStream(client.GetStream()).ConfigureAwait(false);
                 reader = new BinaryReader(stream, false, IsBigEndian);
                 writer = new BinaryWriter(stream, false, IsBigEndian);
 
@@ -242,7 +242,7 @@ namespace Loxodon.Framework.Net.Connection
 
 #pragma warning disable CS0618 
                 if (handshakeHandler != null)
-                    await handshakeHandler.OnHandshake(this);
+                    await handshakeHandler.OnHandshake(this).ConfigureAwait(false);
 #pragma warning restore CS0618 
                 this.connected = true;
             }
@@ -275,7 +275,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public override async Task Close()
         {
-            await connectLock.WaitAsync();
+            await connectLock.WaitAsync().ConfigureAwait(false);
             try
             {
                 if (client != null)
@@ -291,7 +291,7 @@ namespace Loxodon.Framework.Net.Connection
                     client = null;
 
                     if (delayTime > 0)
-                        await Task.Delay(delayTime);
+                        await Task.Delay(delayTime).ConfigureAwait(false);
                 }
 
                 if (reader != null)

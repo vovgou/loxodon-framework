@@ -149,25 +149,25 @@ namespace Loxodon.Framework.Net.Connection
 
         public Task Connect(string hostname, int port, int timeoutMilliseconds)
         {
-            return Connect(hostname, port, timeoutMilliseconds, default(CancellationToken));
+            return Connect(hostname, port, timeoutMilliseconds, CancellationToken.None);
         }
 
         public abstract Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken);
 
-        public virtual Task<IMessage> ReadAsync()
+        public virtual async Task<IMessage> ReadAsync()
         {
             if (reader == null)
                 throw new IOException("The channel is not connected.");
 
-            return decoder.Decode(reader);
+            return await decoder.Decode(reader).ConfigureAwait(false);
         }
 
-        public virtual Task WriteAsync(IMessage message)
+        public virtual async Task WriteAsync(IMessage message)
         {
             if (writer == null)
                 throw new IOException("The channel is not connected.");
 
-            return encoder.Encode(message, writer);
+            await encoder.Encode(message, writer).ConfigureAwait(false);
         }
 
         public abstract Task Close();

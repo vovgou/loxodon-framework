@@ -194,7 +194,6 @@ namespace Loxodon.Framework.Net.Connection
         public virtual void Write(float value)
         {
             CheckDisposed();
-
             uint tmpValue = ToUInt32(value);
             buffer[0] = (byte)tmpValue;
             buffer[1] = (byte)(tmpValue >> 8);
@@ -206,7 +205,6 @@ namespace Loxodon.Framework.Net.Connection
         public virtual void Write(double value)
         {
             CheckDisposed();
-
             ulong tmpValue = ToUInt64(value);
             buffer[0] = (byte)tmpValue;
             buffer[1] = (byte)(tmpValue >> 8);
@@ -228,32 +226,101 @@ namespace Loxodon.Framework.Net.Connection
         public virtual Task WriteAsync(byte[] buffer, int offset, int count)
         {
             CheckDisposed();
-
+            //Asynchronous API may have some bugs, which will cause messages to accumulate when sending messages at high speed
             return output.WriteAsync(buffer, offset, count);
         }
 
         public virtual async Task WriteAsync(IByteBuffer buffer, int count)
         {
             CheckDisposed();
-
             if (buffer is ByteBuffer buf)
             {
                 int offset = buf.ArrayOffset + buf.ReaderIndex;
-                await output.WriteAsync(buf.Array, offset, count);
                 buf.ReaderIndex += count;
+                //Asynchronous API may have some bugs, which will cause messages to accumulate when sending messages at high speed
+                await output.WriteAsync(buf.Array, offset, count).ConfigureAwait(false);
             }
             else
             {
-                int n = 0;
-                while (n < count)
-                {
-                    int len = Math.Min(this.buffer.Length, count - n);
-                    buffer.ReadBytes(this.buffer, 0, len);
-                    await output.WriteAsync(this.buffer, 0, len);
-                    n += len;
-                }
+                byte[] data = new byte[count];
+                buffer.ReadBytes(data, 0, count);
+                await output.WriteAsync(data, 0, count).ConfigureAwait(false);
             }
         }
+
+        //public virtual Task WriteAsync(byte[] buffer, int offset, int count)
+        //{
+        //    return Task.Run(() =>
+        //    {
+        //        CheckDisposed();
+        //        output.Write(buffer, offset, count);
+        //    });
+        //}
+
+        //public virtual async Task WriteAsync(IByteBuffer buffer, int count)
+        //{
+        //    CheckDisposed();
+        //    if (buffer is ByteBuffer buf)
+        //    {
+        //        int offset = buf.ArrayOffset + buf.ReaderIndex;
+        //        buf.ReaderIndex += count;
+        //        await Task.Run(() => output.Write(buf.Array, offset, count)).ConfigureAwait(false);
+        //    }
+        //    else
+        //    {
+        //        byte[] data = buffer.ToArray();
+        //        buffer.ReaderIndex += count;
+        //        //Asynchronous API may have some bugs, which will cause messages to accumulate when sending messages at high speed
+        //        //await output.WriteAsync(data, 0, count).ConfigureAwait(false);
+        //        await Task.Run(() => output.Write(data, 0, count)).ConfigureAwait(false);
+        //    }
+        //}
+
+        //public virtual Task WriteAsync(byte[] buffer, int offset, int count)
+        //{
+        //    ByteBufferCompletionSource source = new ByteBufferCompletionSource(new ByteBuffer(buffer, offset, count), count);
+        //    try
+        //    {
+        //        CheckDisposed();
+        //        this.queue.Enqueue(source);
+        //        lock (queue)
+        //        {
+        //            if (!running)
+        //            {
+        //                DoWrite();
+        //                running = true;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        source.TrySetException(e);
+        //    }
+        //    return source.Task;
+        //}
+
+        //public virtual Task WriteAsync(IByteBuffer buffer, int count)
+        //{
+        //    ByteBufferCompletionSource source = new ByteBufferCompletionSource(buffer, count);
+        //    try
+        //    {
+        //        CheckDisposed();
+        //        this.queue.Enqueue(source);
+        //        lock (queue)
+        //        {
+        //            if (!running)
+        //            {
+        //                running = true;
+        //                DoWrite();
+        //            }
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        source.TrySetException(e);
+        //    }
+        //    return source.Task;
+        //}
 
         public virtual void Flush()
         {
@@ -306,5 +373,56 @@ namespace Loxodon.Framework.Net.Connection
             Dispose(true);
         }
         #endregion
+
+        //#region DoWrite Support
+
+        //private ConcurrentQueue<ByteBufferCompletionSource> queue = new ConcurrentQueue<ByteBufferCompletionSource>();
+        //private bool running = false;
+
+        //private Task DoWrite()
+        //{
+        //    return Task.Run(() =>
+        //    {
+        //        while (true)
+        //        {
+        //            ByteBufferCompletionSource source;
+        //            if (!queue.TryDequeue(out source))
+        //            {
+        //                lock (queue)
+        //                {
+        //                    running = false;
+        //                }
+        //                break;
+        //            }
+
+        //            try
+        //            {
+        //                ByteBuffer buffer = (ByteBuffer)source.Buffer;
+        //                int count = source.Count;
+        //                int offset = buffer.ArrayOffset + buffer.ReaderIndex;
+        //                buffer.ReaderIndex += count;
+        //                output.Write(buffer.Array, offset, count);
+        //                source.SetResult(0);
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                source.SetException(e);
+        //            }
+        //        }
+        //    });
+        //}
+        //protected class ByteBufferCompletionSource : TaskCompletionSource<int>
+        //{
+        //    public ByteBufferCompletionSource(IByteBuffer buffer, int count)
+        //    {
+        //        this.Buffer = buffer;
+        //        this.Count = count;
+        //    }
+
+        //    public IByteBuffer Buffer { get; }
+
+        //    public int Count { get; }
+        //}
+        //#endregion
     }
 }

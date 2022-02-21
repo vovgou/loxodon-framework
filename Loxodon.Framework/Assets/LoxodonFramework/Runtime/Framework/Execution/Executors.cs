@@ -101,7 +101,7 @@ namespace Loxodon.Framework.Execution
             return executor;
         }
 
-        public static void Create(bool dontDestroy = true, bool useFixedUpdate = true)
+        public static void Create(bool dontDestroy = true, bool useFixedUpdate = false)
         {
             lock (syncLock)
             {

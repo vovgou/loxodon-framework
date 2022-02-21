@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-connection",
   "displayName": "Loxodon Framework Connection",
-  "version": "2.1.4",
+  "version": "2.3.0",
   "unity": "2018.4",
   "description": "This is a network component, using TCP protocol to connect to the server by default.",  
   "license": "MIT",
@@ -15,10 +15,14 @@
   ],
   "author": {
     "name": "Clark Yang",
-    "email": "yangpc.china@gmail.com",
-    "url": "https://github.com/vovgou/loxodon-framework"
+    "email": "yangpc.china@gmail.com"
   },
   "category": "GUI",
+  "homepage": "https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Connection",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
   "relatedPackages": {},
   "dependencies": {
   },

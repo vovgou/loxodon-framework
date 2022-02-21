@@ -1,0 +1,16 @@
+{
+    "name": "Loxodon.Framework.ILRuntime",
+    "references": [
+        "Loxodon.Log",
+        "Loxodon.Framework",
+        "ILRuntime"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

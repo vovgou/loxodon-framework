@@ -27,11 +27,14 @@ using System.Collections.Generic;
 using System.Threading;
 
 using Loxodon.Framework.Asynchronous;
+using Loxodon.Log;
 
 namespace Loxodon.Framework.Execution
 {
     public class ThreadScheduledExecutor : AbstractExecutor, IScheduledExecutor
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(ThreadScheduledExecutor));
+
         private IComparer<IDelayTask> comparer = new ComparerImpl<IDelayTask>();
         private List<IDelayTask> queue = new List<IDelayTask>();
         private object _lock = new object();
@@ -216,6 +219,10 @@ namespace Loxodon.Framework.Execution
                     catch (Exception e)
                     {
                         this.SetException(e);
+#if DEBUG
+                        if (log.IsWarnEnabled)
+                            log.Warn(e);
+#endif
                     }
                 };
                 this.executor.Add(this);
@@ -242,8 +249,12 @@ namespace Loxodon.Framework.Execution
                 {
                     Executors.RunAsyncNoReturn(() => this.wrappedAction());
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+#if DEBUG
+                    if (log.IsWarnEnabled)
+                        log.Warn(e);
+#endif
                 }
             }
         }
@@ -281,6 +292,10 @@ namespace Loxodon.Framework.Execution
                     catch (Exception e)
                     {
                         this.SetException(e);
+#if DEBUG
+                        if (log.IsWarnEnabled)
+                            log.Warn(e);
+#endif
                     }
                 };
                 this.executor.Add(this);
@@ -307,8 +322,12 @@ namespace Loxodon.Framework.Execution
                 {
                     Executors.RunAsyncNoReturn(() => this.wrappedAction());
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+#if DEBUG
+                    if (log.IsWarnEnabled)
+                        log.Warn(e);
+#endif
                 }
             }
         }
@@ -343,13 +362,16 @@ namespace Loxodon.Framework.Execution
                         else
                         {
                             Interlocked.Increment(ref count);
-                            //count++;
                             this.executor.Add(this);
                             command();
                         }
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+#if DEBUG
+                        if (log.IsWarnEnabled)
+                            log.Warn(e);
+#endif
                     }
                 };
                 this.executor.Add(this);
@@ -374,8 +396,12 @@ namespace Loxodon.Framework.Execution
                 {
                     Executors.RunAsyncNoReturn(() => this.wrappedAction());
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+#if DEBUG
+                    if (log.IsWarnEnabled)
+                        log.Warn(e);
+#endif
                 }
             }
         }
@@ -409,8 +435,12 @@ namespace Loxodon.Framework.Execution
                             command();
                         }
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+#if DEBUG
+                        if (log.IsWarnEnabled)
+                            log.Warn(e);
+#endif
                     }
                     finally
                     {
@@ -448,8 +478,12 @@ namespace Loxodon.Framework.Execution
                 {
                     Executors.RunAsyncNoReturn(() => this.wrappedAction());
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+#if DEBUG
+                    if (log.IsWarnEnabled)
+                        log.Warn(e);
+#endif
                 }
             }
         }

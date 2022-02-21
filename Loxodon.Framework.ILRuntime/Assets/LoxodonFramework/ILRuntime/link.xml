@@ -1,0 +1,4 @@
+﻿<linker>
+	<assembly fullname="Loxodon.Log" preserve="all"/>
+	<assembly fullname="Loxodon.Framework" preserve="all"/>
+</linker>

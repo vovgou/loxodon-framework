@@ -258,7 +258,7 @@ namespace Loxodon.Framework.Obfuscation
 
         public TypeCode GetTypeCode()
         {
-            return TypeCode.Object;
+            return TypeCode.Int16;
         }
 
         bool IConvertible.ToBoolean(IFormatProvider provider)

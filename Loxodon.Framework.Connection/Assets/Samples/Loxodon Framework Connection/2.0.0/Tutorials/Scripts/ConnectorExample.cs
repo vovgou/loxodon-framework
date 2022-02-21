@@ -59,7 +59,9 @@ namespace Loxodon.Framework.Examples
 
             //----------------------
 
-            //创建TcpChannel，如果游戏协议没有定义握手消息，那么HandshakeHandler可以为null
+            //创建TcpChannel，TcpChannel中不要在插入HandshakeHandler，已经移到DefaultConnector类中
+            //如果使用Kcp协议，此处替换为KcpChannel，针对Kcp的支持在Loxodon.Framework.Connection.KCP包中
+            //var channel = new KcpChannel(new KcpSetting(), new CodecFactory());
             var channel = new TcpChannel(new DefaultDecoder(), new DefaultEncoder());
             channel.NoDelay = true;
             channel.IsBigEndian = true;//默认使用大端字节序，一般网络字节流用大端

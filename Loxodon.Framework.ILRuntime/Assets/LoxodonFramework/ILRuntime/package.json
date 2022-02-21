@@ -1,0 +1,38 @@
+{
+  "name": "com.vovgou.loxodon-framework-ilruntime",
+  "displayName": "Loxodon Framework ILRuntime",
+  "version": "2.3.0",
+  "unity": "2018.4",
+  "description": "ILRuntime",  
+  "license": "MIT",
+  "keywords": [
+    "Loxodon",
+    "Framework",
+    "Databinding",
+    "Localization",
+    "MVVM",
+    "UI",
+    "UGUI",
+    "FairyGUI",
+    "UIElements",
+    "ILRuntime"
+  ],
+  "author": {
+    "name": "Clark Yang",
+    "email": "yangpc.china@gmail.com",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+  "category": "GUI",
+  "relatedPackages": {},
+  "dependencies": {
+    "com.ourpalm.ilruntime": "2.0.2",
+    "com.vovgou.loxodon-framework": "2.3.0"
+  },
+  "samples": [
+    {
+      "displayName": "Examples",
+      "description": "Examples",
+      "path": "Samples~/Examples"
+    }
+  ]
+}

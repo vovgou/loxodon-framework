@@ -59,13 +59,13 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual async Task<byte> ReadByte()
         {
-            await Read(buffer, 0, 1);
+            await Read(buffer, 0, 1).ConfigureAwait(false);
             return buffer[0];
         }
 
         public virtual async Task<ushort> ReadUInt16()
         {
-            await Read(buffer, 0, 2);
+            await Read(buffer, 0, 2).ConfigureAwait(false);
             if (isBigEndian)
                 return (ushort)(buffer[1] | buffer[0] << 8);
             else
@@ -74,7 +74,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual async Task<short> ReadInt16()
         {
-            await Read(buffer, 0, 2);
+            await Read(buffer, 0, 2).ConfigureAwait(false);
             if (isBigEndian)
                 return (short)(buffer[1] | buffer[0] << 8);
             else
@@ -83,7 +83,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual async Task<uint> ReadUInt32()
         {
-            await Read(buffer, 0, 4);
+            await Read(buffer, 0, 4).ConfigureAwait(false);
             if (isBigEndian)
                 return (uint)(buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24);
             else
@@ -92,7 +92,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual async Task<int> ReadInt32()
         {
-            await Read(buffer, 0, 4);
+            await Read(buffer, 0, 4).ConfigureAwait(false);
             if (isBigEndian)
                 return (int)(buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24);
             else
@@ -101,7 +101,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual async Task<ulong> ReadUInt64()
         {
-            await Read(buffer, 0, 8);
+            await Read(buffer, 0, 8).ConfigureAwait(false);
             if (isBigEndian)
             {
                 uint lo = (uint)(buffer[7] | buffer[6] << 8 | buffer[5] << 16 | buffer[4] << 24);
@@ -118,7 +118,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual async Task<long> ReadInt64()
         {
-            await Read(buffer, 0, 8);
+            await Read(buffer, 0, 8).ConfigureAwait(false);
             if (isBigEndian)
             {
                 uint lo = (uint)(buffer[7] | buffer[6] << 8 | buffer[5] << 16 | buffer[4] << 24);
@@ -136,14 +136,14 @@ namespace Loxodon.Framework.Net.Connection
         public virtual async Task<float> ReadSingle()
         {
             CheckDisposed();
-            uint value = await ReadUInt32();
+            uint value = await ReadUInt32().ConfigureAwait(false);
             return ToSingle(value);
         }
 
         public virtual async Task<double> ReadDouble()
         {
             CheckDisposed();
-            ulong value = await ReadUInt64();
+            ulong value = await ReadUInt64().ConfigureAwait(false);
             return ToDouble(value);
         }
 
@@ -153,7 +153,7 @@ namespace Loxodon.Framework.Net.Connection
             int n = 0;
             while (n < count)
             {
-                int len = await this.input.ReadAsync(buffer, offset + n, count - n);
+                int len = await this.input.ReadAsync(buffer, offset + n, count - n).ConfigureAwait(false);
                 if (len <= 0)
                     throw new IOException("Stream is closed.");
 
@@ -172,7 +172,7 @@ namespace Loxodon.Framework.Net.Connection
                 int offset = buf.ArrayOffset + buf.WriterIndex;
                 while (n < count)
                 {
-                    int len = await this.input.ReadAsync(buf.Array, offset + n, count - n);
+                    int len = await this.input.ReadAsync(buf.Array, offset + n, count - n).ConfigureAwait(false);
                     if (len <= 0)
                         throw new IOException("Stream is closed.");
 
@@ -186,7 +186,7 @@ namespace Loxodon.Framework.Net.Connection
                 int n = 0;
                 while (n < count)
                 {
-                    int len = await this.input.ReadAsync(this.buffer, 0, Math.Min(this.buffer.Length, count - n));
+                    int len = await this.input.ReadAsync(this.buffer, 0, Math.Min(this.buffer.Length, count - n)).ConfigureAwait(false);
                     if (len <= 0)
                         throw new IOException("Stream is closed.");
 

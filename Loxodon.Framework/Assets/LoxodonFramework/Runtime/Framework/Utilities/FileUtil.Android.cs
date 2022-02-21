@@ -23,6 +23,7 @@
  */
 
 #if UNITY_ANDROID
+using Loxodon.Log;
 using System;
 using System.IO;
 using UnityEngine;
@@ -32,6 +33,9 @@ namespace Loxodon.Framework.Utilities
     public class ZipAccessorForAndroidStreamingAssets : FileUtil.IZipAccessor
     {
         private const string ACTIVITY_JAVA_CLASS = "com.unity3d.player.UnityPlayer";
+        private const string ASSET_MANGER_CLASS_NAME = "android.content.res.AssetManager";
+
+        private static readonly ILog log = LogManager.GetLogger(typeof(ZipAccessorForAndroidStreamingAssets));
 
         private static AndroidJavaObject assetManager;
 
@@ -42,12 +46,36 @@ namespace Loxodon.Framework.Utilities
                 if (assetManager != null)
                     return assetManager;
 
-                using (AndroidJavaClass activityClass = new AndroidJavaClass(ACTIVITY_JAVA_CLASS))
+                try
                 {
-                    using (var context = activityClass.GetStatic<AndroidJavaObject>("currentActivity"))
+                    using (AndroidJavaClass activityClass = new AndroidJavaClass(ACTIVITY_JAVA_CLASS))
                     {
-                        assetManager = context.Call<AndroidJavaObject>("getAssets");
+                        using (var context = activityClass.GetStatic<AndroidJavaObject>("currentActivity"))
+                        {
+                            assetManager = context.Call<AndroidJavaObject>("getAssets");
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    if (log.IsWarnEnabled)
+                        log.WarnFormat("Failed to get the AssetManager from the Activity, try to get it from android.content.res.AssetManager", e);
+                }
+
+                try
+                {
+                    if (assetManager == null)
+                    {
+                        using (AndroidJavaClass assetManagerClass = new AndroidJavaClass(ASSET_MANGER_CLASS_NAME))
+                        {
+                            assetManager = assetManagerClass.GetStatic<AndroidJavaObject>("getSystem");
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    if (log.IsWarnEnabled)
+                        log.WarnFormat("Failed to get the AssetManager from android.content.res.AssetManager", e);
                 }
                 return assetManager;
             }
@@ -159,9 +187,13 @@ namespace Loxodon.Framework.Utilities
                         array = AndroidJNI.NewByteArray(count);
                         var method = AndroidJNIHelper.GetMethodID(inputStream.GetRawClass(), "read", "([B)I");
                         ret = AndroidJNI.CallIntMethod(inputStream.GetRawObject(), method, new[] { new jvalue() { l = array } });
+                        if (ret <= 0)
+                            return ret;
+
                         byte[] data = AndroidJNI.FromByteArray(array);
                         //Array.Copy(data, 0, buffer, offset, ret);
                         Buffer.BlockCopy(data, 0, buffer, 0, ret);
+                        this.position += ret;
                     }
                     finally
                     {

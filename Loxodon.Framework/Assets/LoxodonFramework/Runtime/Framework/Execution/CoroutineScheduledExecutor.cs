@@ -22,17 +22,20 @@
  * SOFTWARE.
  */
 
-using System;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Log;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Loxodon.Framework.Execution
 {
+    public interface ITime
+    {
+        float Time { get; }
+    }
+
     public class CoroutineScheduledExecutor : AbstractExecutor, IScheduledExecutor
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(CoroutineScheduledExecutor));
@@ -40,10 +43,21 @@ namespace Loxodon.Framework.Execution
         private ComparerImpl<IDelayTask> comparer = new ComparerImpl<IDelayTask>();
         private List<IDelayTask> queue = new List<IDelayTask>();
         private bool running = false;
-
-        public CoroutineScheduledExecutor()
+        public CoroutineScheduledExecutor() : this(false)
         {
         }
+
+        public CoroutineScheduledExecutor(bool timeScaled)
+        {
+            Time = timeScaled ? new ScaledTime() : (ITime)new UnscaledTime();
+        }
+
+        public CoroutineScheduledExecutor(ITime time)
+        {
+            Time = time != null ? time : new UnscaledTime();
+        }
+
+        internal ITime Time { get; private set; }
 
         private void Add(IDelayTask task)
         {
@@ -161,6 +175,8 @@ namespace Loxodon.Framework.Execution
             this.Stop();
         }
 
+
+
         interface IDelayTask : Asynchronous.IAsyncResult
         {
             TimeSpan Delay { get; }
@@ -174,17 +190,18 @@ namespace Loxodon.Framework.Execution
             private TimeSpan delay;
             private Action command;
             private CoroutineScheduledExecutor executor;
-
+            private ITime time;
             public OneTimeDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan delay)
             {
-                this.startTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond);
+                this.time = executor.Time;
+                this.startTime = (long)(time.Time * TimeSpan.TicksPerSecond);
                 this.delay = delay;
                 this.executor = executor;
                 this.command = command;
                 this.executor.Add(this);
             }
 
-            public virtual TimeSpan Delay { get { return new TimeSpan(startTime + delay.Ticks - (long)(Time.fixedTime * TimeSpan.TicksPerSecond)); } }
+            public virtual TimeSpan Delay { get { return new TimeSpan(startTime + delay.Ticks - (long)(time.Time * TimeSpan.TicksPerSecond)); } }
 
             public override bool Cancel()
             {
@@ -210,7 +227,8 @@ namespace Loxodon.Framework.Execution
                     {
                         this.SetCancelled();
                     }
-                    else {
+                    else
+                    {
                         command();
                         this.SetResult();
                     }
@@ -218,8 +236,10 @@ namespace Loxodon.Framework.Execution
                 catch (Exception e)
                 {
                     this.SetException(e);
+#if DEBUG
                     if (log.IsWarnEnabled)
-                        log.WarnFormat("{0}", e);
+                        log.Warn(e);
+#endif
                 }
             }
         }
@@ -230,17 +250,19 @@ namespace Loxodon.Framework.Execution
             private TimeSpan delay;
             private Func<TResult> command;
             private CoroutineScheduledExecutor executor;
+            private ITime time;
 
             public OneTimeDelayTask(CoroutineScheduledExecutor executor, Func<TResult> command, TimeSpan delay)
             {
-                this.startTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond);
+                this.time = executor.Time;
+                this.startTime = (long)(time.Time * TimeSpan.TicksPerSecond);
                 this.delay = delay;
                 this.executor = executor;
                 this.command = command;
                 this.executor.Add(this);
             }
 
-            public virtual TimeSpan Delay { get { return new TimeSpan(startTime + delay.Ticks - (long)(Time.fixedTime * TimeSpan.TicksPerSecond)); } }
+            public virtual TimeSpan Delay { get { return new TimeSpan(startTime + delay.Ticks - (long)(time.Time * TimeSpan.TicksPerSecond)); } }
 
             public override bool Cancel()
             {
@@ -266,15 +288,18 @@ namespace Loxodon.Framework.Execution
                     {
                         this.SetCancelled();
                     }
-                    else {
+                    else
+                    {
                         this.SetResult(command());
                     }
                 }
                 catch (Exception e)
                 {
                     this.SetException(e);
+#if DEBUG
                     if (log.IsWarnEnabled)
-                        log.WarnFormat("{0}", e);
+                        log.Warn(e);
+#endif
                 }
             }
         }
@@ -287,10 +312,11 @@ namespace Loxodon.Framework.Execution
             private CoroutineScheduledExecutor executor;
             private Action command;
             private int count = 0;
-
+            private ITime time;
             public FixedRateDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan initialDelay, TimeSpan period) : base()
             {
-                this.startTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond);
+                this.time = executor.Time;
+                this.startTime = (long)(time.Time * TimeSpan.TicksPerSecond);
                 this.initialDelay = initialDelay;
                 this.period = period;
                 this.executor = executor;
@@ -298,7 +324,7 @@ namespace Loxodon.Framework.Execution
                 this.executor.Add(this);
             }
 
-            public virtual TimeSpan Delay { get { return new TimeSpan(startTime + initialDelay.Ticks + period.Ticks * count - (long)(Time.fixedTime * TimeSpan.TicksPerSecond)); } }
+            public virtual TimeSpan Delay { get { return new TimeSpan(startTime + initialDelay.Ticks + period.Ticks * count - (long)(time.Time * TimeSpan.TicksPerSecond)); } }
 
             public override bool Cancel()
             {
@@ -322,7 +348,8 @@ namespace Loxodon.Framework.Execution
                     {
                         this.SetCancelled();
                     }
-                    else {
+                    else
+                    {
                         Interlocked.Increment(ref count);
                         this.executor.Add(this);
                         command();
@@ -330,8 +357,10 @@ namespace Loxodon.Framework.Execution
                 }
                 catch (Exception e)
                 {
+#if DEBUG
                     if (log.IsWarnEnabled)
-                        log.WarnFormat("{0}", e);
+                        log.Warn(e);
+#endif
                 }
             }
         }
@@ -342,17 +371,18 @@ namespace Loxodon.Framework.Execution
             private long nextTime;
             private CoroutineScheduledExecutor executor;
             private Action command;
-
+            private ITime time;
             public FixedDelayDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan initialDelay, TimeSpan delay) : base()
             {
+                this.time = executor.Time;
                 this.delay = delay;
                 this.executor = executor;
                 this.command = command;
-                this.nextTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond + initialDelay.Ticks);
+                this.nextTime = (long)(time.Time * TimeSpan.TicksPerSecond + initialDelay.Ticks);
                 this.executor.Add(this);
             }
 
-            public virtual TimeSpan Delay { get { return new TimeSpan(nextTime - (long)(Time.fixedTime * TimeSpan.TicksPerSecond)); } }
+            public virtual TimeSpan Delay { get { return new TimeSpan(nextTime - (long)(time.Time * TimeSpan.TicksPerSecond)); } }
 
             public override bool Cancel()
             {
@@ -376,14 +406,17 @@ namespace Loxodon.Framework.Execution
                     {
                         this.SetCancelled();
                     }
-                    else {
+                    else
+                    {
                         command();
                     }
                 }
                 catch (Exception e)
                 {
+#if DEBUG
                     if (log.IsWarnEnabled)
-                        log.WarnFormat("{0}", e);
+                        log.Warn(e);
+#endif
                 }
                 finally
                 {
@@ -391,8 +424,9 @@ namespace Loxodon.Framework.Execution
                     {
                         this.SetCancelled();
                     }
-                    else {
-                        this.nextTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond + this.delay.Ticks);
+                    else
+                    {
+                        this.nextTime = (long)(time.Time * TimeSpan.TicksPerSecond + this.delay.Ticks);
                         this.executor.Add(this);
                     }
                 }
@@ -408,6 +442,16 @@ namespace Loxodon.Framework.Execution
 
                 return x.Delay.Ticks > y.Delay.Ticks ? 1 : -1;
             }
+        }
+
+        public class ScaledTime : ITime
+        {
+            public float Time => UnityEngine.Time.time;
+        }
+
+        public class UnscaledTime : ITime
+        {
+            public float Time => UnityEngine.Time.unscaledTime;
         }
     }
 }

@@ -37,13 +37,13 @@ namespace Loxodon.Framework.Examples
         protected ByteBuffer buffer = new ByteBuffer();
         public async Task<IMessage> Decode(BinaryReader reader)
         {
-            await readLock.WaitAsync();
+            await readLock.WaitAsync().ConfigureAwait(false);
             try
             {
-                int count = await reader.ReadInt32();
+                int count = await reader.ReadInt32().ConfigureAwait(false);
 
                 buffer.Clear();
-                await reader.Read(buffer, count);
+                await reader.Read(buffer, count).ConfigureAwait(false);
 
                 MessageType messageType = (MessageType)buffer.ReadByte();
                 switch (messageType)

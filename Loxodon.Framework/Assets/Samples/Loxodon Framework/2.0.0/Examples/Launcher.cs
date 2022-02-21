@@ -105,5 +105,6 @@ namespace Loxodon.Framework.Examples
 
             yield return transition.WaitForDone();
         }
+
     }
 }

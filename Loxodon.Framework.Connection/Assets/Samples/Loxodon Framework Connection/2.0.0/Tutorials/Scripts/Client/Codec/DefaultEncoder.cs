@@ -37,7 +37,7 @@ namespace Loxodon.Framework.Examples
         protected uint sequence = 0;
         public async Task Encode(IMessage message, BinaryWriter writer)
         {
-            await writeLock.WaitAsync();
+            await writeLock.WaitAsync().ConfigureAwait(false);
             try
             {
                 Notification notification = message as Notification;
@@ -55,7 +55,7 @@ namespace Loxodon.Framework.Examples
                     writer.Write(notification.ContentType);
                     if (buffer != null)
                         writer.Write(buffer, 0, buffer.Length);
-                    await writer.FlushAsync();
+                    await writer.FlushAsync().ConfigureAwait(false);
                     return;
                 }
 
@@ -74,7 +74,7 @@ namespace Loxodon.Framework.Examples
                     writer.Write(request.ContentType);
                     if (buffer != null)
                         writer.Write(buffer, 0, buffer.Length);
-                    await writer.FlushAsync();
+                    await writer.FlushAsync().ConfigureAwait(false);
                     return;
                 }
 
@@ -91,7 +91,7 @@ namespace Loxodon.Framework.Examples
                     writer.Write(response.ContentType);
                     if (buffer != null)
                         writer.Write(buffer, 0, buffer.Length);
-                    await writer.FlushAsync();
+                    await writer.FlushAsync().ConfigureAwait(false);
                     return;
                 }
 

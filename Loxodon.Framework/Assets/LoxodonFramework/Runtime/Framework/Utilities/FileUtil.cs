@@ -84,13 +84,11 @@ namespace Loxodon.Framework.Utilities
             if (!IsZipArchive(path))
                 return File.ReadAllText(path, encoding);
 
-            using (var stream = OpenReadInZip(path))
-            {
-                using (StreamReader sr = new StreamReader(stream, encoding, true))
-                {
-                    return sr.ReadToEnd();
-                }
-            }
+            byte[] data = ReadAllBytes(path);
+            if (!HasBOMFlag(data))
+                return encoding.GetString(data);
+
+            return encoding.GetString(data, 3, data.Length - 3);
         }
 
         public static byte[] ReadAllBytes(string path)
@@ -155,6 +153,17 @@ namespace Loxodon.Framework.Utilities
         {
             if (Regex.IsMatch(path, @"(jar:file:///)|(\.jar)|(\.apk)|(\.obb)|(\.zip)", RegexOptions.IgnoreCase))
                 return true;
+            return false;
+        }
+
+        static bool HasBOMFlag(byte[] data)
+        {
+            if (data == null || data.Length < 3)
+                return false;
+
+            if (data[0] == 239 && data[1] == 187 && data[2] == 191)
+                return true;
+
             return false;
         }
 
