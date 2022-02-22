@@ -2,7 +2,9 @@
 
 # Loxodon Framework Obfuscation
 
-[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE) [![release](https://img.shields.io/badge/release-v2.0.0-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
+[![license](https://img.shields.io/github/license/vovgou/loxodon-framework?color=blue)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE) [![release](https://img.shields.io/github/v/tag/vovgou/loxodon-framework?label=release)](https://github.com/vovgou/loxodon-framework/releases)
+[![openupm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework-obfuscation?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.vovgou.loxodon-framework-obfuscation/)
+[![npm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework-obfuscation)](https://www.npmjs.com/package/com.vovgou.loxodon-framework-obfucation)
 
 
 *开发者 Clark*
@@ -44,7 +46,7 @@ Float和Double类型混淆时转为int和long类型进行与或运算，确保�
     #切换当前目录到项目的根目录
     cd F:/workspace/New Unity Project
 
-    #安装 loxodon-framework
+    #安装 loxodon-framework-obfuscation
     openupm add com.vovgou.loxodon-framework-obfuscation
 
 ### 修改Packages/manifest.json文件安装
@@ -55,15 +57,14 @@ Float和Double类型混淆时转为int和long类型进行与或运算，确保�
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
-        "com.vovgou.loxodon-framework-obfuscation": "2.0.0-preview"
+        "com.vovgou.loxodon-framework-obfuscation": "2.0.1"
       },
       "scopedRegistries": [
         {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
-            "com.vovgou.loxodon-framework-obfuscation",
-            "com.vovgou.loxodon-framework",
+            "com.vovgou",
             "com.openupm"
           ]
         }

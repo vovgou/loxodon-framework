@@ -3,7 +3,8 @@
 # Loxodon Framework ILRuntime
 
 [![license](https://img.shields.io/github/license/vovgou/loxodon-framework?color=blue)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE) [![release](https://img.shields.io/github/v/tag/vovgou/loxodon-framework?label=release)](https://github.com/vovgou/loxodon-framework/releases)
-
+[![openupm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework-ilruntime?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.vovgou.loxodon-framework-ilruntime/)
+[![npm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework-ilruntime)](https://www.npmjs.com/package/com.vovgou.loxodon-framework-ilruntime)
 
 *Developed by Clark*
 
@@ -38,7 +39,7 @@ Installing the framework in this way does not require nodejs and openm-cli.
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
-        "com.vovgou.loxodon-framework-ilruntime": "2.3.0"
+        "com.vovgou.loxodon-framework-ilruntime": "2.2.7"
       },
       "scopedRegistries": [
         {

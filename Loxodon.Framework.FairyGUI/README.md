@@ -2,7 +2,9 @@
 
 # Loxodon Framework FairyGUI
 
-[![license](https://img.shields.io/badge/license-MIT-blue.png)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE) [![release](https://img.shields.io/badge/release-v2.0.0-blue.png)](https://github.com/vovgou/loxodon-framework/releases)
+[![license](https://img.shields.io/github/license/vovgou/loxodon-framework?color=blue)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE) [![release](https://img.shields.io/github/v/tag/vovgou/loxodon-framework?label=release)](https://github.com/vovgou/loxodon-framework/releases)
+[![npm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework-fgui)](https://www.npmjs.com/package/com.vovgou.loxodon-framework-fgui)
+
 
 
 *Developed by Clark*
