@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Loxodon.Framework.ILScriptExamples</RootNamespace>
+    <AssemblyName>Loxodon.Framework.ILScriptExamples</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\..\..\..\..\StreamingAssets\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fody" Version="6.5.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\..\..\..\Library\ScriptAssemblies\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ILRuntime">
+      <HintPath>..\..\..\..\..\..\..\Library\ScriptAssemblies\ILRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="Loxodon.Framework">
+      <HintPath>..\..\..\..\..\..\..\Library\ScriptAssemblies\Loxodon.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Loxodon.Framework.ILRuntime">
+      <HintPath>..\..\..\..\..\..\..\Library\ScriptAssemblies\Loxodon.Framework.ILRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="Loxodon.Framework.ILScript">
+      <HintPath>..\..\..\..\..\..\..\Library\ScriptAssemblies\Loxodon.Framework.ILScript.dll</HintPath>
+    </Reference>
+    <Reference Include="Loxodon.Log">
+      <HintPath>..\..\..\..\..\..\..\Library\ScriptAssemblies\Loxodon.Log.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\Libs\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\Libs\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\Libs\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\Libs\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\Libs\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>..\Libs\UnityEngine.UnityWebRequestModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
