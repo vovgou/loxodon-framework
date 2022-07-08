@@ -118,7 +118,7 @@ namespace Loxodon.Framework.Binding
 
             Register<ToggleGroup, bool>("allowSwitchOff", t => t.allowSwitchOff, (t, v) => t.allowSwitchOff = v);
 
-#if UNITY_2019_1_OR_NEWER
+#if UNITY_2021_1_OR_NEWER
             Register<UnityEngine.UIElements.VisualElement, bool>("enabledSelf", t => t.enabledSelf, (t, v) => t.SetEnabled(v));
             Register<UnityEngine.UIElements.VisualElement, bool>("visible", t => t.visible, (t, v) => t.visible = v);
             Register<UnityEngine.UIElements.TextField, string>("value", t => t.value, (t, v) => t.SetValueWithoutNotify(v));
