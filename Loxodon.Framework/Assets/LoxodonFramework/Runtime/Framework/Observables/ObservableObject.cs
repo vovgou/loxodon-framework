@@ -30,6 +30,8 @@ using System.Diagnostics;
 
 using Loxodon.Log;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Loxodon.Framework.Observables
 {
@@ -37,6 +39,23 @@ namespace Loxodon.Framework.Observables
     public abstract class ObservableObject : INotifyPropertyChanged
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(ObservableObject));
+
+        private static readonly PropertyChangedEventArgs NULL_EVENT_ARGS = new PropertyChangedEventArgs(null);
+        private static readonly Dictionary<string, PropertyChangedEventArgs> PROPERTY_EVENT_ARGS = new Dictionary<string, PropertyChangedEventArgs>();
+
+        private static PropertyChangedEventArgs GetPropertyChangedEventArgs(string propertyName)
+        {
+            if (propertyName == null)
+                return NULL_EVENT_ARGS;
+
+            PropertyChangedEventArgs eventArgs;
+            if (PROPERTY_EVENT_ARGS.TryGetValue(propertyName, out eventArgs))
+                return eventArgs;
+
+            eventArgs = new PropertyChangedEventArgs(propertyName);
+            PROPERTY_EVENT_ARGS[propertyName] = eventArgs;
+            return eventArgs;
+        }
 
         private readonly object _lock = new object();
         private PropertyChangedEventHandler propertyChanged;
@@ -46,13 +65,13 @@ namespace Loxodon.Framework.Observables
             remove { lock (_lock) { this.propertyChanged -= value; } }
         }
 
-        [Conditional("DEBUG")]
-        protected void VerifyPropertyName(string propertyName)
-        {
-            var type = this.GetType();
-            if (!string.IsNullOrEmpty(propertyName) && type.GetProperty(propertyName) == null)
-                throw new ArgumentException("Property not found", propertyName);
-        }
+        //[Conditional("DEBUG")]
+        //protected void VerifyPropertyName(string propertyName)
+        //{
+        //    var type = this.GetType();
+        //    if (!string.IsNullOrEmpty(propertyName) && type.GetProperty(propertyName) == null)
+        //        throw new ArgumentException("Property not found", propertyName);
+        //}
 
         /// <summary>
         /// Raises the PropertyChanging event.
@@ -60,7 +79,8 @@ namespace Loxodon.Framework.Observables
         /// <param name="propertyName">Property name.</param>
         protected virtual void RaisePropertyChanged(string propertyName = null)
         {
-            RaisePropertyChanged(new PropertyChangedEventArgs(propertyName));
+            //RaisePropertyChanged(new PropertyChangedEventArgs(propertyName));
+            RaisePropertyChanged(GetPropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>
@@ -71,7 +91,7 @@ namespace Loxodon.Framework.Observables
         {
             try
             {
-                VerifyPropertyName(eventArgs.PropertyName);
+                //VerifyPropertyName(eventArgs.PropertyName);
 
                 if (propertyChanged != null)
                     propertyChanged(this, eventArgs);
@@ -93,7 +113,7 @@ namespace Loxodon.Framework.Observables
             {
                 try
                 {
-                    VerifyPropertyName(args.PropertyName);
+                    //VerifyPropertyName(args.PropertyName);
 
                     if (propertyChanged != null)
                         propertyChanged(this, args);
@@ -140,6 +160,8 @@ namespace Loxodon.Framework.Observables
             return true;
         }
 
+
+
         /// <summary>
         ///  Set the specified propertyName, field, newValue.
         /// </summary>
@@ -159,6 +181,248 @@ namespace Loxodon.Framework.Observables
         }
 
         /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref bool field, bool newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref byte field, byte newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref sbyte field, sbyte newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref char field, char newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref DateTime field, DateTime newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref short field, short newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref ushort field, ushort newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref int field, int newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref uint field, uint newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref long field, long newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref ulong field, ulong newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref float field, float newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref double field, double newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref decimal field, decimal newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref Vector2 field, Vector2 newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref Vector3 field, Vector3 newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref Vector4 field, Vector4 newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref Color field, Color newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref Rect field, Rect newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool Set(ref Quaternion field, Quaternion newValue, [CallerMemberName] string propertyName = null)
+        {
+            return SetValue(ref field, newValue, propertyName);
+        }
+
+
+
+        /// <summary>
         ///  Set the specified propertyName, field, newValue.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -169,6 +433,282 @@ namespace Loxodon.Framework.Observables
         protected bool Set<T>(ref T field, T newValue, PropertyChangedEventArgs eventArgs)
         {
             if (object.Equals(field, newValue))
+                return false;
+
+            field = newValue;
+            RaisePropertyChanged(eventArgs);
+            return true;
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref bool field, bool newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref char field, char newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref DateTime field, DateTime newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref byte field, byte newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref sbyte field, sbyte newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref short field, short newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref ushort field, ushort newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref int field, int newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref uint field, uint newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref long field, long newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref ulong field, ulong newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref float field, float newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref double field, double newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref decimal field, decimal newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref Color field, Color newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref Vector2 field, Vector2 newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref Vector3 field, Vector3 newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref Vector4 field, Vector4 newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref Quaternion field, Quaternion newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        /// Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool Set(ref Rect field, Rect newValue, PropertyChangedEventArgs eventArgs)
+        {
+            return this.SetValue(ref field, newValue, eventArgs);
+        }
+
+        /// <summary>
+        ///  Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected bool SetValue<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null) where T : IEquatable<T>
+        {
+            if ((field != null && field.Equals(newValue)) || (field == null && newValue == null))
+                return false;
+
+            field = newValue;
+            RaisePropertyChanged(propertyName);
+            return true;
+        }
+
+        /// <summary>
+        ///  Set the specified propertyName, field, newValue.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
+        /// <param name="eventArgs"></param>
+        /// <returns></returns>
+        protected bool SetValue<T>(ref T field, T newValue, PropertyChangedEventArgs eventArgs) where T : IEquatable<T>
+        {
+            if ((field != null && field.Equals(newValue)) || (field == null && newValue == null))
                 return false;
 
             field = newValue;

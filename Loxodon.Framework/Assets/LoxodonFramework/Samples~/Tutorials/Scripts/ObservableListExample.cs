@@ -36,17 +36,17 @@ namespace Loxodon.Framework.Tutorials
 
 		public string Title {
 			get{ return this.title; }
-			set{ this.Set<string> (ref this.title, value, "Title"); }
+			set{ this.Set<string> (ref this.title, value); }
 		}
 
 		public string IconPath {
 			get{ return this.iconPath; }
-			set{ this.Set<string> (ref this.iconPath, value, "IconPath"); }
+			set{ this.Set<string> (ref this.iconPath, value); }
 		}
 
 		public string Content {
 			get{ return this.content; }
-			set{ this.Set<string> (ref this.content, value, "Content"); }
+			set{ this.Set<string> (ref this.content, value); }
 		}
 
 		public override string ToString ()

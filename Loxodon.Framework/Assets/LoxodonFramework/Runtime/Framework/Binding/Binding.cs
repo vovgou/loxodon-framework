@@ -57,6 +57,7 @@ namespace Loxodon.Framework.Binding
         private bool isUpdatingSource;
         private bool isUpdatingTarget;
         private string targetTypeName;
+        private Action updateTargetAction;
 
         public Binding(IBindingContext bindingContext, object source, object target, BindingDescription bindingDescription, ISourceProxyFactory sourceProxyFactory, ITargetProxyFactory targetProxyFactory) : base(bindingContext, source, target)
         {
@@ -197,184 +198,185 @@ namespace Loxodon.Framework.Binding
             catch (Exception) { }
         }
 
+
         protected virtual void UpdateTargetFromSource()
         {
             lock (_lock)
             {
+                if (updateTargetAction == null)
+                    updateTargetAction = DoUpdateTargetFromSource;
+
                 //Run on the main thread
-                Executors.RunOnMainThread(() =>
+                Executors.RunOnMainThread(updateTargetAction);
+            }
+        }
+
+        protected void DoUpdateTargetFromSource()
+        {
+            try
+            {
+                if (this.isUpdatingSource)
+                    return;
+
+                this.isUpdatingTarget = true;
+
+                IObtainable obtainable = this.sourceProxy as IObtainable;
+                if (obtainable == null)
+                    return;
+
+                IModifiable modifier = this.targetProxy as IModifiable;
+                if (modifier == null)
+                    return;
+
+                TypeCode typeCode = this.sourceProxy.TypeCode;
+                switch (typeCode)
                 {
-                    try
-                    {
-                        if (this.isUpdatingSource)
-                            return;
-
-                        this.isUpdatingTarget = true;
-
-                        IObtainable obtainable = this.sourceProxy as IObtainable;
-                        if (obtainable == null)
-                            return;
-
-                        IModifiable modifier = this.targetProxy as IModifiable;
-                        if (modifier == null)
-                            return;
-
-                        TypeCode typeCode = this.sourceProxy.TypeCode;
-                        switch (typeCode)
+                    case TypeCode.Boolean:
                         {
-                            case TypeCode.Boolean:
-                                {
-                                    var value = obtainable.GetValue<bool>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.Byte:
-                                {
-                                    var value = obtainable.GetValue<byte>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.Char:
-                                {
-                                    var value = obtainable.GetValue<char>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.DateTime:
-                                {
-                                    var value = obtainable.GetValue<DateTime>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.Decimal:
-                                {
-                                    var value = obtainable.GetValue<decimal>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.Double:
-                                {
-                                    var value = obtainable.GetValue<double>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.Int16:
-                                {
-                                    var value = obtainable.GetValue<short>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.Int32:
-                                {
-                                    var value = obtainable.GetValue<int>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.Int64:
-                                {
-                                    var value = obtainable.GetValue<long>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.SByte:
-                                {
-                                    var value = obtainable.GetValue<sbyte>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.Single:
-                                {
-                                    var value = obtainable.GetValue<float>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.String:
-                                {
-                                    var value = obtainable.GetValue<string>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.UInt16:
-                                {
-                                    var value = obtainable.GetValue<ushort>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.UInt32:
-                                {
-                                    var value = obtainable.GetValue<uint>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.UInt64:
-                                {
-                                    var value = obtainable.GetValue<ulong>();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
-                            case TypeCode.Object:
-                                {
-                                    Type valueType = this.sourceProxy.Type;
-                                    if (valueType.Equals(typeof(Vector2)))
-                                    {
-                                        var value = obtainable.GetValue<Vector2>();
-                                        this.SetTargetValue(modifier, value);
-                                    }
-                                    else if (valueType.Equals(typeof(Vector3)))
-                                    {
-                                        var value = obtainable.GetValue<Vector3>();
-                                        this.SetTargetValue(modifier, value);
-                                    }
-                                    else if (valueType.Equals(typeof(Vector4)))
-                                    {
-                                        var value = obtainable.GetValue<Vector4>();
-                                        this.SetTargetValue(modifier, value);
-                                    }
-                                    else if (valueType.Equals(typeof(Color)))
-                                    {
-                                        var value = obtainable.GetValue<Color>();
-                                        this.SetTargetValue(modifier, value);
-                                    }
-                                    else if (valueType.Equals(typeof(Rect)))
-                                    {
-                                        var value = obtainable.GetValue<Rect>();
-                                        this.SetTargetValue(modifier, value);
-                                    }
-                                    else if (valueType.Equals(typeof(Quaternion)))
-                                    {
-                                        var value = obtainable.GetValue<Quaternion>();
-                                        this.SetTargetValue(modifier, value);
-                                    }
-                                    else if (valueType.Equals(typeof(Version)))
-                                    {
-                                        var value = obtainable.GetValue<Version>();
-                                        this.SetTargetValue(modifier, value);
-                                    }
-                                    else
-                                    {
-                                        var value = obtainable.GetValue();
-                                        this.SetTargetValue(modifier, value);
-                                    }
-                                    break;
-                                }
-                            default:
-                                {
-                                    var value = obtainable.GetValue();
-                                    this.SetTargetValue(modifier, value);
-                                    break;
-                                }
+                            var value = obtainable.GetValue<bool>();
+                            this.SetTargetValue(modifier, value);
+                            break;
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        if (log.IsErrorEnabled)
-                            log.ErrorFormat("An exception occurs when the target property is updated.Please check the binding \"{0}{1}\" in the view \"{2}\".exception: {3}", this.targetTypeName, this.bindingDescription.ToString(), GetViewName(), e);
-                    }
-                    finally
-                    {
-                        this.isUpdatingTarget = false;
-                    }
-                });
+                    case TypeCode.Byte:
+                        {
+                            var value = obtainable.GetValue<byte>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.Char:
+                        {
+                            var value = obtainable.GetValue<char>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.DateTime:
+                        {
+                            var value = obtainable.GetValue<DateTime>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.Decimal:
+                        {
+                            var value = obtainable.GetValue<decimal>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.Double:
+                        {
+                            var value = obtainable.GetValue<double>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.Int16:
+                        {
+                            var value = obtainable.GetValue<short>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.Int32:
+                        {
+                            var value = obtainable.GetValue<int>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.Int64:
+                        {
+                            var value = obtainable.GetValue<long>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.SByte:
+                        {
+                            var value = obtainable.GetValue<sbyte>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.Single:
+                        {
+                            var value = obtainable.GetValue<float>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.String:
+                        {
+                            var value = obtainable.GetValue<string>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.UInt16:
+                        {
+                            var value = obtainable.GetValue<ushort>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.UInt32:
+                        {
+                            var value = obtainable.GetValue<uint>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.UInt64:
+                        {
+                            var value = obtainable.GetValue<ulong>();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                    case TypeCode.Object:
+                        {
+                            Type valueType = this.sourceProxy.Type;
+                            if (valueType.Equals(typeof(Vector2)))
+                            {
+                                var value = obtainable.GetValue<Vector2>();
+                                this.SetTargetValue(modifier, value);
+                            }
+                            else if (valueType.Equals(typeof(Vector3)))
+                            {
+                                var value = obtainable.GetValue<Vector3>();
+                                this.SetTargetValue(modifier, value);
+                            }
+                            else if (valueType.Equals(typeof(Vector4)))
+                            {
+                                var value = obtainable.GetValue<Vector4>();
+                                this.SetTargetValue(modifier, value);
+                            }
+                            else if (valueType.Equals(typeof(Color)))
+                            {
+                                var value = obtainable.GetValue<Color>();
+                                this.SetTargetValue(modifier, value);
+                            }
+                            else if (valueType.Equals(typeof(Rect)))
+                            {
+                                var value = obtainable.GetValue<Rect>();
+                                this.SetTargetValue(modifier, value);
+                            }
+                            else if (valueType.Equals(typeof(Quaternion)))
+                            {
+                                var value = obtainable.GetValue<Quaternion>();
+                                this.SetTargetValue(modifier, value);
+                            }
+                            else
+                            {
+                                var value = obtainable.GetValue();
+                                this.SetTargetValue(modifier, value);
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            var value = obtainable.GetValue();
+                            this.SetTargetValue(modifier, value);
+                            break;
+                        }
+                }
+            }
+            catch (Exception e)
+            {
+                if (log.IsErrorEnabled)
+                    log.ErrorFormat("An exception occurs when the target property is updated.Please check the binding \"{0}{1}\" in the view \"{2}\".exception: {3}", this.targetTypeName, this.bindingDescription.ToString(), GetViewName(), e);
+            }
+            finally
+            {
+                this.isUpdatingTarget = false;
             }
         }
 
@@ -520,11 +522,6 @@ namespace Loxodon.Framework.Binding
                             else if (valueType.Equals(typeof(Quaternion)))
                             {
                                 var value = obtainable.GetValue<Quaternion>();
-                                this.SetSourceValue(modifier, value);
-                            }
-                            else if (valueType.Equals(typeof(Version)))
-                            {
-                                var value = obtainable.GetValue<Version>();
                                 this.SetSourceValue(modifier, value);
                             }
                             else

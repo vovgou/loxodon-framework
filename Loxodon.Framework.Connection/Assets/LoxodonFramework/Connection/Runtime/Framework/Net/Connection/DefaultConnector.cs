@@ -39,14 +39,17 @@ namespace Loxodon.Framework.Net.Connection
         protected readonly Subject<EventArgs> eventArgsSubject = new Subject<EventArgs>();
         protected readonly Subject<TNotification> notificationSubject = new Subject<TNotification>();
         protected readonly ConcurrentDictionary<IRequest, RequestTaskTimeoutOrCompletionSource> promises = new ConcurrentDictionary<IRequest, RequestTaskTimeoutOrCompletionSource>();
+        protected readonly ConcurrentStack<IMessage> messages = new ConcurrentStack<IMessage>();
         protected string hostname;
         protected int port;
         protected int connTimeoutMilliseconds;
         protected int timeoutMilliseconds;
 
+        protected CancellationTokenSource readTokenSource;
         protected CancellationTokenSource shutdownTokenSource;
         protected CancellationToken shutdownCancellationToken;
-        protected object stateLock = new object();
+        protected readonly object stateLock = new object();
+        protected readonly object readLock = new object();
         protected ConnectionState state = ConnectionState.Closed;
         protected IChannel<IMessage> channel;
         protected IdleStateMonitor idleStateMonitor;
@@ -140,7 +143,7 @@ namespace Loxodon.Framework.Net.Connection
                 if (timeoutMilliseconds <= 0)
                     timeoutMilliseconds = DEFAULT_TIMEOUT;
 
-                Task.Run(DoTick);
+                Task.Factory.StartNew(DoTick, shutdownCancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
             }
         }
 
@@ -154,7 +157,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public Task Connect(string hostname, int port, int timeoutMilliseconds)
         {
-            return Connect(hostname, port, timeoutMilliseconds, default(CancellationToken));
+            return Connect(hostname, port, timeoutMilliseconds, CancellationToken.None);
         }
 
         public async Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken)
@@ -166,6 +169,7 @@ namespace Loxodon.Framework.Net.Connection
             if (!await connectLock.WaitAsync(timeoutMilliseconds, cancellationToken).ConfigureAwait(false))
                 throw new TimeoutException();
 
+            CancellationTokenSource connectionTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             try
             {
                 this.Init();
@@ -176,8 +180,17 @@ namespace Loxodon.Framework.Net.Connection
                 this.hostname = hostname;
                 this.port = port;
                 this.connTimeoutMilliseconds = timeoutMilliseconds;
-                await DoConnect(cancellationToken).TimeoutAfter(connTimeoutMilliseconds).ConfigureAwait(false);
+                connectionTokenSource.CancelAfter(connTimeoutMilliseconds);
+                CancellationToken connectionToken = connectionTokenSource.Token;
+                connectionToken.Register(() =>
+                {
+                    if (channel != null && State == ConnectionState.Connecting)
+                        channel.Close();
+                });
+
+                await DoConnect(connectionToken).ConfigureAwait(false);
                 this.State = ConnectionState.Connected;
+                connectionTokenSource.Dispose();
                 this.eventArgsSubject.Publish(ConnectionEventArgs.ConnectedEventArgs);
             }
             catch (Exception)
@@ -189,41 +202,59 @@ namespace Loxodon.Framework.Net.Connection
             }
             finally
             {
+                if (connectionTokenSource != null)
+                    connectionTokenSource.Dispose();
                 connectLock.Release();
             }
         }
 
         public Task Reconnect()
         {
-            return Reconnect(CancellationToken.None);
+            return Reconnect(false, CancellationToken.None);
         }
 
-        public async Task Reconnect(CancellationToken cancellationToken)
+        public Task Reconnect(CancellationToken cancellationToken)
+        {
+            return Reconnect(false, cancellationToken);
+        }
+
+        protected async Task Reconnect(bool autoReconnect, CancellationToken cancellationToken)
         {
             await connectLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+            CancellationTokenSource connectionTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             try
             {
                 await this.DoDisconnect().ConfigureAwait(false);
                 this.State = ConnectionState.Connecting;
                 this.eventArgsSubject.Publish(ConnectionEventArgs.ReconnectingEventArgs);
-                await DoConnect(cancellationToken).TimeoutAfter(this.connTimeoutMilliseconds).ConfigureAwait(false);
+                connectionTokenSource.CancelAfter(this.connTimeoutMilliseconds);
+                CancellationToken connectionToken = connectionTokenSource.Token;
+                connectionToken.Register(() =>
+                {
+                    if (channel != null && State == ConnectionState.Connecting)
+                        channel.Close();
+                });
+                await DoConnect(connectionToken).ConfigureAwait(false);
                 this.State = ConnectionState.Connected;
+                connectionTokenSource.Dispose();
                 this.eventArgsSubject.Publish(ConnectionEventArgs.ConnectedEventArgs);
             }
             catch (Exception)
             {
                 await DoDisconnect().ConfigureAwait(false);
                 this.State = ConnectionState.Exception;
-                this.eventArgsSubject.Publish(ConnectionEventArgs.FailedEventArgs);
+                this.eventArgsSubject.Publish(autoReconnect ? ConnectionEventArgs.ExceptionEventArgs : ConnectionEventArgs.FailedEventArgs);
                 throw;
             }
             finally
             {
+                if (connectionTokenSource != null)
+                    connectionTokenSource.Dispose();
                 connectLock.Release();
             }
         }
 
-        public async Task Disconnect()
+        public virtual async Task Disconnect()
         {
             if (State == ConnectionState.Closed)
                 return;
@@ -332,10 +363,28 @@ namespace Loxodon.Framework.Net.Connection
 
         protected virtual async Task DoConnect(CancellationToken cancellationToken)
         {
-            await channel.Connect(hostname, port, connTimeoutMilliseconds, cancellationToken).ConfigureAwait(false);
-            await DoHandshake(channel, cancellationToken).ConfigureAwait(false);
-            OnConnected();
-            this.Read();
+            try
+            {
+                await channel.Connect(hostname, port, connTimeoutMilliseconds, cancellationToken).ConfigureAwait(false);
+                await DoHandshake(channel, cancellationToken).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                OnConnected();
+                cancellationToken.ThrowIfCancellationRequested();
+
+                this.messages.Clear();
+                this.readTokenSource = new CancellationTokenSource();
+                _ = Task.Factory.StartNew(DoReceived, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+                this.Read();
+            }catch(Exception e)
+            {
+                if (this.readTokenSource != null)
+                {
+                    this.readTokenSource.Cancel();
+                    this.readTokenSource = null;
+                }
+                throw e;
+            }
         }
 
         protected virtual async Task DoHandshake(IChannel<IMessage> channel, CancellationToken cancellationToken)
@@ -354,8 +403,18 @@ namespace Loxodon.Framework.Net.Connection
         {
             try
             {
-                if (this.channel != null && this.channel.Connected)
+                if (this.channel != null)
                     await channel.Close().ConfigureAwait(false);
+
+                if (readTokenSource != null)
+                {
+                    readTokenSource.Cancel();
+                    readTokenSource = null;
+                    lock (readLock)
+                    {
+                        Monitor.PulseAll(readLock);
+                    }
+                }
 
                 OnDisconnected();
             }
@@ -365,6 +424,28 @@ namespace Loxodon.Framework.Net.Connection
         protected virtual void OnDisconnected()
         {
             idleStateMonitor?.OnDisconnected();
+        }
+
+        protected void DoReceived()
+        {
+            CancellationToken token = this.readTokenSource.Token;
+            while (true)
+            {
+                IMessage message;
+                if (messages.TryPop(out message))
+                {
+                    OnReceived(message);
+                    continue;
+                }
+
+                lock (readLock)
+                {
+                    if (token.IsCancellationRequested && messages.Count <= 0)
+                        break;
+
+                    Monitor.Wait(readLock, 2000);
+                }
+            }
         }
 
         protected virtual Task<IResponse> DoSend(IRequest request, int timeoutMilliseconds, CancellationToken cancellationToken)
@@ -417,13 +498,21 @@ namespace Loxodon.Framework.Net.Connection
             {
                 if (!t.IsFaulted && !t.IsCanceled)
                 {
-                    try
+                    //try
+                    //{
+                    //    this.OnReceived(t.Result);
+                    //}
+                    //finally
+                    //{
+                    //    Read();
+                    //}
+
+                    messages.Push(t.Result);
+                    Read();
+
+                    lock (readLock)
                     {
-                        this.OnReceived(t.Result);
-                    }
-                    finally
-                    {
-                        Read();
+                        Monitor.PulseAll(readLock);
                     }
                 }
                 else
@@ -433,7 +522,6 @@ namespace Loxodon.Framework.Net.Connection
                         return;
 
                     OnIOException(t.Exception);
-                    this.eventArgsSubject.Publish(ConnectionEventArgs.ExceptionEventArgs);
                     await DoDisconnect();
                     if (this.State != ConnectionState.Connected)
                         return;
@@ -441,9 +529,10 @@ namespace Loxodon.Framework.Net.Connection
                     if (!AutoReconnect)
                     {
                         this.State = ConnectionState.Exception;
+                        this.eventArgsSubject.Publish(ConnectionEventArgs.ExceptionEventArgs);
                         return;
                     }
-                    await Reconnect();
+                    await Reconnect(true, CancellationToken.None);
                 }
             }, TaskContinuationOptions.ExecuteSynchronously);
         }
@@ -465,7 +554,7 @@ namespace Loxodon.Framework.Net.Connection
                     {
                         RequestTaskTimeoutOrCompletionSource promise;
                         if (promises.TryRemove(request, out promise) && promise != null)
-                            promise.SetResult(response);
+                            promise.TrySetResult(response);
                         break;
                     }
                 }
@@ -490,13 +579,13 @@ namespace Loxodon.Framework.Net.Connection
 
                         if (promise.IsCanceled)
                         {
-                            promise.SetCanceled();
+                            promise.TrySetCanceled();
                             promises.TryRemove(request, out _);
                         }
 
                         if (promise.IsTimeout)
                         {
-                            promise.SetTimeout();
+                            promise.TrySetTimeout();
                             promises.TryRemove(request, out _);
                         }
                     }
@@ -514,7 +603,7 @@ namespace Loxodon.Framework.Net.Connection
         protected virtual void ValidateConnected()
         {
             if (!this.Connected)
-                throw new IOException("Connection not established.");
+                throw new IOException("The connection is not established or disconnected.");
         }
 
         protected virtual void ValidateDisposed()

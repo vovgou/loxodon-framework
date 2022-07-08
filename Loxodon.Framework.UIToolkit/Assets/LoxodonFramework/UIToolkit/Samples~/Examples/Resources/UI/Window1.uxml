@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Samples/Loxodon%20Framework%20UITookit/2.0.0/Examples/Resources/UI/Window1.uss?fileID=7433441132597879392&amp;guid=d5141b80e522b3f4fbca91bf38da090c&amp;type=3#Window1" />
+    <ui:Button text="Open Dialog" display-tooltip-when-elided="true" name="openDialog" />
+    <ui:Button text="Open Window2" display-tooltip-when-elided="true" name="openWindow" />
+    <ui:Button text="Add Item" display-tooltip-when-elided="true" name="addItem" />
+    <ui:Button text="Close" display-tooltip-when-elided="true" name="close" />
+    <ui:VisualElement name="listContainer" style="flex-grow: 1;" />
+</ui:UXML>

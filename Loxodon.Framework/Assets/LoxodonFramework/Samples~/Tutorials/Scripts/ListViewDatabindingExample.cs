@@ -126,24 +126,24 @@ namespace Loxodon.Framework.Tutorials
         public string Title
         {
             get { return this.title; }
-            set { this.Set<string>(ref title, value, "Title"); }
+            set { this.Set<string>(ref title, value); }
         }
         public string Icon
         {
             get { return this.icon; }
-            set { this.Set<string>(ref icon, value, "Icon"); }
+            set { this.Set<string>(ref icon, value); }
         }
 
         public float Price
         {
             get { return this.price; }
-            set { this.Set<float>(ref price, value, "Price"); }
+            set { this.Set<float>(ref price, value); }
         }
 
         public bool IsSelected
         {
             get { return this.selected; }
-            set { this.Set<bool>(ref selected, value, "IsSelected"); }
+            set { this.Set<bool>(ref selected, value); }
         }
     }
 

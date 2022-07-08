@@ -1,0 +1,29 @@
+{
+  "name": "com.vovgou.loxodon-framework-fody",
+  "displayName": "Loxodon Framework Fody",
+  "version": "2.4.0",
+  "unity": "2018.4",
+  "description": "LoxodonFramework is a lightweight MVVM(Model-View-ViewModel) framework built specifically to target Unity3D. Databinding and localization are supported.It has a very flexible extensibility.It makes your game development faster and easier.\n\nFor tutorials,examples and support,please see the project.You can also discuss the project in the Unity Forums.\n\nThe plugin is compatible with MacOSX,Windows,Linux,UWP,IOS and Android,and provides all the source code of the project.",
+  "license": "MIT",
+  "keywords": [
+    "MVVM",
+    "UGUI",
+    "Ability",
+    "XLua",
+    "Unity3d",
+    "Fody",
+    "PropertyChanged",
+    "Weaver"
+  ],
+  "author": {
+    "name": "Clark Yang",
+    "email": "yangpc.china@gmail.com",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+  "category": "GUI",
+  "relatedPackages": {
+  },
+  "dependencies": {
+    "com.vovgou.loxodon-framework": "2.3.5"
+  }
+}

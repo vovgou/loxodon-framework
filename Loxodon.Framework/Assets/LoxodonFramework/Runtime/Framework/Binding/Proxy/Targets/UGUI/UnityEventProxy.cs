@@ -42,7 +42,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         protected Delegate handler;/* Delegate Binding */
 
         protected IProxyPropertyInfo interactable;
-
+        protected Action updateInteractableAction;
         protected T unityEvent;
 
         public UnityEventProxyBase(object target, T unityEvent) : base(target)
@@ -88,10 +88,10 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             if (this.invoker != null)
-                this.invoker = null;            
+                this.invoker = null;
 
             if (this.handler != null)
-                this.handler = null;            
+                this.handler = null;
 
             if (value == null)
                 return;
@@ -154,7 +154,10 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected virtual void OnCanExecuteChanged(object sender, EventArgs e)
         {
-            Executors.RunOnMainThread(UpdateTargetInteractable);
+            if (updateInteractableAction == null)
+                updateInteractableAction = UpdateTargetInteractable;
+
+            Executors.RunOnMainThread(updateInteractableAction);
         }
 
         protected virtual void UpdateTargetInteractable()

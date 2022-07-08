@@ -244,6 +244,8 @@ namespace Loxodon.Framework.Net.Connection
                 if (handshakeHandler != null)
                     await handshakeHandler.OnHandshake(this).ConfigureAwait(false);
 #pragma warning restore CS0618 
+
+                cancellationToken.ThrowIfCancellationRequested();
                 this.connected = true;
             }
             catch (Exception)

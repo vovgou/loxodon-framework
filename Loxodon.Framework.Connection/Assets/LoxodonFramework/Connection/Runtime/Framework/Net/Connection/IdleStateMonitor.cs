@@ -100,74 +100,142 @@ namespace Loxodon.Framework.Net.Connection
 
             this.cancellationTokenSource = new CancellationTokenSource();
             this.cancellationToken = cancellationTokenSource.Token;
-            Task.Run(() =>
-             {
-                 try
-                 {
-                     while (true)
-                     {
-                         if (this.cancellationToken.IsCancellationRequested)
-                             break;
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    while (true)
+                    {
+                        if (this.cancellationToken.IsCancellationRequested)
+                            break;
 
-                         long ticks = DateTime.Now.Ticks;
-                         if (connected)
-                         {
-                             try
-                             {
-                                 IdleStateEventArgs readerIdleEventArgs = null;
-                                 IdleStateEventArgs writerIdleEventArgs = null;
-                                 IdleStateEventArgs allIdleEventArgs = null;
+                        long ticks = DateTime.Now.Ticks;
+                        if (connected)
+                        {
+                            try
+                            {
+                                IdleStateEventArgs readerIdleEventArgs = null;
+                                IdleStateEventArgs writerIdleEventArgs = null;
+                                IdleStateEventArgs allIdleEventArgs = null;
 
-                                 lock (syncLock)
-                                 {
-                                     if (enableReaderIdle && readerIdleCheckTime <= ticks)
-                                     {
-                                         readerIdleEventArgs = firstReaderIdle ? IdleStateEventArgs.FirstReaderIdleStateEvent : IdleStateEventArgs.ReaderIdleStateEvent;
-                                         firstReaderIdle = false;
-                                         readerIdleCheckTime = ticks + readerIdleTime.Ticks;
-                                     }
+                                lock (syncLock)
+                                {
+                                    if (enableReaderIdle && readerIdleCheckTime <= ticks)
+                                    {
+                                        readerIdleEventArgs = firstReaderIdle ? IdleStateEventArgs.FirstReaderIdleStateEvent : IdleStateEventArgs.ReaderIdleStateEvent;
+                                        firstReaderIdle = false;
+                                        readerIdleCheckTime = ticks + readerIdleTime.Ticks;
+                                    }
 
-                                     if (enableWriterIdle && writerIdleCheckTime <= ticks)
-                                     {
-                                         writerIdleEventArgs = firstWriterIdle ? IdleStateEventArgs.FirstWriterIdleStateEvent : IdleStateEventArgs.WriterIdleStateEvent;
-                                         firstWriterIdle = false;
-                                         writerIdleCheckTime = ticks + writerIdleTime.Ticks;
-                                     }
+                                    if (enableWriterIdle && writerIdleCheckTime <= ticks)
+                                    {
+                                        writerIdleEventArgs = firstWriterIdle ? IdleStateEventArgs.FirstWriterIdleStateEvent : IdleStateEventArgs.WriterIdleStateEvent;
+                                        firstWriterIdle = false;
+                                        writerIdleCheckTime = ticks + writerIdleTime.Ticks;
+                                    }
 
-                                     if (enableAllIdle && allIdleCheckTime <= ticks)
-                                     {
-                                         allIdleEventArgs = firstAllIdle ? IdleStateEventArgs.FirstAllIdleStateEvent : IdleStateEventArgs.AllIdleStateEvent;
-                                         firstAllIdle = false;
-                                         allIdleCheckTime = ticks + allIdleTime.Ticks;
-                                     }
-                                 }
+                                    if (enableAllIdle && allIdleCheckTime <= ticks)
+                                    {
+                                        allIdleEventArgs = firstAllIdle ? IdleStateEventArgs.FirstAllIdleStateEvent : IdleStateEventArgs.AllIdleStateEvent;
+                                        firstAllIdle = false;
+                                        allIdleCheckTime = ticks + allIdleTime.Ticks;
+                                    }
+                                }
 
-                                 if (readerIdleEventArgs != null)
-                                     RaiseIdleStateChanged(readerIdleEventArgs);
-                                 if (writerIdleEventArgs != null)
-                                     RaiseIdleStateChanged(writerIdleEventArgs);
-                                 if (allIdleEventArgs != null)
-                                     RaiseIdleStateChanged(allIdleEventArgs);
-                             }
-                             catch (Exception) { }
-                         }
+                                if (readerIdleEventArgs != null)
+                                    RaiseIdleStateChanged(readerIdleEventArgs);
+                                if (writerIdleEventArgs != null)
+                                    RaiseIdleStateChanged(writerIdleEventArgs);
+                                if (allIdleEventArgs != null)
+                                    RaiseIdleStateChanged(allIdleEventArgs);
+                            }
+                            catch (Exception) { }
+                        }
 
-                         lock (syncLock)
-                         {
-                             if (connected)
-                             {
-                                 if (waitTimeout.Ticks > 0)
-                                     Monitor.Wait(syncLock, waitTimeout);
-                             }
-                             else
-                             {
-                                 Monitor.Wait(syncLock);
-                             }
-                         }
-                     }
-                 }
-                 catch (Exception) { }
-             }, cancellationToken);
+                        lock (syncLock)
+                        {
+                            if (connected)
+                            {
+                                if (waitTimeout.Ticks > 0)
+                                    Monitor.Wait(syncLock, waitTimeout);
+                            }
+                            else
+                            {
+                                Monitor.Wait(syncLock);
+                            }
+                        }
+                    }
+                }
+                catch (Exception) { }
+            }, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            //Task.Run(() =>
+            // {
+            //     try
+            //     {
+            //         while (true)
+            //         {
+            //             if (this.cancellationToken.IsCancellationRequested)
+            //                 break;
+
+            //             long ticks = DateTime.Now.Ticks;
+            //             if (connected)
+            //             {
+            //                 try
+            //                 {
+            //                     IdleStateEventArgs readerIdleEventArgs = null;
+            //                     IdleStateEventArgs writerIdleEventArgs = null;
+            //                     IdleStateEventArgs allIdleEventArgs = null;
+
+            //                     lock (syncLock)
+            //                     {
+            //                         if (enableReaderIdle && readerIdleCheckTime <= ticks)
+            //                         {
+            //                             readerIdleEventArgs = firstReaderIdle ? IdleStateEventArgs.FirstReaderIdleStateEvent : IdleStateEventArgs.ReaderIdleStateEvent;
+            //                             firstReaderIdle = false;
+            //                             readerIdleCheckTime = ticks + readerIdleTime.Ticks;
+            //                         }
+
+            //                         if (enableWriterIdle && writerIdleCheckTime <= ticks)
+            //                         {
+            //                             writerIdleEventArgs = firstWriterIdle ? IdleStateEventArgs.FirstWriterIdleStateEvent : IdleStateEventArgs.WriterIdleStateEvent;
+            //                             firstWriterIdle = false;
+            //                             writerIdleCheckTime = ticks + writerIdleTime.Ticks;
+            //                         }
+
+            //                         if (enableAllIdle && allIdleCheckTime <= ticks)
+            //                         {
+            //                             allIdleEventArgs = firstAllIdle ? IdleStateEventArgs.FirstAllIdleStateEvent : IdleStateEventArgs.AllIdleStateEvent;
+            //                             firstAllIdle = false;
+            //                             allIdleCheckTime = ticks + allIdleTime.Ticks;
+            //                         }
+            //                     }
+
+            //                     if (readerIdleEventArgs != null)
+            //                         RaiseIdleStateChanged(readerIdleEventArgs);
+            //                     if (writerIdleEventArgs != null)
+            //                         RaiseIdleStateChanged(writerIdleEventArgs);
+            //                     if (allIdleEventArgs != null)
+            //                         RaiseIdleStateChanged(allIdleEventArgs);
+            //                 }
+            //                 catch (Exception) { }
+            //             }
+
+            //             lock (syncLock)
+            //             {
+            //                 if (connected)
+            //                 {
+            //                     if (waitTimeout.Ticks > 0)
+            //                         Monitor.Wait(syncLock, waitTimeout);
+            //                 }
+            //                 else
+            //                 {
+            //                     Monitor.Wait(syncLock);
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     catch (Exception) { }
+            // }, cancellationToken);
         }
 
         public void OnConnected()

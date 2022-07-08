@@ -51,7 +51,7 @@ namespace Loxodon.Framework.Tutorials
                 Debug.LogFormat("The task is finished. IsCancelled:{0} Result:{1} Exception:{2}", r.IsCancelled, r.Result, r.Exception);
             });
 
-            InterceptableEnumerator routine = new InterceptableEnumerator(DoTask(result));
+            InterceptableEnumerator routine = InterceptableEnumerator.Create(DoTask(result));
 
             routine.RegisterCatchBlock((e) =>
             {
@@ -80,7 +80,7 @@ namespace Loxodon.Framework.Tutorials
                 Debug.LogFormat("The task is finished. IsCancelled:{0} Result:{1} Exception:{2}", r.IsCancelled, r.Result, r.Exception);
             });
 
-            InterceptableEnumerator routine = new InterceptableEnumerator(DoTask(result));
+            InterceptableEnumerator routine = InterceptableEnumerator.Create(DoTask(result));
 
             /* if result.IsCancellationRequested == true ,the task will be cancelled. */
             routine.RegisterConditionBlock(() => !(result.IsCancellationRequested));

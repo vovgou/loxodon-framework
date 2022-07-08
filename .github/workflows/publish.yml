@@ -88,4 +88,22 @@ jobs:
         env:
           CI: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
+      - name: Publish Loxodon.Framework.UIToolkit
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.UIToolkit/Assets/LoxodonFramework/UIToolkit
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
+      - name: Publish Loxodon.Framework.Fody
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Fody/Assets/LoxodonFramework/Fody
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         

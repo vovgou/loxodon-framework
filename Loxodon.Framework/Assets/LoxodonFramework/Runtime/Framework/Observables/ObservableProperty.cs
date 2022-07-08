@@ -27,7 +27,7 @@ using System;
 namespace Loxodon.Framework.Observables
 {
     [Serializable]
-    public class ObservablePropertyBase<T>
+    public abstract class ObservablePropertyBase<T>
     {
         private readonly object _lock = new object();
         private EventHandler valueChanged;
@@ -52,9 +52,7 @@ namespace Loxodon.Framework.Observables
 
         protected void RaiseValueChanged()
         {
-            var handler = this.valueChanged;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
+            this.valueChanged?.Invoke(this, EventArgs.Empty);
         }
 
         protected virtual bool Equals(T x, T y)

@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -69,4 +68,3 @@ namespace Loxodon.Framework.Asynchronous
         }
     }
 }
-#endif

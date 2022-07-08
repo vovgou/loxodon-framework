@@ -35,17 +35,17 @@ namespace Loxodon.Framework.Examples
 
 		public bool Enable {
 			get{ return this.enable; }
-			set{ this.Set<bool> (ref this.enable, value, "Enable"); }
+			set{ this.Set<bool> (ref this.enable, value); }
 		}
 
 		public float Progress {
 			get{ return this.progress; }
-			set{ this.Set<float> (ref this.progress, value, "Progress"); }
+			set{ this.Set<float> (ref this.progress, value); }
 		}
 
 		public string Tip {
 			get{ return this.tip; }
-			set{ this.Set<string> (ref this.tip, value, "Tip"); }
+			set{ this.Set<string> (ref this.tip, value); }
 		}
 	}
 }

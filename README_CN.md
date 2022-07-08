@@ -9,7 +9,7 @@
 
 [(English)](README.md)
 
-**MVVM and Databinding for Unity3d（C# & XLua）**
+**MVVM and Databinding for Unity3d（C# & XLua & ILRuntime）**
 
 *开发者 Clark*
 
@@ -49,9 +49,9 @@ WebGL
 - **新的API使用了async/await和Task，不再支持.net 2.0**
 - **修改了Window、WindowManager等几个类的函数，改IAsyncTask为IAsyncResult**
 
-### 使用 OpenUPM 安装(推荐)
+### 使用 OpenUPM 安装
 
-[OpenUPM](https://openupm.com/) 是一个开源的UPM包仓库，它支持发布第三方的UPM包，它能够自动管理包的依赖关系，推荐使用它安装本框架.
+[OpenUPM](https://openupm.com/) 是一个开源的UPM包仓库，它支持发布第三方的UPM包，它能够自动管理包的依赖关系，可以使用它安装本框架.
 
 通过openupm命令安装包,要求[nodejs](https://nodejs.org/en/download/) and openupm-cli客户端的支持，如果没有安装请先安装nodejs和open-cli。
 
@@ -64,9 +64,11 @@ WebGL
     #安装 loxodon-framework
     openupm add com.vovgou.loxodon-framework
     
-### 修改Packages/manifest.json文件安装
+### 修改Packages/manifest.json文件安装(推荐)
 
 通过修改manifest.json文件安装，不需要安装nodejs和openupm-cli客户端。在Unity项目根目录下找到Packages/manifest.json文件，在文件的scopedRegistries（没有可以自己添加）节点下添加第三方仓库package.openupm.com的配置，同时在dependencies节点下添加com.vovgou.loxodon-framework的配置，保存后切换到Unity窗口即可完成安装。
+
+框架及所有插件同时也发布到npm的仓库中，也可以使用npm的仓库安装下载插件：[https://registry.npmjs.org/](https://registry.npmjs.org/)
 
     {
       "dependencies": {
@@ -226,6 +228,18 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 
 ## 插件与集成（可选）
 
+- [Loxodon Framework Fody](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody)
+
+    这是一个静态织入代码的插件，已将[PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)集成到框架中，通过为ViewModel类Model类添加注解，可以自动生成"INotifyPropertyChanged"接口，为属性添加RaisePropertyChanged函数，触发PropertyChangedEvent通知，提高开发效率。
+
+- [Loxodon Framework UIToolkit](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.UIToolkit)
+
+    此插件扩展了Loxodon.Framework框架针对UIToolkit的支持，增加UIToolkitWindow窗口，对UIToolkit的控件可以进行数据绑定，也支持UIToolkit和UGUI的界面混用。
+
+- [Loxodon Framework ILRuntime](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.ILRuntime)
+
+	Loxodon.Framework.ILRuntime插件为框架增加了对ILRuntime的支持，可以在ILRuntime环境以MVVM的模式开发游戏。同时还可以引入Fody静态织入INotifyPropertyChanged接口，自动为VM对象的属性添加属性改变事件，简化代码编写，具体可以参见我的示例代码。
+
 - [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
 
     支持本地化文件格式为csv文件格式，要求 Unity2018.4 以上版本.
@@ -248,9 +262,6 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 
     	![](docs/images/LuaPrecompileWizard.png)
 
-- [Loxodon Framework ILRuntime](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.ILRuntime)
-
-	Loxodon.Framework.ILRuntime插件为框架增加了对ILRuntime的支持，可以在ILRuntime环境以MVVM的模式开发游戏。同时还可以引入Fody静态织入INotifyPropertyChanged接口，自动为VM对象的属性添加属性改变事件，简化代码编写，具体可以参见我的示例代码。
 
 - [Loxodon Framework Bundle](https://assetstore.unity.com/packages/slug/87419)
 
@@ -355,4 +366,4 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 ## 联系方式
 邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
 网站: [https://vovgou.github.io/loxodon-framework/](https://vovgou.github.io/loxodon-framework/)  
-QQ群: 622321589（已满） 15034148
+QQ群: 622321589 15034148

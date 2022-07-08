@@ -44,7 +44,7 @@ namespace Loxodon.Framework.ViewModels
         public virtual string Title
         {
             get { return this.title; }
-            set { this.Set<string>(ref this.title, value, "Title"); }
+            set { this.Set<string>(ref this.title, value); }
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Loxodon.Framework.ViewModels
         public virtual string Message
         {
             get { return this.message; }
-            set { this.Set<string>(ref this.message, value, "Message"); }
+            set { this.Set<string>(ref this.message, value); }
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Loxodon.Framework.ViewModels
         public virtual string ConfirmButtonText
         {
             get { return this.confirmButtonText; }
-            set { this.Set<string>(ref this.confirmButtonText, value, "ConfirmButtonText"); }
+            set { this.Set<string>(ref this.confirmButtonText, value); }
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Loxodon.Framework.ViewModels
         public virtual string NeutralButtonText
         {
             get { return this.neutralButtonText; }
-            set { this.Set<string>(ref this.neutralButtonText, value, "NeutralButtonText"); }
+            set { this.Set<string>(ref this.neutralButtonText, value); }
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Loxodon.Framework.ViewModels
         public virtual string CancelButtonText
         {
             get { return this.cancelButtonText; }
-            set { this.Set<string>(ref this.cancelButtonText, value, "CancelButtonText"); }
+            set { this.Set<string>(ref this.cancelButtonText, value); }
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Loxodon.Framework.ViewModels
         public virtual bool CanceledOnTouchOutside
         {
             get { return this.canceledOnTouchOutside; }
-            set { this.Set<bool>(ref this.canceledOnTouchOutside, value, "CanceledOnTouchOutside"); }
+            set { this.Set<bool>(ref this.canceledOnTouchOutside, value); }
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Loxodon.Framework.ViewModels
         public virtual Action<int> Click
         {
             get { return this.click; }
-            set { this.Set<Action<int>>(ref this.click, value, "Click"); }
+            set { this.Set<Action<int>>(ref this.click, value); }
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Loxodon.Framework.ViewModels
         public virtual bool Closed
         {
             get { return this.closed; }
-            protected set { this.Set<bool>(ref this.closed, value, "Closed"); }
+            protected set { this.Set<bool>(ref this.closed, value); }
         }
 
         /// <summary>

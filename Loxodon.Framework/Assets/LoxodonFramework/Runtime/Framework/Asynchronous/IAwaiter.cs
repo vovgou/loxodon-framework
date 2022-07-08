@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
 using System.Runtime.CompilerServices;
 
 namespace Loxodon.Framework.Asynchronous
@@ -54,4 +53,3 @@ namespace Loxodon.Framework.Asynchronous
         T GetResult();
     }
 }
-#endif

@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
 using Loxodon.Framework.Execution;
 using System;
 using System.Collections;
@@ -37,7 +36,7 @@ namespace Loxodon.Framework.Asynchronous
         private static CoroutineAwaiter RunOnCoroutine(IEnumerator routine)
         {
             CoroutineAwaiter awaiter = new CoroutineAwaiter();
-            InterceptableEnumerator enumerator = routine is InterceptableEnumerator ? (InterceptableEnumerator)routine : new InterceptableEnumerator(routine);
+            InterceptableEnumerator enumerator = routine is InterceptableEnumerator ? (InterceptableEnumerator)routine : InterceptableEnumerator.Create(routine);
             enumerator.RegisterCatchBlock(e =>
             {
                 awaiter.SetResult(e);
@@ -51,31 +50,33 @@ namespace Loxodon.Framework.Asynchronous
             return awaiter;
         }
 
-        private static CoroutineAwaiter<TResult> RunOnCoroutine<TResult>(IEnumerator routine, Func<TResult> getter)
-        {
-            CoroutineAwaiter<TResult> awaiter = new CoroutineAwaiter<TResult>();
-            InterceptableEnumerator enumerator = routine is InterceptableEnumerator ? (InterceptableEnumerator)routine : new InterceptableEnumerator(routine);
-            enumerator.RegisterCatchBlock(e =>
-            {
-                awaiter.SetResult(default(TResult), e);
-            });
-            enumerator.RegisterFinallyBlock(() =>
-            {
-                if (!awaiter.IsCompleted)
-                    awaiter.SetResult(getter(), null);
-            });
-            Executors.RunOnCoroutineNoReturn(enumerator);
-            return awaiter;
-        }
+        //private static CoroutineAwaiter<TResult> RunOnCoroutine<TResult>(IEnumerator routine, Func<TResult> getter)
+        //{
+        //    CoroutineAwaiter<TResult> awaiter = new CoroutineAwaiter<TResult>();
+        //    InterceptableEnumerator enumerator = routine is InterceptableEnumerator ? (InterceptableEnumerator)routine : InterceptableEnumerator.Create(routine);
+        //    enumerator.RegisterCatchBlock(e =>
+        //    {
+        //        awaiter.SetResult(default(TResult), e);
+        //    });
+        //    enumerator.RegisterFinallyBlock(() =>
+        //    {
+        //        if (!awaiter.IsCompleted)
+        //            awaiter.SetResult(getter(), null);
+        //    });
+        //    Executors.RunOnCoroutineNoReturn(enumerator);
+        //    return awaiter;
+        //}
 
-        private static IEnumerator DoYieldInstruction(YieldInstruction instruction)
+        private static IEnumerator DoYieldInstruction(YieldInstruction instruction, CoroutineAwaiter awaiter)
         {
             yield return instruction;
+            awaiter.SetResult(null);
         }
 
-        private static IEnumerator DoYieldInstruction(CustomYieldInstruction instruction)
+        private static IEnumerator DoYieldInstruction(CustomYieldInstruction instruction, CoroutineAwaiter<CustomYieldInstruction> awaiter)
         {
             yield return instruction;
+            awaiter.SetResult(instruction, null);
         }
 
         public static IAwaiter GetAwaiter(this IEnumerator coroutine)
@@ -85,7 +86,9 @@ namespace Loxodon.Framework.Asynchronous
 
         public static IAwaiter GetAwaiter(this YieldInstruction instruction)
         {
-            return RunOnCoroutine(DoYieldInstruction(instruction));
+            CoroutineAwaiter awaiter = new CoroutineAwaiter();
+            Executors.RunOnCoroutineNoReturn(DoYieldInstruction(instruction, awaiter));
+            return awaiter;
         }
 
         public static IAwaiter GetAwaiter(this WaitForMainThread instruction)
@@ -108,9 +111,11 @@ namespace Loxodon.Framework.Asynchronous
             return awaiter;
         }
 
-        public static IAwaiter<CustomYieldInstruction> GetAwaiter(this CustomYieldInstruction target)
+        public static IAwaiter<CustomYieldInstruction> GetAwaiter(this CustomYieldInstruction instruction)
         {
-            return RunOnCoroutine(DoYieldInstruction(target), () => target);
+            CoroutineAwaiter<CustomYieldInstruction> awaiter = new CoroutineAwaiter<CustomYieldInstruction>();
+            Executors.RunOnCoroutineNoReturn(DoYieldInstruction(instruction, awaiter));
+            return awaiter;
         }
 
         public static IAwaiter GetAwaiter(this AsyncOperation target)
@@ -171,4 +176,3 @@ namespace Loxodon.Framework.Asynchronous
         public static readonly WaitForBackgroundThread Default = new WaitForBackgroundThread();
     }
 }
-#endif

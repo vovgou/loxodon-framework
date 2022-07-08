@@ -44,6 +44,7 @@ namespace Loxodon.Framework.Execution
         private static object syncLock = new object();
         private static bool disposed = false;
         private static MainThreadExecutor executor;
+        private static SynchronizationContext context;
 #if NETFX_CORE || !NET_LEGACY
         private static int mainThreadId;
 #else
@@ -119,6 +120,7 @@ namespace Loxodon.Framework.Execution
                     mainThread = currentThread;
 #endif
                     executor = CreateMainThreadExecutor(dontDestroy, useFixedUpdate);
+                    context = SynchronizationContext.Current;
                 }
                 catch (Exception e)
                 {
@@ -159,7 +161,15 @@ namespace Loxodon.Framework.Execution
                 return;
             }
 
-            executor.Execute(action);
+            //executor.Execute(action);
+            context.Post(DoAction,action);
+        }
+
+        private static void DoAction(object state)
+        {
+            Action action = (Action)state;
+            if(action!=null)
+                action();
         }
 
         public static TResult RunOnMainThread<TResult>(Func<TResult> func)
@@ -185,7 +195,20 @@ namespace Loxodon.Framework.Execution
                     return;
                 }
 
-                executor.Execute(() =>
+                //executor.Execute(() =>
+                //{
+                //    try
+                //    {
+                //        action();
+                //        promise.SetResult();
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        promise.SetException(e);
+                //    }
+                //});
+
+                context.Post((state) =>
                 {
                     try
                     {
@@ -196,7 +219,7 @@ namespace Loxodon.Framework.Execution
                     {
                         promise.SetException(e);
                     }
-                });
+                }, null);
             }
             catch (Exception e)
             {
@@ -216,7 +239,19 @@ namespace Loxodon.Framework.Execution
                     return;
                 }
 
-                executor.Execute(() =>
+                //executor.Execute(() =>
+                //{
+                //    try
+                //    {
+                //        promise.SetResult(func());
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        promise.SetException(e);
+                //    }
+                //});
+
+                context.Post((state) =>
                 {
                     try
                     {
@@ -226,7 +261,7 @@ namespace Loxodon.Framework.Execution
                     {
                         promise.SetException(e);
                     }
-                });
+                },null);
             }
             catch (Exception e)
             {
@@ -244,7 +279,7 @@ namespace Loxodon.Framework.Execution
 
         protected static InterceptableEnumerator WrapEnumerator(IEnumerator routine, IPromise promise)
         {
-            InterceptableEnumerator enumerator = routine is InterceptableEnumerator ? (InterceptableEnumerator)routine : new InterceptableEnumerator(routine);
+            InterceptableEnumerator enumerator = routine is InterceptableEnumerator ? (InterceptableEnumerator)routine : InterceptableEnumerator.Create(routine);
             if (promise != null)
             {
                 enumerator.RegisterConditionBlock(() => !(promise.IsCancellationRequested));
@@ -281,7 +316,15 @@ namespace Loxodon.Framework.Execution
                 return;
             }
 
-            executor.Execute(routine);
+            //executor.Execute(routine);
+            context.Post(DoStartCoroutine, routine);
+        }
+
+        private static void DoStartCoroutine(object state)
+        {
+            IEnumerator routine = (IEnumerator)state;
+            if(routine!=null)
+                executor.StartCoroutine(routine);
         }
 
         public static Coroutine RunOnCoroutineReturn(IEnumerator routine)

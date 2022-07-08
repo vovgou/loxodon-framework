@@ -117,6 +117,14 @@ namespace Loxodon.Framework.Binding
             Register<Toggle, Toggle.ToggleEvent>("onValueChanged", t => t.onValueChanged, (t, v) => t.onValueChanged = v);
 
             Register<ToggleGroup, bool>("allowSwitchOff", t => t.allowSwitchOff, (t, v) => t.allowSwitchOff = v);
+
+#if UNITY_2019_1_OR_NEWER
+            Register<UnityEngine.UIElements.VisualElement, bool>("enabledSelf", t => t.enabledSelf, (t, v) => t.SetEnabled(v));
+            Register<UnityEngine.UIElements.VisualElement, bool>("visible", t => t.visible, (t, v) => t.visible = v);
+            Register<UnityEngine.UIElements.TextField, string>("value", t => t.value, (t, v) => t.SetValueWithoutNotify(v));
+            Register<UnityEngine.UIElements.Toggle, bool>("value", t => t.value, (t, v) => t.SetValueWithoutNotify(v));
+            Register<UnityEngine.UIElements.AbstractProgressBar, float>("value", t => t.value, (t, v) => t.SetValueWithoutNotify(v));
+#endif
         }
 
         static void Register<T, TValue>(string name, Func<T, TValue> getter, Action<T, TValue> setter)

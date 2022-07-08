@@ -34,7 +34,7 @@ namespace Loxodon.Framework.Views
 {
     public class DefaultUIViewLocator : UIViewLocatorBase
     {
-        private GlobalWindowManager globalWindowManager;
+        private GlobalWindowManagerBase globalWindowManager;
         private Dictionary<string, WeakReference> templates = new Dictionary<string, WeakReference>();
 
         protected string Normalize(string name)
@@ -51,7 +51,7 @@ namespace Loxodon.Framework.Views
             if (globalWindowManager != null)
                 return globalWindowManager;
 
-            globalWindowManager = GameObject.FindObjectOfType<GlobalWindowManager>();
+            globalWindowManager = GameObject.FindObjectOfType<GlobalWindowManagerBase>();
             if (globalWindowManager == null)
                 throw new NotFoundException("GlobalWindowManager");
 

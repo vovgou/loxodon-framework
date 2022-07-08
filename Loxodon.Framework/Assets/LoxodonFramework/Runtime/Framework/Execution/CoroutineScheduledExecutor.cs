@@ -82,7 +82,7 @@ namespace Loxodon.Framework.Execution
 
             this.running = true;
 
-            InterceptableEnumerator ie = new InterceptableEnumerator(DoStart());
+            InterceptableEnumerator ie = InterceptableEnumerator.Create(DoStart());
             ie.RegisterCatchBlock(e => { this.running = false; });
             Executors.RunOnCoroutineNoReturn(ie);
         }

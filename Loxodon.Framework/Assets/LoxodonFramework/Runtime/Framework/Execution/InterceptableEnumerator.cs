@@ -28,22 +28,45 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Loxodon.Log;
+using System.Collections.Concurrent;
 
 namespace Loxodon.Framework.Execution
 {
     /// <summary>
     /// Interceptable enumerator
+    /// Pooled the InterceptableEnumerator and the promise related features built in to optimize GC  
     /// </summary>
     public class InterceptableEnumerator : IEnumerator
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(InterceptableEnumerator));
+        private const int CAPACITY = 100;
+        private static readonly ConcurrentQueue<InterceptableEnumerator> pools = new ConcurrentQueue<InterceptableEnumerator>();
+
+        public static InterceptableEnumerator Create(IEnumerator routine)
+        {
+            InterceptableEnumerator enumerator;
+            if (pools.TryDequeue(out enumerator))
+            {
+                enumerator.stack.Push(routine);
+                return enumerator;
+            }
+            return new InterceptableEnumerator(routine);
+        }
+
+        private static void Free(InterceptableEnumerator enumerator)
+        {
+            if (pools.Count > CAPACITY)
+                return;
+
+            enumerator.Clear();
+            pools.Enqueue(enumerator);
+        }
 
         private object current;
         private Stack<IEnumerator> stack = new Stack<IEnumerator>();
-
+        private List<Func<bool>> hasNext = new List<Func<bool>>();
         private Action<Exception> onException;
         private Action onFinally;
-        private Func<bool> hasNext;
 
         public InterceptableEnumerator(IEnumerator routine)
         {
@@ -108,18 +131,7 @@ namespace Loxodon.Framework.Execution
                 if (this.onException == null)
                     return;
 
-                foreach (Action<Exception> action in this.onException.GetInvocationList())
-                {
-                    try
-                    {
-                        action(e);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (log.IsWarnEnabled)
-                            log.WarnFormat("{0}", ex);
-                    }
-                }
+                onException(e);
             }
             catch (Exception) { }
         }
@@ -131,27 +143,35 @@ namespace Loxodon.Framework.Execution
                 if (this.onFinally == null)
                     return;
 
-                foreach (Action action in this.onFinally.GetInvocationList())
-                {
-                    try
-                    {
-                        action();
-                    }
-                    catch (Exception ex)
-                    {
-                        if (log.IsWarnEnabled)
-                            log.WarnFormat("{0}", ex);
-                    }
-                }
+                onFinally();
             }
             catch (Exception) { }
+            finally
+            {
+                Free(this);
+            }
+        }
+
+        private void Clear()
+        {
+            this.current = null;
+            this.onException = null;
+            this.onFinally = null;
+            this.hasNext.Clear();
+            this.stack.Clear();
         }
 
         private bool HasNext()
         {
-            if (hasNext == null)
-                return true;
-            return hasNext();
+            if (hasNext.Count > 0)
+            {
+                foreach (Func<bool> action in this.hasNext)
+                {
+                    if (!action())
+                        return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -160,7 +180,8 @@ namespace Loxodon.Framework.Execution
         /// <param name="hasNext"></param>
         public virtual void RegisterConditionBlock(Func<bool> hasNext)
         {
-            this.hasNext = hasNext;
+            if (hasNext != null)
+                this.hasNext.Add(hasNext);
         }
 
         /// <summary>
@@ -169,7 +190,8 @@ namespace Loxodon.Framework.Execution
         /// <param name="onException"></param>
         public virtual void RegisterCatchBlock(Action<Exception> onException)
         {
-            this.onException += onException;
+            if (onException != null)
+                this.onException += onException;
         }
 
         /// <summary>
@@ -178,7 +200,8 @@ namespace Loxodon.Framework.Execution
         /// <param name="onFinally"></param>
         public virtual void RegisterFinallyBlock(Action onFinally)
         {
-            this.onFinally += onFinally;
+            if (onFinally != null)
+                this.onFinally += onFinally;
         }
     }
 }

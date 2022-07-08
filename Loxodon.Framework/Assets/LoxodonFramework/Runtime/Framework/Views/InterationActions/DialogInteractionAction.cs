@@ -59,21 +59,46 @@ namespace Loxodon.Framework.Views.InteractionActions
                     throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", viewName));
 
                 if (window is AlertDialogWindow && viewModel is AlertDialogViewModel)
-                    (window as AlertDialogWindow).ViewModel = viewModel as AlertDialogViewModel;
-                else
-                    window.SetDataContext(viewModel);
-
-                EventHandler handler = null;
-                handler = (sender, eventArgs) =>
                 {
-                    window.OnDismissed -= handler;
-                };
+                    (window as AlertDialogWindow).ViewModel = viewModel as AlertDialogViewModel;
+                }
+                else if (window is AlertDialogWindow && viewModel is DialogNotification notification)
+                {
+                    AlertDialogViewModel dialogViewModel = new AlertDialogViewModel();
+                    dialogViewModel.Message = notification.Message;
+                    dialogViewModel.Title = notification.Title;
+                    dialogViewModel.ConfirmButtonText = notification.ConfirmButtonText;
+                    dialogViewModel.NeutralButtonText = notification.NeutralButtonText;
+                    dialogViewModel.CancelButtonText = notification.CancelButtonText;
+                    dialogViewModel.CanceledOnTouchOutside = notification.CanceledOnTouchOutside;
+                    dialogViewModel.Click = (result) => notification.DialogResult = result;
+                    (window as AlertDialogWindow).ViewModel = dialogViewModel;
+                }
+                else
+                {
+                    window.SetDataContext(viewModel);
+                }
+
+                //EventHandler handler = null;
+                //handler = (sender, eventArgs) =>
+                //{
+                //    window.OnDismissed -= handler;
+                //    callback?.Invoke();
+                //};
                 window.Create();
-                window.OnDismissed += handler;
+                //window.OnDismissed += handler;
+                window.WaitDismissed().Callbackable().OnCallback((r) =>
+                {
+                    callback?.Invoke();
+                    callback = null;
+                });
                 window.Show(true);
             }
             catch (Exception e)
             {
+                callback?.Invoke();
+                callback = null;
+
                 if (window != null)
                     window.Dismiss();
 

@@ -52,31 +52,31 @@ namespace Loxodon.Framework.Tutorials
         public int ID
         {
             get { return this.id; }
-            set { this.Set<int>(ref this.id, value, "ID"); }
+            set { this.Set<int>(ref this.id, value); }
         }
 
         public string Username
         {
             get { return this.username; }
-            set { this.Set<string>(ref this.username, value, "Username"); }
+            set { this.Set<string>(ref this.username, value); }
         }
 
         public string Password
         {
             get { return this.password; }
-            set { this.Set<string>(ref this.password, value, "Password"); }
+            set { this.Set<string>(ref this.password, value); }
         }
 
         public string Email
         {
             get { return this.email; }
-            set { this.Set<string>(ref this.email, value, "Email"); }
+            set { this.Set<string>(ref this.email, value); }
         }
 
         public DateTime Birthday
         {
             get { return this.birthday; }
-            set { this.Set<DateTime>(ref this.birthday, value, "Birthday"); }
+            set { this.Set<DateTime>(ref this.birthday, value); }
         }
 
         public ObservableProperty<string> Address
@@ -96,31 +96,31 @@ namespace Loxodon.Framework.Tutorials
         public Account Account
         {
             get { return this.account; }
-            set { this.Set<Account>(ref account, value, "Account"); }
+            set { this.Set<Account>(ref account, value); }
         }
 
         public string Username
         {
             get { return this.username; }
-            set { this.Set<string>(ref this.username, value, "Username"); }
+            set { this.Set<string>(ref this.username, value); }
         }
 
         public string Email
         {
             get { return this.email; }
-            set { this.Set<string>(ref this.email, value, "Email"); }
+            set { this.Set<string>(ref this.email, value); }
         }
 
         public bool Remember
         {
             get { return this.remember; }
-            set { this.Set<bool>(ref this.remember, value, "Remember"); }
+            set { this.Set<bool>(ref this.remember, value); }
         }
 
         public ObservableDictionary<string, string> Errors
         {
             get { return this.errors; }
-            set { this.Set<ObservableDictionary<string, string>>(ref this.errors, value, "Errors"); }
+            set { this.Set<ObservableDictionary<string, string>>(ref this.errors, value); }
         }
 
         public void OnUsernameValueChanged(string value)

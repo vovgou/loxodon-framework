@@ -66,7 +66,7 @@ namespace Loxodon.Framework.Views
 
         public static IUIViewGroup GetCurrentViewGroup()
         {
-            GlobalWindowManager windowManager = GlobalWindowManager.Root;
+            GlobalWindowManagerBase windowManager = GlobalWindowManagerBase.Root;
             IWindow window = windowManager.Current;
             while (window is WindowContainer windowContainer)
             {

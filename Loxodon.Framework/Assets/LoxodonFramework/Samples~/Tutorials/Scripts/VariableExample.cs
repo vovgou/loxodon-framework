@@ -50,31 +50,31 @@ namespace Loxodon.Framework.Tutorials
         public string Username
         {
             get { return this.username; }
-            set { this.Set<string>(ref this.username, value, "Username"); }
+            set { this.Set<string>(ref this.username, value); }
         }
 
         public string Email
         {
             get { return this.email; }
-            set { this.Set<string>(ref this.email, value, "Email"); }
+            set { this.Set<string>(ref this.email, value); }
         }
 
         public bool Remember
         {
             get { return this.remember; }
-            set { this.Set<bool>(ref this.remember, value, "Remember"); }
+            set { this.Set<bool>(ref this.remember, value); }
         }
 
         public Vector3 Vector
         {
             get { return this.vector; }
-            set { this.Set<Vector3>(ref this.vector, value, "Vector"); }
+            set { this.Set<Vector3>(ref this.vector, value); }
         }
 
         public Color Color
         {
             get { return this.color; }
-            set { this.Set<Color>(ref this.color, value, "Color"); }
+            set { this.Set<Color>(ref this.color, value); }
         }
 
         public void OnSubmit()

@@ -9,7 +9,7 @@
 
 [(中文版)](README_CN.md)
 
-**MVVM and Databinding for Unity3d(C# & XLua)**
+**MVVM and Databinding for Unity3d(C# & XLua & ILRuntime)**
 
 *Developed by Clark*
 

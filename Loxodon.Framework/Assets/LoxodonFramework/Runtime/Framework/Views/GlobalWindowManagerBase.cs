@@ -27,8 +27,19 @@ using UnityEngine;
 namespace Loxodon.Framework.Views
 {
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(RectTransform), typeof(Canvas))]
     public abstract class GlobalWindowManagerBase : WindowManager
     {
+        public static GlobalWindowManagerBase Root;
+
+        protected virtual void Start()
+        {
+            Root = this;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            Root = null;
+        }
     }
 }

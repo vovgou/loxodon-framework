@@ -27,9 +27,7 @@ using System.Collections;
 using Loxodon.Log;
 using Loxodon.Framework.Execution;
 using Loxodon.Framework.Asynchronous;
-#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
 using System.Runtime.CompilerServices;
-#endif
 
 namespace Loxodon.Framework.Views
 {
@@ -177,12 +175,10 @@ namespace Loxodon.Framework.Views
             this.Unbind();
         }
 
-#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
         public IAwaiter GetAwaiter()
         {
             return new TransitionAwaiter(this);
         }
-#endif
 
         public ITransition DisableAnimation(bool disabled)
         {
@@ -270,7 +266,7 @@ namespace Loxodon.Framework.Views
         {
             this.running = true;
             this.OnStart();
-#if UNITY_5_3 || UNITY_5_3_OR_NEWER
+#if UNITY_5_3_OR_NEWER
             yield return this.DoTransition();
 #else
             var transitionAction = this.DoTransition();
@@ -285,7 +281,6 @@ namespace Loxodon.Framework.Views
 
     }
 
-#if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
     public struct TransitionAwaiter : IAwaiter, ICriticalNotifyCompletion
     {
         private Transition transition;
@@ -315,5 +310,4 @@ namespace Loxodon.Framework.Views
             transition.OnFinish(continuation);
         }
     }
-#endif
 }

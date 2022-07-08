@@ -247,7 +247,7 @@ namespace Loxodon.Framework.Execution
             {
                 try
                 {
-                    Executors.RunAsyncNoReturn(() => this.wrappedAction());
+                    Executors.RunAsyncNoReturn(this.wrappedAction);
                 }
                 catch (Exception e)
                 {
@@ -320,7 +320,7 @@ namespace Loxodon.Framework.Execution
             {
                 try
                 {
-                    Executors.RunAsyncNoReturn(() => this.wrappedAction());
+                    Executors.RunAsyncNoReturn(this.wrappedAction);
                 }
                 catch (Exception e)
                 {
@@ -394,7 +394,7 @@ namespace Loxodon.Framework.Execution
             {
                 try
                 {
-                    Executors.RunAsyncNoReturn(() => this.wrappedAction());
+                    Executors.RunAsyncNoReturn(this.wrappedAction);
                 }
                 catch (Exception e)
                 {
@@ -450,7 +450,6 @@ namespace Loxodon.Framework.Execution
                         }
                         else
                         {
-                            //this.nextDelay = this.nextDelay.Add(this.delay);
                             this.nextTime = DateTime.Now + this.delay;
                             this.executor.Add(this);
                         }
@@ -476,7 +475,7 @@ namespace Loxodon.Framework.Execution
             {
                 try
                 {
-                    Executors.RunAsyncNoReturn(() => this.wrappedAction());
+                    Executors.RunAsyncNoReturn(this.wrappedAction);
                 }
                 catch (Exception e)
                 {

@@ -44,7 +44,7 @@ namespace Loxodon.Framework.Examples
         ISubscription<WindowStateEventArgs> subscription;
         void Awake()
         {
-            GlobalWindowManager windowManager = FindObjectOfType<GlobalWindowManager>();
+            GlobalWindowManagerBase windowManager = FindObjectOfType<GlobalWindowManagerBase>();
             if (windowManager == null)
                 throw new NotFoundException("Not found the GlobalWindowManager.");
 

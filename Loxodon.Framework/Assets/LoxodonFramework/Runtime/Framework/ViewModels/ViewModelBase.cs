@@ -75,7 +75,7 @@ namespace Loxodon.Framework.ViewModels
         /// <param name="propertyExpression">Expression of property name.</param>
         /// <param name="broadcast">If set to <c>true</c> broadcast.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        protected bool Set<T>(ref T field, T newValue, Expression<Func<T>> propertyExpression, bool broadcast = false)
+        protected bool Set<T>(ref T field, T newValue, Expression<Func<T>> propertyExpression, bool broadcast)
         {
             if (object.Equals(field, newValue))
                 return false;
@@ -99,7 +99,7 @@ namespace Loxodon.Framework.ViewModels
         /// <param name="propertyName"></param>
         /// <param name="broadcast"></param>
         /// <returns></returns>
-        protected bool Set<T>(ref T field, T newValue, string propertyName, bool broadcast = false)
+        protected bool Set<T>(ref T field, T newValue, string propertyName, bool broadcast)
         {
             if (object.Equals(field, newValue))
                 return false;
@@ -122,7 +122,7 @@ namespace Loxodon.Framework.ViewModels
         /// <param name="eventArgs"></param>
         /// <param name="broadcast"></param>
         /// <returns></returns>
-        protected bool Set<T>(ref T field, T newValue, PropertyChangedEventArgs eventArgs, bool broadcast = false)
+        protected bool Set<T>(ref T field, T newValue, PropertyChangedEventArgs eventArgs, bool broadcast)
         {
             if (object.Equals(field, newValue))
                 return false;
