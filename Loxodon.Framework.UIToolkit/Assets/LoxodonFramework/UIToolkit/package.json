@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-uitoolkit",
   "displayName": "Loxodon Framework UIToolkit",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "unity": "2021.3",
   "description": "LoxodonFramework is a lightweight MVVM(Model-View-ViewModel) framework built specifically to target Unity3D. Databinding and localization are supported.It has a very flexible extensibility.It makes your game development faster and easier.\n\nFor tutorials,examples and support,please see the project.You can also discuss the project in the Unity Forums.\n\nThe plugin is compatible with MacOSX,Windows,Linux,UWP,IOS and Android,and provides all the source code of the project.",
   "license": "MIT",
