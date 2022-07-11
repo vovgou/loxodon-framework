@@ -20,6 +20,7 @@ jobs:
       - name: Publish Loxodon.Framework
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework/Assets/LoxodonFramework
+          /bin/cp -f $GITHUB_WORKSPACE/README.md  ./
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
@@ -29,6 +30,7 @@ jobs:
       - name: Publish Loxodon.Framework.Addressable
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.Addressable/Assets/LoxodonFramework/Addressable
+          /bin/cp -f $GITHUB_WORKSPACE/Loxodon.Framework.Addressable/README.md  ./
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
@@ -38,6 +40,7 @@ jobs:
       - name: Publish Loxodon.Framework.Connection
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.Connection/Assets/LoxodonFramework/Connection
+          /bin/cp -f $GITHUB_WORKSPACE/Loxodon.Framework.Connection/README.md  ./
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
@@ -47,6 +50,7 @@ jobs:
       - name: Publish Loxodon.Framework.FairyGUI
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.FairyGUI/Assets/LoxodonFramework/FairyGUI
+          /bin/cp -f $GITHUB_WORKSPACE/Loxodon.Framework.FairyGUI/README.md  ./
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
@@ -56,6 +60,7 @@ jobs:
       - name: Publish Loxodon.Framework.ILRuntime
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.ILRuntime/Assets/LoxodonFramework/ILRuntime
+          /bin/cp -f $GITHUB_WORKSPACE/Loxodon.Framework.ILRuntime/README.md  ./
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
@@ -65,6 +70,7 @@ jobs:
       - name: Publish Loxodon.Framework.LocalizationsForCsv
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.LocalizationsForCsv/Assets/LoxodonFramework/LocalizationsForCsv
+          /bin/cp -f $GITHUB_WORKSPACE/Loxodon.Framework.LocalizationsForCsv/README.md  ./
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
@@ -74,6 +80,7 @@ jobs:
       - name: Publish Loxodon.Framework.Log4Net
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.Log4Net/Assets/LoxodonFramework/Log4Net
+          /bin/cp -f $GITHUB_WORKSPACE/Loxodon.Framework.Log4Net/README.md  ./
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
@@ -83,6 +90,7 @@ jobs:
       - name: Publish Loxodon.Framework.Obfuscation
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.Obfuscation/Assets/LoxodonFramework/Obfuscation
+          /bin/cp -f $GITHUB_WORKSPACE/Loxodon.Framework.Obfuscation/README.md  ./
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
@@ -92,6 +100,7 @@ jobs:
       - name: Publish Loxodon.Framework.UIToolkit
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.UIToolkit/Assets/LoxodonFramework/UIToolkit
+          /bin/cp -f $GITHUB_WORKSPACE/Loxodon.Framework.UIToolkit/README.md  ./
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
@@ -101,6 +110,7 @@ jobs:
       - name: Publish Loxodon.Framework.Fody
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.Fody/Assets/LoxodonFramework/Fody
+          /bin/cp -f $GITHUB_WORKSPACE/Loxodon.Framework.Fody/README.md  ./
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm publish
         env:
