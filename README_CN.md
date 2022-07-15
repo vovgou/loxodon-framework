@@ -186,21 +186,6 @@ WebGL
 
     Loxodon.Framework框架的XLua插件，它是一个lua的MVVM框架，支持lua和c#混合编程或者也可以完全使用lua来编写您的整个游戏。安装步骤详见下一章节或者查看[Loxodon.Framework.XLua的文档](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)    
 
-    - 安装步骤
-
-        - 从Xlua的Github仓库下载最新版的XLua，可以使用源码版本Source code.zip或者xlua_v2.x.xx.zip版本（建议使用xlua_v2.x.xx.zip版本，避免命XLua目录下测试类导致的类名冲突）。将下载好的xlua解压缩，拷贝到项目中。**注意：Unity2018请使用.net3.5,否则会出错，如果想使用.net4.6请参考xlua的FQA解决兼容性问题。**[XLua FAQ](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/faq.md) [下载XLua](https://github.com/Tencent/xLua/releases) 
-        
-        - 从Github下载[Loxodon.Framework.XLua.unitypackage](https://github.com/vovgou/loxodon-framework/releases)，并导入到项目中。如果出现编译错误，请检查是否导入了XLua的Examples目录，这个目录下的InvokeLua.cs文件定义了PropertyChangedEventArgs类，因没有使用命名空间，会导致和System.ComponentModel.PropertyChangedEventArgs类冲突，请删除XLua目录下的Examples文件夹或者给InvokeLua.cs文件中的PropertyChangedEventArgs类添加上命名空间。
-
-        - 如果需要导入示例，请在"Assets/LoxodonFramework/XLua/PackageResources"文件夹下找到Examples.unitypackage，双击导入项目。
-
-    - Lua 预编译工具
-
-        使用Lua预编译工具可以将Lua脚本预编译为字节码文件，并且可以选择是否加密该文件。Lua官方的luac命令编译的字节码分64位和32位，如果想编译64位和32位兼容的字节码，请参考XLua的官方文件，有关通用字节码编译的部分[《通用字节码》](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/compatible_bytecode.md)。
-
-    	![](docs/images/LuaPrecompileWizard.png)
-
-
 - [Loxodon Framework Bundle](https://assetstore.unity.com/packages/slug/87419)
 
     AssetBundle加载和管理的工具，也是一个AssetBundle资源冗余分析工具。它能够自动管理AssetBundle之间复杂的依赖关系，它通过引用计数来维护AssetBundle之间的依赖。你既可以预加载一个AssetBundle，自己管理它的释放，也可以直接通过异步的资源加载函数直接加载资源，资源加载函数会自动去查找资源所在的AB包，自动加载AB，使用完后又会自动释放AB。 它还支持弱缓存，如果对象模板已经在缓存中，则不需要重新去打开AB。它支持多种加载方式，WWW加载，UnityWebRequest加载，File方式的加载等等（在Unity5.6以上版本，请不要使用WWW加载器，它会产生内存峰值）。它提供了一个AssetBundle的打包界面，支持加密AB包（只建议加密敏感资源，因为会影响性能）。同时它也绕开了Unity3D早期版本的一些bug，比如多个协程并发加载同一个资源，在android系统会出错。它的冗余分析是通过解包AssetBundle进行的，这比在编辑器模式下分析的冗余更准确。
@@ -226,18 +211,6 @@ WebGL
     数据类型内存混淆插件，支持ObfuscatedByte，ObfuscatedShort，ObfuscatedInt,ObfuscatedLong,ObfuscatedFloat,ObfuscatedDouble类型，防止内存修改器修改游戏数值，支持数值类型的所有运算符，与byte、short、int、long、float、double类型之间可以自动转换，使用时替换对应的数值类型即可。
     Float和Double类型混淆时转为int和long类型进行与或运算，确保不会丢失精度，类型转换时使用unsafe代码，兼顾转换性能。
 
-    **注意：要求Unity2018以上版本，请开启"Allow unsafe Code"**
-
-    ![](docs/images/obfuscation_unsafe.png)
-
-    **使用示例：**
-
-       ObfuscatedInt  length = 200;
-       ObfuscatedFloat scale = 20.5f;
-       int offset = 30;
-
-       float value = (length * scale) + offset;
-      
 - [Loxodon Framework Addressable](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Addressable)
 
     有关Addressable Asset System功能的扩展与支持。
@@ -248,9 +221,11 @@ WebGL
 
     使用本组件之前，需要自定义消息的编码解码器和消息类型，如果协议存在握手消息，请自定义IHandshakeHandler，实现握手功能。
 
-- [Json.Net.Aot](https://github.com/Daddoon/Json.NET.Aot)
+- [DotNetty for Unity](https://github.com/vovgou/DotNettyForUnity)
 
-    这是Json.Net的一个分支，支持Unity3D，支持.net standard 2.0，如果你的Unity是2018及以上版本，推荐使用这个。
+    DotNetty是著名的java网络库[Netty](https://github.com/netty/netty)的一个C#版本，异步事件驱动网络应用框架，用于快速开发可维护的高性能协议服务器和客户端。  
+ 
+    这个版本是基于[DotNetty](https://github.com/Azure/DotNetty)的0.7.2版本修改的，是一个为Unity开发平台定制的版本。 它删除了一些依赖库以适用Unity平台，并通过了IL2CPP下的测试。 
 
 - [LiteDB](https://github.com/mbdavid/LiteDB)
 

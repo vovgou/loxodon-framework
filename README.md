@@ -143,6 +143,11 @@ Create a view and view model of the progress bar.
     }
 
 ## Plugins
+- [Loxodon Framework Fody](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody)
+
+- [Loxodon Framework UIToolkit](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.UIToolkit)
+
+- [Loxodon Framework ILRuntime](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.ILRuntime)
 - [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
 
     It supports localization files in csv format, requires Unity2018.4 or higher.
@@ -150,21 +155,6 @@ Create a view and view model of the progress bar.
 - [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)
 
     It supports making games with lua scripts.
-
-    - Installation
-        - If [Loxodon.Framework 2.0](https://github.com/vovgou/loxodon-framework/blob/master/README.md) is not installed, please install it first.
-
-        - You can download the latest version of xlua from Xlua's Github repository,the file name is usually xlua_v2.x.xx.zip, unzip and copy it to your project.[XLua Download](https://github.com/Tencent/xLua/releases)  
-        
-        - Download [Loxodon.Framework.XLua.unitypackage](https://github.com/vovgou/loxodon-framework/releases) from github and import it into your Unity project.
-
-        - **In Unity2018 and above, if you use .net 4.x and .net standard 2.0, there will be compatibility issues. Please see the xlua's FAQs.** [XLua FAQ](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/Faq_EN.md) 
-
-        - Find Examples.unitypackage in the "Assets/LoxodonFramework/XLua/Package Resources" folder and import it into the project.
-
-    - Lua precompilation tool
-
-    	![](docs/images/LuaPrecompileWizard.png)
 
 - [Loxodon Framework Bundle](https://assetstore.unity.com/packages/slug/87419)
 
@@ -200,9 +190,11 @@ Create a view and view model of the progress bar.
 
     This is a network connection component, implemented using TcpClient, supports IPV6 and IPV4, automatically recognizes the current network when connecting with a domain name, and preferentially connects to the IPV4 network.
 
-- [Json.Net.Aot](https://github.com/Daddoon/Json.NET.Aot)
+- [DotNetty for Unity](https://github.com/vovgou/DotNettyForUnity)
 
-    This implementation is actually a fork of the excellent work of SaladLab, Json.Net.Unity3D, and of course, the excellent work of the initial author, Newtonsoft!
+    DotNetty is a port of [Netty](https://github.com/netty/netty), asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers & clients.
+
+    This version is modified based on [DotNetty](https://github.com/Azure/DotNetty)'s 0.7.2 version and is a customized version for the Unity development platform. It removes some dependent libraries and passes the test under IL2CPP.
 
 - [LiteDB](https://github.com/mbdavid/LiteDB)
 
