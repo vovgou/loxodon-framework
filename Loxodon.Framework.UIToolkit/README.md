@@ -70,7 +70,7 @@ Requires Unity 2021.3 or higher.
 
 **注意：点击事件请绑定到clickable属性上，控件的值请绑定到value属性。**
 
-	public class Window1 : UIToolkitWindow
+    public class Window1 : UIToolkitWindow
     {
         private IUIViewLocator locator;
         protected override void OnCreate(IBundle bundle)
@@ -112,7 +112,7 @@ Requires Unity 2021.3 or higher.
     }
 
 
-	public class WindowViewMode : ViewModelBase
+    public class WindowViewMode : ViewModelBase
     {
 		private string name;
 		private bool toggle = true;
