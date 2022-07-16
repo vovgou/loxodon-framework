@@ -91,79 +91,6 @@ WebGL
 - LoxodonFramework 2.0 支持 .Net4.x 和 .Net Standard2.0  
 - LoxodonFramework 2.0 支持 Mono 和 IL2CPP
 
-## 快速开始
-
-创建一个进度条的视图和视图模型，并将视图中的UI控件和视图模型绑定，修改视图模型ProgressBarViewModel中的属性，视图UI界面将会自动改变。
-
-![](docs/images/progress.png)
-
-    public class ProgressBarViewModel : ViewModelBase
-    {
-        private string tip;
-        private bool enabled;
-        private float value;
-        public ProgressBarViewModel()
-        {
-        }
-
-        public string Tip
-        {
-            get { return this.tip; }
-            set { this.Set<string>(ref this.tip, value, nameof(Tip)); }
-        }
-
-        public bool Enabled
-        {
-            get { return this.enabled; }
-            set { this.Set<bool>(ref this.enabled, value, nameof(Enabled)); }
-        }
-
-        public float Value
-        {
-            get { return this.value; }
-            set { this.Set<float>(ref this.value, value, nameof(Value)); }
-        }
-    }
-
-    public class ProgressBarView : UIView
-    {
-        public GameObject progressBar;
-        public Text progressTip;
-        public Text progressText;
-        public Slider progressSlider;
-
-        protected override void Awake()
-        {
-            var bindingSet = this.CreateBindingSet<ProgressBar, ProgressBarViewModel>();
-
-            bindingSet.Bind(this.progressBar).For(v => v.activeSelf).To(vm => vm.Enabled).OneWay();
-            bindingSet.Bind(this.progressTip).For(v => v.text).To(vm => vm.Tip).OneWay();
-            bindingSet.Bind(this.progressText).For(v => v.text)
-                .ToExpression(vm => string.Format("{0:0.00}%", vm.Value * 100)).OneWay();
-            bindingSet.Bind(this.progressSlider).For(v => v.value).To(vm => vm.Value).OneWay();
-
-            bindingSet.Build();
-        }
-    }
-
-
-    IEnumerator Unzip(ProgressBarViewModel progressBar)
-    {
-        progressBar.Tip = "Unziping";
-        progressBar.Enabled = true;//Display the progress bar
-
-        for(int i=0;i<30;i++)
-        {            
-            //TODO:Add unzip code here.
-
-            progressBar.Value = (i/(float)30);            
-            yield return null;
-        }
-
-        progressBar.Enabled = false;//Hide the progress bar
-        progressBar.Tip = "";        
-    }
-
 ## 插件与集成（可选）
 
 - [Loxodon Framework Fody](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody)
@@ -245,6 +172,78 @@ WebGL
 
     FlatBuffers是继Protobuf之后，谷歌的另外一个开源的、跨平台的、高效的序列化工具库。它专门为游戏开发或其他性能敏感的应用程序需求而创建。它提供了包括C、C++、C#、java、lua、go、python等等语言的支持，建议大家游戏开发可以选择它作为序列化工具库。
 
+## 快速开始
+
+创建一个进度条的视图和视图模型，并将视图中的UI控件和视图模型绑定，修改视图模型ProgressBarViewModel中的属性，视图UI界面将会自动改变。
+
+![](docs/images/progress.png)
+
+    public class ProgressBarViewModel : ViewModelBase
+    {
+        private string tip;
+        private bool enabled;
+        private float value;
+        public ProgressBarViewModel()
+        {
+        }
+
+        public string Tip
+        {
+            get { return this.tip; }
+            set { this.Set<string>(ref this.tip, value, nameof(Tip)); }
+        }
+
+        public bool Enabled
+        {
+            get { return this.enabled; }
+            set { this.Set<bool>(ref this.enabled, value, nameof(Enabled)); }
+        }
+
+        public float Value
+        {
+            get { return this.value; }
+            set { this.Set<float>(ref this.value, value, nameof(Value)); }
+        }
+    }
+
+    public class ProgressBarView : UIView
+    {
+        public GameObject progressBar;
+        public Text progressTip;
+        public Text progressText;
+        public Slider progressSlider;
+
+        protected override void Awake()
+        {
+            var bindingSet = this.CreateBindingSet<ProgressBar, ProgressBarViewModel>();
+
+            bindingSet.Bind(this.progressBar).For(v => v.activeSelf).To(vm => vm.Enabled).OneWay();
+            bindingSet.Bind(this.progressTip).For(v => v.text).To(vm => vm.Tip).OneWay();
+            bindingSet.Bind(this.progressText).For(v => v.text)
+                .ToExpression(vm => string.Format("{0:0.00}%", vm.Value * 100)).OneWay();
+            bindingSet.Bind(this.progressSlider).For(v => v.value).To(vm => vm.Value).OneWay();
+
+            bindingSet.Build();
+        }
+    }
+
+
+    IEnumerator Unzip(ProgressBarViewModel progressBar)
+    {
+        progressBar.Tip = "Unziping";
+        progressBar.Enabled = true;//Display the progress bar
+
+        for(int i=0;i<30;i++)
+        {            
+            //TODO:Add unzip code here.
+
+            progressBar.Value = (i/(float)30);            
+            yield return null;
+        }
+
+        progressBar.Enabled = false;//Hide the progress bar
+        progressBar.Tip = "";        
+    }
 
 ## 教程和示例
 
