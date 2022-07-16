@@ -69,6 +69,74 @@ For detailed installation steps, please refer to the **[installation documentati
 - LoxodonFramework 2.0 supports .Net4.x and .Net Standard2.0  
 - LoxodonFramework 2.0 supports Mono and IL2CPP 
 
+## Plugins
+- [Loxodon Framework Fody](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody)
+
+- [Loxodon Framework UIToolkit](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.UIToolkit)
+
+- [Loxodon Framework ILRuntime](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.ILRuntime)
+- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
+
+    It supports localization files in csv format, requires Unity2018.4 or higher.
+
+- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)
+
+    It supports making games with lua scripts.
+
+- [Loxodon Framework Bundle](https://assetstore.unity.com/packages/slug/87419)
+
+    Loxodon Framework Bundle is an AssetBundle manager.It provides a functionality that can automatically manage/load an AssetBundle and its dependencies from local or remote location.Asset Dependency Management including BundleManifest that keep track of every AssetBundle and all of their dependencies. An AssetBundle Simulation Mode which allows for iterative testing of AssetBundles in a the Unity editor without ever building an AssetBundle.
+
+    The asset redundancy analyzer can help you find the redundant assets included in the AssetsBundles.Create a fingerprint for the asset by collecting the characteristic data of the asset. Find out the redundant assets in all AssetBundles by fingerprint comparison.it only supports the AssetBundle of Unity 5.6 or higher.
+
+    ![](docs/images/bundle.png)
+
+- [Loxodon Framework Log4Net](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Log4Net)
+
+    This is a log plugin.It helps you to use Log4Net in the Unity3d.
+
+    ![](docs/images/log4net.png)
+
+- [Loxodon Framework Obfuscation](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Obfuscation)
+
+    **NOTE:Please enable "Allow unsafe Code"**
+
+    ![](docs/images/obfuscation_unsafe.png)
+
+    **Example:**
+
+		ObfuscatedInt  length = 200;
+		ObfuscatedFloat scale = 20.5f;
+		int offset = 30;
+		
+		float value = (length * scale) + offset;
+
+- [Loxodon Framework Addressable](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Addressable)
+
+- [Loxodon Framework Connection](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Connection)
+
+    This is a network connection component, implemented using TcpClient, supports IPV6 and IPV4, automatically recognizes the current network when connecting with a domain name, and preferentially connects to the IPV4 network.
+
+- [DotNetty for Unity](https://github.com/vovgou/DotNettyForUnity)
+
+    DotNetty is a port of [Netty](https://github.com/netty/netty), asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers & clients.
+
+    This version is modified based on [DotNetty](https://github.com/Azure/DotNetty)'s 0.7.2 version and is a customized version for the Unity development platform. It removes some dependent libraries and passes the test under IL2CPP.
+
+- [LiteDB](https://github.com/mbdavid/LiteDB)
+
+    LiteDB is a small, fast and lightweight NoSQL embedded database.
+
+    ![](https://camo.githubusercontent.com/d85fc448ef9266962a8e67f17f6d16080afdce6b/68747470733a2f2f7062732e7477696d672e636f6d2f6d656469612f445f313432727a57774145434a44643f666f726d61743d6a7067266e616d653d39303078393030)
+
+- [SQLite4Unity3d](https://github.com/robertohuertasm/SQLite4Unity3d)
+
+    When I started with Unity3d development I needed to use SQLite in my project and it was very hard to me to find a place with simple instructions on how to make it work. All I got were links to paid solutions on the Unity3d's Assets Store and a lot of different and complicated tutorials.
+
+    At the end, I decided that there should be a simpler way and I created SQLite4Unity3d, a plugin that helps you to use SQLite in your Unity3d projects in a clear and easy way and works in iOS, Mac, Android and Windows projects.
+
+    It uses the great [sqlite-net](https://github.com/praeclarum/sqlite-net/) library as a base so you will have Linq besides sql. For a further reference on what possibilities you have available with this library I encourage you to visit its github repository.
+
 ## Quick Start
 
 Create a view and view model of the progress bar.
@@ -141,74 +209,6 @@ Create a view and view model of the progress bar.
         progressBar.Enabled = false;//Hide the progress bar
         progressBar.Tip = "";        
     }
-
-## Plugins
-- [Loxodon Framework Fody](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody)
-
-- [Loxodon Framework UIToolkit](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.UIToolkit)
-
-- [Loxodon Framework ILRuntime](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.ILRuntime)
-- [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
-
-    It supports localization files in csv format, requires Unity2018.4 or higher.
-
-- [Loxodon Framework XLua](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.XLua)
-
-    It supports making games with lua scripts.
-
-- [Loxodon Framework Bundle](https://assetstore.unity.com/packages/slug/87419)
-
-    Loxodon Framework Bundle is an AssetBundle manager.It provides a functionality that can automatically manage/load an AssetBundle and its dependencies from local or remote location.Asset Dependency Management including BundleManifest that keep track of every AssetBundle and all of their dependencies. An AssetBundle Simulation Mode which allows for iterative testing of AssetBundles in a the Unity editor without ever building an AssetBundle.
-
-    The asset redundancy analyzer can help you find the redundant assets included in the AssetsBundles.Create a fingerprint for the asset by collecting the characteristic data of the asset. Find out the redundant assets in all AssetBundles by fingerprint comparison.it only supports the AssetBundle of Unity 5.6 or higher.
-
-    ![](docs/images/bundle.png)
-
-- [Loxodon Framework Log4Net](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Log4Net)
-
-    This is a log plugin.It helps you to use Log4Net in the Unity3d.
-
-    ![](docs/images/log4net.png)
-
-- [Loxodon Framework Obfuscation](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Obfuscation)
-
-    **NOTE:Please enable "Allow unsafe Code"**
-
-    ![](docs/images/obfuscation_unsafe.png)
-
-    **Example:**
-
-		ObfuscatedInt  length = 200;
-		ObfuscatedFloat scale = 20.5f;
-		int offset = 30;
-		
-		float value = (length * scale) + offset;
-
-- [Loxodon Framework Addressable](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Addressable)
-
-- [Loxodon Framework Connection](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Connection)
-
-    This is a network connection component, implemented using TcpClient, supports IPV6 and IPV4, automatically recognizes the current network when connecting with a domain name, and preferentially connects to the IPV4 network.
-
-- [DotNetty for Unity](https://github.com/vovgou/DotNettyForUnity)
-
-    DotNetty is a port of [Netty](https://github.com/netty/netty), asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers & clients.
-
-    This version is modified based on [DotNetty](https://github.com/Azure/DotNetty)'s 0.7.2 version and is a customized version for the Unity development platform. It removes some dependent libraries and passes the test under IL2CPP.
-
-- [LiteDB](https://github.com/mbdavid/LiteDB)
-
-    LiteDB is a small, fast and lightweight NoSQL embedded database.
-
-    ![](https://camo.githubusercontent.com/d85fc448ef9266962a8e67f17f6d16080afdce6b/68747470733a2f2f7062732e7477696d672e636f6d2f6d656469612f445f313432727a57774145434a44643f666f726d61743d6a7067266e616d653d39303078393030)
-
-- [SQLite4Unity3d](https://github.com/robertohuertasm/SQLite4Unity3d)
-
-    When I started with Unity3d development I needed to use SQLite in my project and it was very hard to me to find a place with simple instructions on how to make it work. All I got were links to paid solutions on the Unity3d's Assets Store and a lot of different and complicated tutorials.
-
-    At the end, I decided that there should be a simpler way and I created SQLite4Unity3d, a plugin that helps you to use SQLite in your Unity3d projects in a clear and easy way and works in iOS, Mac, Android and Windows projects.
-
-    It uses the great [sqlite-net](https://github.com/praeclarum/sqlite-net/) library as a base so you will have Linq besides sql. For a further reference on what possibilities you have available with this library I encourage you to visit its github repository.
 
 
 ## Tutorials and Examples
