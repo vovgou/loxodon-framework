@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Loxodon.Framework.Binding.Reflection
 {
@@ -34,6 +35,14 @@ namespace Loxodon.Framework.Binding.Reflection
         private readonly object _lock = new object();
         private readonly Dictionary<Type, ProxyType> types = new Dictionary<Type, ProxyType>();
 
+        //For compatibility with the "Configurable Enter Play Mode" feature
+#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        static void OnInitialize()
+        {
+            Default.types.Clear();
+        }
+#endif
         public IProxyType Get(Type type)
         {
             return GetType(type);

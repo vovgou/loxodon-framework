@@ -27,13 +27,39 @@ using System.Collections.Generic;
 
 using Loxodon.Framework.Services;
 using System;
+using UnityEngine;
 
 namespace Loxodon.Framework.Contexts
 {
     public class Context : IDisposable
     {
-        private static ApplicationContext context = new ApplicationContext();
-        private static Dictionary<string, Context> contexts = new Dictionary<string, Context>();
+        private static ApplicationContext context = null;
+        private static Dictionary<string, Context> contexts = null;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void OnInitialize()
+        {
+            //For compatibility with the "Configurable Enter Play Mode" feature
+#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
+            try
+            {
+                if (context != null)
+                    context.Dispose();
+
+                if (contexts != null)
+                {
+                    foreach (var context in contexts.Values)
+                        context.Dispose();
+                    contexts.Clear();
+                }
+            }
+            catch (Exception) { }
+#endif
+
+            context = new ApplicationContext();
+            contexts = new Dictionary<string, Context>();
+        }
+
         public static ApplicationContext GetApplicationContext()
         {
             return Context.context;

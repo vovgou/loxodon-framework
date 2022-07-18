@@ -1,9 +1,9 @@
 {
   "name": "com.vovgou.loxodon-framework-fody",
   "displayName": "Loxodon Framework Fody",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "unity": "2018.4",
-  "description": "LoxodonFramework is a lightweight MVVM(Model-View-ViewModel) framework built specifically to target Unity3D. Databinding and localization are supported.It has a very flexible extensibility.It makes your game development faster and easier.\n\nFor tutorials,examples and support,please see the project.You can also discuss the project in the Unity Forums.\n\nThe plugin is compatible with MacOSX,Windows,Linux,UWP,IOS and Android,and provides all the source code of the project.",
+  "description": "This is a plugin for static weaving code that integrates PropertyChanged.Fody into a Unity project, it can inject code which raises the PropertyChanged event into property setters of classes which implement INotifyPropertyChanged.",
   "license": "MIT",
   "keywords": [
     "MVVM",
@@ -24,6 +24,5 @@
   "relatedPackages": {
   },
   "dependencies": {
-    "com.vovgou.loxodon-framework": "2.3.5"
   }
 }

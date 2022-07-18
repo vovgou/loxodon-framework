@@ -41,7 +41,7 @@ namespace Loxodon.Framework.Execution
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(Executors));
 
-        private static object syncLock = new object();
+        private static readonly object syncLock = new object();
         private static bool disposed = false;
         private static MainThreadExecutor executor;
         private static SynchronizationContext context;
@@ -73,14 +73,15 @@ namespace Loxodon.Framework.Execution
 #endif
         }
 
-        static Executors()
-        {
-            Create();
-        }
-
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void OnRuntimeCreate()
         {
+            //For compatibility with the "Configurable Enter Play Mode" feature
+#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
+            disposed = false;
+            executor = null;
+            context = null;
+#endif
             Create();
         }
 
@@ -162,13 +163,13 @@ namespace Loxodon.Framework.Execution
             }
 
             //executor.Execute(action);
-            context.Post(DoAction,action);
+            context.Post(DoAction, action);
         }
 
         private static void DoAction(object state)
         {
             Action action = (Action)state;
-            if(action!=null)
+            if (action != null)
                 action();
         }
 
@@ -261,7 +262,7 @@ namespace Loxodon.Framework.Execution
                     {
                         promise.SetException(e);
                     }
-                },null);
+                }, null);
             }
             catch (Exception e)
             {
@@ -323,7 +324,7 @@ namespace Loxodon.Framework.Execution
         private static void DoStartCoroutine(object state)
         {
             IEnumerator routine = (IEnumerator)state;
-            if(routine!=null)
+            if (routine != null)
                 executor.StartCoroutine(routine);
         }
 

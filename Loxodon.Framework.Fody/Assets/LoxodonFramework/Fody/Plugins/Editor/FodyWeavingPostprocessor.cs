@@ -33,8 +33,11 @@ namespace Loxodon.Framework.Fody.Editos
 {
     public static class FodyWeavingPostprocessor
     {
-        private const string CONFIG_PATH = "Assets/LoxodonFramework/Editor/AppData/Fody/FodyWeavers.xml";
-        private const string DEFAULT_CONFIG_PATH = "Assets/LoxodonFramework/Fody/Plugins/Editor/FodyWeavers.template.xml";
+        private const string CONFIG_PATH_DIR = "Assets/LoxodonFramework/Editor/AppData/Fody/";
+        private const string CONFIG_PATH = CONFIG_PATH_DIR + "FodyWeavers.xml";
+        private const string DEFAULT_CONFIG_DIR = "Assets/LoxodonFramework/Fody/Plugins/Editor/";
+        private const string DEFAULT_CONFIG_PACKAGES_DIR = "Packages/com.vovgou.loxodon-framework-fody/Plugins/Editor/";
+        private const string DEFAULT_CONFIG_TEMPLATE_NAME = "FodyWeavers.template.xml";
         private const string ASSEMBLIES_ROOT_PATH = @"Library\ScriptAssemblies\";
         private const string DEFAULT_ASSEMBLIE_FILENAME = "Assembly-CSharp";
         private const string ASSEMBLIE_FILENAME_SUFFIX = ".dll";
@@ -55,7 +58,14 @@ namespace Loxodon.Framework.Fody.Editos
             if (!File.Exists(CONFIG_PATH))
             {
                 AssetDatabase.StartAssetEditing();
-                File.Copy(DEFAULT_CONFIG_PATH, CONFIG_PATH);
+                if (!Directory.Exists(CONFIG_PATH_DIR))
+                    Directory.CreateDirectory(CONFIG_PATH_DIR);
+
+                if (File.Exists(DEFAULT_CONFIG_PACKAGES_DIR + DEFAULT_CONFIG_TEMPLATE_NAME))
+                    File.Copy(DEFAULT_CONFIG_PACKAGES_DIR + DEFAULT_CONFIG_TEMPLATE_NAME, CONFIG_PATH);
+                else if (File.Exists(DEFAULT_CONFIG_DIR + DEFAULT_CONFIG_TEMPLATE_NAME))
+                    File.Copy(DEFAULT_CONFIG_DIR + DEFAULT_CONFIG_TEMPLATE_NAME, CONFIG_PATH);
+
                 AssetDatabase.StopAssetEditing();
                 AssetDatabase.Refresh();
             }

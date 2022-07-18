@@ -37,6 +37,16 @@ namespace Loxodon.Framework.Views
     {
         //private static readonly ILog log = LogManager.GetLogger(typeof(WindowManager));
         private static BlockingCoroutineTransitionExecutor blockingExecutor;
+
+        //For compatibility with the "Configurable Enter Play Mode" feature
+#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        static void OnInitialize()
+        {
+            if (blockingExecutor != null)
+                blockingExecutor = null;
+        }
+#endif
         private static BlockingCoroutineTransitionExecutor GetTransitionExecutor()
         {
             if (blockingExecutor == null)
