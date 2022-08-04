@@ -22,21 +22,41 @@
  * SOFTWARE.
  */
 
-using System.Threading.Tasks;
-
 namespace Loxodon.Framework.Interactivity
 {
-    public class AsyncInteractionEventArgs : InteractionEventArgs
+    public class WindowNotification
     {
-        /// <summary>
-        /// Constructs a new instance of <see cref="AsyncInteractionEventArgs"/>
-        /// </summary>
-        /// <param name="context"></param>
-        public AsyncInteractionEventArgs(TaskCompletionSource<object> source, object context) : base(context, null)
+        public WindowNotification(ActionType actionType) : this(actionType, true, null)
         {
-            this.Source = source;
         }
 
-        public TaskCompletionSource<object> Source { get; }
+        public WindowNotification(ActionType actionType, bool ignoreAnimation) : this(actionType, ignoreAnimation, null)
+        {
+        }
+
+        public WindowNotification(ActionType actionType, object viewModel) : this(actionType, true, viewModel)
+        {
+        }
+
+        public WindowNotification(ActionType actionType, bool ignoreAnimation, object viewModel)
+        {
+            this.IgnoreAnimation = ignoreAnimation;
+            this.ActionType = actionType;
+            this.ViewModel = viewModel;
+        }
+
+        public bool IgnoreAnimation { get; private set; }
+
+        public ActionType ActionType { get; private set; }
+
+        public object ViewModel { get; private set; }
+    }
+
+    public enum ActionType
+    {
+        CREATE,
+        SHOW,
+        HIDE,
+        DISMISS
     }
 }

@@ -83,16 +83,12 @@ namespace Loxodon.Framework.Interactivity
         /// Fires the Raised event.
         /// </summary>
         /// <param name="context">The context for the interaction request.</param>
-        public Task<T> Raise(T context)
+        public async Task<T> Raise(T context)
         {
             TaskCompletionSource<object> source = new TaskCompletionSource<object>();
             this.Raised?.Invoke(this.sender, new AsyncInteractionEventArgs(source, context));
-            return source.Task.ContinueWith(t =>
-            {
-                if (t.IsFaulted)
-                    throw t.Exception;
-                return context;
-            }, TaskContinuationOptions.NotOnCanceled | TaskContinuationOptions.ExecuteSynchronously);
+            await source.Task;
+            return context;
         }
     }
 }

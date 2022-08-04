@@ -29,6 +29,7 @@ using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.ViewModels;
 using Loxodon.Log;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Views.InteractionActions
@@ -38,14 +39,40 @@ namespace Loxodon.Framework.Views.InteractionActions
         private static readonly ILog log = LogManager.GetLogger(typeof(AsyncDialogInteractionAction));
 
         private string viewName;
+        private Window window;
 
         public AsyncDialogInteractionAction(string viewName)
         {
             this.viewName = viewName;
         }
-        public override async Task Action(object viewModel)
+        public Window Window { get { return this.window; } }
+
+        public override Task Action(object context)
         {
-            Window window = null;
+            if (context is WindowNotification notification)
+            {
+                bool ignoreAnimation = notification.IgnoreAnimation;
+                switch (notification.ActionType)
+                {
+                    case Interactivity.ActionType.CREATE:
+                        return Create(notification.ViewModel);
+                    case Interactivity.ActionType.SHOW:
+                        return Show(notification.ViewModel, ignoreAnimation);
+                    case Interactivity.ActionType.HIDE:
+                        return Hide(ignoreAnimation);
+                    case Interactivity.ActionType.DISMISS:
+                        return Dismiss(ignoreAnimation);
+                }
+                return Task.CompletedTask;
+            }
+            else
+            {
+                return Show(context);
+            }
+        }
+
+        protected async Task Create(object viewModel)
+        {
             try
             {
                 ApplicationContext context = Context.GetApplicationContext();
@@ -78,21 +105,49 @@ namespace Loxodon.Framework.Views.InteractionActions
                 }
                 else
                 {
-                    window.SetDataContext(viewModel);
+                    if (viewModel != null)
+                        window.SetDataContext(viewModel);
                 }
 
                 window.Create();
-                await window.Show(true);
+            }
+            catch (Exception e)
+            {
+                window = null;
+                throw e;
+            }
+        }
+
+        protected async Task Show(object viewModel, bool ignoreAnimation = false)
+        {
+            try
+            {
+                if (window == null)
+                    await Create(viewModel);
+
+                await window.Show(ignoreAnimation);
                 await window.WaitDismissed();
+                window = null;
             }
             catch (Exception e)
             {
                 if (window != null)
-                    await window.Dismiss();
-
-                if (log.IsWarnEnabled)
-                    log.Error("", e);
+                    await window.Dismiss(ignoreAnimation);
+                window = null;
+                throw e;
             }
+        }
+
+        protected async Task Hide(bool ignoreAnimation = false)
+        {
+            if (window != null)
+                await window.Hide(ignoreAnimation);
+        }
+
+        protected async Task Dismiss(bool ignoreAnimation = false)
+        {
+            if (window != null)
+                await window.Dismiss(ignoreAnimation);
         }
     }
 }

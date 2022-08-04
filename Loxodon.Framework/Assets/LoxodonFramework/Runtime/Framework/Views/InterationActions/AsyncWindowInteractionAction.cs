@@ -22,28 +22,48 @@
  * SOFTWARE.
  */
 
+using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Interactivity;
-using Loxodon.Framework.ViewModels;
 using Loxodon.Log;
 using System;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Views.InteractionActions
 {
-    public class DialogInteractionAction : InteractionActionBase<object>
+    public class AsyncWindowInteractionAction : AsyncInteractionActionBase<WindowNotification>
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(DialogInteractionAction));
+        private static readonly ILog log = LogManager.GetLogger(typeof(AsyncWindowInteractionAction));
 
         private string viewName;
-        public DialogInteractionAction(string viewName)
+        private Window window;
+        public AsyncWindowInteractionAction(string viewName)
         {
             this.viewName = viewName;
         }
 
-        public override void Action(object viewModel, Action callback)
+        public Window Window { get { return this.window; } }
+
+        public override Task Action(WindowNotification notification)
         {
-            Window window = null;
+            bool ignoreAnimation = notification.IgnoreAnimation;
+            switch (notification.ActionType)
+            {
+                case Interactivity.ActionType.CREATE:
+                    return Create(notification.ViewModel);
+                case Interactivity.ActionType.SHOW:
+                    return Show(notification.ViewModel, ignoreAnimation);
+                case Interactivity.ActionType.HIDE:
+                    return Hide(ignoreAnimation);
+                case Interactivity.ActionType.DISMISS:
+                    return Dismiss(ignoreAnimation);
+            }
+            return Task.CompletedTask;
+        }
+
+        protected async Task Create(object viewModel)
+        {
             try
             {
                 ApplicationContext context = Context.GetApplicationContext();
@@ -54,50 +74,55 @@ namespace Loxodon.Framework.Views.InteractionActions
                 if (string.IsNullOrEmpty(viewName))
                     throw new ArgumentNullException("The view name is null.");
 
-                window = locator.LoadView<Window>(viewName);
+                window = await locator.LoadWindowAsync<Window>(viewName);
                 if (window == null)
                     throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", viewName));
 
-                if (window is AlertDialogWindow && viewModel is AlertDialogViewModel)
-                {
-                    (window as AlertDialogWindow).ViewModel = viewModel as AlertDialogViewModel;
-                }
-                else if (window is AlertDialogWindow && viewModel is DialogNotification notification)
-                {
-                    AlertDialogViewModel dialogViewModel = new AlertDialogViewModel();
-                    dialogViewModel.Message = notification.Message;
-                    dialogViewModel.Title = notification.Title;
-                    dialogViewModel.ConfirmButtonText = notification.ConfirmButtonText;
-                    dialogViewModel.NeutralButtonText = notification.NeutralButtonText;
-                    dialogViewModel.CancelButtonText = notification.CancelButtonText;
-                    dialogViewModel.CanceledOnTouchOutside = notification.CanceledOnTouchOutside;
-                    dialogViewModel.Click = (result) => notification.DialogResult = result;
-                    (window as AlertDialogWindow).ViewModel = dialogViewModel;
-                }
-                else
-                {
+                if (viewModel != null)
                     window.SetDataContext(viewModel);
-                }
-                                
+
                 window.Create();
-                window.WaitDismissed().Callbackable().OnCallback((r) =>
-                {
-                    callback?.Invoke();
-                    callback = null;
-                });
-                window.Show(true);
             }
             catch (Exception e)
             {
-                callback?.Invoke();
-                callback = null;
-
-                if (window != null)
-                    window.Dismiss();
-
-                if (log.IsWarnEnabled)
-                    log.Error("", e);
+                window = null;
+                throw e;
             }
+        }
+
+        protected async Task Show(object viewModel, bool ignoreAnimation = false)
+        {
+            try
+            {
+                if (window == null)
+                    await Create(viewModel);
+
+                window.WaitDismissed().Callbackable().OnCallback(r =>
+                {
+                    window = null;
+                });
+                await window.Show(ignoreAnimation);
+            }
+            catch (Exception e)
+            {
+                if (window != null)
+                    await window.Dismiss(ignoreAnimation);
+                window = null;
+
+                throw e;
+            }
+        }
+
+        protected async Task Hide(bool ignoreAnimation = false)
+        {
+            if (window != null)
+                await window.Hide(ignoreAnimation);
+        }
+
+        protected async Task Dismiss(bool ignoreAnimation = false)
+        {
+            if (window != null)
+                await window.Dismiss(ignoreAnimation);
         }
     }
 }

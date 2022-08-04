@@ -55,6 +55,8 @@ namespace Loxodon.Framework.Messaging
                 kv.Value.TryGetTarget(out subscription);
                 if (subscription != null)
                     subscription.Publish(message);
+                else
+                    subscriptions.TryRemove(kv.Key, out _);
             }
         }
 
