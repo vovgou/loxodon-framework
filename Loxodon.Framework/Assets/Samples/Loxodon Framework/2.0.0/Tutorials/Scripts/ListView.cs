@@ -60,9 +60,8 @@ namespace Loxodon.Framework.Tutorials
 
                 if (this.items != null)
                     this.items.CollectionChanged -= OnCollectionChanged;
-
+          
                 this.items = value;
-
                 this.OnItemsChanged();
 
                 if (this.items != null)
@@ -100,6 +99,13 @@ namespace Loxodon.Framework.Tutorials
 
         protected virtual void OnItemsChanged()
         {
+            int count = this.content.childCount;
+            for(int i = count - 1; i >= 0; i--)
+            {
+                Transform child = this.content.GetChild(i);
+                GameObject.Destroy(child.gameObject);
+            }
+
             for (int i = 0; i < this.items.Count; i++)
             {
                 this.AddItem(i, items[i]);

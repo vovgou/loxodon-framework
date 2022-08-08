@@ -131,8 +131,6 @@ namespace Loxodon.Framework.Tutorials
         private ToastInteractionAction toastInteractionAction;
         private AsyncDialogInteractionAction dialogInteractionAction;
 
-        private DialogInteractionAction LoginAction = new DialogInteractionAction("UI/LoginWindow");
-
         protected override void Awake()
         {
             ApplicationContext context = Context.GetApplicationContext();

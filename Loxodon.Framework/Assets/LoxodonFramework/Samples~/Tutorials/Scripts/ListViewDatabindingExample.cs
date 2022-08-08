@@ -37,11 +37,12 @@ namespace Loxodon.Framework.Tutorials
 {
     public class ListViewViewModel : ViewModelBase
     {
-        private readonly ObservableList<ListItemViewModel> items = new ObservableList<ListItemViewModel>();
+        private ObservableList<ListItemViewModel> items = CreateList();
 
         public ObservableList<ListItemViewModel> Items
         {
             get { return this.items; }
+            set { this.Set(ref items, value); }
         }
 
         public ListItemViewModel SelectedItem
@@ -91,6 +92,26 @@ namespace Loxodon.Framework.Tutorials
                 int iconIndex = Random.Range(1, 30);
                 item.Icon = string.Format("EquipImages_{0}", iconIndex);
             }
+        }
+
+        public void ChangeItems()
+        {
+            this.Items = CreateList();
+        }
+
+        private static ObservableList<ListItemViewModel> CreateList()
+        {
+            var items = new ObservableList<ListItemViewModel>();
+            for (int i = 0; i < 3; i++)
+            {
+                int iconIndex = Random.Range(1, 30);
+                items.Add(new ListItemViewModel()
+                {
+                    Title = "Equip " + i,
+                    Icon = string.Format("EquipImages_{0}", iconIndex),
+                });
+            }
+            return items;
         }
 
         public void Select(int index)
@@ -159,6 +180,8 @@ namespace Loxodon.Framework.Tutorials
 
         public Button changeIconButton;
 
+        public Button changeItems;
+
         public ListView listView;
 
         void Awake()
@@ -180,10 +203,6 @@ namespace Loxodon.Framework.Tutorials
         void Start()
         {
             viewModel = new ListViewViewModel();
-            for (int i = 0; i < 3; i++)
-            {
-                viewModel.AddItem();
-            }
             viewModel.Items[0].IsSelected = true;
 
             IBindingContext bindingContext = this.BindingContext();
@@ -197,6 +216,7 @@ namespace Loxodon.Framework.Tutorials
             bindingSet.Bind(this.removeButton).For(v => v.onClick).To(vm => vm.RemoveItem);
             bindingSet.Bind(this.clearButton).For(v => v.onClick).To(vm => vm.ClearItem);
             bindingSet.Bind(this.changeIconButton).For(v => v.onClick).To(vm => vm.ChangeItemIcon);
+            bindingSet.Bind(this.changeItems).For(v => v.onClick).To(vm => vm.ChangeItems);
 
             bindingSet.Build();
         }
