@@ -89,6 +89,12 @@ namespace Loxodon.Framework.Fody.Editos
             if (assemblyNames.Count <= 0)
                 assemblyNames.Add(DEFAULT_ASSEMBLIE_FILENAME);
 
+            string weaverAssemblyRoot = DEFAULT_CONFIG_PACKAGES_DIR;
+            if (Directory.Exists(DEFAULT_CONFIG_PACKAGES_DIR))
+                weaverAssemblyRoot = DEFAULT_CONFIG_PACKAGES_DIR;
+            else if (Directory.Exists(DEFAULT_CONFIG_DIR))
+                weaverAssemblyRoot = DEFAULT_CONFIG_DIR;
+
             foreach (string name in assemblyNames)
             {
                 string assemblyFilePath = ASSEMBLIES_ROOT_PATH + name;
@@ -98,7 +104,7 @@ namespace Loxodon.Framework.Fody.Editos
                 if (!File.Exists(assemblyFilePath))
                     continue;
 
-                WeavingTask weaver = new WeavingTask(assemblyFilePath, config);
+                WeavingTask weaver = new WeavingTask(assemblyFilePath, weaverAssemblyRoot, config);
                 weaver.Execute();
                 Debug.LogFormat("Weaving code succeeded for {0}.dll", name);
             }

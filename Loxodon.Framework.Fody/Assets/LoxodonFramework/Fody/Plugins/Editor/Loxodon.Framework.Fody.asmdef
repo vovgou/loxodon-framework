@@ -12,8 +12,7 @@
         "Mono.Cecil.dll",
         "Mono.Cecil.Pdb.dll",
         "Mono.Cecil.Rocks.dll",
-        "FodyHelpers.dll",
-        "PropertyChanged.Fody.dll"
+        "FodyHelpers.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": []

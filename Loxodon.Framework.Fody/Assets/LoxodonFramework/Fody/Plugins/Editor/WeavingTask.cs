@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using UnityEngine;
 using FieldAttributes = Mono.Cecil.FieldAttributes;
@@ -41,15 +42,17 @@ namespace Loxodon.Framework.Fody.Editos
     {
         protected XElement config;
         protected string assemblyFilePath;
+        protected string weaverAssemblyRoot;
         protected TestAssemblyResolver assemblyResolver;
         protected ModuleDefinition moduleDefinition;
         protected TypeCache typeCache;
         protected TypeSystem typeSystem;
         protected List<BaseModuleWeaver> weavers = new List<BaseModuleWeaver>();
 
-        public WeavingTask(string assemblyFilePath, XElement config)
+        public WeavingTask(string assemblyFilePath, string weaverAssemblyRoot, XElement config)
         {
             this.assemblyFilePath = assemblyFilePath;
+            this.weaverAssemblyRoot = weaverAssemblyRoot;
             this.config = config;
         }
 
@@ -71,15 +74,12 @@ namespace Loxodon.Framework.Fody.Editos
             typeCache = new TypeCache(assemblyResolver.Resolve);
             foreach (XElement element in config.Elements())
             {
-                if (element.Name.LocalName.Equals("PropertyChanged"))
-                {
-                    //var assembly = LoadFromFile("Assets/LoxodonFramework/Fody/Plugins/Editor/PropertyChanged.Fody/PropertyChanged.Fody.dll");
-                    //var weaverType = FindType(assembly, "ModuleWeaver");
-                    //var weaver = (BaseModuleWeaver)Activator.CreateInstance(weaverType);
-                    var weaver = new PropertyChangedWeaver();
-                    InitializeWeaver(weaver, element);
-                    weavers.Add(weaver);
-                }
+                var weaverName = element.Name.LocalName;
+                var assembly = FindAssembly(weaverName);
+                var weaverType = FindType(assembly, "ModuleWeaver");
+                BaseModuleWeaver weaver = (BaseModuleWeaver)Activator.CreateInstance(weaverType);
+                InitializeWeaver(weaver, element);
+                weavers.Add(weaver);
             }
             typeSystem = new TypeSystem(typeCache.FindType, this.moduleDefinition);
             weavers.ForEach(m => m.TypeSystem = typeSystem);
@@ -189,10 +189,19 @@ namespace Loxodon.Framework.Fody.Editos
             return $"{classPrefix}_ProcessedByFody";
         }
 
-        protected Assembly LoadFromFile(string assemblyPath)
+        protected Assembly FindAssembly(string weaverName)
         {
-            var rawAssembly = File.ReadAllBytes(assemblyPath);
-            return Assembly.Load(rawAssembly);
+            var weaverAssemblyPath = $"{weaverAssemblyRoot}{weaverName}.Fody/{weaverName}.Fody.dll";
+            if (File.Exists(weaverAssemblyPath))
+                return Assembly.LoadFrom(weaverAssemblyPath);
+
+            Assembly[] listAssembly = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (Assembly assembly in listAssembly)
+            {
+                if (Regex.IsMatch(assembly.FullName, $"^{weaverName}.Fody"))
+                    return assembly;
+            }
+            return null;
         }
 
         protected static Type FindType(Assembly assembly, string typeName)
