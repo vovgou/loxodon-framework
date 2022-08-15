@@ -40,7 +40,7 @@ WebGL
 
 **从1.x.x版本升级到2.0版本前，请先删除老版本的所有文件，按下面的安装步骤安装新版本。2.0版本的教程和示例代码默认不会自动导入，如需要请手动导入到项目中。**
 
-** Loxodon.Framework.XLua和Loxodon.Framework.Bundle因为依赖问题仍然使用传统方式发布。 **
+**Loxodon.Framework.XLua和Loxodon.Framework.Bundle因为依赖问题仍然使用传统方式发布。**
 
 **不兼容的改变：**
 - **修改了IUIViewLocator接口以及实现，如果继承了此接口的自定义实现需要调整。**
@@ -59,10 +59,11 @@ WebGL
 - [常见问题解答 FAQ](https://github.com/vovgou/loxodon-framework/blob/master/docs/faq.md)
 
 ## 关键功能：
-- MVVM框架，支持UGUI和FairyGUI，将来会支持UIToolkit;
+- MVVM框架，支持UGUI、UIToolkit和FairyGUI;
 - 支持XLua，可以完全使用Lua脚本开发（可选）;
 - 支持async&await (C#和Lua都支持); 
 - Lua支持了try&catch&finally; 
+- 支持ILRuntime;
 - 多平台支持; 
 - 高扩展性，面向接口开发; 
 - 运行时委托替代反射（包括IOS平台），尽可能的避免值类型的装箱拆箱;
