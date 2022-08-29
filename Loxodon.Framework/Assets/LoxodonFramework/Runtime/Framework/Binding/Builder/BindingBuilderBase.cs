@@ -187,6 +187,7 @@ namespace Loxodon.Framework.Binding.Builder
         {
             this.description.Mode = bindingDescription.Mode;
             this.description.TargetName = bindingDescription.TargetName;
+            this.description.TargetType = bindingDescription.TargetType;
             this.description.UpdateTrigger = bindingDescription.UpdateTrigger;
             this.description.Converter = bindingDescription.Converter;
             this.description.Source = bindingDescription.Source;

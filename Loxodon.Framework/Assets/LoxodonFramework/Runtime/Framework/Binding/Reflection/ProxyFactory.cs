@@ -23,7 +23,7 @@
  */
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using UnityEngine;
 
 namespace Loxodon.Framework.Binding.Reflection
@@ -33,7 +33,7 @@ namespace Loxodon.Framework.Binding.Reflection
         public static readonly ProxyFactory Default = new ProxyFactory();
 
         private readonly object _lock = new object();
-        private readonly Dictionary<Type, ProxyType> types = new Dictionary<Type, ProxyType>();
+        private readonly ConcurrentDictionary<Type, ProxyType> types = new ConcurrentDictionary<Type, ProxyType>();
 
         //For compatibility with the "Configurable Enter Play Mode" feature
 #if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
@@ -43,18 +43,20 @@ namespace Loxodon.Framework.Binding.Reflection
             Default.types.Clear();
         }
 #endif
-        public IProxyType Get(Type type)
-        {
-            return GetType(type);
-        }
+        internal ConcurrentDictionary<Type, ProxyType> Types { get { return types; } }
 
-        protected virtual ProxyType GetType(Type type)
+        internal virtual ProxyType GetType(Type type, bool create = true)
         {
             ProxyType ret;
             if (this.types.TryGetValue(type, out ret) && ret != null)
                 return ret;
 
-            return Create(type);
+            return create ? this.types.GetOrAdd(type, (t) => new ProxyType(t, this)) : null;
+        }
+
+        public IProxyType Get(Type type)
+        {
+            return GetType(type, true);
         }
 
         public void Register(IProxyMemberInfo proxyMemberInfo)
@@ -73,16 +75,6 @@ namespace Loxodon.Framework.Binding.Reflection
 
             ProxyType proxyType = this.GetType(proxyMemberInfo.DeclaringType);
             proxyType.Unregister(proxyMemberInfo);
-        }
-
-        protected ProxyType Create(Type type)
-        {
-            lock (_lock)
-            {
-                ProxyType proxyType = new ProxyType(type, this);
-                this.types.Add(type, proxyType);
-                return proxyType;
-            }
         }
     }
 }

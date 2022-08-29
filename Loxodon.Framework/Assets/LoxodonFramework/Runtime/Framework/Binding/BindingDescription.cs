@@ -37,6 +37,8 @@ namespace Loxodon.Framework.Binding
     {
         public string TargetName { get; set; }
 
+        public Type TargetType { get; set; }
+
         public string UpdateTrigger { get; set; }
 
         public IConverter Converter { get; set; }

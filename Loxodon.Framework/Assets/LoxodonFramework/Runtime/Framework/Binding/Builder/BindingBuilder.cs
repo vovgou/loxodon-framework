@@ -41,6 +41,7 @@ namespace Loxodon.Framework.Binding.Builder
 
         public BindingBuilder(IBindingContext context, TTarget target) : base(context, target)
         {
+            this.description.TargetType = typeof(TTarget);
         }
 
         public BindingBuilder<TTarget, TSource> For(string targetName)
@@ -197,6 +198,7 @@ namespace Loxodon.Framework.Binding.Builder
 
         public BindingBuilder(IBindingContext context, TTarget target) : base(context, target)
         {
+            this.description.TargetType = typeof(TTarget);
         }
 
         public BindingBuilder<TTarget> For(string targetPropertyName)

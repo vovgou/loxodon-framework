@@ -153,7 +153,7 @@ namespace Loxodon.Framework.Views
             }
             set
             {
-                if (!IsDestroyed() && this.gameObject.activeSelf != value)
+                if (!IsDestroyed() && this.gameObject.activeSelf == false)
                     this.gameObject.SetActive(value);
 
                 VisualElement root = this.RootVisualElement;
@@ -201,12 +201,16 @@ namespace Loxodon.Framework.Views
 
         private PanelRaycaster GetPanelRaycaster()
         {
-            return EventSystem.current.GetComponentInChildren<PanelRaycaster>();
+            if (EventSystem.current != null)
+                return EventSystem.current.GetComponentInChildren<PanelRaycaster>();
+            return null;
         }
 
         private PanelEventHandler GetPanelEventHandler()
         {
-            return EventSystem.current.GetComponentInChildren<PanelEventHandler>();
+            if (EventSystem.current != null)
+                return EventSystem.current.GetComponentInChildren<PanelEventHandler>();
+            return null;
         }
 
         public virtual bool IsDestroyed()

@@ -41,7 +41,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if ("RegisterValueChangedCallback".Equals(description.TargetName))
                 return this.CreateValueChangedEventProxy(target);
 
-            IProxyType type = target.GetType().AsProxy();
+            IProxyType type = description.TargetType != null ? description.TargetType.AsProxy() : target.GetType().AsProxy();
             IProxyMemberInfo memberInfo = type.GetMember(description.TargetName);
             if (memberInfo == null)
                 memberInfo = type.GetMember(description.TargetName, BindingFlags.Instance | BindingFlags.NonPublic);

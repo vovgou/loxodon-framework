@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/OSA/Scenes/_Home.unity
+    guid: ef052324c63518c4a9d77dfd446c209e
+  - enabled: 1
+    path: Assets/OSA/Scenes/animated_insert_remove.unity
+    guid: 34fe678d389d0fe4593d3772dc9ed77b
+  - enabled: 1
+    path: Assets/OSA/Scenes/chat.unity
+    guid: f4b7374d13bdab24bbbb88ff3e3909d1
+  - enabled: 1
+    path: Assets/OSA/Scenes/content_size_fitter.unity
+    guid: 86ed8d5c17f097242a1a7da7942273c8
+  - enabled: 1
+    path: Assets/OSA/Scenes/datetime_picker.unity
+    guid: d72ddfd844e123d43bc8d5d9729b6db7
+  - enabled: 1
+    path: Assets/OSA/Scenes/example.unity
+    guid: 7a88f0d196cc88d46b97d9200f231d5e
+  - enabled: 1
+    path: Assets/OSA/Scenes/expand_item_to_variable_size.unity
+    guid: 220b78217ab2fdb44a3d1bdc64629be5
+  - enabled: 1
+    path: Assets/OSA/Scenes/grid_packed.unity
+    guid: 9f4f77765bc2a904a9300b62450c2b59
+  - enabled: 1
+    path: Assets/OSA/Scenes/grid_plus_horizontal_plus_async_download.unity
+    guid: 27ebc6f67413d8e4ab79cfae660b0849
+  - enabled: 1
+    path: Assets/OSA/Scenes/grid_with_subcategories.unity
+    guid: c7a651f947202564b8519227517a31de
+  - enabled: 1
+    path: Assets/OSA/Scenes/hierarchy_or_treeview.unity
+    guid: 7d731a7ce7722d9488282b99321f5af9
+  - enabled: 1
+    path: Assets/OSA/Scenes/hierarchy_or_treeview_sticky_header.unity
+    guid: 38cd1fa300d0a6545bb82d123c6c494f
+  - enabled: 1
+    path: Assets/OSA/Scenes/incremental_item_fetching.unity
+    guid: 6fb5633569549114b8118df2c0035aec
+  - enabled: 1
+    path: Assets/OSA/Scenes/item_dragging.unity
+    guid: 93a3c8f3e7208f0499d98046649c1ece
+  - enabled: 1
+    path: Assets/OSA/Scenes/looping_spinner.unity
+    guid: 5d981f0071e408146a9b5fbcca6de36d
+  - enabled: 1
+    path: Assets/OSA/Scenes/multiple_prefabs.unity
+    guid: 352b45e88c6913e458e2d409a245f90b
+  - enabled: 1
+    path: Assets/OSA/Scenes/nested_scrollviews.unity
+    guid: 5807dc623649cfc4689799f44314f79a
+  - enabled: 1
+    path: Assets/OSA/Scenes/nested_scrollviews_same_direction.unity
+    guid: 92b9321b8f9a3b24f97cd74ffd3e855d
+  - enabled: 1
+    path: Assets/OSA/Scenes/non_optimized.unity
+    guid: de42b83e455f4a34eaf83fd24dd9a472
+  - enabled: 1
+    path: Assets/OSA/Scenes/page_view_worldspace.unity
+    guid: b3dd830c30bab1b44b87e080b38944a3
+  - enabled: 1
+    path: Assets/OSA/Scenes/select_and_delete.unity
+    guid: bd571fea0cb36754e8f02d57adafbd84
+  - enabled: 1
+    path: Assets/OSA/Scenes/simple_multiple_prefabs.unity
+    guid: 367ff103acff98546b09ccccc47ddab0
+  - enabled: 1
+    path: Assets/OSA/Scenes/simple_pull_to_refresh.unity
+    guid: 32485df9dd5c1f747b793e284087f63c
+  - enabled: 1
+    path: Assets/OSA/Scenes/simple_tutorial.unity
+    guid: 29a8ea9c9e7494441bf39465fc6505c5
+  - enabled: 1
+    path: Assets/OSA/Scenes/table_view.unity
+    guid: aa616a950b22b8a4a9a97a57b0a2cc2f
+  m_configObjects: {}

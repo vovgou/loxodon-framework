@@ -70,11 +70,14 @@ For detailed installation steps, please refer to the **[installation documentati
 - LoxodonFramework 2.0 supports Mono and IL2CPP 
 
 ## Plugins
+- [Loxodon Framework OSA](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.OSA)
+
 - [Loxodon Framework Fody](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody)
 
 - [Loxodon Framework UIToolkit](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.UIToolkit)
 
 - [Loxodon Framework ILRuntime](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.ILRuntime)
+
 - [Loxodon Framework Localization For CSV](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.LocalizationsForCsv)
 
     It supports localization files in csv format, requires Unity2018.4 or higher.

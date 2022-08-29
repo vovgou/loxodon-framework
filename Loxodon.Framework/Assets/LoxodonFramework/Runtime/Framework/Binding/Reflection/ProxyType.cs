@@ -33,6 +33,8 @@ namespace Loxodon.Framework.Binding.Reflection
 {
     public class ProxyType : IProxyType
     {
+        private static readonly BindingFlags DeclaredOnlyLookup = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+
         private readonly Dictionary<string, IProxyEventInfo> events = new Dictionary<string, IProxyEventInfo>();
 
         private readonly Dictionary<string, IProxyFieldInfo> fields = new Dictionary<string, IProxyFieldInfo>();
@@ -46,7 +48,7 @@ namespace Loxodon.Framework.Binding.Reflection
         private readonly object _lock = new object();
         private readonly ProxyFactory factory;
         private readonly Type type;
-        private IProxyType baseType;
+        private ProxyType baseType;
 
         public ProxyType(Type type, ProxyFactory factory)
         {
@@ -176,20 +178,18 @@ namespace Loxodon.Framework.Binding.Reflection
             }
         }
 
-        public IProxyType GetBase()
+        private IProxyType GetBase()
         {
             if (this.baseType != null)
                 return this.baseType;
 
-            //Type _baseType = type.GetTypeInfo().BaseType;
             Type _baseType = type.BaseType;
             if (_baseType == null)
                 return null;
 
-            this.baseType = factory.Get(_baseType);
+            this.baseType = factory.GetType(_baseType, true);
             return this.baseType;
         }
-
         public IProxyMemberInfo GetMember(string name)
         {
             if (name.Equals("Item") && typeof(ICollection).IsAssignableFrom(type))
@@ -219,9 +219,7 @@ namespace Loxodon.Framework.Binding.Reflection
         public IProxyMemberInfo GetMember(string name, BindingFlags flags)
         {
             if (name.Equals("Item") && typeof(ICollection).IsAssignableFrom(type))
-            {
                 return GetItem();
-            }
 
             IProxyMemberInfo info = GetProperty(name, flags);
             if (info != null)
@@ -248,17 +246,53 @@ namespace Loxodon.Framework.Binding.Reflection
             if (this.events.TryGetValue(name, out info))
                 return info;
 
-            EventInfo eventInfo = this.type.GetEvent(name);
-            if (eventInfo != null && eventInfo.DeclaringType.Equals(type))
+            return FindEventInfo(name, DeclaredOnlyLookup, true);
+        }
+
+        private IProxyEventInfo FindEventInfo(string name, BindingFlags flags, bool includeInterface)
+        {
+            IProxyEventInfo info = null;
+            EventInfo eventInfo = this.type.GetEvent(name, flags | BindingFlags.DeclaredOnly);
+            if (eventInfo != null)
             {
+                if (this.events.TryGetValue(eventInfo.Name, out info))
+                    return info;
                 return this.CreateProxyEventInfo(eventInfo);
             }
 
-            IProxyType baseTypeInfo = this.GetBase();
-            if (baseTypeInfo == null)
-                return null;
+            if (type.BaseType != null && !type.BaseType.Equals(typeof(System.Object)))
+            {
+                if (baseType != null)
+                {
+                    info = baseType.FindEventInfo(name, flags, false);
+                }
+                else if (type.BaseType.GetEvent(name, flags) != null)
+                {
+                    baseType = factory.GetType(type.BaseType, true);
+                    info = baseType.FindEventInfo(name, flags, false);
+                }
+                if (info != null)
+                    return info;
+            }
 
-            return baseTypeInfo.GetEvent(name);
+            if (includeInterface)
+            {
+                Type[] types = type.GetInterfaces();
+                foreach (Type interfaceType in types)
+                {
+                    ProxyType proxyType = factory.GetType(interfaceType, false);
+                    if (proxyType == null && interfaceType.GetEvent(name, flags | BindingFlags.DeclaredOnly) != null)
+                        proxyType = factory.GetType(interfaceType, true);
+
+                    if (proxyType == null)
+                        continue;
+
+                    info = proxyType.FindEventInfo(name, flags, false);
+                    if (info != null)
+                        return info;
+                }
+            }
+            return null;
         }
 
         public IProxyFieldInfo GetField(string name)
@@ -267,35 +301,57 @@ namespace Loxodon.Framework.Binding.Reflection
             if (this.fields.TryGetValue(name, out info))
                 return info;
 
-            FieldInfo fieldInfo = this.type.GetField(name);
-            if (fieldInfo != null && fieldInfo.DeclaringType.Equals(type))
-            {
-                return this.CreateProxyFieldInfo(fieldInfo);
-            }
-
-            IProxyType baseTypeInfo = this.GetBase();
-            if (baseTypeInfo == null)
-                return null;
-
-            return baseTypeInfo.GetField(name);
+            return FindFieldInfo(name, DeclaredOnlyLookup, true);
         }
         public IProxyFieldInfo GetField(string name, BindingFlags flags)
         {
-            IProxyFieldInfo info;
-            if (this.fields.TryGetValue(name, out info))
-                return info;
+            return FindFieldInfo(name, flags, true);
+        }
 
-            FieldInfo fieldInfo = this.type.GetField(name, flags);
-            if (fieldInfo != null && fieldInfo.DeclaringType.Equals(type))
+        private IProxyFieldInfo FindFieldInfo(string name, BindingFlags flags, bool includeInterface)
+        {
+            IProxyFieldInfo info = null;
+            FieldInfo fieldInfo = this.type.GetField(name, flags | BindingFlags.DeclaredOnly);
+            if (fieldInfo != null)
             {
+                if (this.fields.TryGetValue(fieldInfo.Name, out info))
+                    return info;
                 return this.CreateProxyFieldInfo(fieldInfo);
             }
 
-            IProxyType baseTypeInfo = this.GetBase();
-            if (baseTypeInfo == null)
-                return null;
+            if (type.BaseType != null && !type.BaseType.Equals(typeof(System.Object)))
+            {
+                if (baseType != null)
+                {
+                    info = baseType.FindFieldInfo(name, flags, false);
+                }
+                else if (type.BaseType.GetField(name, flags) != null)
+                {
+                    baseType = factory.GetType(type.BaseType, true);
+                    info = baseType.FindFieldInfo(name, flags, false);
+                }
+                if (info != null)
+                    return info;
+            }
 
-            return baseTypeInfo.GetField(name, flags);
+            if (includeInterface)
+            {
+                Type[] types = type.GetInterfaces();
+                foreach (Type interfaceType in types)
+                {
+                    ProxyType proxyType = factory.GetType(interfaceType, false);
+                    if (proxyType == null && interfaceType.GetField(name, flags | BindingFlags.DeclaredOnly) != null)
+                        proxyType = factory.GetType(interfaceType, true);
+
+                    if (proxyType == null)
+                        continue;
+
+                    info = proxyType.FindFieldInfo(name, flags, false);
+                    if (info != null)
+                        return info;
+                }
+            }
+            return null;
         }
 
         public IProxyPropertyInfo GetProperty(string name)
@@ -304,36 +360,58 @@ namespace Loxodon.Framework.Binding.Reflection
             if (this.properties.TryGetValue(name, out info))
                 return info;
 
-            PropertyInfo propertyInfo = this.type.GetProperty(name);
-            if (propertyInfo != null && propertyInfo.DeclaringType.Equals(type))
-            {
-                return this.CreateProxyPropertyInfo(propertyInfo);
-            }
-
-            IProxyType baseTypeInfo = this.GetBase();
-            if (baseTypeInfo == null)
-                return null;
-
-            return baseTypeInfo.GetProperty(name);
+            return FindPropertyInfo(name, DeclaredOnlyLookup, true);
         }
 
         public IProxyPropertyInfo GetProperty(string name, BindingFlags flags)
         {
-            IProxyPropertyInfo info;
-            if (this.properties.TryGetValue(name, out info))
-                return info;
+            return FindPropertyInfo(name, flags, true);
+        }
 
-            PropertyInfo propertyInfo = this.type.GetProperty(name, flags);
-            if (propertyInfo != null && propertyInfo.DeclaringType.Equals(type))
+        private IProxyPropertyInfo FindPropertyInfo(string name, BindingFlags flags, bool includeInterface)
+        {
+            IProxyPropertyInfo info = null;
+            PropertyInfo propertyInfo = this.type.GetProperty(name, flags | BindingFlags.DeclaredOnly);
+            if (propertyInfo != null)
             {
+                if (this.properties.TryGetValue(propertyInfo.Name, out info))
+                    return info;
                 return this.CreateProxyPropertyInfo(propertyInfo);
             }
 
-            IProxyType baseTypeInfo = this.GetBase();
-            if (baseTypeInfo == null)
-                return null;
+            if (type.BaseType != null && !type.BaseType.Equals(typeof(System.Object)))
+            {
+                if (baseType != null)
+                {
+                    info = baseType.FindPropertyInfo(name, flags, false);
+                }
+                else if (type.BaseType.GetProperty(name, flags) != null)
+                {
+                    baseType = factory.GetType(type.BaseType, true);
+                    info = baseType.FindPropertyInfo(name, flags, false);
+                }
+                if (info != null)
+                    return info;
+            }
 
-            return baseTypeInfo.GetProperty(name, flags);
+            if (includeInterface)
+            {
+                Type[] types = type.GetInterfaces();
+                foreach (Type interfaceType in types)
+                {
+                    ProxyType proxyType = factory.GetType(interfaceType, false);
+                    if (proxyType == null && interfaceType.GetProperty(name, flags | BindingFlags.DeclaredOnly) != null)
+                        proxyType = factory.GetType(interfaceType, true);
+
+                    if (proxyType == null)
+                        continue;
+
+                    info = proxyType.FindPropertyInfo(name, flags, false);
+                    if (info != null)
+                        return info;
+                }
+            }
+            return null;
         }
 
         public IProxyItemInfo GetItem()
@@ -347,11 +425,9 @@ namespace Loxodon.Framework.Binding.Reflection
             }
             else
             {
-                PropertyInfo propertyInfo = this.type.GetProperty("Item");
-                if (propertyInfo != null && propertyInfo.DeclaringType.Equals(type))
-                {
+                PropertyInfo propertyInfo = this.type.GetProperty("Item", BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                if (propertyInfo != null)
                     return this.CreateProxyItemInfo(propertyInfo);
-                }
 
                 IProxyType baseTypeInfo = this.GetBase();
                 if (baseTypeInfo == null)
@@ -363,13 +439,6 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public IProxyMethodInfo GetMethod(string name)
         {
-            //MemberInfo memberInfo = this.type.FindFirstMemberInfo(name);            
-            //if (memberInfo == null)
-            //    return null;
-
-            //if (!(memberInfo is MethodInfo))
-            //    return null;
-
             MethodInfo methodInfo = this.type.GetMethod(name);
             if (methodInfo == null)
                 return null;
@@ -383,28 +452,11 @@ namespace Loxodon.Framework.Binding.Reflection
             if (info != null)
                 return info;
 
-            MethodInfo methodInfo = this.type.GetMethod(name, parameterTypes);
-            if (methodInfo != null && methodInfo.DeclaringType.Equals(type))
-            {
-                return this.CreateProxyMethodInfo(methodInfo);
-            }
-
-            IProxyType baseTypeInfo = this.GetBase();
-            if (baseTypeInfo == null)
-                return null;
-
-            return baseTypeInfo.GetMethod(name, parameterTypes);
+            return FindMethodInfo(name, parameterTypes, DeclaredOnlyLookup, true);
         }
 
         public IProxyMethodInfo GetMethod(string name, BindingFlags flags)
         {
-            //MemberInfo memberInfo = this.type.FindFirstMemberInfo(name, flags);
-            //if (memberInfo == null)
-            //    return null;
-
-            //if (!(memberInfo is MethodInfo))
-            //    return null;
-
             MethodInfo methodInfo = this.type.GetMethod(name, flags);
             if (methodInfo == null)
                 return null;
@@ -414,25 +466,54 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public IProxyMethodInfo GetMethod(string name, Type[] parameterTypes, BindingFlags flags)
         {
-            IProxyMethodInfo info = this.GetMethodInfo(name, parameterTypes);
-            if (info != null)
-                return info;
+            return FindMethodInfo(name, parameterTypes, flags, true);
+        }
 
-#if NETFX_CORE
-            MethodInfo methodInfo = this.type.GetMethod(name, flags);
-#else
-            MethodInfo methodInfo = this.type.GetMethod(name, flags, null, parameterTypes, null);
-#endif
-            if (methodInfo != null && methodInfo.DeclaringType.Equals(type))
+        private IProxyMethodInfo FindMethodInfo(string name, Type[] parameterTypes, BindingFlags flags, bool includeInterface)
+        {
+            IProxyMethodInfo info = null;
+            MethodInfo methodInfo = this.type.GetMethod(name, flags | BindingFlags.DeclaredOnly, null, parameterTypes, null);
+            if (methodInfo != null)
             {
+                info = this.GetMethodInfo(name, parameterTypes);
+                if (info != null)
+                    return info;
                 return this.CreateProxyMethodInfo(methodInfo);
             }
 
-            IProxyType baseTypeInfo = this.GetBase();
-            if (baseTypeInfo == null)
-                return null;
+            if (type.BaseType != null)
+            {
+                if (baseType != null)
+                {
+                    info = baseType.FindMethodInfo(name, parameterTypes, flags, false);
+                }
+                else if (type.BaseType.GetMethod(name, flags) != null)
+                {
+                    baseType = factory.GetType(type.BaseType, true);
+                    info = baseType.FindMethodInfo(name, parameterTypes, flags, false);
+                }
+                if (info != null)
+                    return info;
+            }
 
-            return baseTypeInfo.GetMethod(name, parameterTypes, flags);
+            if (includeInterface)
+            {
+                Type[] types = type.GetInterfaces();
+                foreach (Type interfaceType in types)
+                {
+                    ProxyType proxyType = factory.GetType(interfaceType, false);
+                    if (proxyType == null && interfaceType.GetMethod(name, flags | BindingFlags.DeclaredOnly, null, parameterTypes, null) != null)
+                        proxyType = factory.GetType(interfaceType, true);
+
+                    if (proxyType == null)
+                        continue;
+
+                    info = proxyType.FindMethodInfo(name, parameterTypes, flags, false);
+                    if (info != null)
+                        return info;
+                }
+            }
+            return null;
         }
 
         protected IProxyEventInfo CreateProxyEventInfo(EventInfo eventInfo)
@@ -458,7 +539,7 @@ namespace Loxodon.Framework.Binding.Reflection
             return info;
         }
 
-        protected IProxyPropertyInfo CreateProxyPropertyInfo(PropertyInfo propertyInfo)
+        internal IProxyPropertyInfo CreateProxyPropertyInfo(PropertyInfo propertyInfo)
         {
             IProxyPropertyInfo info = null;
             try
