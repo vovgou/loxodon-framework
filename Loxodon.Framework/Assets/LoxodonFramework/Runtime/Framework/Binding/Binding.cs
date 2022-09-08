@@ -29,16 +29,15 @@ using Loxodon.Framework.Binding.Converters;
 using Loxodon.Framework.Binding.Proxy.Sources;
 using Loxodon.Framework.Binding.Proxy.Targets;
 using UnityEngine.Events;
-using Loxodon.Framework.Execution;
 using UnityEngine;
 using Loxodon.Framework.Binding.Contexts;
+using System.Threading;
 
 namespace Loxodon.Framework.Binding
 {
     public class Binding : AbstractBinding
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(Binding));
-
         private readonly ISourceProxyFactory sourceProxyFactory;
         private readonly ITargetProxyFactory targetProxyFactory;
 
@@ -57,7 +56,7 @@ namespace Loxodon.Framework.Binding
         private bool isUpdatingSource;
         private bool isUpdatingTarget;
         private string targetTypeName;
-        private Action updateTargetAction;
+        private SendOrPostCallback updateTargetAction;
 
         public Binding(IBindingContext bindingContext, object source, object target, BindingDescription bindingDescription, ISourceProxyFactory sourceProxyFactory, ITargetProxyFactory targetProxyFactory) : base(bindingContext, source, target)
         {
@@ -207,11 +206,11 @@ namespace Loxodon.Framework.Binding
                     updateTargetAction = DoUpdateTargetFromSource;
 
                 //Run on the main thread
-                Executors.RunOnMainThread(updateTargetAction);
+                UISynchronizationContext.Post(updateTargetAction, null);
             }
         }
 
-        protected void DoUpdateTargetFromSource()
+        protected void DoUpdateTargetFromSource(object state)
         {
             try
             {

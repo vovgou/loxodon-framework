@@ -22,35 +22,36 @@
  * SOFTWARE.
  */
 
-using System.Threading.Tasks;
+using System.Threading;
+using UnityEngine;
 
-namespace Loxodon.Framework.Views
+namespace Loxodon.Framework.Binding
 {
-    public interface IDialog
+    public class UISynchronizationContext
     {
-        /// <summary>
-        /// Show the dialog box.
-        /// </summary>
-        void Show();
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void OnInitialize()
+        {
+            content = SynchronizationContext.Current;
+            threadId = Thread.CurrentThread.ManagedThreadId;
+        }
 
-        /// <summary>
-        /// Cancel the dialog box.
-        /// </summary>
-        void Cancel();
+        private static int threadId;
+        private static SynchronizationContext content;
 
-        /// <summary>
-        /// Suspend the coroutine,until the dialog box closed.
-        /// eg:
-        /// yiled return dialog.WaitForClosed();
-        /// </summary>
-        /// <returns></returns>
-        object WaitForClosed();
-
-        ///// <summary>
-        ///// Suspend the coroutine,until the dialog box closed.
-        ///// </summary>
-        ///// <typeparam name="TResult"></typeparam>
-        ///// <returns></returns>
-        //Task<TResult> WaitForClosed<TResult>();
+        public static void Post(SendOrPostCallback callback, object state)
+        {
+            if (threadId == Thread.CurrentThread.ManagedThreadId)
+                callback(state);
+            else
+                content.Post(callback, state);
+        }
+        public static void Send(SendOrPostCallback callback, object state)
+        {
+            if (threadId == Thread.CurrentThread.ManagedThreadId)
+                callback(state);
+            else
+                content.Send(callback, state);
+        }
     }
 }

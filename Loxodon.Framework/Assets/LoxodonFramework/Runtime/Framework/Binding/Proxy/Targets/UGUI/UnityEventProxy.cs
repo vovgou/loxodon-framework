@@ -30,7 +30,7 @@ using UnityEngine.Events;
 using Loxodon.Log;
 using Loxodon.Framework.Commands;
 using Loxodon.Framework.Binding.Reflection;
-using Loxodon.Framework.Execution;
+using System.Threading;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
@@ -42,7 +42,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         protected Delegate handler;/* Delegate Binding */
 
         protected IProxyPropertyInfo interactable;
-        protected Action updateInteractableAction;
+        protected SendOrPostCallback updateInteractableAction;
         protected T unityEvent;
 
         public UnityEventProxyBase(object target, T unityEvent) : base(target)
@@ -157,10 +157,11 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if (updateInteractableAction == null)
                 updateInteractableAction = UpdateTargetInteractable;
 
-            Executors.RunOnMainThread(updateInteractableAction);
+            UISynchronizationContext.Post(updateInteractableAction, null);
+            //Executors.RunOnMainThread(updateInteractableAction);
         }
 
-        protected virtual void UpdateTargetInteractable()
+        protected virtual void UpdateTargetInteractable(object state = null)
         {
             var target = this.Target;
             if (this.interactable == null || target == null)

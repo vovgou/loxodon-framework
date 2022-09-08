@@ -29,6 +29,7 @@ using Loxodon.Framework.Execution;
 using Loxodon.Framework.ViewModels;
 using Loxodon.Framework.Contexts;
 using UnityEngine;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Views
 {
@@ -198,7 +199,7 @@ namespace Loxodon.Framework.Views
             viewModel.CancelButtonText = cancelButtonText;
             viewModel.CanceledOnTouchOutside = canceledOnTouchOutside;
             viewModel.Click = afterHideCallback;
-            
+
             IUIViewLocator locator = GetUIViewLocator();
             AlertDialogWindow window = locator.LoadView<AlertDialogWindow>(ViewName);
             if (window == null)
@@ -279,6 +280,7 @@ namespace Loxodon.Framework.Views
             }
         }
 
+        private TaskCompletionSource<int> source;
         private AlertDialogWindow window;
         private IUIView contentView;
         private AlertDialogViewModel viewModel;
@@ -289,14 +291,28 @@ namespace Loxodon.Framework.Views
 
         public AlertDialog(AlertDialogWindow window, IUIView contentView, AlertDialogViewModel viewModel)
         {
+            this.source = new TaskCompletionSource<int>();
             this.window = window;
             this.contentView = contentView;
             this.viewModel = viewModel;
+
+            EventHandler handler = null;
+            handler = (sender, e) =>
+            {
+                this.window.OnDismissed -= handler;
+                source.SetResult(viewModel.Result);
+            };
+            this.window.OnDismissed += handler;
         }
 
         public virtual object WaitForClosed()
         {
             return Executors.WaitWhile(() => !this.viewModel.Closed);
+        }
+
+        public virtual Task<int> WaitForResult()
+        {
+            return source.Task;
         }
 
         public void Show()

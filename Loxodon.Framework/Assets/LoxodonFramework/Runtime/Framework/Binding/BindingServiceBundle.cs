@@ -22,17 +22,15 @@
  * SOFTWARE.
  */
 
-using System.Reflection;
-using Loxodon.Framework.Services;
-using Loxodon.Framework.Binding.Reflection;
-using Loxodon.Framework.Binding.Converters;
 using Loxodon.Framework.Binding.Binders;
+using Loxodon.Framework.Binding.Converters;
 using Loxodon.Framework.Binding.Paths;
 using Loxodon.Framework.Binding.Proxy.Sources;
-using Loxodon.Framework.Binding.Proxy.Sources.Object;
 using Loxodon.Framework.Binding.Proxy.Sources.Expressions;
+using Loxodon.Framework.Binding.Proxy.Sources.Object;
 using Loxodon.Framework.Binding.Proxy.Sources.Text;
 using Loxodon.Framework.Binding.Proxy.Targets;
+using Loxodon.Framework.Services;
 
 namespace Loxodon.Framework.Binding
 {

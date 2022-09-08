@@ -33,7 +33,7 @@ namespace Loxodon.Framework.Binding.Reflection
 {
     public class ProxyType : IProxyType
     {
-        private static readonly BindingFlags DeclaredOnlyLookup = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+        private static readonly BindingFlags DEFAULT_LOOKUP = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
         private readonly Dictionary<string, IProxyEventInfo> events = new Dictionary<string, IProxyEventInfo>();
 
@@ -246,7 +246,7 @@ namespace Loxodon.Framework.Binding.Reflection
             if (this.events.TryGetValue(name, out info))
                 return info;
 
-            return FindEventInfo(name, DeclaredOnlyLookup, true);
+            return FindEventInfo(name, DEFAULT_LOOKUP, true);
         }
 
         private IProxyEventInfo FindEventInfo(string name, BindingFlags flags, bool includeInterface)
@@ -266,7 +266,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 {
                     info = baseType.FindEventInfo(name, flags, false);
                 }
-                else if (type.BaseType.GetEvent(name, flags) != null)
+                else if (type.BaseType.GetEvent(name, flags & ~BindingFlags.DeclaredOnly) != null)
                 {
                     baseType = factory.GetType(type.BaseType, true);
                     info = baseType.FindEventInfo(name, flags, false);
@@ -301,7 +301,7 @@ namespace Loxodon.Framework.Binding.Reflection
             if (this.fields.TryGetValue(name, out info))
                 return info;
 
-            return FindFieldInfo(name, DeclaredOnlyLookup, true);
+            return FindFieldInfo(name, DEFAULT_LOOKUP, true);
         }
         public IProxyFieldInfo GetField(string name, BindingFlags flags)
         {
@@ -325,7 +325,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 {
                     info = baseType.FindFieldInfo(name, flags, false);
                 }
-                else if (type.BaseType.GetField(name, flags) != null)
+                else if (type.BaseType.GetField(name, flags & ~BindingFlags.DeclaredOnly) != null)
                 {
                     baseType = factory.GetType(type.BaseType, true);
                     info = baseType.FindFieldInfo(name, flags, false);
@@ -360,7 +360,7 @@ namespace Loxodon.Framework.Binding.Reflection
             if (this.properties.TryGetValue(name, out info))
                 return info;
 
-            return FindPropertyInfo(name, DeclaredOnlyLookup, true);
+            return FindPropertyInfo(name, DEFAULT_LOOKUP, true);
         }
 
         public IProxyPropertyInfo GetProperty(string name, BindingFlags flags)
@@ -372,6 +372,7 @@ namespace Loxodon.Framework.Binding.Reflection
         {
             IProxyPropertyInfo info = null;
             PropertyInfo propertyInfo = this.type.GetProperty(name, flags | BindingFlags.DeclaredOnly);
+
             if (propertyInfo != null)
             {
                 if (this.properties.TryGetValue(propertyInfo.Name, out info))
@@ -385,7 +386,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 {
                     info = baseType.FindPropertyInfo(name, flags, false);
                 }
-                else if (type.BaseType.GetProperty(name, flags) != null)
+                else if (type.BaseType.GetProperty(name, flags & ~BindingFlags.DeclaredOnly) != null)
                 {
                     baseType = factory.GetType(type.BaseType, true);
                     info = baseType.FindPropertyInfo(name, flags, false);
@@ -452,7 +453,7 @@ namespace Loxodon.Framework.Binding.Reflection
             if (info != null)
                 return info;
 
-            return FindMethodInfo(name, parameterTypes, DeclaredOnlyLookup, true);
+            return FindMethodInfo(name, parameterTypes, DEFAULT_LOOKUP, true);
         }
 
         public IProxyMethodInfo GetMethod(string name, BindingFlags flags)
@@ -487,7 +488,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 {
                     info = baseType.FindMethodInfo(name, parameterTypes, flags, false);
                 }
-                else if (type.BaseType.GetMethod(name, flags) != null)
+                else if (type.BaseType.GetMethod(name, flags & ~BindingFlags.DeclaredOnly) != null)
                 {
                     baseType = factory.GetType(type.BaseType, true);
                     info = baseType.FindMethodInfo(name, parameterTypes, flags, false);
