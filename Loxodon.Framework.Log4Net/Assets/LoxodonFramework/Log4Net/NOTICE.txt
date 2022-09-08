@@ -1,0 +1,11 @@
+Notice
+
+This product is governed by the MIT license; however, the following components are governed by the licenses indicated below:
+
+A. Log4Net
+
+	LICENSE:Apache 2.0
+		Plugins/Log4Net/LICENSE.txt
+	HOMEPAGE:
+		http://logging.apache.org/log4net
+	

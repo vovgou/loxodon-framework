@@ -13,7 +13,7 @@
 
 Requires Unity 2018.4 or higher.
 
-这是一个静态织入代码的插件，它将 "[PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)"整合到Unity项目中，通过为ViewModel类Model类添加注解，自动生成"INotifyPropertyChanged"接口和相关的代码，提高开发效率。
+这是一个静态织入代码的插件，已将 "[PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)"整合到Unity项目中，通过为ViewModel类Model类添加注解，自动生成"INotifyPropertyChanged"接口和相关的代码，提高开发效率。
 
 关于[PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)注解的使用请查看官方文档。
 

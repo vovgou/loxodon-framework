@@ -1,0 +1,12 @@
+Notice
+
+This product is governed by the MIT license; however, the following components are governed by the licenses indicated below:
+
+A. CsvHelper
+
+	LICENSE:MS-PL/Apache 2.0
+		Plugins/CsvHelper/LICENSE.txt
+	HOMEPAGE:
+		https://github.com/JoshClose/CsvHelper
+	
+
