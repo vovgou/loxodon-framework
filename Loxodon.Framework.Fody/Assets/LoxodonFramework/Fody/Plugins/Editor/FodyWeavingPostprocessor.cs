@@ -1,138 +1,151 @@
-﻿/*
- * MIT License
- *
- * Copyright (c) 2018 Clark Yang
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to 
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- * of the Software, and to permit persons to whom the Software is furnished to do so, 
- * subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all 
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
- * SOFTWARE.
- */
-
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
-namespace Loxodon.Framework.Fody.Editos
+public class FodyWeavingPostprocessor : IPostBuildPlayerScriptDLLs
 {
-    public class FodyWeavingPostprocessor : IPostBuildPlayerScriptDLLs
+    private const string CONFIG_DIR = "Assets/LoxodonFramework/Editor/AppData/Fody/";
+    private const string CONFIG_FULLNAME = "Assets/LoxodonFramework/Editor/AppData/Fody/FodyWeavers.xml";
+    private const string DEFAULT_CONFIG_TEMPLATE_DIR = "Assets/LoxodonFramework/Fody/Plugins/Editor/";
+    private const string PACKAGES_CONFIG_TEMPLATE_DIR = "Packages/com.vovgou.loxodon-framework-fody/Plugins/Editor/";
+    private const string DEFAULT_CONFIG_TEMPLATE_FILENAME = "FodyWeavers.template.xml";
+    private const string ASSEMBLIES_EDITOR_LIB_PATH = "Library/ScriptAssemblies/";
+    private const string ASSEMBLIES_BUILD_TEMP_PATH = "Temp/StagingArea/Data/Managed/";
+    private const string DEFAULT_ASSEMBLIE_FILENAME = "Assembly-CSharp";
+    private const string ASSEMBLIE_FILENAME_SUFFIX = ".dll";
+
+    public int callbackOrder => 0;
+
+    [DidReloadScripts]
+    public static void OnScriptsReloaded()
     {
-        private const string CONFIG_PATH_DIR = "Assets/LoxodonFramework/Editor/AppData/Fody/";
-        private const string CONFIG_PATH = CONFIG_PATH_DIR + "FodyWeavers.xml";
-        private const string DEFAULT_CONFIG_DIR = "Assets/LoxodonFramework/Fody/Plugins/Editor/";
-        private const string DEFAULT_CONFIG_PACKAGES_DIR = "Packages/com.vovgou.loxodon-framework-fody/Plugins/Editor/";
-        private const string DEFAULT_CONFIG_TEMPLATE_NAME = "FodyWeavers.template.xml";
-        private const string ASSEMBLIES_EDITOR_LIB_PATH = "Library/ScriptAssemblies/";
-        private const string ASSEMBLIES_BUILD_TEMP_PATH = "Temp/StagingArea/Data/Managed/";
-        private const string DEFAULT_ASSEMBLIE_FILENAME = "Assembly-CSharp";
-        private const string ASSEMBLIE_FILENAME_SUFFIX = ".dll";
+        DoWeave(ASSEMBLIES_EDITOR_LIB_PATH);
+    }
 
-        public int callbackOrder => 0;
+    public void OnPostBuildPlayerScriptDLLs(BuildReport report)
+    {
+        DoWeave(ASSEMBLIES_BUILD_TEMP_PATH);
+    }
 
-        [DidReloadScripts]
-        public static void OnScriptsReloaded()
+    protected static void DoWeave(string assembliesOutput)
+    {
+        if (!File.Exists(CONFIG_FULLNAME))
         {
-            DoWeave(ASSEMBLIES_EDITOR_LIB_PATH);
+            if (!Directory.Exists(CONFIG_DIR))
+                Directory.CreateDirectory(CONFIG_DIR);
+
+            if (File.Exists(PACKAGES_CONFIG_TEMPLATE_DIR + DEFAULT_CONFIG_TEMPLATE_FILENAME))
+                File.Copy(PACKAGES_CONFIG_TEMPLATE_DIR + DEFAULT_CONFIG_TEMPLATE_FILENAME, CONFIG_FULLNAME);
+            else if (File.Exists(DEFAULT_CONFIG_TEMPLATE_DIR + DEFAULT_CONFIG_TEMPLATE_FILENAME))
+                File.Copy(DEFAULT_CONFIG_TEMPLATE_DIR + DEFAULT_CONFIG_TEMPLATE_FILENAME, CONFIG_FULLNAME);
         }
 
-        public void OnPostBuildPlayerScriptDLLs(BuildReport report)
+        if (string.IsNullOrEmpty(assembliesOutput))
+            assembliesOutput = ASSEMBLIES_EDITOR_LIB_PATH;
+
+        string weaverAssemblyRoot = PACKAGES_CONFIG_TEMPLATE_DIR;
+        if (Directory.Exists(PACKAGES_CONFIG_TEMPLATE_DIR))
+            weaverAssemblyRoot = PACKAGES_CONFIG_TEMPLATE_DIR;
+        else if (Directory.Exists(DEFAULT_CONFIG_TEMPLATE_DIR))
+            weaverAssemblyRoot = DEFAULT_CONFIG_TEMPLATE_DIR;
+
+        LoadAssembly(weaverAssemblyRoot + "Fody/FodyHelpers.dll");
+        LoadAssembly(weaverAssemblyRoot + "Fody/Mono.Cecil.dll");
+        LoadAssembly(weaverAssemblyRoot + "Fody/Mono.Cecil.Pdb.dll");
+        LoadAssembly(weaverAssemblyRoot + "Fody/Mono.Cecil.Rocks.dll");
+        Assembly assembly = LoadAssembly(weaverAssemblyRoot + "Fody/Fody.Unity.dll");
+
+        List<string> assemblyNames = new List<string>();
+        XElement config = XElement.Load(CONFIG_FULLNAME);
+        XElement assemblyNamesNode = config.Element(XName.Get("AssemblyNames"));
+        if (assemblyNamesNode != null)
         {
-            DoWeave(ASSEMBLIES_BUILD_TEMP_PATH);
-        }
-
-        private static void DoWeave(string assembliesPath = null)
-        {
-            if (!File.Exists(CONFIG_PATH))
+            foreach (var node in assemblyNamesNode.Elements())
             {
-                AssetDatabase.StartAssetEditing();
-                if (!Directory.Exists(CONFIG_PATH_DIR))
-                    Directory.CreateDirectory(CONFIG_PATH_DIR);
-
-                if (File.Exists(DEFAULT_CONFIG_PACKAGES_DIR + DEFAULT_CONFIG_TEMPLATE_NAME))
-                    File.Copy(DEFAULT_CONFIG_PACKAGES_DIR + DEFAULT_CONFIG_TEMPLATE_NAME, CONFIG_PATH);
-                else if (File.Exists(DEFAULT_CONFIG_DIR + DEFAULT_CONFIG_TEMPLATE_NAME))
-                    File.Copy(DEFAULT_CONFIG_DIR + DEFAULT_CONFIG_TEMPLATE_NAME, CONFIG_PATH);
-
-                AssetDatabase.StopAssetEditing();
-                AssetDatabase.Refresh();
-            }
-
-            List<string> assemblyNames = new List<string>();
-            XElement config = XElement.Load(CONFIG_PATH);
-            XElement assemblyNamesNode = config.Element(XName.Get("AssemblyNames"));
-            if (assemblyNamesNode != null)
-            {
-                foreach (var node in assemblyNamesNode.Elements())
-                {
-                    string assemblyName = node.Value;
-                    if (string.IsNullOrEmpty(assemblyName))
-                        continue;
-
-                    assemblyNames.Add(assemblyName);
-                }
-                assemblyNamesNode.Remove();
-            }
-
-            if (assemblyNames.Count <= 0)
-                assemblyNames.Add(DEFAULT_ASSEMBLIE_FILENAME);
-
-            string assembliesRoot = string.IsNullOrEmpty(assembliesPath) ? ASSEMBLIES_EDITOR_LIB_PATH : assembliesPath;
-            string weaverAssemblyRoot = DEFAULT_CONFIG_PACKAGES_DIR;
-            if (Directory.Exists(DEFAULT_CONFIG_PACKAGES_DIR))
-                weaverAssemblyRoot = DEFAULT_CONFIG_PACKAGES_DIR;
-            else if (Directory.Exists(DEFAULT_CONFIG_DIR))
-                weaverAssemblyRoot = DEFAULT_CONFIG_DIR;
-
-            foreach (string name in assemblyNames)
-            {
-                string assemblyFilePath = assembliesRoot + name;
-                if (!assemblyFilePath.EndsWith(ASSEMBLIE_FILENAME_SUFFIX, System.StringComparison.OrdinalIgnoreCase))
-                    assemblyFilePath += ASSEMBLIE_FILENAME_SUFFIX;
-
-                if (!File.Exists(assemblyFilePath))
+                string assemblyName = node.Value;
+                if (string.IsNullOrEmpty(assemblyName))
                     continue;
 
-                WeavingTask weaver = new WeavingTask(assemblyFilePath, weaverAssemblyRoot, config);
-                weaver.Execute();
-                Debug.LogFormat("Weaving code succeeded for {0}.dll", name);
+                assemblyNames.Add(assemblyName);
             }
+            assemblyNamesNode.Remove();
         }
 
-        //private static string GetAssembliesRoot(XElement assemblyNamesNode)
-        //{
-        //    if (assemblyNamesNode == null)
-        //        return ASSEMBLIES_EDITOR_LIB_PATH;
+        if (assemblyNames.Count <= 0)
+            assemblyNames.Add(DEFAULT_ASSEMBLIE_FILENAME);
 
-        //    var attr = assemblyNamesNode.Attribute(XName.Get("root"));
-        //    if (attr == null || string.IsNullOrEmpty(attr.Value))
-        //        return ASSEMBLIES_EDITOR_LIB_PATH;
+        foreach (string name in assemblyNames)
+        {
+            string assemblyFilePath = assembliesOutput + name;
+            if (!assemblyFilePath.EndsWith(ASSEMBLIE_FILENAME_SUFFIX, StringComparison.OrdinalIgnoreCase))
+                assemblyFilePath += ASSEMBLIE_FILENAME_SUFFIX;
 
-        //    string root = attr.Value.Trim();
-        //    if (string.IsNullOrEmpty(root))
-        //        return ASSEMBLIES_EDITOR_LIB_PATH;
+            if (!File.Exists(assemblyFilePath))
+                continue;
 
-        //    root = root.Replace(@"\", "/");
-        //    if (!root.EndsWith("/"))
-        //        return root + "/";
-        //    return root;
-        //}
+            var weavingTaskType = FindType(assembly, "WeavingTask");
+            Func<string, Type> weaverFinder = (weaverName) => WeaverFinder(weaverAssemblyRoot, weaverName);
+            var target = Activator.CreateInstance(weavingTaskType, new object[] { assemblyFilePath, weaverFinder, config });
+            if (Execute(target))
+                Debug.LogFormat("Weaving code succeeded for {0}.dll", name);
+            else
+                Debug.LogWarning($"The assembly has already been processed by Fody. Weaving aborted. Path: {assemblyFilePath}");
+        }
+    }
+
+    protected static bool Execute(object target)
+    {
+        MethodInfo methodInfo = target.GetType().GetMethod("Execute");
+        return (bool)methodInfo.Invoke(target, null);
+    }
+
+    protected static Type WeaverFinder(string weaverAssemblyRoot, string weaverName)
+    {
+        Assembly assembly = FindWeaverAssembly(weaverAssemblyRoot, weaverName);
+        return FindType(assembly, "ModuleWeaver");
+    }
+
+    protected static Assembly LoadAssembly(string path)
+    {
+        return Assembly.Load(File.ReadAllBytes(path));
+    }
+
+    protected static Assembly FindWeaverAssembly(string root, string weaverName)
+    {
+        var weaverAssemblyPath = $"{root}{weaverName}.Fody/{weaverName}.Fody.dll";
+        if (File.Exists(weaverAssemblyPath))
+            return LoadAssembly(weaverAssemblyPath);
+
+        Assembly[] listAssembly = AppDomain.CurrentDomain.GetAssemblies();
+        foreach (Assembly assembly in listAssembly)
+        {
+            if (Regex.IsMatch(assembly.FullName, $"^{weaverName}.Fody"))
+                return assembly;
+        }
+        return null;
+    }
+
+    protected static Type FindType(Assembly assembly, string typeName)
+    {
+        try
+        {
+            return assembly
+                .GetTypes()
+                .FirstOrDefault(x => x.Name == typeName);
+        }
+        catch (ReflectionTypeLoadException exception)
+        {
+            var message = string.Format(
+                @"Could not load '{0}' from '{1}' due to ReflectionTypeLoadException.{2}", typeName, assembly.FullName, exception);
+            throw new Exception(message);
+        }
     }
 }

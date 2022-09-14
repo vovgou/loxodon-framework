@@ -25,11 +25,11 @@
 #if UNITY_2019_1_OR_NEWER
 using Loxodon.Framework.Binding.Reflection;
 using Loxodon.Framework.Commands;
-using Loxodon.Framework.Execution;
 using Loxodon.Log;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 using UnityEngine.UIElements;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
@@ -44,6 +44,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         protected Delegate handler;/* Delegate Binding */
 
         protected readonly Clickable clickable;
+        protected SendOrPostCallback updateTargetEnableAction;
 
         public ClickableEventProxy(object target, Clickable clickable) : base(target)
         {
@@ -215,10 +216,12 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected virtual void OnCanExecuteChanged(object sender, EventArgs e)
         {
-            Executors.RunOnMainThread(UpdateTargetEnable);
+            if (updateTargetEnableAction == null)
+                updateTargetEnableAction = UpdateTargetEnable;
+            UISynchronizationContext.Post(updateTargetEnableAction, null);
         }
 
-        protected virtual void UpdateTargetEnable()
+        protected virtual void UpdateTargetEnable(object state = null)
         {
             var target = this.Target;
             if (target == null || !(target is VisualElement))

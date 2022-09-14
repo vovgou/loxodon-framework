@@ -158,7 +158,6 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 updateInteractableAction = UpdateTargetInteractable;
 
             UISynchronizationContext.Post(updateInteractableAction, null);
-            //Executors.RunOnMainThread(updateInteractableAction);
         }
 
         protected virtual void UpdateTargetInteractable(object state = null)
