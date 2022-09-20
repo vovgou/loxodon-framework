@@ -151,7 +151,7 @@ FodyWeavers.xml
 		}
 	}
 
-[ToString.Fody](https://github.com/Fody/ToString)
+### [ToString.Fody](https://github.com/Fody/ToString)
 
 FodyWeavers.xml
 
