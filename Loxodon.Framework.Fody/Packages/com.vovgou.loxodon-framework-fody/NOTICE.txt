@@ -1,0 +1,23 @@
+Notice
+
+This product is governed by the MIT license; however, the following components are governed by the licenses indicated below:
+
+A. Fody
+
+	LICENSE:MIT
+		https://github.com/Fody/Fody/blob/master/License.txt
+	HOMEPAGE:
+		https://github.com/Fody/Fody
+
+B. Fody.Unity
+
+	LICENSE:MIT
+		Plugins/Editor/Fody/LICENSE.txt
+	HOMEPAGE:
+		https://github.com/vovgou/Fody.Unity
+
+C. Mono.Cecil
+
+	LICENSE:MIT
+		https://github.com/jbevain/cecil/blob/master/LICENSE.txt
+	

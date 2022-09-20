@@ -1,0 +1,10 @@
+Notice
+
+This product is governed by the MIT license; however, the following components are governed by the licenses indicated below:
+
+A. PropertyChanged.Fody
+
+	LICENSE:MIT
+		Plugins/Editor/PropertyChanged.Fody/LICENSE.txt
+	HOMEPAGE:
+		https://github.com/vovgou/PropertyChangedForUnity

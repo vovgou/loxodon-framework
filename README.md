@@ -132,14 +132,6 @@ For detailed installation steps, please refer to the **[installation documentati
 
     ![](https://camo.githubusercontent.com/d85fc448ef9266962a8e67f17f6d16080afdce6b/68747470733a2f2f7062732e7477696d672e636f6d2f6d656469612f445f313432727a57774145434a44643f666f726d61743d6a7067266e616d653d39303078393030)
 
-- [SQLite4Unity3d](https://github.com/robertohuertasm/SQLite4Unity3d)
-
-    When I started with Unity3d development I needed to use SQLite in my project and it was very hard to me to find a place with simple instructions on how to make it work. All I got were links to paid solutions on the Unity3d's Assets Store and a lot of different and complicated tutorials.
-
-    At the end, I decided that there should be a simpler way and I created SQLite4Unity3d, a plugin that helps you to use SQLite in your Unity3d projects in a clear and easy way and works in iOS, Mac, Android and Windows projects.
-
-    It uses the great [sqlite-net](https://github.com/praeclarum/sqlite-net/) library as a base so you will have Linq besides sql. For a further reference on what possibilities you have available with this library I encourage you to visit its github repository.
-
 ## Quick Start
 
 Create a view and view model of the progress bar.

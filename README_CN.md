@@ -166,10 +166,6 @@ WebGL
 
     ![](https://camo.githubusercontent.com/d85fc448ef9266962a8e67f17f6d16080afdce6b/68747470733a2f2f7062732e7477696d672e636f6d2f6d656469612f445f313432727a57774145434a44643f666f726d61743d6a7067266e616d653d39303078393030)
 
-- [SQLite4Unity3d](https://github.com/robertohuertasm/SQLite4Unity3d)
-
-    这是SQLite-net支持Unity3D的一个分支项目，支持ORM，不支持加密，如果需要加密功能，可以自己去看 [SQLite-Net](https://github.com/praeclarum/sqlite-net/)，有支持加密功能的方案，不过比较麻烦。
-
 - [lua-protobuf](https://github.com/starwing/lua-protobuf)
 
     lua版本的protobuf解码项目，支持protobuf 3，使用lua开发的同学可以使用这个来解码，推荐。

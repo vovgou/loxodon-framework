@@ -1,0 +1,10 @@
+Notice
+
+This product is governed by the MIT license; however, the following components are governed by the licenses indicated below:
+
+A. ToString.Fody
+
+	LICENSE:MIT
+		Plugins/Editor/ToString.Fody/LICENSE.txt
+	HOMEPAGE:
+		https://github.com/Fody/ToString
