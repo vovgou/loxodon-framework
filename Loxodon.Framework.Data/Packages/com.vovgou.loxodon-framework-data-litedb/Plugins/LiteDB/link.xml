@@ -1,0 +1,8 @@
+<linker>
+	<assembly fullname="System.Core">
+		<type fullname="System.Linq.Expressions.Interpreter.LightLambda" preserve="all" />
+	</assembly>
+	<assembly fullname="LiteDB">
+		<namespace  fullname="LiteDB" preserve="all" />
+	</assembly>
+</linker>

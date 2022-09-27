@@ -1,0 +1,10 @@
+Notice
+
+This product is governed by the MIT license; however, the following components are governed by the licenses indicated below:
+
+A. LiteDB
+
+	LICENSE:MIT
+		Plugins/LiteDB/LICENSE.txt
+	HOMEPAGE:
+		https://github.com/mbdavid/LiteDB

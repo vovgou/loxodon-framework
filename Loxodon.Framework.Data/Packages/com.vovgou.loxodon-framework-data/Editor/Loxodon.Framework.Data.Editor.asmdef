@@ -1,0 +1,22 @@
+{
+    "name": "Loxodon.Framework.Data.Editor",
+    "references": [
+        "Loxodon.Framework.Editor"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "ICSharpCode.SharpZipLib.dll",
+        "NPOI.dll",
+        "NPOI.OOXML.dll",
+        "NPOI.OpenXml4Net.dll",
+        "NPOI.OpenXmlFormats.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

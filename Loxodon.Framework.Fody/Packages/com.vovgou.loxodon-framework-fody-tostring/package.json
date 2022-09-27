@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-fody-tostring",
   "displayName": "Loxodon Framework Fody ToString",
-  "version": "2.4.9",
+  "version": "2.5.0",
   "unity": "2018.4",
   "description": "This is a plugin for static weaving code that integrates ToString.Fody into a Unity project.",
   "license": "MIT",

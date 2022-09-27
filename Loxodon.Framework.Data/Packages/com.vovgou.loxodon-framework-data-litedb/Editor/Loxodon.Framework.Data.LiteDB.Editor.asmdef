@@ -1,0 +1,16 @@
+{
+    "name": "Loxodon.Framework.Data.LiteDB.Editor",
+    "references": [
+        "Loxodon.Framework.Data.Editor"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

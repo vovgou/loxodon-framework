@@ -30,6 +30,8 @@ namespace Loxodon.Framework.Localizations
 {
     public class VectorTypeConverter : ITypeConverter
     {
+        private static readonly char[] COMMA_SEPARATOR = new char[] { ',' };
+        private static readonly string PATTERN = @"(^\()|(\)$)";
         public bool Support(string typeName)
         {
             switch (typeName)
@@ -63,18 +65,18 @@ namespace Loxodon.Framework.Localizations
             if (type == null)
                 throw new NotSupportedException();
 
-            var val = Regex.Replace(((string)value).Trim(), @"(^\()|(\)$)", "");
+            var val = Regex.Replace(((string)value).Trim(), PATTERN, "");
             if (type.Equals(typeof(Vector2)))
             {
                 try
                 {
-                    string[] s = val.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] s = val.Split(COMMA_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
                     if (s.Length == 2)
                         return new Vector2(float.Parse(s[0]), float.Parse(s[1]));
-
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    throw new FormatException(string.Format("The '{0}' is illegal Vector2.", value), e);
                 }
                 throw new FormatException(string.Format("The '{0}' is illegal Vector2.", value));
             }
@@ -83,13 +85,13 @@ namespace Loxodon.Framework.Localizations
             {
                 try
                 {
-                    string[] s = val.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] s = val.Split(COMMA_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
                     if (s.Length == 3)
                         return new Vector3(float.Parse(s[0]), float.Parse(s[1]), float.Parse(s[2]));
-
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    throw new FormatException(string.Format("The '{0}' is illegal Vector3.", value), e);
                 }
                 throw new FormatException(string.Format("The '{0}' is illegal Vector3.", value));
             }
@@ -98,15 +100,14 @@ namespace Loxodon.Framework.Localizations
             {
                 try
                 {
-                    string[] s = val.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] s = val.Split(COMMA_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
                     if (s.Length == 4)
                         return new Vector4(float.Parse(s[0]), float.Parse(s[1]), float.Parse(s[2]), float.Parse(s[3]));
-
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    throw new FormatException(string.Format("The '{0}' is illegal Vector4.", value), e);
                 }
-
                 throw new FormatException(string.Format("The '{0}' is illegal Vector4.", value));
             }
 
