@@ -99,6 +99,10 @@ WebGL
 
     **注意：本插件依赖[Optimized ScrollView Adapter](https://assetstore.unity.com/packages/tools/gui/optimized-scrollview-adapter-68436)，请在使用前先安装Optimized ScrollView Adapter。**
 
+- [Loxodon Framework Data](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Data)
+
+	此插件支持从Excel文件中导出数据到Json文件、Lua文件或者LiteDB数据库，以及通过Json.Net将数据转为C#对象。推荐使用LiteDB存储配置数据，这是一个轻量级的NoSQL嵌入式数据库，它本身就支持ORM功能、支持BSON格式、支持数据索引功能，使用起来非常方便。
+
 - [Loxodon Framework Fody](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody)
 
     这是一个静态织入代码的插件，已将[PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)集成到框架中，通过为ViewModel类Model类添加注解，可以自动生成"INotifyPropertyChanged"接口，为属性添加RaisePropertyChanged函数，触发PropertyChangedEvent通知，提高开发效率。
