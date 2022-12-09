@@ -109,7 +109,9 @@ namespace Loxodon.Framework.Editors
 
         [BlackList]
         public static List<List<string>> BlackList = new List<List<string>>()  {
-               new List<string>(){"System.Type", "IsSZArray"}
+               new List<string>(){"System.Type", "IsSZArray"},
+               new List<string>(){"System.Type", "MakeGenericSignatureType","System.Type","System.Type[]"},
+               new List<string>(){"System.Type", "IsCollectible"}
         };
     }
 }
