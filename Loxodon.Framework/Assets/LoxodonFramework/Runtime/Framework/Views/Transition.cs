@@ -171,7 +171,7 @@ namespace Loxodon.Framework.Views
         protected virtual void OnEnd()
         {
             this.done = true;
-            this.RaiseFinished();            
+            this.RaiseFinished();
             this.Unbind();
         }
 
@@ -190,6 +190,14 @@ namespace Loxodon.Framework.Views
                 return this;
             }
 
+            if (this.done)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("The transition is done.DisableAnimation failed.");
+
+                return this;
+            }
+
             this.animationDisabled = disabled;
             return this;
         }
@@ -200,6 +208,14 @@ namespace Loxodon.Framework.Views
             {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The transition is running.sets the layer failed.");
+
+                return this;
+            }
+
+            if (this.done)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("The transition is done.sets the layer failed.");
 
                 return this;
             }
@@ -218,6 +234,14 @@ namespace Loxodon.Framework.Views
                 return this;
             }
 
+            if (this.done)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("The transition is done.sets the policy failed.");
+
+                return this;
+            }
+
             this.OverlayPolicy = policy;
             return this;
         }
@@ -229,6 +253,12 @@ namespace Loxodon.Framework.Views
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The transition is running.OnStart failed.");
 
+                return this;
+            }
+
+            if (this.done)
+            {
+                callback();
                 return this;
             }
 
@@ -245,6 +275,9 @@ namespace Loxodon.Framework.Views
 
                 return this;
             }
+
+            if (this.done)
+                return this;
 
             this.onStateChanged += callback;
             return this;
@@ -277,8 +310,19 @@ namespace Loxodon.Framework.Views
         }
 
         protected abstract IEnumerator DoTransition();
+    }
 
+    public class CompletedTransition : Transition
+    {
+        public CompletedTransition(IManageable window) : base(window)
+        {
+            this.IsDone = true;
+        }
 
+        protected override IEnumerator DoTransition()
+        {
+            yield break;
+        }
     }
 
     public struct TransitionAwaiter : IAwaiter, ICriticalNotifyCompletion

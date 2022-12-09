@@ -543,27 +543,16 @@ namespace Loxodon.Framework.Views
             protected override IEnumerator DoTransition()
             {
                 IManageable current = this.Window;
-                if (this.manager.IndexOf(current) == 0)
+                if (this.manager.IndexOf(current) == 0 && current.Activated)
                 {
-                    if (current.Activated)
-                    {
-                        IAsyncResult passivate = current.Passivate(this.AnimationDisabled);
-                        yield return passivate.WaitForDone();
-                    }
-
-                    if (current.Visibility)
-                    {
-                        IAsyncResult hide = current.DoHide(this.AnimationDisabled);
-                        yield return hide.WaitForDone();
-                    }
+                    IAsyncResult passivate = current.Passivate(this.AnimationDisabled);
+                    yield return passivate.WaitForDone();
                 }
-                else
+
+                if (current.Visibility)
                 {
-                    if (current.Visibility)
-                    {
-                        IAsyncResult hide = current.DoHide(this.AnimationDisabled);
-                        yield return hide.WaitForDone();
-                    }
+                    IAsyncResult hide = current.DoHide(this.AnimationDisabled);
+                    yield return hide.WaitForDone();
                 }
 
                 if (dismiss)

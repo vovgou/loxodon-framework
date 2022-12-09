@@ -173,7 +173,13 @@ namespace Loxodon.Framework.Binding.Builder
         protected void SetCommandParameter(object parameter)
         {
             this.description.CommandParameter = parameter;
-            this.description.Converter = new ParameterWrapConverter(this.description.CommandParameter);
+            this.description.Converter = new ParameterWrapConverter(new ConstantCommandParameter(parameter));
+        }
+
+        protected void SetCommandParameter<TParam>(Func<TParam> parameter)
+        {
+            this.description.CommandParameter = parameter;
+            this.description.Converter = new ParameterWrapConverter(new ExpressionCommandParameter<TParam>(parameter));
         }
 
         protected void SetSourceDescription(SourceDescription source)
@@ -218,7 +224,7 @@ namespace Loxodon.Framework.Binding.Builder
                 this.context.Add(this.target, this.description, this.scopeKey);
                 this.builded = true;
             }
-            catch(BindingException e)
+            catch (BindingException e)
             {
                 throw e;
             }

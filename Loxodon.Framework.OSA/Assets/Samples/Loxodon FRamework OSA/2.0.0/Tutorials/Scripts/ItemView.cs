@@ -34,15 +34,17 @@ namespace Loxodon.Framework.Tutorials.OSA
         public Image background;
         public Text titleText;
         public Image border;
-        public Button button;
+        public Button selectButton;
+        public Button clickButton;
         protected override void Start()
         {
             BindingSet<ItemView, ItemViewModel> bindingSet = this.CreateBindingSet<ItemView, ItemViewModel>();
             bindingSet.Bind(this.titleText).For(v => v.text).To(vm => vm.Title).OneWay();
             bindingSet.Bind(this.background).For(v => v.color).To(vm => vm.Color).OneWay();
             bindingSet.Bind(this.border).For(v => v.enabled).To(vm => vm.Selected).OneWay();
-            bindingSet.Bind(this.button).For(v => v.onClick).To(vm => vm.Select);
-
+            bindingSet.Bind(this.selectButton).For(v => v.onClick).To(vm => vm.SelectCommand).CommandParameter(this.GetDataContext);
+            if (this.clickButton != null)
+                bindingSet.Bind(this.clickButton).For(v => v.onClick).To(vm => vm.ClickCommand).CommandParameter(this.GetDataContext);
             bindingSet.Build();
         }
     }

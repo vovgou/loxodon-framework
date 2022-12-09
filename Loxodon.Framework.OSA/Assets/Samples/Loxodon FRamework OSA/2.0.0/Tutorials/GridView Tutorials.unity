@@ -1425,7 +1425,8 @@ MonoBehaviour:
   background: {fileID: 1991756265}
   titleText: {fileID: 1906588112}
   border: {fileID: 1719219348}
-  button: {fileID: 1991756267}
+  selectButton: {fileID: 1991756267}
+  clickButton: {fileID: 0}
 --- !u!114 &1376114102
 MonoBehaviour:
   m_ObjectHideFlags: 0

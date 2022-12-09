@@ -36,6 +36,8 @@ namespace Loxodon.Framework.Tutorials
         public Text price;
         public Image image;
         public GameObject border;
+        public Button selectButton;
+        public Button clickButton;
 
         protected override void Start()
         {
@@ -44,6 +46,8 @@ namespace Loxodon.Framework.Tutorials
             bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();
             bindingSet.Bind(this.price).For(v => v.text).ToExpression(vm => string.Format("${0:0.00}", vm.Price)).OneWay();
             bindingSet.Bind(this.border).For(v => v.activeSelf).To(vm => vm.IsSelected).OneWay();
+            bindingSet.Bind(this.selectButton).For(v => v.onClick).To(vm => vm.SelectCommand).CommandParameter(this.GetDataContext);
+            bindingSet.Bind(this.clickButton).For(v => v.onClick).To(vm => vm.ClickCommand).CommandParameter(this.GetDataContext);
             bindingSet.Build();
         }
     }

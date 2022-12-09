@@ -25,30 +25,18 @@
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Observables;
 using Loxodon.Framework.Views;
-using System;
 using System.Collections.Specialized;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace Loxodon.Framework.Tutorials
 {
     public class ListView : UIView
     {
-        public class ItemClickedEvent : UnityEvent<int>
-        {
-            public ItemClickedEvent()
-            {
-            }
-        }
-
         private ObservableList<ListItemViewModel> items;
 
         public Transform content;
 
         public GameObject itemTemplate;
-
-        public ItemClickedEvent OnSelectChanged = new ItemClickedEvent();
 
         public ObservableList<ListItemViewModel> Items
         {
@@ -112,30 +100,11 @@ namespace Loxodon.Framework.Tutorials
             }
         }
 
-        protected virtual void OnSelectChange(GameObject itemViewGo)
-        {
-            if (this.OnSelectChanged == null || itemViewGo == null)
-                return;
-
-            for (int i = 0; i < this.content.childCount; i++)
-            {
-                var child = this.content.GetChild(i);
-                if (itemViewGo.transform == child)
-                {
-                    this.OnSelectChanged.Invoke(i);
-                    break;
-                }
-            }
-        }
-
         protected virtual void AddItem(int index, object item)
         {
             var itemViewGo = Instantiate(this.itemTemplate);
             itemViewGo.transform.SetParent(this.content, false);
             itemViewGo.transform.SetSiblingIndex(index);
-
-            Button button = itemViewGo.GetComponent<Button>();
-            button.onClick.AddListener(() => OnSelectChange(itemViewGo));
             itemViewGo.SetActive(true);
 
             UIView itemView = itemViewGo.GetComponent<UIView>();

@@ -22,18 +22,16 @@
  * SOFTWARE.
  */
 
-using System;
-
-using Loxodon.Log;
 using Loxodon.Framework.Execution;
 using Loxodon.Framework.ViewModels;
-using Loxodon.Framework.Contexts;
-using UnityEngine;
+using Loxodon.Log;
+using System;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Loxodon.Framework.Views
 {
-    public class AlertDialog : IDialog
+    public class AlertDialog : UIBase, IDialog
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(AlertDialog));
 
@@ -41,7 +39,6 @@ namespace Loxodon.Framework.Views
         public const int BUTTON_NEGATIVE = -2;
         public const int BUTTON_NEUTRAL = -3;
 
-        private const string DEFAULT_VIEW_LOCATOR_KEY = "_DEFAULT_VIEW_LOCATOR";
         private const string DEFAULT_VIEW_NAME = "UI/AlertDialog";
 
         private static string viewName;
@@ -49,25 +46,6 @@ namespace Loxodon.Framework.Views
         {
             get { return string.IsNullOrEmpty(viewName) ? DEFAULT_VIEW_NAME : viewName; }
             set { viewName = value; }
-        }
-
-        private static IUIViewLocator GetUIViewLocator()
-        {
-            ApplicationContext context = Context.GetApplicationContext();
-            IUIViewLocator locator = context.GetService<IUIViewLocator>();
-            if (locator == null)
-            {
-                if (log.IsWarnEnabled)
-                    log.Warn("Not found the \"IUIViewLocator\" in the ApplicationContext.Try loading the AlertDialog using the DefaultUIViewLocator.");
-
-                locator = context.GetService<IUIViewLocator>(DEFAULT_VIEW_LOCATOR_KEY);
-                if (locator == null)
-                {
-                    locator = new DefaultUIViewLocator();
-                    context.GetContainer().Register(DEFAULT_VIEW_LOCATOR_KEY, locator);
-                }
-            }
-            return locator;
         }
 
         /// <summary>

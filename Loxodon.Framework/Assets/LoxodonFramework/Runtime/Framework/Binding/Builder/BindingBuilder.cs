@@ -173,6 +173,12 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
+        public BindingBuilder<TTarget, TSource> CommandParameter<TParam>(Func<TParam> parameter)
+        {
+            this.SetCommandParameter(parameter);
+            return this;
+        }
+
         public BindingBuilder<TTarget, TSource> WithConversion(string converterName)
         {
             var converter = this.ConverterByName(converterName);
@@ -333,6 +339,12 @@ namespace Loxodon.Framework.Binding.Builder
         }
 
         public BindingBuilder<TTarget> CommandParameter(object parameter)
+        {
+            this.SetCommandParameter(parameter);
+            return this;
+        }
+
+        public BindingBuilder<TTarget> CommandParameter<TParam>(Func<TParam> parameter)
         {
             this.SetCommandParameter(parameter);
             return this;

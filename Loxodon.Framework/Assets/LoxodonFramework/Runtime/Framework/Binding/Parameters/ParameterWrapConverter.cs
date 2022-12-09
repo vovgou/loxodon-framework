@@ -32,8 +32,8 @@ namespace Loxodon.Framework.Binding.Parameters
 {
     public class ParameterWrapConverter : AbstractConverter
     {
-        private readonly object commandParameter;
-        public ParameterWrapConverter(object commandParameter)
+        private readonly ICommandParameter commandParameter;
+        public ParameterWrapConverter(ICommandParameter commandParameter)
         {
             if (commandParameter == null)
                 throw new ArgumentNullException("commandParameter");

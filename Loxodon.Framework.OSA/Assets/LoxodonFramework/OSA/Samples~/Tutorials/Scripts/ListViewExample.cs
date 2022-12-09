@@ -24,6 +24,7 @@
 
 using Com.TheFallenGames.OSA.Demos.Common;
 using Loxodon.Framework.Binding;
+using Loxodon.Framework.Commands;
 using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Observables;
 using Loxodon.Framework.ViewModels;
@@ -37,6 +38,16 @@ namespace Loxodon.Framework.Tutorials.OSA
     {
         private int id = 0;
         private ObservableList<ItemViewModel> items;
+        private ItemViewModel selectedItem;
+        private SimpleCommand<ItemViewModel> itemSelectCommand;
+        private SimpleCommand<ItemViewModel> itemClickCommand;
+
+        public ListViewExampleViewModel()
+        {
+            itemClickCommand = new SimpleCommand<ItemViewModel>(OnItemClick);
+            itemSelectCommand = new SimpleCommand<ItemViewModel>(OnItemSelect);
+            this.CreateItems(3);
+        }
 
         public ObservableList<ItemViewModel> Items
         {
@@ -44,9 +55,28 @@ namespace Loxodon.Framework.Tutorials.OSA
             set { this.Set(ref items, value); }
         }
 
-        public ListViewExampleViewModel()
+        public ItemViewModel SelectedItem { get { return this.selectedItem; } }
+
+        private void OnItemClick(ItemViewModel item)
         {
-            this.CreateItems(3);
+            Debug.LogFormat("click item:{0}", item.Title);
+        }
+
+        private void OnItemSelect(ItemViewModel item)
+        {
+            item.Selected = !item.Selected;
+            if (item.Selected)
+                this.selectedItem = item;
+
+            if (items != null && item.Selected)
+            {
+                foreach (var i in items)
+                {
+                    if (i == item)
+                        continue;
+                    i.Selected = false;
+                }
+            }
         }
 
         public void AddItem()
@@ -85,9 +115,9 @@ namespace Loxodon.Framework.Tutorials.OSA
 
         private ItemViewModel CreateItem()
         {
-            return new ItemViewModel(this.items)
+            return new ItemViewModel(this.itemSelectCommand, this.itemClickCommand)
             {
-                Title = "Item #" + (id++),
+                Title = "Item #" + (id++)
             };
         }
     }

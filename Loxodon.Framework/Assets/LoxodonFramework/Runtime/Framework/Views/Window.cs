@@ -336,8 +336,11 @@ namespace Loxodon.Framework.Views
             if (this.dismissTransition != null || this.dismissed)
                 throw new InvalidOperationException("The window has been destroyed");
 
+            if (this.Activated)
+                return new CompletedTransition(this);
+
             if (this.Visibility)
-                throw new InvalidOperationException("The window is already visible.");
+                DoHide(true);
 
             return this.WindowManager.Show(this).DisableAnimation(ignoreAnimation);
         }
@@ -345,41 +348,37 @@ namespace Loxodon.Framework.Views
         public virtual IAsyncResult DoShow(bool ignoreAnimation = false)
         {
             AsyncResult result = new AsyncResult();
-            Action<IPromise> action = promise =>
+            try
             {
-                try
-                {
-                    if (!this.created)
-                        this.Create();
+                if (!this.created)
+                    this.Create();
 
-                    this.OnShow();
-                    this.Visibility = true;
-                    this.State = WindowState.VISIBLE;
-                    if (!ignoreAnimation && this.EnterAnimation != null)
-                    {
-                        this.EnterAnimation.OnStart(() =>
-                        {
-                            this.State = WindowState.ENTER_ANIMATION_BEGIN;
-                        }).OnEnd(() =>
-                        {
-                            this.State = WindowState.ENTER_ANIMATION_END;
-                            promise.SetResult();
-                        }).Play();
-                    }
-                    else
-                    {
-                        promise.SetResult();
-                    }
-                }
-                catch (Exception e)
+                this.OnShow();
+                this.Visibility = true;
+                this.State = WindowState.VISIBLE;
+                if (!ignoreAnimation && this.EnterAnimation != null)
                 {
-                    promise.SetException(e);
-
-                    if (log.IsWarnEnabled)
-                        log.WarnFormat("The window named \"{0}\" failed to open!Error:{1}", this.Name, e);
+                    this.EnterAnimation.OnStart(() =>
+                    {
+                        this.State = WindowState.ENTER_ANIMATION_BEGIN;
+                    }).OnEnd(() =>
+                    {
+                        this.State = WindowState.ENTER_ANIMATION_END;
+                        result.SetResult();
+                    }).Play();
                 }
-            };
-            action(result);
+                else
+                {
+                    result.SetResult();
+                }
+            }
+            catch (Exception e)
+            {
+                result.SetException(e);
+
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("The window named \"{0}\" failed to open!Error:{1}", this.Name, e);
+            }
             return result;
         }
 
@@ -395,11 +394,11 @@ namespace Loxodon.Framework.Views
             if (!this.created)
                 throw new InvalidOperationException("The window has not been created.");
 
-            if (this.dismissed)
-                throw new InvalidOperationException("The window has been destroyed.");
+            if (this.dismissTransition != null || this.dismissed)
+                throw new InvalidOperationException("The window has been destroyed");
 
             if (!this.Visibility)
-                throw new InvalidOperationException("The window is not visible.");
+                return new CompletedTransition(this);
 
             return this.WindowManager.Hide(this).DisableAnimation(ignoreAnimation);
         }
@@ -407,41 +406,37 @@ namespace Loxodon.Framework.Views
         public virtual IAsyncResult DoHide(bool ignoreAnimation = false)
         {
             AsyncResult result = new AsyncResult();
-            Action<IPromise> action = promise =>
+            try
             {
-                try
+                if (!ignoreAnimation && this.ExitAnimation != null)
                 {
-                    if (!ignoreAnimation && this.ExitAnimation != null)
+                    this.ExitAnimation.OnStart(() =>
                     {
-                        this.ExitAnimation.OnStart(() =>
-                        {
-                            this.State = WindowState.EXIT_ANIMATION_BEGIN;
-                        }).OnEnd(() =>
-                        {
-                            this.State = WindowState.EXIT_ANIMATION_END;
-                            this.Visibility = false;
-                            this.State = WindowState.INVISIBLE;
-                            this.OnHide();
-                            promise.SetResult();
-                        }).Play();
-                    }
-                    else
+                        this.State = WindowState.EXIT_ANIMATION_BEGIN;
+                    }).OnEnd(() =>
                     {
+                        this.State = WindowState.EXIT_ANIMATION_END;
                         this.Visibility = false;
                         this.State = WindowState.INVISIBLE;
                         this.OnHide();
-                        promise.SetResult();
-                    }
+                        result.SetResult();
+                    }).Play();
                 }
-                catch (Exception e)
+                else
                 {
-                    promise.SetException(e);
-
-                    if (log.IsWarnEnabled)
-                        log.WarnFormat("The window named \"{0}\" failed to hide!Error:{1}", this.Name, e);
+                    this.Visibility = false;
+                    this.State = WindowState.INVISIBLE;
+                    this.OnHide();
+                    result.SetResult();
                 }
-            };
-            action(result);
+            }
+            catch (Exception e)
+            {
+                result.SetException(e);
+
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("The window named \"{0}\" failed to hide!Error:{1}", this.Name, e);
+            }
             return result;
         }
 
@@ -458,7 +453,7 @@ namespace Loxodon.Framework.Views
                 return this.dismissTransition;
 
             if (this.dismissed)
-                throw new InvalidOperationException(string.Format("The window[{0}] has been destroyed.", this.Name));
+                return new CompletedTransition(this);
 
             this.dismissTransition = this.WindowManager.Dismiss(this).DisableAnimation(ignoreAnimation);
             return this.dismissTransition;

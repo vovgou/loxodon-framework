@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+using Loxodon.Framework.Utilities;
 using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
@@ -125,7 +126,7 @@ namespace Loxodon.Framework.Data.Editors
                             if (isNull)
                                 return new string[0];
 
-                            string[] values = str.Split(ITEM_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
+                            string[] values = StringSpliter.Split(str, ITEM_SEPARATOR, StringSplitOptions.RemoveEmptyEntries); ;
                             string[] result = new string[values.Length];
                             for (int i = 0; i < values.Length; i++)
                                 result[i] = Trim(values[i]);
@@ -170,10 +171,10 @@ namespace Loxodon.Framework.Data.Editors
                             if (isNull)
                                 return result;
 
-                            string[] values = str.Split(ITEM_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
+                            string[] values = StringSpliter.Split(str, ITEM_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
                             for (int i = 0; i < values.Length; i++)
                             {
-                                string[] keyValueStr = values[i].Split(KEY_VALUE_SEPARATOR);
+                                string[] keyValueStr = StringSpliter.Split(values[i], KEY_VALUE_SEPARATOR);
                                 if (keyValueStr.Length != 2 || string.IsNullOrEmpty(keyValueStr[0]))
                                     throw new FormatException(string.Format("{0}", str));
 

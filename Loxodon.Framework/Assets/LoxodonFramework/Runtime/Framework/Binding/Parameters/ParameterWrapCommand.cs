@@ -27,20 +27,16 @@ using System;
 
 namespace Loxodon.Framework.Binding.Parameters
 {
-    public class ParameterWrapCommand : ICommand
+    public class ParameterWrapCommand : ParameterWrapBase, ICommand
     {
         private readonly object _lock = new object();
         private readonly ICommand wrappedCommand;
-        private readonly object commandParameter;
-        public ParameterWrapCommand(ICommand wrappedCommand, object commandParameter)
+        public ParameterWrapCommand(ICommand wrappedCommand, ICommandParameter commandParameter) : base(commandParameter)
         {
             if (wrappedCommand == null)
                 throw new ArgumentNullException("wrappedCommand");
-            if (commandParameter == null)
-                throw new ArgumentNullException("commandParameter");
 
             this.wrappedCommand = wrappedCommand;
-            this.commandParameter = commandParameter;
         }
 
         public event EventHandler CanExecuteChanged
@@ -51,13 +47,14 @@ namespace Loxodon.Framework.Binding.Parameters
 
         public bool CanExecute(object parameter)
         {
-            return wrappedCommand.CanExecute(commandParameter);
+            return wrappedCommand.CanExecute(GetParameterValue());
         }
 
         public void Execute(object parameter)
         {
-            if (this.CanExecute(commandParameter))
-                wrappedCommand.Execute(commandParameter);
+            var param = GetParameterValue();
+            if (wrappedCommand.CanExecute(param))
+                wrappedCommand.Execute(param);
         }
     }
 }

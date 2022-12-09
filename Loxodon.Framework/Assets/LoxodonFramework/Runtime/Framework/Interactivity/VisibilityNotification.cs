@@ -26,16 +26,17 @@ namespace Loxodon.Framework.Interactivity
 {
     public class VisibilityNotification
     {
-        private bool visible;
+        public bool Visible { get; private set; }
+        public object ViewModel { get; private set; }
 
-        public VisibilityNotification(bool visible)
+        public VisibilityNotification(bool visible) : this(visible, null)
         {
-            this.visible = visible;
         }
 
-        public bool Visible
+        public VisibilityNotification(bool visible, object viewModel)
         {
-            get { return this.visible; }
+            this.Visible = visible;
+            this.ViewModel = viewModel;
         }
     }
 }

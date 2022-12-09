@@ -27,25 +27,21 @@ using System;
 
 namespace Loxodon.Framework.Binding.Parameters
 {
-    public class ParameterWrapScriptInvoker : IInvoker
+    public class ParameterWrapScriptInvoker : ParameterWrapBase, IInvoker
     {
-        private readonly object commandParameter;
         private readonly IScriptInvoker invoker;
 
-        public ParameterWrapScriptInvoker(IScriptInvoker invoker, object commandParameter)
+        public ParameterWrapScriptInvoker(IScriptInvoker invoker, ICommandParameter commandParameter) : base(commandParameter)
         {
             if (invoker == null)
                 throw new ArgumentNullException("invoker");
-            if (commandParameter == null)
-                throw new ArgumentNullException("commandParameter");
 
             this.invoker = invoker;
-            this.commandParameter = commandParameter;
         }
 
         public object Invoke(params object[] args)
         {
-            return this.invoker.Invoke(commandParameter);
+            return this.invoker.Invoke(GetParameterValue());
         }
     }
 }

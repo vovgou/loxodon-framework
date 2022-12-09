@@ -9,7 +9,7 @@ puppeteer:
 ![](images/icon.png)
 # Loxodon Framework
 
-*MVVM Framework for Unity3D (C# & XLua)*
+*MVVM Framework for Unity3D (C# & XLua & ILRuntime)*
 
 *Version 2.0.0*
 
@@ -2550,15 +2550,15 @@ For more examples, see the ListView And Sprite Databinding Tutorials.unity
 
 Binding from event to command (ICommand) or method supports custom parameters. Use Command Parameter to add a custom parameter to a UI event without parameters (such as the Click event of a Button). If the UI event itself has parameters, it will be commanded Parameter override. Use Command Parameter to easily bind the Click events of multiple Buttons to the same function OnClick (int buttonNo) of the view model. Please ensure that the parameter type of the function matches the command parameter, otherwise it will cause an error. Please refer to the example below for details.
 
-In the example, the Click event of a group of Button buttons is bound to the OnClick function of the view model. You can know which button is currently pressed by the parameter buttonNo.
+In the example, the Click event of a group of Button buttons is bound to the OnClick function of the view model. You can know which button is currently pressed by the parameter buttonName.
 
     public class ButtonGroupViewModel : ViewModelBase
     {
         private string text;
-        private readonly SimpleCommand<int> click;
+        private readonly SimpleCommand<string> click;
         public ButtonGroupViewModel()
         {
-            this.click = new SimpleCommand<int>(OnClick);
+            this.click = new SimpleCommand<string>(OnClick);
         }
 
         public string Text
@@ -2572,22 +2572,21 @@ In the example, the Click event of a group of Button buttons is bound to the OnC
             get { return this.click; }
         }
 
-        public void OnClick(int buttonNo)
+        public void OnClick(string buttonName)
         {
-            Executors.RunOnCoroutineNoReturn(DoClick(buttonNo));
+            Executors.RunOnCoroutineNoReturn(DoClick(buttonName));
         }
 
-        private IEnumerator DoClick(int buttonNo)
+        private IEnumerator DoClick(string buttonName)
         {
             this.click.Enabled = false;
-            this.Text = string.Format("Click Button:{0}.Restore button status after one second", buttonNo);
-            Debug.LogFormat("Click Button:{0}", buttonNo);
+            this.Text = string.Format("Click Button:{0}.Restore button status after one second", buttonName);
+            Debug.LogFormat("Click Button:{0}", buttonName);
 
             //Restore button status after one second
             yield return new WaitForSeconds(1f);
             this.click.Enabled = true;
         }
-
     }
 
 
@@ -2601,11 +2600,11 @@ In the example, the Click event of a group of Button buttons is bound to the OnC
         /* databinding */
         BindingSet<DatabindingForButtonGroupExample, ButtonGroupViewModel> bindingSet;
         bindingSet = this.CreateBindingSet<DatabindingForButtonGroupExample, ButtonGroupViewModel>();
-        bindingSet.Bind(this.button1).For(v => v.onClick).To(vm => vm.Click).CommandParameter(1);
-        bindingSet.Bind(this.button2).For(v => v.onClick).To(vm => vm.Click).CommandParameter(2);
-        bindingSet.Bind(this.button3).For(v => v.onClick).To(vm => vm.Click).CommandParameter(3);
-        bindingSet.Bind(this.button4).For(v => v.onClick).To(vm => vm.Click).CommandParameter(4);
-        bindingSet.Bind(this.button5).For(v => v.onClick).To(vm => vm.Click).CommandParameter(5);
+        bindingSet.Bind(this.button1).For(v => v.onClick).To(vm => vm.Click).CommandParameter(()=>button1.name);
+        bindingSet.Bind(this.button2).For(v => v.onClick).To(vm => vm.Click).CommandParameter(()=>button2.name);
+        bindingSet.Bind(this.button3).For(v => v.onClick).To(vm => vm.Click).CommandParameter(()=>button3.name);
+        bindingSet.Bind(this.button4).For(v => v.onClick).To(vm => vm.Click).CommandParameter(()=>button4.name);
+        bindingSet.Bind(this.button5).For(v => v.onClick).To(vm => vm.Click).CommandParameter(()=>button5.name);
 
         bindingSet.Bind(this.text).For(v => v.text).To(vm => vm.Text).OneWay();
 

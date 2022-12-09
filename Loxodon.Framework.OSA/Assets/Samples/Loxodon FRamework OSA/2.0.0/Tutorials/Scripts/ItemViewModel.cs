@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+using Loxodon.Framework.Commands;
 using Loxodon.Framework.Observables;
 using UnityEngine;
 
@@ -29,21 +30,39 @@ namespace Loxodon.Framework.Tutorials.OSA
 {
     public class ItemViewModel : ObservableObject
     {
-        private ObservableList<ItemViewModel> items;
         private string title;
         private Color color;
         private bool selected = false;
+        private ICommand clickCommand;
+        private ICommand selectCommand;
 
         public ItemViewModel()
         {
             this.color = GetRandomColor();
         }
 
-        public ItemViewModel(ObservableList<ItemViewModel> items)
+        public ItemViewModel(ICommand selectCommand)
         {
-            this.items = items;
+            this.selectCommand = selectCommand;
             this.color = GetRandomColor();
         }
+
+        public ItemViewModel(ICommand selectCommand, ICommand clickCommand)
+        {
+            this.selectCommand = selectCommand;
+            this.clickCommand = clickCommand;      
+            this.color = GetRandomColor();
+        }
+
+        public ICommand ClickCommand
+        {
+            get { return this.clickCommand; }
+        }
+
+        public ICommand SelectCommand
+        {
+            get { return this.selectCommand; }
+        }      
 
         public string Title
         {
@@ -63,21 +82,14 @@ namespace Loxodon.Framework.Tutorials.OSA
             set { this.Set(ref selected, value); }
         }
 
-        public void Select()
+        public void OnChangeColor(float value)
         {
-            this.Selected = !selected;
-            if (items != null && this.Selected)
-            {
-                foreach (var item in items)
-                {
-                    if (item == this)
-                        continue;
-                    item.Selected = false;
-                }
-            }
+            Color color = this.color;
+            color.r = value;
+            this.Color = color;
         }
 
-        public static Color GetRandomColor(bool fullAlpha = false)
+        public static Color GetRandomColor(bool fullAlpha = true)
         {
             return new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), fullAlpha ? 1f : Random.Range(0f, 1f));
         }

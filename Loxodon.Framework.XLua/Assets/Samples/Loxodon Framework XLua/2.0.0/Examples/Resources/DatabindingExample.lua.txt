@@ -149,7 +149,7 @@ function M:start()
 	bindingSet:Bind(self.usernameInput):For("text","onEndEdit"):To("username"):TwoWay()
 	bindingSet:Bind(self.emailInput):For("text","onEndEdit"):To("email"):TwoWay()
 	bindingSet:Bind(self.rememberInput):For("isOn","onValueChanged"):To("remember"):TwoWay()
-	bindingSet:Bind(self.submit):For("onClick"):To("submit"):OneWay()
+	bindingSet:Bind(self.submit):For("onClick"):To("submit"):OneWay()	
 	
 	bindingSet:Build()
 end

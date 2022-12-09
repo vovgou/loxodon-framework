@@ -27,147 +27,14 @@ using Loxodon.Framework.Binding.Builder;
 using Loxodon.Framework.Binding.Contexts;
 using Loxodon.Framework.Binding.Converters;
 using Loxodon.Framework.Contexts;
-using Loxodon.Framework.Observables;
-using Loxodon.Framework.ViewModels;
+using Loxodon.Framework.Interactivity;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Loxodon.Framework.Tutorials
 {
-    public class ListViewViewModel : ViewModelBase
-    {
-        private ObservableList<ListItemViewModel> items = CreateList();
-
-        public ObservableList<ListItemViewModel> Items
-        {
-            get { return this.items; }
-            set { this.Set(ref items, value); }
-        }
-
-        public ListItemViewModel SelectedItem
-        {
-            get
-            {
-                foreach (var item in items)
-                {
-                    if (item.IsSelected)
-                        return item;
-                }
-                return null;
-            }
-        }
-
-        public void AddItem()
-        {
-            int i = this.items.Count;
-            int iconIndex = Random.Range(1, 30);
-            this.items.Add(new ListItemViewModel() { Title = "Equip " + i, Icon = string.Format("EquipImages_{0}", iconIndex), Price = Random.Range(10f, 100f) });
-        }
-
-        public void RemoveItem()
-        {
-            if (this.items.Count <= 0)
-                return;
-
-            int index = Random.Range(0, this.items.Count - 1);
-            this.items.RemoveAt(index);
-        }
-
-        public void ClearItem()
-        {
-            if (this.items.Count <= 0)
-                return;
-
-            this.items.Clear();
-        }
-
-        public void ChangeItemIcon()
-        {
-            if (this.items.Count <= 0)
-                return;
-
-            foreach (var item in this.items)
-            {
-                int iconIndex = Random.Range(1, 30);
-                item.Icon = string.Format("EquipImages_{0}", iconIndex);
-            }
-        }
-
-        public void ChangeItems()
-        {
-            this.Items = CreateList();
-        }
-
-        private static ObservableList<ListItemViewModel> CreateList()
-        {
-            var items = new ObservableList<ListItemViewModel>();
-            for (int i = 0; i < 3; i++)
-            {
-                int iconIndex = Random.Range(1, 30);
-                items.Add(new ListItemViewModel()
-                {
-                    Title = "Equip " + i,
-                    Icon = string.Format("EquipImages_{0}", iconIndex),
-                });
-            }
-            return items;
-        }
-
-        public void Select(int index)
-        {
-            if (index <= -1 || index > this.items.Count - 1)
-                return;
-
-            for (int i = 0; i < this.items.Count; i++)
-            {
-                if (i == index)
-                {
-                    items[i].IsSelected = !items[i].IsSelected;
-                    if (items[i].IsSelected)
-                        Debug.LogFormat("Select, Current Index:{0}", index);
-                    else
-                        Debug.LogFormat("Cancel");
-                }
-                else
-                {
-                    items[i].IsSelected = false;
-                }
-            }
-        }
-    }
-
-    public class ListItemViewModel : ViewModelBase
-    {
-        private string title;
-        private string icon;
-        private float price;
-        private bool selected;
-
-        public string Title
-        {
-            get { return this.title; }
-            set { this.Set<string>(ref title, value); }
-        }
-        public string Icon
-        {
-            get { return this.icon; }
-            set { this.Set<string>(ref icon, value); }
-        }
-
-        public float Price
-        {
-            get { return this.price; }
-            set { this.Set<float>(ref price, value); }
-        }
-
-        public bool IsSelected
-        {
-            get { return this.selected; }
-            set { this.Set<bool>(ref selected, value); }
-        }
-    }
-
     public class ListViewDatabindingExample : MonoBehaviour
     {
         private ListViewViewModel viewModel;
@@ -183,6 +50,10 @@ namespace Loxodon.Framework.Tutorials
         public Button changeItems;
 
         public ListView listView;
+
+        public ListItemDetailView detailView;
+
+        public ListItemEditView editView;
 
         void Awake()
         {
@@ -203,14 +74,13 @@ namespace Loxodon.Framework.Tutorials
         void Start()
         {
             viewModel = new ListViewViewModel();
-            viewModel.Items[0].IsSelected = true;
-
             IBindingContext bindingContext = this.BindingContext();
             bindingContext.DataContext = viewModel;
 
             BindingSet<ListViewDatabindingExample, ListViewViewModel> bindingSet = this.CreateBindingSet<ListViewDatabindingExample, ListViewViewModel>();
             bindingSet.Bind(this.listView).For(v => v.Items).To(vm => vm.Items).OneWay();
-            bindingSet.Bind(this.listView).For(v => v.OnSelectChanged).To<int>(vm => vm.Select).OneWay();
+            bindingSet.Bind(this.detailView).For(v => v.Item).To(vm => vm.SelectedItem);
+            bindingSet.Bind().For(v => v.OnOpenItemEditView).To(vm => vm.ItemEditRequest);
 
             bindingSet.Bind(this.addButton).For(v => v.onClick).To(vm => vm.AddItem);
             bindingSet.Bind(this.removeButton).For(v => v.onClick).To(vm => vm.RemoveItem);
@@ -219,6 +89,24 @@ namespace Loxodon.Framework.Tutorials
             bindingSet.Bind(this.changeItems).For(v => v.onClick).To(vm => vm.ChangeItems);
 
             bindingSet.Build();
+
+            viewModel.SelectItem(0);
+        }
+
+        void OnOpenItemEditView(object sender, InteractionEventArgs args)
+        {
+            ListItemEditViewModel item = (ListItemEditViewModel)args.Context;
+            this.editView.gameObject.SetActive(true);
+            this.editView.SetDataContext(item);
+            Action callback = args.Callback;
+
+            Action handler = null;
+            handler = () =>
+            {
+                this.editView.onClosed -= handler;
+                callback();
+            };
+            this.editView.onClosed += handler;
         }
     }
 }

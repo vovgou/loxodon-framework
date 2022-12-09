@@ -40,8 +40,9 @@ namespace Loxodon.Framework.Tutorials
 
         public object Convert(object value)
         {
-            Sprite sprite;
-            sprites.TryGetValue((string)value, out sprite);
+            Sprite sprite = null;
+            if (value != null)
+                sprites.TryGetValue((string)value, out sprite);
             return sprite;
         }
 

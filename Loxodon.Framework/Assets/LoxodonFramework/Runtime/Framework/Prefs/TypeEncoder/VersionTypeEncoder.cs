@@ -55,7 +55,5 @@ namespace Loxodon.Framework.Prefs
         {
             return ((Version)value).ToString();
         }
-
-
     }
 }

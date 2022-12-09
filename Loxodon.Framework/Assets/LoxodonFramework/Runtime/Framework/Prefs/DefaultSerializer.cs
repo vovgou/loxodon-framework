@@ -37,6 +37,7 @@ namespace Loxodon.Framework.Prefs
         {
             AddTypeEncoder(new PrimitiveTypeEncoder());
             AddTypeEncoder(new VersionTypeEncoder());
+            AddTypeEncoder(new EnumTypeEncoder());
             AddTypeEncoder(new JsonTypeEncoder());
         }
 

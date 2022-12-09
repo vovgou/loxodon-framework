@@ -22,57 +22,29 @@
  * SOFTWARE.
  */
 
+using Loxodon.Log;
+using System;
 using System.Collections;
 using UnityEngine;
 
-using Loxodon.Framework.Contexts;
-using System;
-using Loxodon.Log;
-
 namespace Loxodon.Framework.Views
 {
-    public class Toast
+    public class Toast : UIBase
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(Toast));
 
-        private const string DEFAULT_VIEW_LOCATOR_KEY = "_DEFAULT_VIEW_LOCATOR";
         private const string DEFAULT_VIEW_NAME = "UI/Toast";
+
+        public static new IUIViewGroup GetCurrentViewGroup()
+        {
+            return UIBase.GetCurrentViewGroup();
+        }
 
         private static string viewName;
         public static string ViewName
         {
             get { return string.IsNullOrEmpty(viewName) ? DEFAULT_VIEW_NAME : viewName; }
             set { viewName = value; }
-        }
-
-        private static IUIViewLocator GetUIViewLocator()
-        {
-            ApplicationContext context = Context.GetApplicationContext();
-            IUIViewLocator locator = context.GetService<IUIViewLocator>();
-            if (locator == null)
-            {
-                if (log.IsWarnEnabled)
-                    log.Warn("Not found the \"IUIViewLocator\" in the ApplicationContext.Try loading the Toast using the DefaultUIViewLocator.");
-
-                locator = context.GetService<IUIViewLocator>(DEFAULT_VIEW_LOCATOR_KEY);
-                if (locator == null)
-                {
-                    locator = new DefaultUIViewLocator();
-                    context.GetContainer().Register(DEFAULT_VIEW_LOCATOR_KEY, locator);
-                }
-            }
-            return locator;
-        }
-
-        public static IUIViewGroup GetCurrentViewGroup()
-        {
-            GlobalWindowManagerBase windowManager = GlobalWindowManagerBase.Root;
-            IWindow window = windowManager.Current;
-            while (window is WindowContainer windowContainer)
-            {
-                window = windowContainer.Current;
-            }
-            return window as IUIViewGroup;
         }
 
         public static Toast Show(string text, float duration = 3f)

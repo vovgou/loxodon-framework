@@ -32,6 +32,7 @@ namespace Loxodon.Framework.Utilities
 {
     public class StringSpliter : IEnumerator<char>
     {
+        private static readonly char[] SEPARATOR = new char[] { ',' };
         [ThreadStatic]
         private static StringSpliter spliter;
         private static StringSpliter Spliter
@@ -46,6 +47,11 @@ namespace Loxodon.Framework.Utilities
 
         public static string[] Split(string input, params char[] characters)
         {
+            return Split(input, characters, StringSplitOptions.None);
+        }
+
+        public static string[] Split(string input, char[] characters, StringSplitOptions options)
+        {
             if (string.IsNullOrEmpty(input))
                 return new string[0];
 
@@ -53,7 +59,7 @@ namespace Loxodon.Framework.Utilities
             try
             {
                 spliter.Reset(input, characters);
-                return spliter.Split();
+                return spliter.Split(options);
             }
             finally
             {
@@ -76,7 +82,7 @@ namespace Loxodon.Framework.Utilities
                 throw new ArgumentException("Invalid argument", "text");
 
             if (separators == null || separators.Length == 0)
-                this.separators = new char[] { ',' };
+                this.separators = SEPARATOR;
             else
                 this.separators = separators;
 
@@ -127,14 +133,15 @@ namespace Loxodon.Framework.Utilities
             this.items.Clear();
         }
 
-        public string[] Split()
+        public string[] Split(StringSplitOptions options)
         {
             while (this.MoveNext())
             {
                 char ch = this.Current;
                 if (separators.Contains(ch))
                 {
-                    items.Add("");
+                    if (options == StringSplitOptions.None)
+                        items.Add("");
                     continue;
                 }
 
@@ -142,7 +149,7 @@ namespace Loxodon.Framework.Utilities
                 items.Add(content);
             }
 
-            if (separators.Contains(this.Current))
+            if (separators.Contains(this.Current) && options == StringSplitOptions.None)
                 items.Add("");
 
             return items.ToArray();

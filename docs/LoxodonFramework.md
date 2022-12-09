@@ -9,7 +9,7 @@ puppeteer:
 ![](images/icon.png)
 # Loxodon Framework
 
-*MVVM Framework for Unity3D(C# & XLua)*
+*MVVM Framework for Unity3D(C# & XLua & ILRuntime)*
 
 *开发者 Clark*
 *Version 2.0.0*
@@ -321,7 +321,7 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 
 [XLua FAQ](https://github.com/Tencent/xLua/blob/master/Assets/XLua/Doc/faq.md)
 
-[XLua下载](https://github.com/Tencent/xLua/releases "xlua")
+[XLua下载](https://github.com/Tencent/xLua/releases)
 
 ![](images/xlua_2.1.15.png)
 
@@ -2457,17 +2457,17 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
 #### Command Parameter
 
-从事件到命令(ICommand)或方法的绑定支持自定义参数，使用Command Parameter可以为没有参数的UI事件添加一个自定义参数（如Button的Click事件），如果UI事件本身有参数则会被命令参数覆盖。使用Command Parameter可以很方便的将多个Button的Click事件绑定到视图模型的同一个函数OnClick(int buttonNo)上，请注意确保函数的参数类型和命令参数匹配，否则会导致错误。详情请参考下面的示例
+从事件到命令(ICommand)或方法的绑定支持自定义参数，使用Command Parameter可以为没有参数的UI事件添加一个自定义参数（如Button的Click事件），如果UI事件本身有参数则会被命令参数覆盖。使用Command Parameter可以很方便的将多个Button的Click事件绑定到视图模型的同一个函数OnClick(string buttonName)上，请注意确保函数的参数类型和命令参数匹配，否则会导致错误。命令参数在版本v2.5.2之前只支持常量作为命令参数，从v2.5.2开始，支持使用拉姆达表达式做为命令参数。详情请参考下面的示例
 
-在示例中将一组Button按钮的Click事件绑定到视图模型的OnClick函数上，通过参数buttonNo可以知道当前按下了哪个按钮。
+在示例中将一组Button按钮的Click事件绑定到视图模型的OnClick函数上，通过参数buttonName可以知道当前按下了哪个按钮。
 
     public class ButtonGroupViewModel : ViewModelBase
     {
         private string text;
-        private readonly SimpleCommand<int> click;
+        private readonly SimpleCommand<string> click;
         public ButtonGroupViewModel()
         {
-            this.click = new SimpleCommand<int>(OnClick);
+            this.click = new SimpleCommand<string>(OnClick);
         }
 
         public string Text
@@ -2481,16 +2481,16 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
             get { return this.click; }
         }
 
-        public void OnClick(int buttonNo)
+        public void OnClick(string buttonName)
         {
-            Executors.RunOnCoroutineNoReturn(DoClick(buttonNo));
+            Executors.RunOnCoroutineNoReturn(DoClick(buttonName));
         }
 
-        private IEnumerator DoClick(int buttonNo)
+        private IEnumerator DoClick(string buttonName)
         {
             this.click.Enabled = false;
-            this.Text = string.Format("Click Button:{0}.Restore button status after one second", buttonNo);
-            Debug.LogFormat("Click Button:{0}", buttonNo);
+            this.Text = string.Format("Click Button:{0}.Restore button status after one second", buttonName);
+            Debug.LogFormat("Click Button:{0}", buttonName);
 
             //Restore button status after one second
             yield return new WaitForSeconds(1f);
@@ -2510,11 +2510,11 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
         /* databinding */
         BindingSet<DatabindingForButtonGroupExample, ButtonGroupViewModel> bindingSet;
         bindingSet = this.CreateBindingSet<DatabindingForButtonGroupExample, ButtonGroupViewModel>();
-        bindingSet.Bind(this.button1).For(v => v.onClick).To(vm => vm.Click).CommandParameter(1);
-        bindingSet.Bind(this.button2).For(v => v.onClick).To(vm => vm.Click).CommandParameter(2);
-        bindingSet.Bind(this.button3).For(v => v.onClick).To(vm => vm.Click).CommandParameter(3);
-        bindingSet.Bind(this.button4).For(v => v.onClick).To(vm => vm.Click).CommandParameter(4);
-        bindingSet.Bind(this.button5).For(v => v.onClick).To(vm => vm.Click).CommandParameter(5);
+        bindingSet.Bind(this.button1).For(v => v.onClick).To(vm => vm.Click).CommandParameter(()=>button1.name);
+        bindingSet.Bind(this.button2).For(v => v.onClick).To(vm => vm.Click).CommandParameter(()=>button2.name);
+        bindingSet.Bind(this.button3).For(v => v.onClick).To(vm => vm.Click).CommandParameter(()=>button3.name);
+        bindingSet.Bind(this.button4).For(v => v.onClick).To(vm => vm.Click).CommandParameter(()=>button4.name);
+        bindingSet.Bind(this.button5).For(v => v.onClick).To(vm => vm.Click).CommandParameter(()=>button5.name);
 
         bindingSet.Bind(this.text).For(v => v.text).To(vm => vm.Text).OneWay();
 
@@ -2540,7 +2540,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
 #### 注册属性和域的访问器
 
-在IOS平台不允许JIT编译，不允许动态生成代码，数据绑定功能访问对象的属性、域和方法时无法像其他平台一样通过动态生成委托来访问，只能通过反射来访问，众所周知反射的效率是很差的，所以我提供了静态注入访问器的功能来绕过反射。默认情况下，我已经创建了UGUI和Unity引擎的部分类的属性访问器，参考我的代码，你也可以将视图模型类的常用属性的访问器注册到类型代理中。
+包括IOS平台在内，无论是Mono还是IL2CPP，数据绑定功能访问对象的属性、域都通过动态生成委托来访问，方法调用因为IL2CPP不支持表达式树的编译，使用的是反射调用，Mono使用的是通过表达式树编译成委托的方式调用。对于常用的UI控件，也可以通过静态注入访问器的方式访问对象的属性和域。默认情况下，我已经创建了UGUI和Unity引擎的部分类的属性访问器，参考我的代码，你也可以将视图模型类的常用属性的访问器注册到类型代理中。
 
     public class UnityProxyRegister
     {

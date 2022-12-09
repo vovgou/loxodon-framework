@@ -44,7 +44,7 @@ namespace Loxodon.Framework.Prefs
 
         public bool IsSupport(Type type)
         {
-            if (typeof(IList).IsAssignableFrom(type) || typeof(IDictionary).IsAssignableFrom(type))
+            if (typeof(IList).IsAssignableFrom(type) || typeof(IDictionary).IsAssignableFrom(type) || typeof(Rect).Equals(type))
                 return false;
 
 #if NETFX_CORE

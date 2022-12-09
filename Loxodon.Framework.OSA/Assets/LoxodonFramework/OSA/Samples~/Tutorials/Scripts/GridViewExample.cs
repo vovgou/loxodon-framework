@@ -24,6 +24,7 @@
 
 using Com.TheFallenGames.OSA.Demos.Common;
 using Loxodon.Framework.Binding;
+using Loxodon.Framework.Commands;
 using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Observables;
 using Loxodon.Framework.ViewModels;
@@ -37,6 +38,13 @@ namespace Loxodon.Framework.Tutorials.OSA
     {
         private int id = 0;
         private ObservableList<ItemViewModel> items;
+        private ItemViewModel selectedItem;
+        private SimpleCommand<ItemViewModel> itemSelectCommand;
+        public GridViewExampleViewModel()
+        {
+            itemSelectCommand = new SimpleCommand<ItemViewModel>(OnItemSelect);
+            this.items = this.CreateItems(3);
+        }
 
         public ObservableList<ItemViewModel> Items
         {
@@ -44,10 +52,7 @@ namespace Loxodon.Framework.Tutorials.OSA
             set { this.Set(ref items, value); }
         }
 
-        public GridViewExampleViewModel()
-        {
-            this.items = this.CreateItems(3);
-        }
+        public ItemViewModel SelectedItem { get { return this.selectedItem; } }
 
         public void AddItem()
         {
@@ -76,6 +81,23 @@ namespace Loxodon.Framework.Tutorials.OSA
             items.Clear();
         }
 
+        private void OnItemSelect(ItemViewModel item)
+        {
+            item.Selected = !item.Selected;
+            if (item.Selected)
+                this.selectedItem = item;
+
+            if (items != null && item.Selected)
+            {
+                foreach (var i in items)
+                {
+                    if (i == item)
+                        continue;
+                    i.Selected = false;
+                }
+            }
+        }
+
         private ObservableList<ItemViewModel> CreateItems(int count)
         {
             var models = new ObservableList<ItemViewModel>();
@@ -86,7 +108,7 @@ namespace Loxodon.Framework.Tutorials.OSA
 
         private ItemViewModel CreateItem()
         {
-            return new ItemViewModel()
+            return new ItemViewModel(this.itemSelectCommand)
             {
                 Title = "Item #" + (id++),
             };

@@ -24,6 +24,7 @@
 
 using Loxodon.Framework.Binding.Contexts;
 using Loxodon.Framework.Binding.Converters;
+using Loxodon.Framework.Binding.Parameters;
 using Loxodon.Framework.Binding.Proxy.Sources.Expressions;
 using XLua;
 
@@ -103,8 +104,17 @@ namespace Loxodon.Framework.Binding.Builder
 
         public LuaBindingBuilder CommandParameter(object parameter)
         {
-            this.SetCommandParameter(parameter);
+            if (parameter is LuaFunction function)
+                this.SetCommandParameter(function);
+            else                
+                this.SetCommandParameter(parameter);
             return this;
+        }
+
+        protected void SetCommandParameter(LuaFunction parameter)
+        {
+            this.description.CommandParameter = parameter;
+            this.description.Converter = new ParameterWrapConverter(new LuaFunctionCommandParameter(parameter));
         }
 
         public LuaBindingBuilder WithConversion(string converterName)

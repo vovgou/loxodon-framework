@@ -33,12 +33,12 @@ namespace Loxodon.Framework.Services
 
         public virtual object Resolve(Type type)
         {
-            return this.Resolve<object>(type.Name);
+            return this.Resolve<object>(GetServiceName(type));
         }
 
         public virtual T Resolve<T>()
         {
-            return this.Resolve<T>(typeof(T).Name);
+            return this.Resolve<T>(GetServiceName(typeof(T)));
         }
 
         public virtual object Resolve(string name)
@@ -56,12 +56,12 @@ namespace Loxodon.Framework.Services
 
         public virtual void Register<T>(Func<T> factory)
         {
-            this.Register<T>(typeof(T).Name, factory);
+            this.Register<T>(GetServiceName(typeof(T)), factory);
         }
 
         public virtual void Register(Type type, object target)
         {
-            this.Register<object>(type.Name, target);
+            this.Register<object>(GetServiceName(type), target);
         }
 
         public virtual void Register(string name, object target)
@@ -71,7 +71,7 @@ namespace Loxodon.Framework.Services
 
         public virtual void Register<T>(T target)
         {
-            this.Register<T>(typeof(T).Name, target);
+            this.Register<T>(GetServiceName(typeof(T)), target);
         }
 
         public virtual void Register<T>(string name, Func<T> factory)
@@ -92,12 +92,12 @@ namespace Loxodon.Framework.Services
 
         public virtual void Unregister(Type type)
         {
-            this.Unregister(type.Name);
+            this.Unregister(GetServiceName(type));
         }
 
         public virtual void Unregister<T>()
         {
-            this.Unregister(typeof(T).Name);
+            this.Unregister(GetServiceName(typeof(T)));
         }
 
         public virtual void Unregister(string name)
@@ -107,6 +107,13 @@ namespace Loxodon.Framework.Services
                 factory.Dispose();
 
             this.services.Remove(name);
+        }
+
+        protected virtual string GetServiceName(Type type)
+        {
+            if (type.IsGenericType)
+                return type.ToString();
+            return type.Name;
         }
 
         #region IDisposable Support

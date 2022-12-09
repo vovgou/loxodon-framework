@@ -1,7 +1,8 @@
 {
     "name": "Loxodon.Framework.Data.Editor",
     "references": [
-        "Loxodon.Framework.Editor"
+        "Loxodon.Framework.Editor",
+        "Loxodon.Framework"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [

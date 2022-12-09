@@ -29,28 +29,23 @@ using System.Reflection;
 
 namespace Loxodon.Framework.Binding.Parameters
 {
-    public class ParameterWrapDelegateInvoker : IInvoker
+    public class ParameterWrapDelegateInvoker : ParameterWrapBase, IInvoker
     {
-        private readonly object commandParameter;
         private readonly Delegate handler;
 
-        public ParameterWrapDelegateInvoker(Delegate handler, object commandParameter)
+        public ParameterWrapDelegateInvoker(Delegate handler, ICommandParameter commandParameter) : base(commandParameter)
         {
             if (handler == null)
                 throw new ArgumentNullException("handler");
-            if (commandParameter == null)
-                throw new ArgumentNullException("commandParameter");
 
             this.handler = handler;
-            this.commandParameter = commandParameter;
-
             if (!IsValid(handler))
                 throw new ArgumentException("Bind method failed.the parameter types do not match.");
         }
 
         public object Invoke(params object[] args)
         {
-            return this.handler.DynamicInvoke(commandParameter);
+            return this.handler.DynamicInvoke(GetParameterValue());
         }
 
         protected virtual bool IsValid(Delegate handler)
@@ -67,7 +62,7 @@ namespace Loxodon.Framework.Binding.Parameters
             if (parameterTypes.Count != 1)
                 return false;
 
-            return parameterTypes[0].IsAssignableFrom(commandParameter.GetType());
+            return parameterTypes[0].IsAssignableFrom(GetParameterValueType());
         }
     }
 }
