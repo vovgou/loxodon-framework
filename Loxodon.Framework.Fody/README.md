@@ -68,6 +68,8 @@ Installing the framework in this way does not require nodejs and openm-cli.
 
 ## Quick Start
 
+### [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)
+
 Add the assembly filenames that need to automatically weave "Notifity" code to the configuration file.
 
 ![](docs/images/weaver_config.png)
@@ -148,6 +150,52 @@ After the project is compiled, use the ILSpy tool to view the assembly.the code 
 			this.PropertyChanged?.Invoke(this, eventArgs);
 		}
 	}
+
+### [ToString.Fody](https://github.com/Fody/ToString)
+
+Add `<ToString/>` to FodyWeavers.xml
+
+    <Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+		<AssemblyNames>
+	  		<Item>Assembly-CSharp</Item>
+		</AssemblyNames>
+		<ToString />
+    </Weavers>
+
+#### Your Code
+
+    [ToString]
+    public class User 
+    {
+        public string FirstName { get; set; }  
+
+        public string LastName { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
+    }
+
+#### What gets compiled
+
+    public class User 
+    {
+        public string FirstName { get; set; }  
+
+        public string LastName { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
+	
+		[GeneratedCode("Fody.ToString", "1.11.1.0")]
+		[DebuggerNonUserCode]
+		public override string ToString()
+		{
+			return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
+			{
+				FirstName ?? "null",
+				LastName ?? "null",
+				FullName ?? "null"
+			});
+		}
+    }
 
 
 

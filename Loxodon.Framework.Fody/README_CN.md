@@ -67,6 +67,7 @@ Requires Unity 2018.4 or higher.
 ## 快速开始
 
 ### [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)
+
 插件导入到项目后，会在Assets\LoxodonFramework\Editor\AppData\Fody目录下自动生成FodyWeavers.xml文件。修改这个文件，添加需要织入代码的程序集名称即可。XML文件中的PropertyChanged节点是关于PropertyChanged.Fody插件的配置，具体可以查看[PropertyChanged.Fody](https://github.com/Fody/PropertyChanged/wiki/Options)的文档。
 
 PropertyChanged默认会织入所有继承了INotifyPropertyChanged或者添加了AddINotifyPropertyChangedInterface注解的类，如果某个类不想被织入代码，可以使用DoNotNotify注解排除。老的项目引入此插件后，会导致所有已经添加了属性通知的ViewModel类再次被织入RaisePropertyChanged函数，造成重复触发通知事件的情况，因此我重写了PropertyChanged.Fody插件的部分方法，为xml配置文件PropertyChanged节点增加了一个属性defaultWeaving。当defaultWeaving=false时，只会为添加了AddINotifyPropertyChangedInterface注解的类织入通知代码，避免老的ViewModel类被重复的织入RaisePropertyChanged函数。
@@ -153,7 +154,7 @@ FodyWeavers.xml
 
 ### [ToString.Fody](https://github.com/Fody/ToString)
 
-FodyWeavers.xml
+增加注解 `<ToString/>` to FodyWeavers.xml
 
     <Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
 		<AssemblyNames>
@@ -164,7 +165,6 @@ FodyWeavers.xml
 
 User类代码如下，为User类添加[ToString]注解。
 
-    [AddINotifyPropertyChangedInterface]
     [ToString]
     public class User 
     {
@@ -177,67 +177,26 @@ User类代码如下，为User类添加[ToString]注解。
 
 织入后的代码如下，自动生成了ToString函数。
 
-	public string FirstName
-	{
-		[CompilerGenerated]
-		get
+    public class User 
+    {
+        public string FirstName { get; set; }  
+
+        public string LastName { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
+	
+		[GeneratedCode("Fody.ToString", "1.11.1.0")]
+		[DebuggerNonUserCode]
+		public override string ToString()
 		{
-			return FirstName;
-		}
-		[CompilerGenerated]
-		set
-		{
-			if (!string.Equals(FirstName, value, StringComparison.Ordinal))
+			return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
 			{
-				FirstName = value;
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
-			}
+				FirstName ?? "null",
+				LastName ?? "null",
+				FullName ?? "null"
+			});
 		}
-	}
-
-	public string LastName
-	{
-		[CompilerGenerated]
-		get
-		{
-			return LastName;
-		}
-		[CompilerGenerated]
-		set
-		{
-			if (!string.Equals(LastName, value, StringComparison.Ordinal))
-			{
-				LastName = value;
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
-			}
-		}
-	}
-
-	public string FullName => FirstName + " " + LastName;
-
-	[field: NonSerialized]
-	public event PropertyChangedEventHandler PropertyChanged;
-
-	[GeneratedCode("PropertyChanged.Fody", "4.0.2.0")]
-	[DebuggerNonUserCode]
-	protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
-	{
-		this.PropertyChanged?.Invoke(this, eventArgs);
-	}
-
-	[GeneratedCode("Fody.ToString", "1.11.1.0")]
-	[DebuggerNonUserCode]
-	public override string ToString()
-	{
-		return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
-		{
-			FirstName ?? "null",
-			LastName ?? "null",
-			FullName ?? "null"
-		});
-	}
+    }
 
 ## Contact Us
 Email: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
