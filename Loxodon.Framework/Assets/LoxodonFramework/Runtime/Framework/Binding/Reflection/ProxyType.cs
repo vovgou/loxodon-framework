@@ -109,11 +109,11 @@ namespace Loxodon.Framework.Binding.Reflection
             if ((parameters == null || parameters.Length == 0) && (parameterTypes == null || parameterTypes.Length == 0))
                 return true;
 
-            if (parameters != null && parameterTypes != null && parameters.Length == parameters.Length)
+            if (parameters != null && parameterTypes != null && parameters.Length == parameterTypes.Length)
             {
                 for (int i = 0; i < parameters.Length; i++)
                 {
-                    if (!parameters[i].Equals(parameterTypes[i]))
+                    if (parameters[i].ParameterType != parameterTypes[i])
                         return false;
                 }
                 return true;
