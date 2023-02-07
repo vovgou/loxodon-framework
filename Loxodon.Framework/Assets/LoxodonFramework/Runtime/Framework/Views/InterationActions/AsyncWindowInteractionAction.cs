@@ -24,23 +24,21 @@
 
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Binding;
-using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Interactivity;
-using Loxodon.Log;
 using System;
 using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Views.InteractionActions
 {
-    public class AsyncWindowInteractionAction : AsyncInteractionActionBase<WindowNotification>
+    public class AsyncWindowInteractionAction : AsyncLoadableInteractionActionBase<WindowNotification>
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(AsyncWindowInteractionAction));
-
-        private string viewName;
         private Window window;
-        public AsyncWindowInteractionAction(string viewName)
+        public AsyncWindowInteractionAction(string viewName) : this(viewName, null)
         {
-            this.viewName = viewName;
+        }
+
+        public AsyncWindowInteractionAction(string viewName, IUIViewLocator locator) : base(viewName, locator)
+        {
         }
 
         public Window Window { get { return this.window; } }
@@ -53,7 +51,7 @@ namespace Loxodon.Framework.Views.InteractionActions
                 case Interactivity.ActionType.CREATE:
                     return Create(notification.ViewModel);
                 case Interactivity.ActionType.SHOW:
-                    return Show(notification.ViewModel, ignoreAnimation);
+                    return Show(notification.ViewModel, notification.WaitDismissed, ignoreAnimation);
                 case Interactivity.ActionType.HIDE:
                     return Hide(ignoreAnimation);
                 case Interactivity.ActionType.DISMISS:
@@ -66,17 +64,9 @@ namespace Loxodon.Framework.Views.InteractionActions
         {
             try
             {
-                ApplicationContext context = Context.GetApplicationContext();
-                IUIViewLocator locator = context.GetService<IUIViewLocator>();
-                if (locator == null)
-                    throw new NotFoundException("Not found the \"IUIViewLocator\".");
-
-                if (string.IsNullOrEmpty(viewName))
-                    throw new ArgumentNullException("The view name is null.");
-
-                window = await locator.LoadWindowAsync<Window>(viewName);
+                window = await LoadWindowAsync<Window>();
                 if (window == null)
-                    throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", viewName));
+                    throw new NotFoundException(string.Format("Not found the window named \"{0}\".", ViewName));
 
                 if (viewModel != null)
                     window.SetDataContext(viewModel);
@@ -90,7 +80,7 @@ namespace Loxodon.Framework.Views.InteractionActions
             }
         }
 
-        protected async Task Show(object viewModel, bool ignoreAnimation = false)
+        protected async Task Show(object viewModel, bool waitDismissed, bool ignoreAnimation = false)
         {
             try
             {
@@ -99,16 +89,20 @@ namespace Loxodon.Framework.Views.InteractionActions
 
                 window.WaitDismissed().Callbackable().OnCallback(r =>
                 {
-                    window = null;
+                    this.window = null;
                 });
+
                 await window.Show(ignoreAnimation);
+
+                if (waitDismissed)
+                    await window.WaitDismissed();
             }
             catch (Exception e)
             {
                 if (window != null)
                     await window.Dismiss(ignoreAnimation);
-                window = null;
 
+                this.window = null;
                 throw e;
             }
         }

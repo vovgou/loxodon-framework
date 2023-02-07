@@ -27,8 +27,7 @@ using Loxodon.Framework.Binding.Builder;
 using Loxodon.Framework.Binding.Contexts;
 using Loxodon.Framework.Binding.Converters;
 using Loxodon.Framework.Contexts;
-using Loxodon.Framework.Interactivity;
-using System;
+using Loxodon.Framework.Views.InteractionActions;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -55,6 +54,8 @@ namespace Loxodon.Framework.Tutorials
 
         public ListItemEditView editView;
 
+        private AsyncViewInteractionAction editViewInteractionAction;
+
         void Awake()
         {
             ApplicationContext context = Context.GetApplicationContext();
@@ -73,6 +74,7 @@ namespace Loxodon.Framework.Tutorials
 
         void Start()
         {
+            editViewInteractionAction = new AsyncViewInteractionAction(editView);
             viewModel = new ListViewViewModel();
             IBindingContext bindingContext = this.BindingContext();
             bindingContext.DataContext = viewModel;
@@ -80,7 +82,7 @@ namespace Loxodon.Framework.Tutorials
             BindingSet<ListViewDatabindingExample, ListViewViewModel> bindingSet = this.CreateBindingSet<ListViewDatabindingExample, ListViewViewModel>();
             bindingSet.Bind(this.listView).For(v => v.Items).To(vm => vm.Items).OneWay();
             bindingSet.Bind(this.detailView).For(v => v.Item).To(vm => vm.SelectedItem);
-            bindingSet.Bind().For(v => v.OnOpenItemEditView).To(vm => vm.ItemEditRequest);
+            bindingSet.Bind().For(v => v.editViewInteractionAction).To(vm => vm.ItemEditRequest);
 
             bindingSet.Bind(this.addButton).For(v => v.onClick).To(vm => vm.AddItem);
             bindingSet.Bind(this.removeButton).For(v => v.onClick).To(vm => vm.RemoveItem);
@@ -91,22 +93,6 @@ namespace Loxodon.Framework.Tutorials
             bindingSet.Build();
 
             viewModel.SelectItem(0);
-        }
-
-        void OnOpenItemEditView(object sender, InteractionEventArgs args)
-        {
-            ListItemEditViewModel item = (ListItemEditViewModel)args.Context;
-            this.editView.gameObject.SetActive(true);
-            this.editView.SetDataContext(item);
-            Action callback = args.Callback;
-
-            Action handler = null;
-            handler = () =>
-            {
-                this.editView.onClosed -= handler;
-                callback();
-            };
-            this.editView.onClosed += handler;
         }
     }
 }

@@ -27,19 +27,37 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 using Loxodon.Framework.Views.Animations;
+using Loxodon.Log;
 
 namespace Loxodon.Framework.Views
 {
     [RequireComponent(typeof(RectTransform), typeof(CanvasGroup))]
     public class UIView : UIBehaviour, IUIView
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(UIView));
+
         private IAnimation enterAnimation;
         private IAnimation exitAnimation;
         private RectTransform rectTransform;
         private CanvasGroup canvasGroup;
+        private readonly object _lock = new object();
+        private EventHandler onDisabled;
+        private EventHandler onEnabled;
 
         [NonSerialized]
         private IAttributes attributes = new Attributes();
+
+        public event EventHandler OnDisabled
+        {
+            add { lock (_lock) { this.onDisabled += value; } }
+            remove { lock (_lock) { this.onDisabled -= value; } }
+        }
+
+        public event EventHandler OnEnabled
+        {
+            add { lock (_lock) { this.onEnabled += value; } }
+            remove { lock (_lock) { this.onEnabled -= value; } }
+        }
 
         public virtual string Name
         {
@@ -110,12 +128,42 @@ namespace Loxodon.Framework.Views
         {
             base.OnEnable();
             this.OnVisibilityChanged();
+            this.RaiseOnEnabled();
         }
 
         protected override void OnDisable()
         {
             this.OnVisibilityChanged();
             base.OnDisable();
+            this.RaiseOnDisabled();
+        }
+
+        protected void RaiseOnEnabled()
+        {
+            try
+            {
+                if (this.onEnabled != null)
+                    this.onEnabled(this, EventArgs.Empty);
+            }
+            catch (Exception e)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("{0}", e);
+            }
+        }
+
+        protected void RaiseOnDisabled()
+        {
+            try
+            {
+                if (this.onDisabled != null)
+                    this.onDisabled(this, EventArgs.Empty);
+            }
+            catch (Exception e)
+            {
+                if (log.IsWarnEnabled)
+                    log.WarnFormat("{0}", e);
+            }
         }
 
         public virtual float Alpha

@@ -23,37 +23,28 @@
  */
 
 using Loxodon.Framework.Binding;
-using Loxodon.Framework.Views;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Loxodon.Framework.Tutorials.OSA
 {
-    public class ItemEditView : UIView
+    public class ItemDetailView : MonoBehaviour
     {
-        public InputField titleInput;
         public Text title;
-        public Slider colorSlider;
-        public Button close;
-
+        public Image color;
         public ItemViewModel Item
         {
             get { return (ItemViewModel)this.GetDataContext(); }
             set { this.SetDataContext(value); }
         }
 
-        protected override void Start()
+        protected void Start()
         {
-            var bindingSet = this.CreateBindingSet<ItemEditView, ItemViewModel>();
-            bindingSet.Bind(titleInput).For(v => v.text,v=>v.onEndEdit).To(vm => vm.Title);
+            var bindingSet = this.CreateBindingSet<ItemDetailView, ItemViewModel>();
+            bindingSet.Bind(title).For(v => v.text).To(vm => vm.Title);
             bindingSet.Bind(title).For(v => v.color).To(vm => vm.Color);
-            bindingSet.Bind(colorSlider).For(v => v.onValueChanged).To<float>(vm => vm.OnChangeColor);
+            bindingSet.Bind(color).For(v => v.color).To(vm => vm.Color);
             bindingSet.Build();
-
-            this.close.onClick.AddListener(()=> {
-                this.gameObject.SetActive(false);
-            });
         }
-
     }
 }

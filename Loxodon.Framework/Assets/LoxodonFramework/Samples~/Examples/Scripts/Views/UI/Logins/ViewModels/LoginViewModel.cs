@@ -22,18 +22,15 @@
  * SOFTWARE.
  */
 
-using System;
-using System.Text.RegularExpressions;
-
-using Loxodon.Log;
-using Loxodon.Framework.Contexts;
-using Loxodon.Framework.Prefs;
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Commands;
-using Loxodon.Framework.ViewModels;
+using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.Localizations;
 using Loxodon.Framework.Observables;
-using Loxodon.Framework.Interactivity;
+using Loxodon.Framework.Prefs;
+using Loxodon.Framework.ViewModels;
+using Loxodon.Log;
+using System.Text.RegularExpressions;
 
 namespace Loxodon.Framework.Examples
 {
@@ -56,7 +53,7 @@ namespace Loxodon.Framework.Examples
         private Localization localization;
 
         private InteractionRequest interactionFinished;
-        private InteractionRequest<Notification> toastRequest;
+        private InteractionRequest<ToastNotification> toastRequest;
 
         public LoginViewModel(IAccountService accountService, Localization localization, Preferences globalPreferences)
         {
@@ -65,7 +62,7 @@ namespace Loxodon.Framework.Examples
             this.globalPreferences = globalPreferences;
 
             this.interactionFinished = new InteractionRequest(this);
-            this.toastRequest = new InteractionRequest<Notification>(this);
+            this.toastRequest = new InteractionRequest<ToastNotification>(this);
 
             if (this.username == null)
             {
@@ -178,7 +175,7 @@ namespace Loxodon.Framework.Examples
                         log.ErrorFormat("Exception:{0}", result.Exception);
 
                     var tipContent = this.localization.GetText("login.exception.tip", "Login exception.");
-                    this.toastRequest.Raise(new Notification(tipContent));/* show toast */
+                    this.toastRequest.Raise(new ToastNotification(tipContent,2f));/* show toast */
                     return;
                 }
 
@@ -194,7 +191,7 @@ namespace Loxodon.Framework.Examples
                 {
                     /* Login failure */
                     var tipContent = this.localization.GetText("login.failure.tip", "Login failure.");
-                    this.toastRequest.Raise(new Notification(tipContent));/* show toast */
+                    this.toastRequest.Raise(new ToastNotification(tipContent,2f));/* show toast */
                 }
             }
             finally

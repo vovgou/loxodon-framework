@@ -24,26 +24,26 @@
 
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Binding;
-using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.ViewModels;
 using Loxodon.Log;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Views.InteractionActions
 {
-    public class AsyncDialogInteractionAction : AsyncInteractionActionBase<object>
+    public class AsyncDialogInteractionAction : AsyncLoadableInteractionActionBase<object>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(AsyncDialogInteractionAction));
 
-        private string viewName;
         private Window window;
 
-        public AsyncDialogInteractionAction(string viewName)
+        public AsyncDialogInteractionAction(string viewName) : base(viewName, null)
         {
-            this.viewName = viewName;
+        }
+
+        public AsyncDialogInteractionAction(string viewName, IUIViewLocator locator) : base(viewName, locator)
+        {
         }
         public Window Window { get { return this.window; } }
 
@@ -75,17 +75,9 @@ namespace Loxodon.Framework.Views.InteractionActions
         {
             try
             {
-                ApplicationContext context = Context.GetApplicationContext();
-                IUIViewLocator locator = context.GetService<IUIViewLocator>();
-                if (locator == null)
-                    throw new NotFoundException("Not found the \"IUIViewLocator\".");
-
-                if (string.IsNullOrEmpty(viewName))
-                    throw new ArgumentNullException("The view name is null.");
-
-                window = await locator.LoadWindowAsync<Window>(viewName);
+                window = await LoadWindowAsync<Window>();
                 if (window == null)
-                    throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", viewName));
+                    throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", ViewName));
 
                 if (window is AlertDialogWindow && viewModel is AlertDialogViewModel)
                 {

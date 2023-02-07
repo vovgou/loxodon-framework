@@ -37,6 +37,9 @@ public class FodyWeavingPostprocessor : IPostBuildPlayerScriptDLLs
 
     protected static void DoWeave(string assembliesOutput)
     {
+        if (Regex.IsMatch(Application.dataPath, @"[\u4e00-\u9fbb]+"))
+            throw new Exception("Chinese/Unicode characters are not allowed in the project path.");
+
         if (!File.Exists(CONFIG_FULLNAME))
         {
             if (!Directory.Exists(CONFIG_DIR))

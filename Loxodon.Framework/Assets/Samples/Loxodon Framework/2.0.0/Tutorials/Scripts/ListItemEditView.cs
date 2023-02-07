@@ -24,7 +24,6 @@
 
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Views;
-using System;
 using UnityEngine.UI;
 
 namespace Loxodon.Framework.Tutorials
@@ -39,7 +38,6 @@ namespace Loxodon.Framework.Tutorials
         public Button submit;
         public Button cancel;
 
-        public event Action onClosed;
         public ListItemEditViewModel ViewModel
         {
             get { return (ListItemEditViewModel)this.GetDataContext(); }
@@ -61,21 +59,19 @@ namespace Loxodon.Framework.Tutorials
         }
 
         private void Cancel()
-        {
-            this.gameObject.SetActive(false);
+        {            
             this.ViewModel.Cancelled = true;
-            this.onClosed?.Invoke();
+            this.gameObject.SetActive(false);
+            //this.Visibility = false;
             this.SetDataContext(null);
-            this.onClosed = null;
         }
 
         private void Submit()
-        {
-            this.gameObject.SetActive(false);
+        {            
             this.ViewModel.Cancelled = false;
-            this.onClosed?.Invoke();
+            this.gameObject.SetActive(false);
+            //this.Visibility = false;           
             this.SetDataContext(null);
-            this.onClosed = null;
         }
     }
 

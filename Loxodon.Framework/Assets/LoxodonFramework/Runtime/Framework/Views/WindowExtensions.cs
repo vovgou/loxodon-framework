@@ -45,5 +45,23 @@ namespace Loxodon.Framework.Views
             window.OnDismissed += handler;
             return result;
         }
+
+        /// <summary>
+        /// wait until the view is disabled.
+        /// </summary>
+        /// <param name="window"></param>
+        /// <returns></returns>
+        public static Asynchronous.IAsyncResult WaitDisabled(this UIView view)
+        {
+            AsyncResult result = new AsyncResult();
+            EventHandler handler = null;
+            handler = (sender, eventArgs) =>
+            {
+                view.OnDisabled -= handler;
+                result.SetResult(null);
+            };
+            view.OnDisabled += handler;
+            return result;
+        }
     }
 }

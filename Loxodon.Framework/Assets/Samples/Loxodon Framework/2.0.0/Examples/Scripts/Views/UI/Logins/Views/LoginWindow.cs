@@ -65,11 +65,11 @@ namespace Loxodon.Framework.Examples
 
         public virtual void OnToastShow(object sender, InteractionEventArgs args)
         {
-            Notification notification = args.Context as Notification;
+            ToastNotification notification = args.Context as ToastNotification;
             if (notification == null)
                 return;
 
-            Toast.Show(this, notification.Message, 2f);
+            Toast.Show(this, notification.Message, notification.Duration);
         }
     }
 }

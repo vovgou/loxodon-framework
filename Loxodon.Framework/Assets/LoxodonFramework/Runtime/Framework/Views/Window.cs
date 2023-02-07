@@ -99,8 +99,8 @@ namespace Loxodon.Framework.Views
 
         protected override void OnDisable()
         {
-            this.RaiseVisibilityChanged();
             base.OnDisable();
+            this.RaiseVisibilityChanged();
         }
 
         public bool Activated
@@ -322,8 +322,8 @@ namespace Loxodon.Framework.Views
             this.State = WindowState.CREATE_BEGIN;
             this.Visibility = false;
             this.Interactable = this.Activated;
-            this.OnCreate(bundle);
             this.WindowManager.Add(this);
+            this.OnCreate(bundle);
             this.created = true;
             this.State = WindowState.CREATE_END;
         }

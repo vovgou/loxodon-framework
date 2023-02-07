@@ -29,6 +29,7 @@ using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.Observables;
 using Loxodon.Framework.ViewModels;
+using Loxodon.Framework.Views.InteractionActions;
 using Loxodon.Framework.Views.UI;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,16 +43,18 @@ namespace Loxodon.Framework.Tutorials.OSA
         private ItemViewModel selectedItem;
         private SimpleCommand<ItemViewModel> itemSelectCommand;
         private SimpleCommand<ItemViewModel> itemClickCommand;
-        private InteractionRequest<ItemViewModel> itemEditRequest;
+        //private InteractionRequest<ItemViewModel> itemEditRequest;
+        private AsyncInteractionRequest<VisibilityNotification> itemEditRequest;
         public ListViewExampleViewModel()
         {
-            itemEditRequest = new InteractionRequest<ItemViewModel>(this);
+            //itemEditRequest = new InteractionRequest<ItemViewModel>(this);
+            itemEditRequest = new AsyncInteractionRequest<VisibilityNotification>(this);
             itemClickCommand = new SimpleCommand<ItemViewModel>(OnItemClick);
             itemSelectCommand = new SimpleCommand<ItemViewModel>(OnItemSelect);
             this.CreateItems(3);
         }
 
-        public InteractionRequest<ItemViewModel> ItemEditRequest
+        public IInteractionRequest ItemEditRequest
         {
             get { return itemEditRequest; }
         }
@@ -62,9 +65,9 @@ namespace Loxodon.Framework.Tutorials.OSA
             set { this.Set(ref items, value); }
         }
 
-        public ItemViewModel SelectedItem 
+        public ItemViewModel SelectedItem
         {
-            get { return this.selectedItem;}
+            get { return this.selectedItem; }
             set { Set(ref selectedItem, value); }
         }
 
@@ -72,7 +75,8 @@ namespace Loxodon.Framework.Tutorials.OSA
         {
             Debug.LogFormat("click item:{0}", item.Title);
 
-            this.itemEditRequest.Raise(item);
+            //this.itemEditRequest.Raise(item);
+            _ = this.itemEditRequest.Raise(new VisibilityNotification(true, item));
         }
 
         private void OnItemSelect(ItemViewModel item)
@@ -144,6 +148,7 @@ namespace Loxodon.Framework.Tutorials.OSA
         public ListViewBindingAdapter listView;
         public ItemDetailView itemDetailView;
         public ItemEditView itemEditView;
+        private AsyncViewInteractionAction editViewInteractionAction;
 
         protected void Awake()
         {
@@ -154,6 +159,8 @@ namespace Loxodon.Framework.Tutorials.OSA
 
         private void Start()
         {
+            editViewInteractionAction = new AsyncViewInteractionAction(itemEditView);
+
             var bindingSet = this.CreateBindingSet<ListViewExample, ListViewExampleViewModel>();
 
             bindingSet.Bind(addButton).For(v => v.onClick).To(vm => vm.AddItem);
@@ -162,17 +169,18 @@ namespace Loxodon.Framework.Tutorials.OSA
             bindingSet.Bind(resetButton).For(v => v.onClick).To(vm => vm.ResetItem);
             bindingSet.Bind(listView).For(v => v.Items).To(vm => vm.Items);
             bindingSet.Bind(itemDetailView).For(v => v.Item).To(vm => vm.SelectedItem);
-            bindingSet.Bind().For(v => v.OnOpenItemEditView).To(vm => vm.ItemEditRequest);
+            //bindingSet.Bind().For(v => v.OnOpenItemEditView).To(vm => vm.ItemEditRequest);
+            bindingSet.Bind().For(v => v.editViewInteractionAction).To(vm => vm.ItemEditRequest);
             bindingSet.Build();
 
             this.SetDataContext(new ListViewExampleViewModel());
         }
 
-        void OnOpenItemEditView(object sender, InteractionEventArgs args)
-        {
-            ItemViewModel item = (ItemViewModel)args.Context;
-            this.itemEditView.gameObject.SetActive(true);
-            this.itemEditView.SetDataContext(item);
-        }
+        //void OnOpenItemEditView(object sender, InteractionEventArgs args)
+        //{
+        //    ItemViewModel item = (ItemViewModel)args.Context;
+        //    this.itemEditView.gameObject.SetActive(true);
+        //    this.itemEditView.SetDataContext(item);
+        //}
     }
 }

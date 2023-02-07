@@ -52,7 +52,11 @@ namespace Loxodon.Framework.Tutorials.OSA
             set { this.Set(ref items, value); }
         }
 
-        public ItemViewModel SelectedItem { get { return this.selectedItem; } }
+        public ItemViewModel SelectedItem
+        {
+            get { return this.selectedItem; }
+            set { Set(ref selectedItem, value); }
+        }
 
         public void AddItem()
         {
@@ -85,7 +89,7 @@ namespace Loxodon.Framework.Tutorials.OSA
         {
             item.Selected = !item.Selected;
             if (item.Selected)
-                this.selectedItem = item;
+                this.SelectedItem = item;
 
             if (items != null && item.Selected)
             {

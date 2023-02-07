@@ -62,7 +62,7 @@ namespace Loxodon.Framework.Tutorials.OSA
         public ICommand SelectCommand
         {
             get { return this.selectCommand; }
-        }
+        }      
 
         public string Title
         {
@@ -82,21 +82,14 @@ namespace Loxodon.Framework.Tutorials.OSA
             set { this.Set(ref selected, value); }
         }
 
-        //public void Select()
-        //{
-        //    this.Selected = !selected;
-        //    if (items != null && this.Selected)
-        //    {
-        //        foreach (var item in items)
-        //        {
-        //            if (item == this)
-        //                continue;
-        //            item.Selected = false;
-        //        }
-        //    }
-        //}
+        public void OnChangeColor(float value)
+        {
+            Color color = this.color;
+            color.r = value;
+            this.Color = color;
+        }
 
-        public static Color GetRandomColor(bool fullAlpha = false)
+        public static Color GetRandomColor(bool fullAlpha = true)
         {
             return new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), fullAlpha ? 1f : Random.Range(0f, 1f));
         }

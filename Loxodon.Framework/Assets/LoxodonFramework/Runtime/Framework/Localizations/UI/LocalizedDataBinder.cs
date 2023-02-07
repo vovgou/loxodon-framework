@@ -51,7 +51,7 @@ namespace Loxodon.Framework.Localizations
         protected virtual void Start()
         {
             var localization = Localization.Current;
-            var bindingSet = this.CreateBindingSet();
+            var bindingSet = this.CreateSimpleBindingSet();
             foreach (var description in data.descriptions)
             {
                 string typeName = description.TypeName;

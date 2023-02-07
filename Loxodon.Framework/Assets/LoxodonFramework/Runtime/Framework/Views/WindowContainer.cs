@@ -63,7 +63,6 @@ namespace Loxodon.Framework.Views
         {
             /* Create Window View */
             this.WindowType = WindowType.FULL;
-
             this.localWindowManager = this.CreateWindowManager();
         }
 

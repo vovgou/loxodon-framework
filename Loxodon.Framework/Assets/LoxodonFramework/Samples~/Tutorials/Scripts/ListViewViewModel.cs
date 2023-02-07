@@ -35,12 +35,12 @@ namespace Loxodon.Framework.Tutorials
         private ListItemViewModel selectedItem;
         private SimpleCommand<ListItemViewModel> itemSelectCommand;
         private SimpleCommand<ListItemViewModel> itemClickCommand;
-        private InteractionRequest<ListItemEditViewModel> itemEditRequest;
+        private AsyncInteractionRequest<VisibilityNotification> itemEditRequest;
         private ObservableList<ListItemViewModel> items;
 
         public ListViewViewModel()
         {
-            itemEditRequest = new InteractionRequest<ListItemEditViewModel>(this);
+            itemEditRequest = new AsyncInteractionRequest<VisibilityNotification>(this);
             itemClickCommand = new SimpleCommand<ListItemViewModel>(OnItemClick);
             itemSelectCommand = new SimpleCommand<ListItemViewModel>(OnItemSelect);
             items = CreateList();
@@ -85,18 +85,18 @@ namespace Loxodon.Framework.Tutorials
             return item;
         }
 
-        private void OnItemClick(ListItemViewModel item)
+        private async void OnItemClick(ListItemViewModel item)
         {
-            this.itemEditRequest.Raise(new ListItemEditViewModel(item), vm =>
-             {
-                 if (vm.Cancelled)
-                     return;
+            ListItemEditViewModel editViewModel = new ListItemEditViewModel(item);
+            await this.itemEditRequest.Raise(VisibilityNotification.CreateShowNotification(editViewModel, true));
 
-                 //Apply changes
-                 item.Icon = vm.Icon;
-                 item.Price = vm.Price;
-                 item.Title = vm.Title;
-             });
+            if (editViewModel.Cancelled)
+                return;
+
+            //Apply changes
+            item.Icon = editViewModel.Icon;
+            item.Price = editViewModel.Price;
+            item.Title = editViewModel.Title;
         }
 
         private void OnItemSelect(ListItemViewModel item)
