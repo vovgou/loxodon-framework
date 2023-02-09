@@ -8,13 +8,18 @@ jobs:
     runs-on: ubuntu-latest
     name: 'publish npm'
     environment: npm
+    
+    strategy:
+      matrix:
+        node-version: [16.x, 17.x, 18.x, 19.x]
+    
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@master
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          node-version: 12.13.0
+          node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/
           
       - name: Publish Loxodon.Framework
