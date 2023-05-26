@@ -91,7 +91,7 @@ namespace Loxodon.Framework.Views
             try
             {
                 promise.UpdateProgress(0f);
-                var result = Addressables.InstantiateAsync(name);
+                var result = Addressables.LoadAssetAsync<GameObject>(name);
                 while (!result.IsDone)
                 {
                     await new WaitForSecondsRealtime(0.05f);
@@ -104,14 +104,14 @@ namespace Loxodon.Framework.Views
                     return;
                 }
 
-                GameObject go = result.Result;
-                go.SetActive(false);
+                var preObj = result.Result;
+                preObj.SetActive(false);
+                var go = Object.Instantiate(preObj);
 
                 T view = go.GetComponent<T>();
                 if (view == null)
                 {
-                    //GameObject.Destroy(go);
-                    Addressables.ReleaseInstance(go);
+                    Addressables.ReleaseInstance(result);
                     promise.SetException(new NotFoundException(name));
                 }
 
