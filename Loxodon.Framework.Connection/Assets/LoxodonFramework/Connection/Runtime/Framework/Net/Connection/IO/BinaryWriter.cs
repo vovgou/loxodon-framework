@@ -223,6 +223,23 @@ namespace Loxodon.Framework.Net.Connection
             output.Write(buffer, offset, count);
         }
 
+        public virtual void Write(IByteBuffer buffer, int count)
+        {
+            CheckDisposed();
+            if (buffer is ByteBuffer buf)
+            {
+                int offset = buf.ArrayOffset + buf.ReaderIndex;
+                buf.ReaderIndex += count;
+                output.Write(buf.Array, offset, count);
+            }
+            else
+            {
+                byte[] data = new byte[count];
+                buffer.ReadBytes(data, 0, count);
+                output.Write(data, 0, count);
+            }
+        }
+
         public virtual Task WriteAsync(byte[] buffer, int offset, int count)
         {
             CheckDisposed();

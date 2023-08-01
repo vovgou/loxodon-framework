@@ -83,7 +83,7 @@ namespace Loxodon.Framework.Views
                 viewName = ViewName;
 
             IUIViewLocator locator = GetUIViewLocator();
-            ToastView view = locator.LoadView<ToastView>(viewName);
+            ToastViewBase view = locator.LoadView<ToastViewBase>(viewName);
             if (view == null)
                 throw new NotFoundException("Not found the \"ToastView\".");
 
@@ -98,19 +98,19 @@ namespace Loxodon.Framework.Views
         private readonly IUIViewGroup viewGroup;
         private readonly float duration;
         private readonly string text;
-        private readonly ToastView view;
+        private readonly ToastViewBase view;
         private readonly UILayout layout;
         private readonly Action callback;
 
-        protected Toast(ToastView view, IUIViewGroup viewGroup, string text, float duration) : this(view, viewGroup, text, duration, null, null)
+        protected Toast(ToastViewBase view, IUIViewGroup viewGroup, string text, float duration) : this(view, viewGroup, text, duration, null, null)
         {
         }
 
-        protected Toast(ToastView view, IUIViewGroup viewGroup, string text, float duration, UILayout layout) : this(view, viewGroup, text, duration, layout, null)
+        protected Toast(ToastViewBase view, IUIViewGroup viewGroup, string text, float duration, UILayout layout) : this(view, viewGroup, text, duration, layout, null)
         {
         }
 
-        protected Toast(ToastView view, IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback)
+        protected Toast(ToastViewBase view, IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback)
         {
             this.view = view;
             this.viewGroup = viewGroup;
@@ -130,7 +130,7 @@ namespace Loxodon.Framework.Views
             get { return this.text; }
         }
 
-        public ToastView View
+        public ToastViewBase View
         {
             get { return this.view; }
         }
@@ -172,7 +172,7 @@ namespace Loxodon.Framework.Views
 
             this.viewGroup.AddView(this.view, this.layout);
             this.view.Visibility = true;
-            this.view.text.text = this.text;
+            this.view.Content = this.text;
 
             if (this.view.EnterAnimation != null)
                 this.view.EnterAnimation.Play();

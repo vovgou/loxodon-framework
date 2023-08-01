@@ -142,6 +142,13 @@ namespace Loxodon.Framework.Observables
             return property.Name;
         }
 
+        [Conditional("DEBUG")]
+        protected void VerifyPropertyType(Type type)
+        {
+            if (type.IsValueType)
+                log.Debug("Please use Set(field,newValue) instead of Set<T>(field,newValue) to avoid value types being boxed.");
+        }
+
         /// <summary>
         /// Set the specified propertyExpression, field and newValue.
         /// </summary>
@@ -151,6 +158,7 @@ namespace Loxodon.Framework.Observables
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         protected bool Set<T>(ref T field, T newValue, Expression<Func<T>> propertyExpression)
         {
+            //VerifyPropertyType(typeof(T));
             if (object.Equals(field, newValue))
                 return false;
 
@@ -159,8 +167,6 @@ namespace Loxodon.Framework.Observables
             RaisePropertyChanged(propertyName);
             return true;
         }
-
-
 
         /// <summary>
         ///  Set the specified propertyName, field, newValue.
@@ -172,6 +178,7 @@ namespace Loxodon.Framework.Observables
         /// <returns></returns>
         protected bool Set<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
+            //VerifyPropertyType(typeof(T));
             if (object.Equals(field, newValue))
                 return false;
 
@@ -692,7 +699,7 @@ namespace Loxodon.Framework.Observables
         {
             if ((field != null && field.Equals(newValue)) || (field == null && newValue == null))
                 return false;
-
+            
             field = newValue;
             RaisePropertyChanged(propertyName);
             return true;

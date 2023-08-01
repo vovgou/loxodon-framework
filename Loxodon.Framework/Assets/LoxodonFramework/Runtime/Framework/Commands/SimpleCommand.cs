@@ -64,7 +64,7 @@ namespace Loxodon.Framework.Commands
         }
     }
 
-    public class SimpleCommand<T> : CommandBase
+    public class SimpleCommand<T> : CommandBase, ICommand<T>
     {
         private bool enabled = true;
         private readonly Action<T> execute;
@@ -99,6 +99,16 @@ namespace Loxodon.Framework.Commands
         {
             if (this.CanExecute(parameter) && this.execute != null)
                 this.execute((T)Convert.ChangeType(parameter, typeof(T)));
+        }
+
+        public bool CanExecute(T parameter)
+        {
+            return this.Enabled;
+        }
+
+        public void Execute(T parameter)
+        {
+            this.execute(parameter);
         }
     }
 }

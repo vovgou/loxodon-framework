@@ -26,26 +26,29 @@ using Loxodon.Framework.ViewModels;
 
 namespace Loxodon.Framework.Examples
 {
-	public class ProgressBar : ViewModelBase
-	{
+    public class ProgressBar : ViewModelBase
+    {
 
-		private float progress;
-		private string tip;
-		private bool enable;
+        private float progress;
+        private string tip;
+        private bool enable;
 
-		public bool Enable {
-			get{ return this.enable; }
-			set{ this.Set<bool> (ref this.enable, value); }
-		}
+        public bool Enable
+        {
+            get { return this.enable; }
+            set { this.Set(ref this.enable, value); }
+        }
 
-		public float Progress {
-			get{ return this.progress; }
-			set{ this.Set<float> (ref this.progress, value); }
-		}
+        public float Progress
+        {
+            get { return this.progress; }
+            set { this.Set(ref this.progress, value); }
+        }
 
-		public string Tip {
-			get{ return this.tip; }
-			set{ this.Set<string> (ref this.tip, value); }
-		}
-	}
+        public string Tip
+        {
+            get { return this.tip; }
+            set { this.Set(ref this.tip, value); }
+        }
+    }
 }

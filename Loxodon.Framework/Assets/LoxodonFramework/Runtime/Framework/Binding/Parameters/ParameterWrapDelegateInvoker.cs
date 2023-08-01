@@ -65,4 +65,26 @@ namespace Loxodon.Framework.Binding.Parameters
             return parameterTypes[0].IsAssignableFrom(GetParameterValueType());
         }
     }
+
+    public class ParameterWrapActionInvoker<T> : IInvoker
+    {
+        private readonly Action<T> handler;
+        private readonly ICommandParameter<T> commandParameter;
+        public ParameterWrapActionInvoker(Action<T> handler, ICommandParameter<T> commandParameter)
+        {
+            if (handler == null)
+                throw new ArgumentNullException("handler");
+            if (commandParameter == null)
+                throw new ArgumentNullException("commandParameter");
+
+            this.commandParameter = commandParameter;
+            this.handler = handler;
+        }
+
+        public object Invoke(params object[] args)
+        {
+            this.handler(commandParameter.GetValue());
+            return null;
+        }
+    }
 }

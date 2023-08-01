@@ -50,15 +50,16 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
         protected virtual ISourceProxy CreateProxy(object source, IPathNode node)
         {
-            IProxyType proxyType = source.GetType().AsProxy();
+            Type type = source.GetType();           
             if (node is IndexedNode)
             {
+                IProxyType proxyType = type.AsProxy();
                 if (!(source is ICollection))
-                    throw new ProxyException("Type \"{0}\" is not a collection and cannot be accessed by index \"{1}\".", proxyType.Type.Name, node.ToString());
+                    throw new ProxyException("Type \"{0}\" is not a collection and cannot be accessed by index \"{1}\".", type.Name, node.ToString());
 
                 var itemInfo = proxyType.GetItem();
                 if (itemInfo == null)
-                    throw new MissingMemberException(proxyType.Type.FullName, "Item");
+                    throw new MissingMemberException(type.FullName, "Item");
 
                 var intIndexedNode = node as IntegerIndexedNode;
                 if (intIndexedNode != null)
@@ -76,14 +77,14 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 return null;
 
             var memberInfo = memberNode.MemberInfo;
-            if (memberInfo!=null && !memberInfo.DeclaringType.IsAssignableFrom(source.GetType()))
+            if (memberInfo!=null && !memberInfo.DeclaringType.IsAssignableFrom(type))
                 return null;
 
             if (memberInfo == null)
-                memberInfo = source.GetType().FindFirstMemberInfo(memberNode.Name);
+                memberInfo = type.FindFirstMemberInfo(memberNode.Name);
 
             if (memberInfo == null || memberInfo.IsStatic())
-                throw new MissingMemberException(proxyType.Type.FullName, memberNode.Name);
+                throw new MissingMemberException(type.FullName, memberNode.Name);
 
             var propertyInfo = memberInfo as PropertyInfo;
             if (propertyInfo != null)

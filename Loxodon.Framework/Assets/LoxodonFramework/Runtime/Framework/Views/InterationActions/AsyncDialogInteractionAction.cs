@@ -38,7 +38,7 @@ namespace Loxodon.Framework.Views.InteractionActions
 
         private Window window;
 
-        public AsyncDialogInteractionAction(string viewName) : base(viewName, null)
+        public AsyncDialogInteractionAction(string viewName) : base(viewName, null, null)
         {
         }
 
@@ -79,11 +79,11 @@ namespace Loxodon.Framework.Views.InteractionActions
                 if (window == null)
                     throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", ViewName));
 
-                if (window is AlertDialogWindow && viewModel is AlertDialogViewModel)
+                if (window is AlertDialogWindowBase && viewModel is AlertDialogViewModel)
                 {
-                    (window as AlertDialogWindow).ViewModel = viewModel as AlertDialogViewModel;
+                    (window as AlertDialogWindowBase).ViewModel = viewModel as AlertDialogViewModel;
                 }
-                else if (window is AlertDialogWindow && viewModel is DialogNotification notification)
+                else if (window is AlertDialogWindowBase && viewModel is DialogNotification notification)
                 {
                     AlertDialogViewModel dialogViewModel = new AlertDialogViewModel();
                     dialogViewModel.Message = notification.Message;
@@ -93,7 +93,7 @@ namespace Loxodon.Framework.Views.InteractionActions
                     dialogViewModel.CancelButtonText = notification.CancelButtonText;
                     dialogViewModel.CanceledOnTouchOutside = notification.CanceledOnTouchOutside;
                     dialogViewModel.Click = (result) => notification.DialogResult = result;
-                    (window as AlertDialogWindow).ViewModel = dialogViewModel;
+                    (window as AlertDialogWindowBase).ViewModel = dialogViewModel;
                 }
                 else
                 {

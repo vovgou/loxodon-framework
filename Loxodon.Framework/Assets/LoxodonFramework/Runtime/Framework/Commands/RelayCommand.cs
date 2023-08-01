@@ -62,7 +62,7 @@ namespace Loxodon.Framework.Commands
         }
     }
 
-    public class RelayCommand<T> : CommandBase
+    public class RelayCommand<T> : CommandBase, ICommand<T>
     {
         private readonly Action<T> execute;
         private readonly Func<bool> canExecute;
@@ -91,10 +91,20 @@ namespace Loxodon.Framework.Commands
             return this.canExecute == null || this.canExecute();
         }
 
+        public bool CanExecute(T parameter)
+        {
+            return this.canExecute == null || this.canExecute();
+        }
+
         public override void Execute(object parameter)
         {
             if (this.CanExecute(parameter) && this.execute != null)
                 this.execute((T)Convert.ChangeType(parameter, typeof(T)));
+        }
+
+        public void Execute(T parameter)
+        {
+            this.execute(parameter);
         }
     }
 }

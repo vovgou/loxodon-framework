@@ -24,7 +24,6 @@
 
 using Loxodon.Log;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Loxodon.Framework.Binding.Reflection

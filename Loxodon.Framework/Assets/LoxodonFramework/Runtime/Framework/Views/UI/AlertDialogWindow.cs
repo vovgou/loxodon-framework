@@ -25,17 +25,14 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using Loxodon.Framework.ViewModels;
 
 namespace Loxodon.Framework.Views
 {
-    public class AlertDialogWindow : Window
+    public class AlertDialogWindow : AlertDialogWindowBase
     {
         public Text Title;
 
         public Text Message;
-
-        public GameObject Content;
 
         public Button ConfirmButton;
 
@@ -47,11 +44,7 @@ namespace Loxodon.Framework.Views
 
         public bool CanceledOnTouchOutside { get; set; }
 
-        private IUIView contentView;
-
-        private AlertDialogViewModel viewModel;
-
-        public IUIView ContentView
+        public override IUIView ContentView
         {
             get { return this.contentView; }
             set
@@ -73,16 +66,6 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public AlertDialogViewModel ViewModel
-        {
-            get { return this.viewModel; }
-            set
-            {
-                this.viewModel = value;
-                this.OnChangeViewModel();
-            }
-        }
-
         protected virtual void Button_OnClick(int which)
         {
             try
@@ -96,7 +79,7 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public virtual void Cancel()
+        public override void Cancel()
         {
             this.Button_OnClick(AlertDialog.BUTTON_NEGATIVE);
         }
@@ -106,7 +89,7 @@ namespace Loxodon.Framework.Views
             this.WindowType = WindowType.DIALOG;
         }
 
-        protected void OnChangeViewModel()
+        protected override void OnChangeViewModel()
         {
             if (this.Message != null)
             {

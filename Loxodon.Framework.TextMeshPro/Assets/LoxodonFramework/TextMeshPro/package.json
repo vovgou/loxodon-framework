@@ -1,0 +1,40 @@
+{
+  "name": "com.vovgou.loxodon-framework-textmeshpro",
+  "displayName": "Loxodon Framework TextMeshPro",
+  "version": "2.6.0",
+  "unity": "2018.4",
+  "description": "This is a plugin for the TextMeshPro.",
+  "license": "MIT",
+  "keywords": [
+    "Loxodon",
+    "Framework",
+    "Databinding",
+    "Localization",
+    "MVVM",
+    "UI",
+    "UGUI",
+    "TextMeshPro"
+  ],
+  "author": {
+    "name": "Clark Yang",
+    "email": "yangpc.china@gmail.com"
+  },
+  "category": "GUI",
+  "homepage": "https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.TextMeshPro",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+  "relatedPackages": {},
+  "dependencies": {
+    "com.vovgou.loxodon-framework": "2.6.0",
+    "com.unity.textmeshpro": "1.4.1"
+  },
+  "samples": [
+    {
+      "displayName": "Tutorials",
+      "description": "Tutorials",
+      "path": "Samples~/Tutorials"
+    }
+  ]
+}

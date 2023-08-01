@@ -39,7 +39,7 @@ namespace Loxodon.Framework.Views
         private static BlockingCoroutineTransitionExecutor blockingExecutor;
 
         //For compatibility with the "Configurable Enter Play Mode" feature
-#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
+#if UNITY_2019_3_OR_NEWER //&& UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         static void OnInitialize()
         {

@@ -37,17 +37,17 @@ namespace Loxodon.Framework.Examples
 
 		public string Username {
 			get{ return this.username; }
-			set{ this.Set<string> (ref this.username, value); }
+			set{ this.Set(ref this.username, value); }
 		}
 
 		public string Password {
 			get{ return this.password; }
-			set{ this.Set<string> (ref this.password, value); }
+			set{ this.Set(ref this.password, value); }
 		}
 
 		public DateTime Created {
 			get{ return this.created; }
-			set{ this.Set<DateTime> (ref this.created, value); }
+			set{ this.Set(ref this.created, value); }
 		}
 	}
 }

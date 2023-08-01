@@ -97,8 +97,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 return;
 
             //Bind Command
-            ICommand command = value as ICommand;
-            if (command != null)
+            if (value is ICommand command)
             {
                 if (this.interactable == null)
                 {
@@ -114,36 +113,28 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             //Bind Method
-            IProxyInvoker proxyInvoker = value as IProxyInvoker;
-            if (proxyInvoker != null)
+            if (value is IProxyInvoker proxyInvoker)
             {
-                if (this.IsValid(proxyInvoker))
-                {
-                    this.invoker = proxyInvoker;
-                    return;
-                }
-
-                throw new ArgumentException("Bind method failed.the parameter types do not match.");
+                if (!IsValid(proxyInvoker))
+                    throw new ArgumentException("Bind method failed.the parameter types do not match.");
+                this.invoker = proxyInvoker;
+                return;
             }
 
             //Bind Delegate
-            Delegate handler = value as Delegate;
-            if (handler != null)
+            if (value is Delegate handler)
             {
-                if (this.IsValid(handler))
-                {
-                    this.handler = handler;
-                    return;
-                }
-
-                throw new ArgumentException("Bind method failed.the parameter types do not match.");
+                if (!IsValid(handler))
+                    throw new ArgumentException("Bind method failed.the parameter types do not match.");
+                this.handler = handler;
+                return;
             }
 
             //Bind Script Function
-            IInvoker invoker = value as IInvoker;
-            if (invoker != null)
+            if (value is IInvoker invoker)
             {
                 this.invoker = invoker;
+                return;
             }
         }
 
@@ -215,7 +206,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected override bool IsValid(Delegate handler)
         {
-            if (handler is UnityAction)
+            if (handler is UnityAction || handler is Action)
                 return true;
 #if NETFX_CORE
             MethodInfo info = handler.GetMethodInfo();
@@ -261,12 +252,12 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
                 if (this.handler != null)
                 {
-                    if (this.handler is UnityAction)
-                        (this.handler as UnityAction)();
+                    if (this.handler is Action action)
+                        action();
+                    else if (this.handler is UnityAction unityAction)
+                        unityAction();
                     else
-                    {
                         this.handler.DynamicInvoke();
-                    }
                     return;
                 }
             }
@@ -300,7 +291,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected override bool IsValid(Delegate handler)
         {
-            if (handler is UnityAction<T>)
+            if (handler is UnityAction<T> || handler is Action<T>)
                 return true;
 #if NETFX_CORE
             MethodInfo info = handler.GetMethodInfo();
@@ -336,24 +327,30 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             {
                 if (this.command != null)
                 {
-                    this.command.Execute(parameter);
+                    if (command is ICommand<T> genericCommand)
+                        genericCommand.Execute(parameter);
+                    else
+                        command.Execute(parameter);
                     return;
                 }
 
                 if (this.invoker != null)
                 {
-                    this.invoker.Invoke(parameter);
+                    if (invoker is IInvoker<T> genericInvoker)
+                        genericInvoker.Invoke(parameter);
+                    else
+                        invoker.Invoke(parameter);
                     return;
                 }
 
                 if (this.handler != null)
                 {
-                    if (this.handler is UnityAction<T>)
-                        (this.handler as UnityAction<T>)(parameter);
+                    if (this.handler is Action<T> action)
+                        action(parameter);
+                    else if (this.handler is UnityAction<T> unityAction)
+                        unityAction(parameter);
                     else
-                    {
                         this.handler.DynamicInvoke(parameter);
-                    }
                     return;
                 }
             }
@@ -387,7 +384,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected override bool IsValid(Delegate handler)
         {
-            if (handler is UnityAction<T0, T1>)
+            if (handler is UnityAction<T0, T1> || handler is Action<T0, T1>)
                 return true;
 #if NETFX_CORE
             MethodInfo info = handler.GetMethodInfo();
@@ -431,18 +428,22 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
                 if (this.invoker != null)
                 {
-                    this.invoker.Invoke(t0, t1);
+                    if (invoker is IInvoker<T0, T1> genericInvoker)
+                        genericInvoker.Invoke(t0, t1);
+                    else
+                        invoker.Invoke(t0, t1);
                     return;
                 }
 
                 if (this.handler != null)
                 {
-                    if (this.handler is UnityAction<T0, T1>)
-                        (this.handler as UnityAction<T0, T1>)(t0, t1);
+                    if (this.handler is Action<T0, T1> action)
+                        action(t0, t1);
+                    else if (this.handler is UnityAction<T0, T1> unityAction)
+                        unityAction(t0, t1);
                     else
-                    {
                         this.handler.DynamicInvoke(t0, t1);
-                    }
+
                     return;
                 }
             }
@@ -476,7 +477,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected override bool IsValid(Delegate handler)
         {
-            if (handler is UnityAction<T0, T1, T2>)
+            if (handler is UnityAction<T0, T1, T2> || handler is Action<T0, T1, T2>)
                 return true;
 #if NETFX_CORE
             MethodInfo info = handler.GetMethodInfo();
@@ -523,18 +524,21 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
                 if (this.invoker != null)
                 {
-                    this.invoker.Invoke(t0, t1, t2);
+                    if (invoker is IInvoker<T0, T1, T2> genericInvoker)
+                        genericInvoker.Invoke(t0, t1, t2);
+                    else
+                        invoker.Invoke(t0, t1, t2);
                     return;
                 }
 
                 if (this.handler != null)
                 {
-                    if (this.handler is UnityAction<T0, T1, T2>)
-                        (this.handler as UnityAction<T0, T1, T2>)(t0, t1, t2);
+                    if (this.handler is Action<T0, T1, T2> action)
+                        action(t0, t1, t2);
+                    else if (this.handler is UnityAction<T0, T1, T2> unityAction)
+                        unityAction(t0, t1, t2);
                     else
-                    {
                         this.handler.DynamicInvoke(t0, t1, t2);
-                    }
                     return;
                 }
             }
@@ -568,7 +572,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected override bool IsValid(Delegate handler)
         {
-            if (handler is UnityAction<T0, T1, T2, T3>)
+            if (handler is UnityAction<T0, T1, T2, T3> || handler is Action<T0, T1, T2, T3>)
                 return true;
 #if NETFX_CORE
             MethodInfo info = handler.GetMethodInfo();
@@ -617,18 +621,21 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
                 if (this.invoker != null)
                 {
-                    this.invoker.Invoke(t0, t1, t2, t3);
+                    if (invoker is IInvoker<T0, T1, T2, T3> genericInvoker)
+                        genericInvoker.Invoke(t0, t1, t2, t3);
+                    else
+                        invoker.Invoke(t0, t1, t2, t3);
                     return;
                 }
 
                 if (this.handler != null)
                 {
-                    if (this.handler is UnityAction<T0, T1, T2, T3>)
-                        (this.handler as UnityAction<T0, T1, T2, T3>)(t0, t1, t2, t3);
+                    if (this.handler is UnityAction<T0, T1, T2, T3> action)
+                        action(t0, t1, t2, t3);
+                    else if (this.handler is UnityAction<T0, T1, T2, T3> unityAction)
+                        unityAction(t0, t1, t2, t3);
                     else
-                    {
                         this.handler.DynamicInvoke(t0, t1, t2, t3);
-                    }
                     return;
                 }
             }

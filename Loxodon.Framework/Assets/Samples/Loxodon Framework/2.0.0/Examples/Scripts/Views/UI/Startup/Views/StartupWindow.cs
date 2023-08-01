@@ -32,6 +32,7 @@ using Loxodon.Framework.Views;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Binding.Builder;
 using Loxodon.Framework.Interactivity;
+using Loxodon.Framework.Views.InteractionActions;
 
 namespace Loxodon.Framework.Examples
 {
@@ -45,22 +46,19 @@ namespace Loxodon.Framework.Examples
         public Button button;
 
         private StartupViewModel viewModel;
-        private IDisposable subscription;
-
         private IUIViewLocator viewLocator;
+        private AsyncWindowInteractionAction loginWindowInteractionAction;
 
         protected override void OnCreate(IBundle bundle)
         {
             this.viewLocator = Context.GetApplicationContext().GetService<IUIViewLocator>();
+            this.loginWindowInteractionAction = new AsyncWindowInteractionAction("UI/Logins/Login", viewLocator,this.WindowManager);
             this.viewModel = new StartupViewModel();
-
-            //this.subscription = this.viewModel.Messenger.Subscribe ();
-
-            //this.SetDataContext (viewModel);
 
             /* databinding, Bound to the ViewModel. */
             BindingSet<StartupWindow, StartupViewModel> bindingSet = this.CreateBindingSet(viewModel);
-            bindingSet.Bind().For(v => v.OnOpenLoginWindow).To(vm => vm.LoginRequest);
+            //bindingSet.Bind().For(v => v.OnOpenLoginWindow).To(vm => vm.LoginRequest);
+            bindingSet.Bind().For(v => v.loginWindowInteractionAction).To(vm => vm.LoginRequest);
             bindingSet.Bind().For(v => v.OnDismissRequest).To(vm => vm.DismissRequest);
 
             bindingSet.Bind(this.progressBarSlider).For("value", "onValueChanged").To("ProgressBar.Progress").TwoWay();
@@ -83,50 +81,41 @@ namespace Loxodon.Framework.Examples
             this.viewModel.Unzip();
         }
 
-        public override void DoDismiss()
-        {
-            base.DoDismiss();
-            if (this.subscription != null)
-            {
-                this.subscription.Dispose();
-                this.subscription = null;
-            }
-        }
-
         protected void OnDismissRequest(object sender, InteractionEventArgs args)
         {
             this.Dismiss();
         }
 
-        protected void OnOpenLoginWindow(object sender, InteractionEventArgs args)
-        {
-            try
-            {
-                LoginWindow loginWindow = viewLocator.LoadWindow<LoginWindow>(this.WindowManager, "UI/Logins/Login");
-                var callback = args.Callback;
-                var loginViewModel = args.Context;
+        //// Use AsyncWindowInteractionAction instead of this method.
+        //protected void OnOpenLoginWindow(object sender, InteractionEventArgs args)
+        //{
+        //    try
+        //    {
+        //        LoginWindow loginWindow = viewLocator.LoadWindow<LoginWindow>(this.WindowManager, "UI/Logins/Login");
+        //        var callback = args.Callback;
+        //        var loginViewModel = args.Context;
 
-                if (callback != null)
-                {
-                    EventHandler handler = null;
-                    handler = (window, e) =>
-                    {
-                        loginWindow.OnDismissed -= handler;
-                        if (callback != null)
-                            callback();
-                    };
-                    loginWindow.OnDismissed += handler;
-                }
+        //        if (callback != null)
+        //        {
+        //            EventHandler handler = null;
+        //            handler = (window, e) =>
+        //            {
+        //                loginWindow.OnDismissed -= handler;
+        //                if (callback != null)
+        //                    callback();
+        //            };
+        //            loginWindow.OnDismissed += handler;
+        //        }
 
-                loginWindow.SetDataContext(loginViewModel);
-                loginWindow.Create();
-                loginWindow.Show();
-            }
-            catch (Exception e)
-            {
-                if (log.IsWarnEnabled)
-                    log.Warn(e);
-            }
-        }
+        //        loginWindow.SetDataContext(loginViewModel);
+        //        loginWindow.Create();
+        //        loginWindow.Show();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        if (log.IsWarnEnabled)
+        //            log.Warn(e);
+        //    }
+        //}
     }
 }

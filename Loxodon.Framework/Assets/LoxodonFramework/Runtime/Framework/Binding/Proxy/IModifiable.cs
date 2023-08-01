@@ -30,4 +30,9 @@ namespace Loxodon.Framework.Binding.Proxy
 
         void SetValue<TValue>(TValue value);
     }
+
+    public interface IModifiable<TValue>
+    {
+        void SetValue(TValue value);
+    }
 }

@@ -98,8 +98,8 @@ namespace Loxodon.Framework.Views
                     throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", viewName));
                 }
 
-                if (window is AlertDialogWindow && viewModel is AlertDialogViewModel)
-                    (window as AlertDialogWindow).ViewModel = viewModel as AlertDialogViewModel;
+                if (window is AlertDialogWindowBase && viewModel is AlertDialogViewModel)
+                    (window as AlertDialogWindowBase).ViewModel = viewModel as AlertDialogViewModel;
                 else
                     window.SetDataContext(viewModel);
 

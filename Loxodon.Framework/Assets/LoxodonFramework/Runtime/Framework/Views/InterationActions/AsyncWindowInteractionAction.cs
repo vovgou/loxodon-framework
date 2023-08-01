@@ -33,11 +33,19 @@ namespace Loxodon.Framework.Views.InteractionActions
     public class AsyncWindowInteractionAction : AsyncLoadableInteractionActionBase<WindowNotification>
     {
         private Window window;
-        public AsyncWindowInteractionAction(string viewName) : this(viewName, null)
+        public AsyncWindowInteractionAction(string viewName) : this(viewName, null,null)
         {
         }
 
         public AsyncWindowInteractionAction(string viewName, IUIViewLocator locator) : base(viewName, locator)
+        {
+        }
+
+        public AsyncWindowInteractionAction(string viewName, IWindowManager windowManager) : base(viewName, windowManager)
+        {
+        }
+
+        public AsyncWindowInteractionAction(string viewName, IUIViewLocator locator, IWindowManager windowManager) : base(viewName, locator, windowManager)
         {
         }
 

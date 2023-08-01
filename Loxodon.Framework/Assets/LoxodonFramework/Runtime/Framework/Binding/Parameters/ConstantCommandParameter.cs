@@ -43,4 +43,27 @@ namespace Loxodon.Framework.Binding.Parameters
             return parameter != null ? parameter.GetType() : typeof(object);
         }
     }
+
+    public class ConstantCommandParameter<T> : ICommandParameter<T>
+    {
+        private T parameter;
+        public ConstantCommandParameter(T parameter)
+        {
+            this.parameter = parameter;
+        }
+        public T GetValue()
+        {
+            return parameter;
+        }
+
+        public Type GetValueType()
+        {
+            return typeof(T);
+        }
+
+        object ICommandParameter.GetValue()
+        {
+            return GetValue();
+        }
+    }
 }

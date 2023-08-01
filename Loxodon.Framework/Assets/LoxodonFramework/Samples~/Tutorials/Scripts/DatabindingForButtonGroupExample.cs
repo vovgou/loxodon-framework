@@ -50,7 +50,7 @@ namespace Loxodon.Framework.Tutorials
         public string Text
         {
             get { return this.text; }
-            set { this.Set<string>(ref text, value); }
+            set { this.Set(ref text, value); }
         }
 
         public ICommand Click

@@ -36,7 +36,7 @@ namespace Loxodon.Framework.Binding.Reflection
         private readonly ConcurrentDictionary<Type, ProxyType> types = new ConcurrentDictionary<Type, ProxyType>();
 
         //For compatibility with the "Configurable Enter Play Mode" feature
-#if UNITY_2019_3_OR_NEWER && UNITY_EDITOR
+#if UNITY_2019_3_OR_NEWER //&& UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         static void OnInitialize()
         {

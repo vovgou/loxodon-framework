@@ -30,7 +30,7 @@ namespace Loxodon.Framework.Editors
         [MenuItem(XML2CSV_MENU_NAME, false, 0)]
         static void Xml2Csv()
         {
-            var selections = Selection.GetFiltered(typeof(TextAsset), SelectionMode.DeepAssets);
+            var selections = Selection.objects;
             if (selections == null || selections.Length <= 0)
                 return;
 
@@ -47,17 +47,16 @@ namespace Loxodon.Framework.Editors
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
+            ISet<string> files = GetSelections(XML_EXTENSION);
+            if (files == null || files.Count <= 0)
+                return;
+
             Dictionary<string, DataTable> dict = new Dictionary<string, DataTable>();
-            foreach (var s in selections)
+            foreach (var file in files)
             {
                 try
                 {
-                    string path = AssetDatabase.GetAssetPath(s);
-                    FileInfo fileInfo = new FileInfo(path);
-
-                    if (!fileInfo.Extension.ToLower().Equals(XML_EXTENSION))
-                        continue;
-
+                    FileInfo fileInfo = new FileInfo(file);
                     string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
                     string localeName = fileInfo.Directory.Name;
 
@@ -68,7 +67,8 @@ namespace Loxodon.Framework.Editors
                         dict.Add(fileName, dataTable);
                     }
 
-                    ReadXml(new MemoryStream((s as TextAsset).bytes), dataTable, localeName);
+                    TextAsset textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(file);
+                    ReadXml(new MemoryStream(textAsset.bytes), dataTable, localeName);
                 }
                 catch (Exception)
                 {
@@ -92,7 +92,7 @@ namespace Loxodon.Framework.Editors
         [MenuItem(CSV2XML_MENU_NAME, false, 0)]
         static void Csv2Xml()
         {
-            var selections = Selection.GetFiltered(typeof(TextAsset), SelectionMode.DeepAssets);
+            var selections = Selection.objects;
             if (selections == null || selections.Length <= 0)
                 return;
 
@@ -109,17 +109,16 @@ namespace Loxodon.Framework.Editors
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
+            ISet<string> files = GetSelections(CSV_EXTENSION);
+            if (files == null || files.Count <= 0)
+                return;
+
             Dictionary<string, DataTable> dict = new Dictionary<string, DataTable>();
-            foreach (var s in selections)
+            foreach (var file in files)
             {
                 try
                 {
-                    string path = AssetDatabase.GetAssetPath(s);
-                    FileInfo fileInfo = new FileInfo(path);
-
-                    if (!fileInfo.Extension.ToLower().Equals(CSV_EXTENSION))
-                        continue;
-
+                    FileInfo fileInfo = new FileInfo(file);
                     string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
                     DataTable dataTable = null;
                     if (!dict.TryGetValue(fileName, out dataTable))
@@ -128,7 +127,8 @@ namespace Loxodon.Framework.Editors
                         dict.Add(fileName, dataTable);
                     }
 
-                    ReadCsv(new MemoryStream((s as TextAsset).bytes), dataTable);
+                    TextAsset textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(file);
+                    ReadCsv(new MemoryStream(textAsset.bytes), dataTable);
                 }
                 catch (Exception)
                 {
@@ -163,33 +163,13 @@ namespace Loxodon.Framework.Editors
         [MenuItem(XML2CSV_MENU_NAME, true)]
         static bool IsValidatedXml()
         {
-            var selections = Selection.GetFiltered(typeof(TextAsset), SelectionMode.DeepAssets);
-            if (selections == null || selections.Length <= 0)
-                return false;
-
-            foreach (var s in selections)
-            {
-                string path = AssetDatabase.GetAssetPath(s);
-                if (path.ToLower().EndsWith(XML_EXTENSION))
-                    return true;
-            }
-            return false;
+            return IsValidated(XML_EXTENSION);
         }
 
         [MenuItem(CSV2XML_MENU_NAME, true)]
         static bool IsValidatedCsv()
         {
-            var selections = Selection.GetFiltered(typeof(TextAsset), SelectionMode.DeepAssets);
-            if (selections == null || selections.Length <= 0)
-                return false;
-
-            foreach (var s in selections)
-            {
-                string path = AssetDatabase.GetAssetPath(s);
-                if (path.ToLower().EndsWith(CSV_EXTENSION))
-                    return true;
-            }
-            return false;
+            return IsValidated(CSV_EXTENSION);
         }
 
         static string GetRelativeDirectory(string dir)
@@ -398,31 +378,54 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        //private static string GetPackageFullPath()
-        //{
-        //    string packagePath = Path.GetFullPath("Packages/com.vovgou.loxodon-framework-localization-csv");
-        //    if (Directory.Exists(packagePath))
-        //        return packagePath;
+        static bool IsValidated(string extension)
+        {
+            var selections = Selection.objects;
+            if (selections == null || selections.Length <= 0)
+                return false;
 
-        //    packagePath = Path.GetFullPath("Assets/..");
-        //    if (Directory.Exists(packagePath))
-        //    {
-        //        if (Directory.Exists(packagePath + "/Assets/Packages/com.vovgou.loxodon-framework-localization-csv/Package Resources"))
-        //            return packagePath + "/Assets/Packages/com.vovgou.loxodon-framework-localization-csv";
+            foreach (var s in selections)
+            {
+                string path = AssetDatabase.GetAssetPath(s);
+                if (s is DefaultAsset && Directory.Exists(path))
+                {
+                    string[] files = Directory.GetFiles(path, "*" + extension, SearchOption.AllDirectories);
+                    if (files != null && files.Length > 0)
+                        return true;
+                }
+                else if (s is TextAsset)
+                {
+                    if (path.ToLower().EndsWith(extension))
+                        return true;
+                }
+            }
+            return false;
+        }
 
-        //        if (Directory.Exists(packagePath + "/Assets/LoxodonFramework/LocalizationsForCsv/Package Resources"))
-        //            return packagePath + "/Assets/LoxodonFramework/LocalizationsForCsv";
+        static ISet<string> GetSelections(string extension)
+        {
+            HashSet<string> set = new HashSet<string>();
+            var selections = Selection.objects;
+            if (selections == null || selections.Length <= 0)
+                return null;
 
-        //        return null;
-        //    }
-        //    return null;
-        //}
-
-        //[MenuItem("Tools/Loxodon/Samples/Import Localization CSV Tutorials", false, 2000)]
-        //private static void ImportExamples()
-        //{
-        //    string packageFullPath = GetPackageFullPath();
-        //    AssetDatabase.ImportPackage(packageFullPath + "/Package Resources/Tutorials.unitypackage", true);
-        //}
+            foreach (var s in selections)
+            {
+                string path = AssetDatabase.GetAssetPath(s);
+                if (s is DefaultAsset && Directory.Exists(path))
+                {
+                    foreach (string file in Directory.GetFiles(path, "*" + extension, SearchOption.AllDirectories))
+                    {
+                        set.Add(file);
+                    }
+                }
+                else if (s is TextAsset)
+                {
+                    if (path.ToLower().EndsWith(extension))
+                        set.Add(path);
+                }
+            }
+            return set;
+        }
     }
 }

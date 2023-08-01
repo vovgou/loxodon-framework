@@ -179,7 +179,7 @@ namespace Loxodon.Framework.Views
             viewModel.Click = afterHideCallback;
 
             IUIViewLocator locator = GetUIViewLocator();
-            AlertDialogWindow window = locator.LoadView<AlertDialogWindow>(ViewName);
+            AlertDialogWindowBase window = locator.LoadView<AlertDialogWindowBase>(ViewName);
             if (window == null)
             {
                 if (log.IsWarnEnabled)
@@ -223,7 +223,7 @@ namespace Loxodon.Framework.Views
         /// <returns>A AlertDialog.</returns>
         public static AlertDialog ShowMessage(string viewName, string contentViewName, AlertDialogViewModel viewModel)
         {
-            AlertDialogWindow window = null;
+            AlertDialogWindowBase window = null;
             IUIView contentView = null;
             try
             {
@@ -231,7 +231,7 @@ namespace Loxodon.Framework.Views
                     viewName = ViewName;
 
                 IUIViewLocator locator = GetUIViewLocator();
-                window = locator.LoadView<AlertDialogWindow>(viewName);
+                window = locator.LoadView<AlertDialogWindowBase>(viewName);
                 if (window == null)
                 {
                     if (log.IsWarnEnabled)
@@ -259,15 +259,15 @@ namespace Loxodon.Framework.Views
         }
 
         private TaskCompletionSource<int> source;
-        private AlertDialogWindow window;
+        private AlertDialogWindowBase window;
         private IUIView contentView;
         private AlertDialogViewModel viewModel;
 
-        public AlertDialog(AlertDialogWindow window, AlertDialogViewModel viewModel) : this(window, null, viewModel)
+        public AlertDialog(AlertDialogWindowBase window, AlertDialogViewModel viewModel) : this(window, null, viewModel)
         {
         }
 
-        public AlertDialog(AlertDialogWindow window, IUIView contentView, AlertDialogViewModel viewModel)
+        public AlertDialog(AlertDialogWindowBase window, IUIView contentView, AlertDialogViewModel viewModel)
         {
             this.source = new TaskCompletionSource<int>();
             this.window = window;

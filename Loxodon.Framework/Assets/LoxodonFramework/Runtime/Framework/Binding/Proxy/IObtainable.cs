@@ -30,4 +30,9 @@ namespace Loxodon.Framework.Binding.Proxy
 
         TValue GetValue<TValue>();
     }
+
+    public interface IObtainable<TValue>
+    {
+        TValue GetValue();
+    }
 }

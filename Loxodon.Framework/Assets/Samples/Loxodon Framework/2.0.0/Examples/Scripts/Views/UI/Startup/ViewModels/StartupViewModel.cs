@@ -49,8 +49,10 @@ namespace Loxodon.Framework.Examples
         private SimpleCommand command;
         private Localization localization;
 
-        private InteractionRequest<LoginViewModel> loginRequest;
-        private InteractionRequest dismissRequest;
+        //public InteractionRequest<LoginViewModel> LoginRequest;
+        public AsyncInteractionRequest<WindowNotification> LoginRequest { get; private set; }
+        public InteractionRequest DismissRequest { get; private set; }
+
 
         public StartupViewModel() : this(null)
         {
@@ -63,21 +65,29 @@ namespace Loxodon.Framework.Examples
             var accountService = context.GetService<IAccountService>();
             var globalPreferences = context.GetGlobalPreferences();
 
-            this.loginRequest = new InteractionRequest<LoginViewModel>(this);
-            this.dismissRequest = new InteractionRequest(this);
+            //this.LoginRequest = new InteractionRequest<LoginViewModel>(this);          
+            this.LoginRequest = new AsyncInteractionRequest<WindowNotification>(this);
+            this.DismissRequest = new InteractionRequest(this);
 
             var loginViewModel = new LoginViewModel(accountService, localization, globalPreferences);
+            //this.command = new SimpleCommand(() =>
+            //{
+            //    this.LoginRequest.Raise(loginViewModel, vm =>
+            //    {
+            //        this.command.Enabled = true;
 
-            this.command = new SimpleCommand(() =>
+            //        if (vm.Account != null)
+            //            this.LoadScene();
+            //    });
+            //});
+
+            this.command = new SimpleCommand(async () =>
             {
                 this.command.Enabled = false;
-                this.loginRequest.Raise(loginViewModel, vm =>
-                {
-                    this.command.Enabled = true;
-
-                    if (vm.Account != null)
-                        this.LoadScene();
-                });
+                await this.LoginRequest.Raise(WindowNotification.CreateShowNotification(loginViewModel, false, true));
+                this.command.Enabled = true;
+                if (loginViewModel.Account != null)
+                    this.LoadScene();
             });
         }
 
@@ -89,16 +99,6 @@ namespace Loxodon.Framework.Examples
         public ICommand Click
         {
             get { return this.command; }
-        }
-
-        public IInteractionRequest LoginRequest
-        {
-            get { return this.loginRequest; }
-        }
-
-        public IInteractionRequest DismissRequest
-        {
-            get { return this.dismissRequest; }
         }
 
         public void OnClick()
@@ -158,7 +158,7 @@ namespace Loxodon.Framework.Examples
             {
                 this.ProgressBar.Tip = "";
                 this.progressBar.Enable = false;
-                this.dismissRequest.Raise();/* Dismiss StartupWindow */
+                this.DismissRequest.Raise();
             }
         }
     }

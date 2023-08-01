@@ -790,17 +790,20 @@ namespace Loxodon.Framework.Binding.Reflection
             if (parameters == null || parameters.Length != 1)
                 throw new NotSupportedException();
 
-            IProxyItemInfo info = null;
+            Type keyType = parameters[0].ParameterType;
+            Type valueType = propertyInfo.PropertyType;
+            int typeFlag = TypeFlag(type, keyType, valueType);
 
+            IProxyItemInfo info = null;
             try
             {
-                if (type.IsSubclassOfGenericTypeDefinition(typeof(IDictionary<,>)))
+                if (typeFlag == 1)
                 {
-                    info = (IProxyItemInfo)Activator.CreateInstance(typeof(DictionaryProxyItemInfo<,,>).MakeGenericType(type, parameters[0].ParameterType, propertyInfo.PropertyType), propertyInfo);
+                    info = (IProxyItemInfo)Activator.CreateInstance(typeof(DictionaryProxyItemInfo<,,>).MakeGenericType(type, keyType, valueType), propertyInfo);
                 }
-                else if (type.IsSubclassOfGenericTypeDefinition(typeof(IList<>)))
+                else if (typeFlag == 2)
                 {
-                    info = (IProxyItemInfo)Activator.CreateInstance(typeof(ListProxyItemInfo<,>).MakeGenericType(type, propertyInfo.PropertyType), propertyInfo);
+                    info = (IProxyItemInfo)Activator.CreateInstance(typeof(ListProxyItemInfo<,>).MakeGenericType(type, valueType), propertyInfo);
                 }
                 else
                 {
@@ -810,11 +813,11 @@ namespace Loxodon.Framework.Binding.Reflection
             }
             catch (Exception)
             {
-                if (type.IsSubclassOfGenericTypeDefinition(typeof(IDictionary<,>)))
+                if (typeFlag == 1)
                 {
                     info = this.CreateDictionaryProxyItemInfo(propertyInfo);
                 }
-                else if (type.IsSubclassOfGenericTypeDefinition(typeof(IList<>)))
+                else if (typeFlag == 2)
                 {
                     info = this.CreateListProxyItemInfo(propertyInfo);
                 }
@@ -827,6 +830,22 @@ namespace Loxodon.Framework.Binding.Reflection
             if (info != null)
                 this.itemInfo = info;
             return info;
+        }
+
+        protected int TypeFlag(Type type, Type keyType, Type valueType)
+        {
+            try
+            {
+                if (keyType.Equals(typeof(int)) && typeof(IList<>).MakeGenericType(valueType).IsAssignableFrom(type))
+                    return 2;
+                if (typeof(IDictionary<,>).MakeGenericType(keyType, valueType).IsAssignableFrom(type))
+                    return 1;
+                return 0;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
         }
 
         protected virtual IProxyItemInfo CreateListProxyItemInfo(PropertyInfo propertyInfo)

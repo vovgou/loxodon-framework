@@ -38,9 +38,8 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
         private readonly IInteractionRequest request;
 
         private bool disposed = false;
-        protected IProxyInvoker invoker;/* Method Binding */
+        protected IInvoker invoker;/* Method Binding or  Script Function Binding*/
         protected Delegate handler;/* Delegate Binding */
-        protected IScriptInvoker scriptInvoker;/* Script Function Binding  */
 
         public InteractionNodeProxy(IInteractionRequest request) : this(null, request)
         {
@@ -61,7 +60,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
         public virtual void SetValue(object value)
         {
-            if (value != null && !(value is IProxyInvoker || value is Delegate || value is IScriptInvoker))
+            if (value != null && !(value is IInvoker || value is Delegate))
                 throw new ArgumentException("Binding object to InteractionRequest failed, unsupported object type", "value");
 
             if (this.invoker != null)
@@ -70,28 +69,27 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             if (this.handler != null)
                 this.handler = null;
 
-            if (this.scriptInvoker != null)
-                this.scriptInvoker = null;
-
             if (value == null)
                 return;
 
             //Bind Method
-            IProxyInvoker invoker = value as IProxyInvoker;
-            if (invoker != null)
+            if (value is IProxyInvoker proxyInvoker)
             {
-                if (this.IsValid(invoker))
+                if (this.IsValid(proxyInvoker))
                 {
-                    this.invoker = invoker;
+                    this.invoker = proxyInvoker;
                     return;
                 }
 
                 throw new ArgumentException("Binding the IProxyInvoker to InteractionRequest failed, mismatched parameter type.");
             }
+            else if (value is IInvoker invoker)
+            {
+                this.invoker = invoker;
+            }
 
             //Bind Delegate
-            Delegate handler = value as Delegate;
-            if (handler != null)
+            if (value is Delegate handler)
             {
                 if (this.IsValid(handler))
                 {
@@ -100,13 +98,6 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 }
 
                 throw new ArgumentException("Binding the Delegate to InteractionRequest failed, mismatched parameter type.");
-            }
-
-            //Bind Script Function
-            IScriptInvoker scriptInvoker = value as IScriptInvoker;
-            if (scriptInvoker != null)
-            {
-                this.scriptInvoker = scriptInvoker;
             }
         }
 
@@ -166,18 +157,10 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
                 if (this.handler != null)
                 {
-                    if (this.handler is EventHandler<InteractionEventArgs>)
-                        (this.handler as EventHandler<InteractionEventArgs>)(sender, args);
+                    if (this.handler is EventHandler<InteractionEventArgs> eventHandler)
+                        eventHandler(sender, args);
                     else
-                    {
                         this.handler.DynamicInvoke(sender, args);
-                    }
-                    return;
-                }
-
-                if (this.scriptInvoker != null)
-                {
-                    this.scriptInvoker.Invoke(sender, args);
                     return;
                 }
             }
@@ -194,7 +177,6 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             {
                 this.UnbindEvent();
                 this.handler = null;
-                this.scriptInvoker = null;
                 this.invoker = null;
                 disposed = true;
                 base.Dispose(disposing);

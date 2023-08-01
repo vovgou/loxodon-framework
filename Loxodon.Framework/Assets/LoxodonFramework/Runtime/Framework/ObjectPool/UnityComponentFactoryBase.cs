@@ -28,7 +28,7 @@ namespace Loxodon.Framework.ObjectPool
 {
     public abstract class UnityComponentFactoryBase<T> : IObjectFactory<T> where T : Component
     {
-        public T Create(IObjectPool<T> pool)
+        public virtual T Create(IObjectPool<T> pool)
         {
             T target = this.Create();
             PooledUnityObject pooledObj = target.gameObject.AddComponent<PooledUnityObject>();

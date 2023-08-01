@@ -93,7 +93,7 @@ namespace Loxodon.Framework.Examples
             get { return this.username; }
             set
             {
-                if (this.Set<string>(ref this.username, value))
+                if (this.Set(ref this.username, value))
                 {
                     this.ValidateUsername();
                 }
@@ -105,7 +105,7 @@ namespace Loxodon.Framework.Examples
             get { return this.password; }
             set
             {
-                if (this.Set<string>(ref this.password, value))
+                if (this.Set(ref this.password, value))
                 {
                     this.ValidatePassword();
                 }

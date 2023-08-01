@@ -29,9 +29,11 @@ using Loxodon.Log;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using UnityEngine;
 
 namespace Loxodon.Framework.Views.UI
 {
+    [DefaultExecutionOrder(1000)]
     public class ListViewBindingAdapter : OSA<ListViewParams, ListItemViewHolder>, IBindingAdapter
     {
         private IList items;

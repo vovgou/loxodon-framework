@@ -733,6 +733,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   windowType: 0
   windowPriority: 0
+  stateBroadcast: 1
   script:
     cachedAsset: {fileID: 4900000, guid: 1bd43e6c6f24c534aa9bcb5c0585d0a1, type: 3}
     text: {fileID: 4900000, guid: 1bd43e6c6f24c534aa9bcb5c0585d0a1, type: 3}

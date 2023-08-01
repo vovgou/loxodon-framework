@@ -31,14 +31,11 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
     public class MethodTargetProxy : TargetProxyBase, IObtainable, IProxyInvoker
     {
         protected readonly IProxyMethodInfo methodInfo;
-        protected IProxyInvoker invoker;
         public MethodTargetProxy(object target, IProxyMethodInfo methodInfo) : base(target)
         {
             this.methodInfo = methodInfo;
             if (!methodInfo.ReturnType.Equals(typeof(void)))
                 throw new ArgumentException("methodInfo");
-
-            this.invoker = this;// new WeakProxyInvoker(new WeakReference(target, false), methodInfo);
         }
 
         public override BindingMode DefaultMode { get { return BindingMode.OneWayToSource; } }
@@ -49,12 +46,12 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public object GetValue()
         {
-            return this.invoker;
+            return this;
         }
 
         public TValue GetValue<TValue>()
         {
-            return (TValue)this.invoker;
+            return (TValue)this.GetValue();
         }
 
         public object Invoke(params object[] args)

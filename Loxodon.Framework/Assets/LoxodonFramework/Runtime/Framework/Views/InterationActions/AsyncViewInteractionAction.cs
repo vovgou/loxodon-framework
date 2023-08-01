@@ -44,7 +44,7 @@ namespace Loxodon.Framework.Views.InteractionActions
             this.autoDestroy = autoDestroy;
         }
 
-        public AsyncViewInteractionAction(UIView view, bool autoDestroy = false) : base(null, null)
+        public AsyncViewInteractionAction(UIView view, bool autoDestroy = false) : base(null, null,null)
         {
             this.view = view;
             this.autoDestroy = autoDestroy;

@@ -1,0 +1,15 @@
+{
+    "name": "Loxodon.Framework.TextMeshPro",
+    "references": [
+        "Loxodon.Framework",
+        "Unity.TextMeshPro"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

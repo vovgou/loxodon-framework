@@ -1,0 +1,15 @@
+{
+    "name": "Loxodon.Framework.Binding.Weaving",
+    "references": [
+        "Loxodon.Framework",
+        "Loxodon.Log"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

@@ -176,10 +176,16 @@ namespace Loxodon.Framework.Binding.Builder
             this.description.Converter = new ParameterWrapConverter(new ConstantCommandParameter(parameter));
         }
 
+        protected void SetCommandParameter<T>(T parameter)
+        {
+            this.description.CommandParameter = parameter;
+            this.description.Converter = new ParameterWrapConverter<T>(new ConstantCommandParameter<T>(parameter));
+        }
+
         protected void SetCommandParameter<TParam>(Func<TParam> parameter)
         {
             this.description.CommandParameter = parameter;
-            this.description.Converter = new ParameterWrapConverter(new ExpressionCommandParameter<TParam>(parameter));
+            this.description.Converter = new ParameterWrapConverter<TParam>(new ExpressionCommandParameter<TParam>(parameter));
         }
 
         protected void SetSourceDescription(SourceDescription source)

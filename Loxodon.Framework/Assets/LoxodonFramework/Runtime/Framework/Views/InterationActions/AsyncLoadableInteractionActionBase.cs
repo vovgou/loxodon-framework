@@ -34,11 +34,21 @@ namespace Loxodon.Framework.Views.InteractionActions
     {
         private string viewName;
         private IUIViewLocator locator;
+        private IWindowManager windowManager;
 
-        public AsyncLoadableInteractionActionBase(string viewName, IUIViewLocator locator)
+        public AsyncLoadableInteractionActionBase(string viewName, IUIViewLocator locator) : this(viewName, locator, null)
+        {
+        }
+
+        public AsyncLoadableInteractionActionBase(string viewName, IWindowManager windowManager) : this(viewName, null, windowManager)
+        {
+        }
+
+        public AsyncLoadableInteractionActionBase(string viewName, IUIViewLocator locator, IWindowManager windowManager)
         {
             this.viewName = viewName;
             this.locator = locator;
+            this.windowManager = windowManager;
         }
 
         protected string ViewName { get { return this.viewName; } }
@@ -77,7 +87,7 @@ namespace Loxodon.Framework.Views.InteractionActions
             if (string.IsNullOrEmpty(viewName))
                 throw new ArgumentNullException("The view name is null.");
 
-            return await locator.LoadWindowAsync<T>(viewName);
+            return await locator.LoadWindowAsync<T>(windowManager, viewName);
         }
     }
 }

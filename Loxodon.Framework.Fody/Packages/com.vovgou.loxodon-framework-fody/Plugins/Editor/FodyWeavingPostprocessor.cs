@@ -96,7 +96,8 @@ public class FodyWeavingPostprocessor : IPostBuildPlayerScriptDLLs
 
             var weavingTaskType = FindType(assembly, "WeavingTask");
             Func<string, Type> weaverFinder = (weaverName) => WeaverFinder(weaverName);
-            var target = Activator.CreateInstance(weavingTaskType, new object[] { assemblyFilePath, weaverFinder, config });
+            Action<int, string> logger = Log;
+            var target = Activator.CreateInstance(weavingTaskType, new object[] { assemblyFilePath, weaverFinder, config, logger });
             if (Execute(target))
                 Debug.LogFormat("Weaving code succeeded for {0}.dll", name);
             else
@@ -108,6 +109,26 @@ public class FodyWeavingPostprocessor : IPostBuildPlayerScriptDLLs
     {
         MethodInfo methodInfo = target.GetType().GetMethod("Execute");
         return (bool)methodInfo.Invoke(target, null);
+    }
+
+    protected static void Log(int level, string message)
+    {
+        switch (level)
+        {
+            case 0:
+            case 1:
+                Debug.Log(message);
+                break;
+            case 2:
+                Debug.LogWarning(message);
+                break;
+            case 3:
+                Debug.LogError(message);
+                break;
+            default:
+                Debug.Log(message);
+                break;
+        }
     }
 
     protected static Type WeaverFinder(string weaverName)

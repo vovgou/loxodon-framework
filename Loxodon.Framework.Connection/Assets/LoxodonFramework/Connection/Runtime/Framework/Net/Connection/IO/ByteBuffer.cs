@@ -42,10 +42,13 @@ namespace Loxodon.Framework.Net.Connection
         protected int markedWriterIndex;
         protected int maxCapacity;
         protected bool isBigEndian;
-
-        public ByteBuffer(bool isBigEndian = true)
+        public ByteBuffer(bool isBigEndian = true) : this(DEFAULT_CAPACITY, isBigEndian)
         {
-            this.array = new byte[DEFAULT_CAPACITY];
+        }
+
+        public ByteBuffer(int initCapacity, bool isBigEndian = true)
+        {
+            this.array = new byte[initCapacity];
             this.offset = 0;
             this.length = Int32.MaxValue;
             this.extensible = true;
@@ -83,9 +86,9 @@ namespace Loxodon.Framework.Net.Connection
             this.isBigEndian = isBigEndian;
         }
 
-        internal byte[] Array { get { return this.array; } }
+        internal protected byte[] Array { get { return this.array; } }
 
-        internal int ArrayOffset { get { return this.offset; } }
+        internal protected int ArrayOffset { get { return this.offset; } }
 
         //internal int ArrayLength { get { return this.length; } }
 

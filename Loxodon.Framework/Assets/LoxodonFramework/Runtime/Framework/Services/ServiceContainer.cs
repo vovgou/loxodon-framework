@@ -23,97 +23,169 @@
  */
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Loxodon.Framework.Services
 {
     public class ServiceContainer : IServiceContainer, IDisposable
     {
-        private Dictionary<string, IFactory> services = new Dictionary<string, IFactory>();
+        private readonly object _lock = new object();
+        private ConcurrentDictionary<string, Entry> nameServiceMappings = new ConcurrentDictionary<string, Entry>();
+        private ConcurrentDictionary<Type, Entry> typeServiceMappings = new ConcurrentDictionary<Type, Entry>();
 
         public virtual object Resolve(Type type)
         {
-            return this.Resolve<object>(GetServiceName(type));
+            Entry entry;
+            if (typeServiceMappings.TryGetValue(type, out entry))
+                return entry.Factory.Create();
+            return null;
         }
 
         public virtual T Resolve<T>()
         {
-            return this.Resolve<T>(GetServiceName(typeof(T)));
+            Entry entry;
+            if (typeServiceMappings.TryGetValue(typeof(T), out entry))
+                return (T)entry.Factory.Create();
+            return default(T);
         }
 
         public virtual object Resolve(string name)
         {
-            return this.Resolve<object>(name);
+            Entry entry;
+            if (nameServiceMappings.TryGetValue(name, out entry))
+                return entry.Factory.Create();
+            return null;
         }
 
         public virtual T Resolve<T>(string name)
         {
-            IFactory factory;
-            if (this.services.TryGetValue(name, out factory))
-                return (T)factory.Create();
+            Entry entry;
+            if (nameServiceMappings.TryGetValue(name, out entry))
+                return (T)entry.Factory.Create();
             return default(T);
         }
 
         public virtual void Register<T>(Func<T> factory)
         {
-            this.Register<T>(GetServiceName(typeof(T)), factory);
+            this.Register0(typeof(T), new GenericFactory<T>(factory));
         }
 
         public virtual void Register(Type type, object target)
         {
-            this.Register<object>(GetServiceName(type), target);
+            this.Register0(type, new SingleInstanceFactory(target));
         }
 
         public virtual void Register(string name, object target)
         {
-            this.Register<object>(name, target);
+            this.Register0(name, new SingleInstanceFactory(target));
         }
 
         public virtual void Register<T>(T target)
         {
-            this.Register<T>(GetServiceName(typeof(T)), target);
+            this.Register0(typeof(T), new SingleInstanceFactory(target));
         }
 
         public virtual void Register<T>(string name, Func<T> factory)
         {
-            if (this.services.ContainsKey(name))
-                throw new DuplicateRegisterServiceException(string.Format("Duplicate key {0}", name));
-
-            this.services.Add(name, new GenericFactory<T>(factory));
+            this.Register0(name, new GenericFactory<T>(factory));
         }
 
         public virtual void Register<T>(string name, T target)
         {
-            if (this.services.ContainsKey(name))
-                throw new DuplicateRegisterServiceException(string.Format("Duplicate key {0}", name));
-
-            this.services.Add(name, new SingleInstanceFactory(target));
+            this.Register0(name, new SingleInstanceFactory(target));
         }
 
         public virtual void Unregister(Type type)
         {
-            this.Unregister(GetServiceName(type));
+            this.Unregister0(type);
         }
 
         public virtual void Unregister<T>()
         {
-            this.Unregister(GetServiceName(typeof(T)));
+            this.Unregister0(typeof(T));
         }
 
         public virtual void Unregister(string name)
         {
-            IFactory factory;
-            if (this.services.TryGetValue(name, out factory))
-                factory.Dispose();
-
-            this.services.Remove(name);
+            this.Unregister0(name);
         }
 
-        protected virtual string GetServiceName(Type type)
+        //internal void Register0(string name, Type type, IFactory factory)
+        //{
+        //    lock (_lock)
+        //    {
+        //        var entry = new Entry(name, type, factory);
+        //        if (!nameServiceMappings.TryAdd(name, entry))
+        //            throw new DuplicateRegisterServiceException(string.Format("Duplicate key {0}", name));
+
+        //        typeServiceMappings.TryAdd(type, entry);
+        //    }
+        //}
+
+        /// <summary>
+        /// For services registered with a type, if the type is not a generic type, 
+        /// it can be retrieved by type or type name.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="factory"></param>
+        internal void Register0(Type type, IFactory factory)
         {
-            if (type.IsGenericType)
-                return type.ToString();
-            return type.Name;
+            lock (_lock)
+            {
+                string name = type.IsGenericType ? null : type.Name;
+                Entry entry = new Entry(name, type, factory);
+                if (!typeServiceMappings.TryAdd(type, entry))
+                    throw new DuplicateRegisterServiceException(string.Format("Duplicate key {0}", type));
+
+                if (!string.IsNullOrEmpty(name))
+                    nameServiceMappings.TryAdd(name, entry);
+            }
+        }
+
+        /// <summary>
+        /// Services registered with a name can only be retrieved with a name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="factory"></param>
+        internal void Register0(string name, IFactory factory)
+        {
+            lock (_lock)
+            {
+                if (!nameServiceMappings.TryAdd(name, new Entry(name, null, factory)))
+                    throw new DuplicateRegisterServiceException(string.Format("Duplicate key {0}", name));
+            }
+        }
+
+        internal void Unregister0(string name)
+        {
+            lock (_lock)
+            {
+                Entry entry;
+                if (!nameServiceMappings.TryRemove(name, out entry) || entry == null || entry.Type == null)
+                    return;
+
+                Entry entry2;
+                if (!typeServiceMappings.TryGetValue(entry.Type, out entry2) || entry != entry2)
+                    return;
+
+                typeServiceMappings.TryRemove(entry.Type, out _);
+            }
+        }
+
+        internal void Unregister0(Type type)
+        {
+            lock (_lock)
+            {
+                Entry entry;
+                if (!typeServiceMappings.TryRemove(type, out entry) || entry == null || string.IsNullOrEmpty(entry.Name))
+                    return;
+
+                Entry entry2;
+                if (!nameServiceMappings.TryGetValue(entry.Name, out entry2) || entry != entry2)
+                    return;
+
+                nameServiceMappings.TryRemove(entry.Name, out _);
+            }
         }
 
         #region IDisposable Support
@@ -125,11 +197,17 @@ namespace Loxodon.Framework.Services
             {
                 if (disposing)
                 {
-                    foreach (var kv in services)
+                    foreach (var kv in nameServiceMappings)
                         kv.Value.Dispose();
 
-                    this.services.Clear();
-                    //this.services = null;
+                    this.nameServiceMappings.Clear();
+                    this.nameServiceMappings = null;
+
+                    foreach (var kv in typeServiceMappings)
+                        kv.Value.Dispose();
+
+                    this.typeServiceMappings.Clear();
+                    this.typeServiceMappings = null;
                 }
                 disposed = true;
             }
@@ -146,6 +224,24 @@ namespace Loxodon.Framework.Services
             GC.SuppressFinalize(this);
         }
         #endregion
+
+        internal class Entry : IDisposable
+        {
+            public Entry(string name, Type type, IFactory factory)
+            {
+                this.Name = name;
+                this.Type = type;
+                this.Factory = factory;
+            }
+
+            public string Name { get; }
+            public Type Type { get; }
+            public IFactory Factory { get; }
+            public void Dispose()
+            {
+                Factory.Dispose();
+            }
+        }
 
         internal interface IFactory : IDisposable
         {

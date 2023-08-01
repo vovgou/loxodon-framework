@@ -167,7 +167,13 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
-        public BindingBuilder<TTarget, TSource> CommandParameter(object parameter)
+        //public BindingBuilder<TTarget, TSource> CommandParameter(object parameter)
+        //{
+        //    this.SetCommandParameter(parameter);
+        //    return this;
+        //}
+
+        public BindingBuilder<TTarget, TSource> CommandParameter<T>(T parameter)
         {
             this.SetCommandParameter(parameter);
             return this;
@@ -338,7 +344,13 @@ namespace Loxodon.Framework.Binding.Builder
             return this;
         }
 
-        public BindingBuilder<TTarget> CommandParameter(object parameter)
+        //public BindingBuilder<TTarget> CommandParameter(object parameter)
+        //{
+        //    this.SetCommandParameter(parameter);
+        //    return this;
+        //}
+
+        public BindingBuilder<TTarget> CommandParameter<T>(T parameter)
         {
             this.SetCommandParameter(parameter);
             return this;

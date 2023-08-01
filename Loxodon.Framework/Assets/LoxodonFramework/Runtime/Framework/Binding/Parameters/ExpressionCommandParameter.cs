@@ -26,7 +26,7 @@ using System;
 
 namespace Loxodon.Framework.Binding.Parameters
 {
-    public class ExpressionCommandParameter<TParam> : ICommandParameter
+    public class ExpressionCommandParameter<TParam> : ICommandParameter<TParam>
     {
         private Func<TParam> expression;
         public ExpressionCommandParameter(Func<TParam> expression)
@@ -34,14 +34,19 @@ namespace Loxodon.Framework.Binding.Parameters
             this.expression = expression;
         }
 
-        public object GetValue()
+        object ICommandParameter.GetValue()
         {
-            return expression();
+            return GetValue();
         }
 
         public Type GetValueType()
         {
             return typeof(TParam);
+        }
+
+        public TParam GetValue()
+        {
+            return expression();
         }
     }
 }

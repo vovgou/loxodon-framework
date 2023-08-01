@@ -130,6 +130,15 @@ jobs:
           CI: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
+      - name: Publish Loxodon.Framework.Fody.BindingProxy
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody-bindingproxy
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
       - name: Publish Loxodon.Framework.Data
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.Data/Packages/com.vovgou.loxodon-framework-data

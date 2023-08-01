@@ -44,24 +44,24 @@ namespace Loxodon.Framework.Tutorials
         public string Title
         {
             get { return this.title; }
-            set { this.Set<string>(ref title, value); }
+            set { this.Set(ref title, value); }
         }
         public string Icon
         {
             get { return this.icon; }
-            set { this.Set<string>(ref icon, value); }
+            set { this.Set(ref icon, value); }
         }
 
         public float Price
         {
             get { return this.price; }
-            set { this.Set<float>(ref price, value); }
+            set { this.Set(ref price, value); }
         }
 
         public bool Cancelled
         {
             get { return this.cancelled; }
-            set { this.Set<bool>(ref this.cancelled, value); }
+            set { this.Set(ref this.cancelled, value); }
         }
 
         public void OnChangeIcon()

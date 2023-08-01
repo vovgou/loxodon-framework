@@ -40,7 +40,7 @@ namespace Loxodon.Framework.Tutorials
         public string SpriteName
         {
             get { return this.spriteName; }
-            set { this.Set<string>(ref spriteName, value); }
+            set { this.Set(ref spriteName, value); }
         }
 
         public void ChangeSpriteName()

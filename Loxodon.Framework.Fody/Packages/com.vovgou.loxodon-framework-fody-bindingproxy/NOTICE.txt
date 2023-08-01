@@ -1,0 +1,10 @@
+Notice
+
+This product is governed by the MIT license; however, the following components are governed by the licenses indicated below:
+
+A. BindingProxy.Fody
+
+	LICENSE:MIT
+		Plugins/Editor/BindingProxy.Fody/LICENSE.txt
+	HOMEPAGE:
+		https://github.com/vovgou/BindingProxy

@@ -32,4 +32,9 @@ namespace Loxodon.Framework.Binding.Parameters
 
         Type GetValueType();
     }
+
+    public interface ICommandParameter<T> : ICommandParameter
+    {
+        new T GetValue();
+    }
 }
