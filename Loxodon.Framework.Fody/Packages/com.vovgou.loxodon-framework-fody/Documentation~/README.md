@@ -237,7 +237,7 @@ The code after weaving the ToString method is as follows:
 	[DebuggerNonUserCode]
 	public override string ToString()
 	{
-		return string.Format(CultureInfo.InvariantCulture, "{{T: \"User\", FirstName: \"{0}\", LastName: \"{1}\", FullName: \"{2}\"}}", new object[3]
+		return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
 		{
 			FirstName ?? "null",
 			LastName ?? "null",

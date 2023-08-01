@@ -237,7 +237,7 @@ User类代码如下，为User类添加[ToString]注解。
 	[DebuggerNonUserCode]
 	public override string ToString()
 	{
-		return string.Format(CultureInfo.InvariantCulture, "{{T: \"User\", FirstName: \"{0}\", LastName: \"{1}\", FullName: \"{2}\"}}", new object[3]
+		return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
 		{
 			FirstName ?? "null",
 			LastName ?? "null",
