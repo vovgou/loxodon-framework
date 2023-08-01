@@ -22,41 +22,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/
           
-      - name: Publish Loxodon.Framework
-        run: |
-          cd $GITHUB_WORKSPACE/Loxodon.Framework/Assets/LoxodonFramework
-          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
-          npm publish
-        env:
-          CI: true
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
-      - name: Publish Loxodon.Framework.Addressable
-        run: |
-          cd $GITHUB_WORKSPACE/Loxodon.Framework.Addressable/Assets/LoxodonFramework/Addressable
-          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
-          npm publish
-        env:
-          CI: true
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-          
-      - name: Publish Loxodon.Framework.Connection
-        run: |
-          cd $GITHUB_WORKSPACE/Loxodon.Framework.Connection/Assets/LoxodonFramework/Connection
-          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
-          npm publish
-        env:
-          CI: true
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-          
-      - name: Publish Loxodon.Framework.FairyGUI
-        run: |
-          cd $GITHUB_WORKSPACE/Loxodon.Framework.FairyGUI/Assets/LoxodonFramework/FairyGUI
-          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
-          npm publish
-        env:
-          CI: true
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      
           
       - name: Publish Loxodon.Framework.ILRuntime
         run: |
