@@ -99,13 +99,25 @@ WebGL
 
     **注意：本插件依赖[Optimized ScrollView Adapter](https://assetstore.unity.com/packages/tools/gui/optimized-scrollview-adapter-68436)，请在使用前先安装Optimized ScrollView Adapter。**
 
+- [Loxodon Framework TextMeshPro](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.TextMeshPro) 
+
+    这个插件主要作用是为AlertDialog和Toast视图提供TextMeshPro的支持，使用TextMeshProUGUI代替Text。
+
+    **注意：本插件依赖TextMeshPro**
+
+
 - [Loxodon Framework Data](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Data)
 
 	此插件支持从Excel文件中导出数据到Json文件、Lua文件或者LiteDB数据库，以及通过Json.Net将数据转为C#对象。推荐使用LiteDB存储配置数据，这是一个轻量级的NoSQL嵌入式数据库，它本身就支持ORM功能、支持BSON格式、支持数据索引功能，使用起来非常方便。
 
 - [Loxodon Framework Fody](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody)
 
-    这是一个静态织入代码的插件，已将[PropertyChanged.Fody](https://github.com/Fody/PropertyChanged)集成到框架中，通过为ViewModel类Model类添加注解，可以自动生成"INotifyPropertyChanged"接口，为属性添加RaisePropertyChanged函数，触发PropertyChangedEvent通知，提高开发效率。
+    这是一个静态织入代码的插件，它由多个子插件组成，支持为对象静态织入ToString函数，织入PropertyChanged事件，织入BindingProxy类等，在优化性能的同时也提高开发效率。
+
+    - [Loxodon.Framework.Fody.PropertyChanged](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody-propertychanged)
+    - [Loxodon.Framework.Fody.ToString](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody-tostring)
+    - [Loxodon.Framework.Fody.BindingProxy](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody-bindingproxy)
+    
 
 - [Loxodon Framework UIToolkit](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.UIToolkit)
 

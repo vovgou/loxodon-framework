@@ -103,6 +103,15 @@ jobs:
           CI: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
+      - name: Publish Loxodon.Framework.TextMeshPro
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.TextMeshPro/Assets/LoxodonFramework/TextMeshPro
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
       - name: Publish Loxodon.Framework.Fody
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody
