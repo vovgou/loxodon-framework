@@ -141,7 +141,7 @@ namespace Loxodon.Framework.Asynchronous
 
         public virtual bool IsDone
         {
-            get { return this.result.IsDone && this.running == 0; }
+            get { return this.result.IsDone; }
         }
 
         public virtual bool IsCancelled
@@ -444,7 +444,7 @@ namespace Loxodon.Framework.Asynchronous
 
         public virtual bool IsDone
         {
-            get { return this.result.IsDone && this.running == 0; }
+            get { return this.result.IsDone; }
         }
 
         public virtual bool IsCancelled
