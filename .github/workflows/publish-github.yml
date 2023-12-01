@@ -28,6 +28,7 @@ jobs:
 
       - run: |          
           npm config set //npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN
+          npm config set registry https://npm.pkg.github.com/vovgou
         env:
           CI: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
