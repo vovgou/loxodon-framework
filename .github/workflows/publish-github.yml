@@ -20,10 +20,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          registry-url: https://npm.pkg.github.com/
+          registry-url: https://npm.pkg.github.com/vovgou
 
       - run: |
-          npm config set registry https://npm.pkg.github.com
+          npm config set registry https://npm.pkg.github.com/vovgou
           npm config set //npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
