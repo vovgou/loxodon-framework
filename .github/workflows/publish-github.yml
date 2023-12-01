@@ -32,7 +32,7 @@ jobs:
       - name: Publish Loxodon.Framework
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework/Assets/LoxodonFramework
-          npm publish --registry=https://npm.pkg.github.com
+          npm publish
 
       - name: Publish Loxodon.Framework.Addressable
         run: |
