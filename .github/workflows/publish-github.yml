@@ -23,7 +23,7 @@ jobs:
           registry-url: https://npm.pkg.github.com/
 
       - run: |
-          npm config set registry https://npm.pkg.github.com/
+          npm config set registry https://npm.pkg.github.com
           npm config set //npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
@@ -31,7 +31,7 @@ jobs:
       - name: Publish Loxodon.Framework
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework/Assets/LoxodonFramework
-          npm publish
+          npm publish --registry=https://npm.pkg.github.com
 
       - name: Publish Loxodon.Framework.Addressable
         run: |
