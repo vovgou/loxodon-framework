@@ -1,0 +1,114 @@
+name: Publish To Github
+
+on:
+  workflow_dispatch: 
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    name: 'publish npm'
+    environment: github-npm
+    
+    strategy:
+      matrix:
+        node-version: [16.x]
+    
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://npm.pkg.github.com/
+
+      - run: npm config set //npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
+      - name: Publish Loxodon.Framework
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework/Assets/LoxodonFramework          
+          npm publish
+
+      - name: Publish Loxodon.Framework.Addressable
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Addressable/Assets/LoxodonFramework/Addressable
+          npm publish
+          
+      - name: Publish Loxodon.Framework.Connection
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Connection/Assets/LoxodonFramework/Connection
+          npm publish
+          
+      - name: Publish Loxodon.Framework.FairyGUI
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.FairyGUI/Assets/LoxodonFramework/FairyGUI
+          npm publish
+          
+      - name: Publish Loxodon.Framework.ILRuntime
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.ILRuntime/Assets/LoxodonFramework/ILRuntime
+          npm publish
+          
+      - name: Publish Loxodon.Framework.LocalizationsForCsv
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.LocalizationsForCsv/Assets/LoxodonFramework/LocalizationsForCsv
+          npm publish
+          
+      - name: Publish Loxodon.Framework.Log4Net
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Log4Net/Assets/LoxodonFramework/Log4Net
+          npm publish
+          
+      - name: Publish Loxodon.Framework.Obfuscation
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Obfuscation/Assets/LoxodonFramework/Obfuscation
+          npm publish
+
+      - name: Publish Loxodon.Framework.UIToolkit
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.UIToolkit/Assets/LoxodonFramework/UIToolkit
+          npm publish
+
+      - name: Publish Loxodon.Framework.TextMeshPro
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.TextMeshPro/Assets/LoxodonFramework/TextMeshPro
+          npm publish
+
+      - name: Publish Loxodon.Framework.Fody
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody
+          npm publish
+
+      - name: Publish Loxodon.Framework.Fody.PropertyChanged
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody-propertychanged
+          npm publish
+
+      - name: Publish Loxodon.Framework.Fody.ToString
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody-tostring
+          npm publish
+
+      - name: Publish Loxodon.Framework.Fody.BindingProxy
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody-bindingproxy
+          npm publish
+
+      - name: Publish Loxodon.Framework.Data
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Data/Packages/com.vovgou.loxodon-framework-data
+          npm publish
+
+      - name: Publish Loxodon.Framework.Data.LiteDB
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Data/Packages/com.vovgou.loxodon-framework-data-litedb
+          npm publish
+
+      - name: Publish Loxodon.Framework.Data.Newtonsoft
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.Data/Packages/com.vovgou.loxodon-framework-data-newtonsoft
+          npm publish
+
+
