@@ -11,15 +11,14 @@ jobs:
     
     strategy:
       matrix:
-        node-version: [16.x]
-    
+        node-version: [16.x]    
     steps:
       - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-	  always-auth: true
+          always-auth: true
           node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/
         env:
