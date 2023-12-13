@@ -42,7 +42,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         protected Delegate handler;/* Delegate Binding */
 
         protected IProxyPropertyInfo interactable;
-        protected SendOrPostCallback updateInteractableAction;
+        protected SendOrPostCallback interactablePostCallback;
         protected T unityEvent;
 
         public UnityEventProxyBase(object target, T unityEvent) : base(target)
@@ -145,10 +145,16 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected virtual void OnCanExecuteChanged(object sender, EventArgs e)
         {
-            if (updateInteractableAction == null)
-                updateInteractableAction = UpdateTargetInteractable;
-
-            UISynchronizationContext.Post(updateInteractableAction, null);
+            if (UISynchronizationContext.InThread)
+            {
+                UpdateTargetInteractable(null);
+            }
+            else
+            {
+                if (interactablePostCallback == null)
+                    interactablePostCallback = UpdateTargetInteractable;
+                UISynchronizationContext.Post(interactablePostCallback, null);
+            }
         }
 
         protected virtual void UpdateTargetInteractable(object state = null)

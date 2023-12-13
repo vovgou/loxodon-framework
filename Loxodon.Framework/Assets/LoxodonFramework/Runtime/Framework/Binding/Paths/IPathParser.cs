@@ -57,7 +57,7 @@ namespace Loxodon.Framework.Binding.Paths
         Path ParseStaticPath(LambdaExpression expression);
 
         /// <summary>
-        /// Parser member name.eg:vm => vm.User
+        /// Parser target name.eg:vm => vm.User
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>

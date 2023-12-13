@@ -51,8 +51,6 @@ namespace Loxodon.Framework.Binding
         private EventHandler targetValueChangedHandler;
 
         private IConverter converter;
-
-        private object _lock = new object();
         private bool isUpdatingSource;
         private bool isUpdatingTarget;
         private string targetTypeName;
@@ -200,11 +198,19 @@ namespace Loxodon.Framework.Binding
 
         protected virtual void UpdateTargetFromSource()
         {
-            lock (_lock)
+            if (UISynchronizationContext.InThread)
             {
+                DoUpdateTargetFromSource(null);
+            }
+            else
+            {
+#if UNITY_WEBGL
                 if (updateTargetAction == null)
                     updateTargetAction = DoUpdateTargetFromSource;
-
+#else
+                if (updateTargetAction == null)
+                    Interlocked.CompareExchange(ref updateTargetAction, DoUpdateTargetFromSource, null);
+#endif
                 //Run on the main thread
                 UISynchronizationContext.Post(updateTargetAction, null);
             }
@@ -351,6 +357,11 @@ namespace Loxodon.Framework.Binding
                             else if (valueType.Equals(typeof(Quaternion)))
                             {
                                 var value = obtainable.GetValue<Quaternion>();
+                                this.SetTargetValue(modifier, value);
+                            }
+                            else if (valueType.Equals(typeof(TimeSpan)))
+                            {
+                                var value = obtainable.GetValue<TimeSpan>();
                                 this.SetTargetValue(modifier, value);
                             }
                             else
@@ -521,6 +532,11 @@ namespace Loxodon.Framework.Binding
                             else if (valueType.Equals(typeof(Quaternion)))
                             {
                                 var value = obtainable.GetValue<Quaternion>();
+                                this.SetSourceValue(modifier, value);
+                            }
+                            else if (valueType.Equals(typeof(TimeSpan)))
+                            {
+                                var value = obtainable.GetValue<TimeSpan>();
                                 this.SetSourceValue(modifier, value);
                             }
                             else

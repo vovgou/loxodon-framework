@@ -1,0 +1,35 @@
+{
+  "name": "com.vovgou.loxodon-framework-nlog",
+  "displayName": "Loxodon Framework NLog",
+  "version": "2.6.2",
+  "unity": "2018.4",
+  "description": "This is a plugin for the logging feature of Loxodon.Framework, which helps you use NLog in your Unity project.",
+  "license": "MIT",
+  "keywords": [
+    "MVVM",
+    "Unity3d",
+    "NLog"
+  ],
+  "author": {
+    "name": "Clark Yang",
+    "email": "yangpc.china@gmail.com",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+ "category": "GUI",
+  "homepage": "https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.NLog",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+  "relatedPackages": {},
+  "dependencies": {
+    "com.vovgou.loxodon-framework": "2.6.2"
+  },
+  "samples": [
+    {
+      "displayName": "Tutorials",
+      "description": "Tutorials",
+      "path": "Samples~/Tutorials"
+    }
+  ]
+}

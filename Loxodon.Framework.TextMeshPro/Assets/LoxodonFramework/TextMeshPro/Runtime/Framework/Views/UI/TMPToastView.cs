@@ -22,13 +22,13 @@
  * SOFTWARE.
  */
 
-using Text = TMPro.TextMeshProUGUI;
+using TMPro;
 
 namespace Loxodon.Framework.Views
 {
     public class TMPToastView : ToastViewBase
     {
-        public Text text;
+        public TextMeshProUGUI text;
 
         protected override void OnContentChanged()
         {

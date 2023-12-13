@@ -67,6 +67,11 @@ jobs:
           cd $GITHUB_WORKSPACE/Loxodon.Framework.Log4Net/Assets/LoxodonFramework/Log4Net
           npm publish
           
+      - name: Publish Loxodon.Framework.NLog
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.NLog/Assets/LoxodonFramework/NLog
+          npm publish
+
       - name: Publish Loxodon.Framework.Obfuscation
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.Obfuscation/Assets/LoxodonFramework/Obfuscation
@@ -75,6 +80,11 @@ jobs:
       - name: Publish Loxodon.Framework.UIToolkit
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.UIToolkit/Assets/LoxodonFramework/UIToolkit
+          npm publish
+
+      - name: Publish Loxodon.Framework.TextFormatting
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.TextFormatting/Assets/LoxodonFramework/TextFormatting
           npm publish
 
       - name: Publish Loxodon.Framework.TextMeshPro

@@ -29,6 +29,7 @@ namespace Loxodon.Framework.Asynchronous
     /// <summary>
     /// 
     /// </summary>
+    [Obsolete("This type will be removed in version 3.0")]
     public interface IAsyncTask : IAsyncResult
     {
         /// <summary>
@@ -81,6 +82,7 @@ namespace Loxodon.Framework.Asynchronous
     /// 
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
+    [Obsolete("This type will be removed in version 3.0")]
     public interface IAsyncTask<TResult> : IAsyncResult<TResult>
     {
         /// <summary>

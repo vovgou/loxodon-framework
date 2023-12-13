@@ -28,6 +28,7 @@ using Loxodon.Log;
 using Loxodon.Framework.Observables;
 using Loxodon.Framework.Messaging;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace Loxodon.Framework.ViewModels
 {
@@ -77,7 +78,7 @@ namespace Loxodon.Framework.ViewModels
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         protected bool Set<T>(ref T field, T newValue, Expression<Func<T>> propertyExpression, bool broadcast)
         {
-            if (object.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
                 return false;
 
             var oldValue = field;
@@ -101,7 +102,7 @@ namespace Loxodon.Framework.ViewModels
         /// <returns></returns>
         protected bool Set<T>(ref T field, T newValue, string propertyName, bool broadcast)
         {
-            if (object.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
                 return false;
 
             var oldValue = field;
@@ -124,7 +125,7 @@ namespace Loxodon.Framework.ViewModels
         /// <returns></returns>
         protected bool Set<T>(ref T field, T newValue, PropertyChangedEventArgs eventArgs, bool broadcast)
         {
-            if (object.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
                 return false;
 
             var oldValue = field;

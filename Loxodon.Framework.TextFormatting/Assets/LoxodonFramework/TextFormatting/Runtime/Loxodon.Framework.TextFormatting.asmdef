@@ -1,0 +1,17 @@
+{
+    "name": "Loxodon.Framework.TextFormatting",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e353924064f468f48b732b2ec0d3e62a",
+        "GUID:b5a18e24b06d5f04e90936c0f91d7d88"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

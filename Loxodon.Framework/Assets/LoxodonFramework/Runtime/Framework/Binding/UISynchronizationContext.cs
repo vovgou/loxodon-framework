@@ -32,26 +32,28 @@ namespace Loxodon.Framework.Binding
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void OnInitialize()
         {
-            content = SynchronizationContext.Current;
+            context = SynchronizationContext.Current;
             threadId = Thread.CurrentThread.ManagedThreadId;
         }
 
         private static int threadId;
-        private static SynchronizationContext content;
+        private static SynchronizationContext context;
+
+        public static bool InThread { get { return threadId == Thread.CurrentThread.ManagedThreadId; } }
 
         public static void Post(SendOrPostCallback callback, object state)
         {
             if (threadId == Thread.CurrentThread.ManagedThreadId)
                 callback(state);
             else
-                content.Post(callback, state);
+                context.Post(callback, state);
         }
         public static void Send(SendOrPostCallback callback, object state)
         {
             if (threadId == Thread.CurrentThread.ManagedThreadId)
                 callback(state);
             else
-                content.Send(callback, state);
+                context.Send(callback, state);
         }
     }
 }

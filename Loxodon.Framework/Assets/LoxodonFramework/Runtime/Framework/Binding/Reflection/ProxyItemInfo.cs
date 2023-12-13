@@ -45,9 +45,6 @@ namespace Loxodon.Framework.Binding.Reflection
             if (!propertyInfo.Name.Equals("Item"))
                 throw new ArgumentException("The property types do not match!");
 
-            if (!typeof(ICollection).IsAssignableFrom(propertyInfo.DeclaringType))
-                throw new ArgumentException("The property types do not match!");
-
             this.propertyInfo = propertyInfo;
             //this.isValueType = this.propertyInfo.DeclaringType.GetTypeInfo().IsValueType;
             this.isValueType = this.propertyInfo.DeclaringType.IsValueType;

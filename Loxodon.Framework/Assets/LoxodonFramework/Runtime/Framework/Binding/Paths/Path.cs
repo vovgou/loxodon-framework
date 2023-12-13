@@ -33,10 +33,7 @@ namespace Loxodon.Framework.Binding.Paths
     [Serializable]
     public class Path : IEnumerator<IPathNode>
     {
-        private readonly object _lock = new object();
-        private List<IPathNode> nodes = new List<IPathNode>();
-        private PathToken token;
-
+        private readonly List<IPathNode> nodes = new List<IPathNode>();
         public Path() : this(null)
         {
         }
@@ -52,10 +49,9 @@ namespace Loxodon.Framework.Binding.Paths
             get { return this.nodes[index]; }
         }
 
-        public int Count
-        {
-            get { return this.nodes.Count; }
-        }
+        public bool IsEmpty { get { return nodes.Count == 0; } }
+
+        public int Count { get { return nodes.Count; } }
 
         public bool IsStatic { get { return nodes.Exists(n => n.IsStatic); } }
 
@@ -96,20 +92,9 @@ namespace Loxodon.Framework.Binding.Paths
 
         public PathToken AsPathToken()
         {
-            if (this.token != null)
-                return this.token;
-
-            lock (_lock)
-            {
-                if (this.token != null)
-                    return this.token;
-
-                if (this.nodes.Count <= 0)
-                    throw new InvalidOperationException("The path node is empty");
-
-                this.token = new PathToken(this, 0);
-                return this.token;
-            }
+            if (this.nodes.Count <= 0)
+                throw new InvalidOperationException("The path node is empty");
+            return new PathToken(this, 0);
         }
 
         public override string ToString()
@@ -147,7 +132,7 @@ namespace Loxodon.Framework.Binding.Paths
         #endregion
 
         #region IDisposable Support
-        private bool disposed = false; // 要检测冗余调用
+        private bool disposed = false;
 
         protected virtual void Dispose(bool disposing)
         {

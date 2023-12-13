@@ -68,7 +68,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 }
                 catch (MissingMemberException e)
                 {
-                    throw e;
+                    if (!TargetNameUtil.IsCollection(description.TargetName))
+                        throw e;
                 }
                 catch (NullReferenceException e)
                 {

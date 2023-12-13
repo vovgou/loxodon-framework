@@ -1,0 +1,11 @@
+Notice
+
+This product is governed by the MIT license; however, the following components are governed by the licenses indicated below:
+
+A. Fody
+
+	LICENSE:MIT
+		Plugins/NLog/LICENSE.txt
+	HOMEPAGE:
+		https://github.com/NLog/NLog
+	

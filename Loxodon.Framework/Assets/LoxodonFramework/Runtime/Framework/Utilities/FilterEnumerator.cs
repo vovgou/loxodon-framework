@@ -25,11 +25,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Loxodon.Framework.Utilities
 {
+    [Obsolete("This type will be removed in version 3.0")]
     public class FilterEnumerator : IEnumerator
     {
         private IEnumerator enumerator;
@@ -62,6 +61,7 @@ namespace Loxodon.Framework.Utilities
         }
     }
 
+    [Obsolete("This type will be removed in version 3.0")]
     public class FilterEnumerator<T> : IEnumerator<T>
     {
         private IEnumerator<T> enumerator;

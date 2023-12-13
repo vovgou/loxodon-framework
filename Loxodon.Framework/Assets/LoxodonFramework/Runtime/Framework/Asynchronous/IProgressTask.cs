@@ -30,6 +30,7 @@ namespace Loxodon.Framework.Asynchronous
     /// 
     /// </summary>
     /// <typeparam name="TProgress"></typeparam>
+    [Obsolete("This type will be removed in version 3.0")]
     public interface IProgressTask<TProgress> : IProgressResult<TProgress>
     {
         /// <summary>
@@ -91,6 +92,7 @@ namespace Loxodon.Framework.Asynchronous
     /// </summary>
     /// <typeparam name="TProgress"></typeparam>
     /// <typeparam name="TResult"></typeparam>
+    [Obsolete("This type will be removed in version 3.0")]
     public interface IProgressTask<TProgress, TResult> : IProgressResult<TProgress, TResult>
     {
         /// <summary>

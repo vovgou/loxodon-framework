@@ -33,12 +33,16 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 {
     public class VisualElementProxyFactory : ITargetProxyFactory
     {
+        private static readonly string REGISTER_VALUE_CHANGED_CALLBACK = "RegisterValueChangedCallback";
         public ITargetProxy CreateProxy(object target, BindingDescription description)
         {
+            if (TargetNameUtil.IsCollection(description.TargetName))
+                return null;
+
             if (!target.GetType().IsSubclassOfGenericTypeDefinition(typeof(INotifyValueChanged<>)))
                 return null;
 
-            if ("RegisterValueChangedCallback".Equals(description.TargetName))
+            if (REGISTER_VALUE_CHANGED_CALLBACK.Equals(description.TargetName))
                 return this.CreateValueChangedEventProxy(target);
 
             IProxyType type = description.TargetType != null ? description.TargetType.AsProxy() : target.GetType().AsProxy();
@@ -66,7 +70,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 }
 
                 //Other Property Type
-                if (!"RegisterValueChangedCallback".Equals(description.UpdateTrigger))/* by UniversalTargetProxyFactory */
+                if (!REGISTER_VALUE_CHANGED_CALLBACK.Equals(description.UpdateTrigger))/* by UniversalTargetProxyFactory */
                     return null;
 
                 return CreateVisualElementPropertyProxy(target, propertyInfo);
@@ -89,7 +93,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 }
 
                 //Other Property Type
-                if (!"RegisterValueChangedCallback".Equals(description.UpdateTrigger))/* by UniversalTargetProxyFactory */
+                if (!REGISTER_VALUE_CHANGED_CALLBACK.Equals(description.UpdateTrigger))/* by UniversalTargetProxyFactory */
                     return null;
 
                 return CreateVisualElementFieldProxy(target, fieldInfo);
@@ -126,29 +130,13 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.Decimal: return new ValueChangedEventProxy<decimal>((INotifyValueChanged<decimal>)target);
                 case TypeCode.DateTime: return new ValueChangedEventProxy<DateTime>((INotifyValueChanged<DateTime>)target);
                 case TypeCode.Object:
-                default:
-                    {
-                        try
-                        {
-                            return (ITargetProxy)Activator.CreateInstance(typeof(ValueChangedEventProxy<>).MakeGenericType(type), target);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new NotSupportedException("", e);
-                        }
-                    }
+                default: return (ITargetProxy)Activator.CreateInstance(typeof(ValueChangedEventProxy<>).MakeGenericType(type), target);
             }
         }
 
         protected virtual ITargetProxy CreateVisualElementPropertyProxy(object target, IProxyPropertyInfo propertyInfo)
         {
-            Type type = propertyInfo.ValueType;
-#if NETFX_CORE
-            TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
-#else
-            TypeCode typeCode = Type.GetTypeCode(type);
-#endif
-
+            TypeCode typeCode = propertyInfo.ValueTypeCode;
             switch (typeCode)
             {
                 case TypeCode.String: return new VisualElementPropertyProxy<string>(target, propertyInfo);
@@ -167,29 +155,13 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.Decimal: return new VisualElementPropertyProxy<decimal>(target, propertyInfo);
                 case TypeCode.DateTime: return new VisualElementPropertyProxy<DateTime>(target, propertyInfo);
                 case TypeCode.Object:
-                default:
-                    {
-                        try
-                        {
-                            return (ITargetProxy)Activator.CreateInstance(typeof(VisualElementPropertyProxy<>).MakeGenericType(type), target, propertyInfo);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new NotSupportedException("", e);
-                        }
-                    }
+                default: return (ITargetProxy)Activator.CreateInstance(typeof(VisualElementPropertyProxy<>).MakeGenericType(propertyInfo.ValueType), target, propertyInfo);
             }
         }
 
         protected virtual ITargetProxy CreateVisualElementFieldProxy(object target, IProxyFieldInfo fieldInfo)
         {
-            Type type = fieldInfo.ValueType;
-#if NETFX_CORE
-            TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
-#else
-            TypeCode typeCode = Type.GetTypeCode(type);
-#endif
-
+            TypeCode typeCode = fieldInfo.ValueTypeCode;
             switch (typeCode)
             {
                 case TypeCode.String: return new VisualElementFieldProxy<string>(target, fieldInfo);
@@ -208,20 +180,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.Decimal: return new VisualElementFieldProxy<decimal>(target, fieldInfo);
                 case TypeCode.DateTime: return new VisualElementFieldProxy<DateTime>(target, fieldInfo);
                 case TypeCode.Object:
-                default:
-                    {
-                        try
-                        {
-                            return (ITargetProxy)Activator.CreateInstance(typeof(VisualElementFieldProxy<>).MakeGenericType(type), target, fieldInfo);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new NotSupportedException("", e);
-                        }
-                    }
+                default: return (ITargetProxy)Activator.CreateInstance(typeof(VisualElementFieldProxy<>).MakeGenericType(fieldInfo.ValueType), target, fieldInfo);
             }
         }
-
     }
 }
 #endif

@@ -1,0 +1,18 @@
+{
+    "name": "Loxodon.Framework.Formatting.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:06f66f727813f5e4e9f0c4821f2aa942"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

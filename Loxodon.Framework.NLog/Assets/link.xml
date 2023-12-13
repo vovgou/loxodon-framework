@@ -1,0 +1,5 @@
+﻿<linker>
+    <assembly fullname="NLog">
+       <namespace fullname="NLog" preserve="all"/>
+    </assembly>
+</linker>

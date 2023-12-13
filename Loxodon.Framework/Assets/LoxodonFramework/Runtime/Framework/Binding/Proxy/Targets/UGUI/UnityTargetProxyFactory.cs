@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine.Events;
 
-using Loxodon.Log;
 using Loxodon.Framework.Binding.Reflection;
 using Loxodon.Framework.Observables;
 
@@ -35,10 +34,14 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 {
     public class UnityTargetProxyFactory : ITargetProxyFactory
     {
-        //private static readonly ILog log = LogManager.GetLogger(typeof(UnityTargetProxyFactory));
-
+        [ThreadStatic]
+        private static readonly List<Type> TYPES = new List<Type>();
+        private static readonly Type[] EMPTY_TYPES = new Type[0];
         public ITargetProxy CreateProxy(object target, BindingDescription description)
         {
+            if (TargetNameUtil.IsCollection(description.TargetName))
+                return null;
+
             IProxyType type = description.TargetType != null ? description.TargetType.AsProxy() : target.GetType().AsProxy();
             IProxyMemberInfo memberInfo = type.GetMember(description.TargetName);
             if (memberInfo == null)
@@ -113,9 +116,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         protected virtual ITargetProxy CreateUnityPropertyProxy(object target, IProxyPropertyInfo propertyInfo, UnityEventBase updateTrigger)
         {
-            Type type = propertyInfo.ValueType;
             TypeCode typeCode = propertyInfo.ValueTypeCode;
-
             switch (typeCode)
             {
                 case TypeCode.String: return new UnityPropertyProxy<string>(target, propertyInfo, (UnityEvent<string>)updateTrigger);
@@ -133,26 +134,13 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.Double: return new UnityPropertyProxy<double>(target, propertyInfo, (UnityEvent<double>)updateTrigger);
                 case TypeCode.Decimal: return new UnityPropertyProxy<decimal>(target, propertyInfo, (UnityEvent<decimal>)updateTrigger);
                 case TypeCode.DateTime: return new UnityPropertyProxy<DateTime>(target, propertyInfo, (UnityEvent<DateTime>)updateTrigger);
-                case TypeCode.Object:
-                default:
-                    {
-                        try
-                        {
-                            return (ITargetProxy)Activator.CreateInstance(typeof(UnityPropertyProxy<>).MakeGenericType(propertyInfo.ValueType), target, propertyInfo, updateTrigger);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new NotSupportedException("", e);
-                        }
-                    }
+                default: return (ITargetProxy)Activator.CreateInstance(typeof(UnityPropertyProxy<>).MakeGenericType(propertyInfo.ValueType), target, propertyInfo, updateTrigger);
             }
         }
 
         protected virtual ITargetProxy CreateUnityFieldProxy(object target, IProxyFieldInfo fieldInfo, UnityEventBase updateTrigger)
         {
-            Type type = fieldInfo.ValueType;
             TypeCode typeCode = fieldInfo.ValueTypeCode;
-
             switch (typeCode)
             {
                 case TypeCode.String: return new UnityFieldProxy<string>(target, fieldInfo, (UnityEvent<string>)updateTrigger);
@@ -170,18 +158,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.Double: return new UnityFieldProxy<double>(target, fieldInfo, (UnityEvent<double>)updateTrigger);
                 case TypeCode.Decimal: return new UnityFieldProxy<decimal>(target, fieldInfo, (UnityEvent<decimal>)updateTrigger);
                 case TypeCode.DateTime: return new UnityFieldProxy<DateTime>(target, fieldInfo, (UnityEvent<DateTime>)updateTrigger);
-                case TypeCode.Object:
-                default:
-                    {
-                        try
-                        {
-                            return (ITargetProxy)Activator.CreateInstance(typeof(UnityFieldProxy<>).MakeGenericType(fieldInfo.ValueType), target, fieldInfo, updateTrigger);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new NotSupportedException("", e);
-                        }
-                    }
+                default: return (ITargetProxy)Activator.CreateInstance(typeof(UnityFieldProxy<>).MakeGenericType(fieldInfo.ValueType), target, fieldInfo, updateTrigger);
             }
         }
 
@@ -199,49 +176,29 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 #endif
                     switch (typeCode)
                     {
-                        case TypeCode.String:
-                            return new UnityEventProxy<string>(target, (UnityEvent<string>)unityEvent);
-                        case TypeCode.Boolean:
-                            return new UnityEventProxy<bool>(target, (UnityEvent<bool>)unityEvent);
-                        case TypeCode.SByte:
-                            return new UnityEventProxy<sbyte>(target, (UnityEvent<sbyte>)unityEvent);
-                        case TypeCode.Byte:
-                            return new UnityEventProxy<byte>(target, (UnityEvent<byte>)unityEvent);
-                        case TypeCode.Int16:
-                            return new UnityEventProxy<short>(target, (UnityEvent<short>)unityEvent);
-                        case TypeCode.UInt16:
-                            return new UnityEventProxy<ushort>(target, (UnityEvent<ushort>)unityEvent);
-                        case TypeCode.Int32:
-                            return new UnityEventProxy<int>(target, (UnityEvent<int>)unityEvent);
-                        case TypeCode.UInt32:
-                            return new UnityEventProxy<uint>(target, (UnityEvent<uint>)unityEvent);
-                        case TypeCode.Int64:
-                            return new UnityEventProxy<long>(target, (UnityEvent<long>)unityEvent);
-                        case TypeCode.UInt64:
-                            return new UnityEventProxy<ulong>(target, (UnityEvent<ulong>)unityEvent);
-                        case TypeCode.Char:
-                            return new UnityEventProxy<char>(target, (UnityEvent<char>)unityEvent);
-                        case TypeCode.Single:
-                            return new UnityEventProxy<float>(target, (UnityEvent<float>)unityEvent);
-                        case TypeCode.Double:
-                            return new UnityEventProxy<double>(target, (UnityEvent<double>)unityEvent);
-                        case TypeCode.Decimal:
-                            return new UnityEventProxy<decimal>(target, (UnityEvent<decimal>)unityEvent);
-                        case TypeCode.DateTime:
-                            return new UnityEventProxy<DateTime>(target, (UnityEvent<DateTime>)unityEvent);
-                        case TypeCode.Object:
-                        default:
-                            {
-                                try
-                                {
-                                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<>).MakeGenericType(paramTypes[0]), target, unityEvent);
-                                }
-                                catch (Exception e)
-                                {
-                                    throw new NotSupportedException("", e);
-                                }
-                            }
+                        case TypeCode.String: return new UnityEventProxy<string>(target, (UnityEvent<string>)unityEvent);
+                        case TypeCode.Boolean: return new UnityEventProxy<bool>(target, (UnityEvent<bool>)unityEvent);
+                        case TypeCode.SByte: return new UnityEventProxy<sbyte>(target, (UnityEvent<sbyte>)unityEvent);
+                        case TypeCode.Byte: return new UnityEventProxy<byte>(target, (UnityEvent<byte>)unityEvent);
+                        case TypeCode.Int16: return new UnityEventProxy<short>(target, (UnityEvent<short>)unityEvent);
+                        case TypeCode.UInt16: return new UnityEventProxy<ushort>(target, (UnityEvent<ushort>)unityEvent);
+                        case TypeCode.Int32: return new UnityEventProxy<int>(target, (UnityEvent<int>)unityEvent);
+                        case TypeCode.UInt32: return new UnityEventProxy<uint>(target, (UnityEvent<uint>)unityEvent);
+                        case TypeCode.Int64: return new UnityEventProxy<long>(target, (UnityEvent<long>)unityEvent);
+                        case TypeCode.UInt64: return new UnityEventProxy<ulong>(target, (UnityEvent<ulong>)unityEvent);
+                        case TypeCode.Char: return new UnityEventProxy<char>(target, (UnityEvent<char>)unityEvent);
+                        case TypeCode.Single: return new UnityEventProxy<float>(target, (UnityEvent<float>)unityEvent);
+                        case TypeCode.Double: return new UnityEventProxy<double>(target, (UnityEvent<double>)unityEvent);
+                        case TypeCode.Decimal: return new UnityEventProxy<decimal>(target, (UnityEvent<decimal>)unityEvent);
+                        case TypeCode.DateTime: return new UnityEventProxy<DateTime>(target, (UnityEvent<DateTime>)unityEvent);
+                        default: return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<>).MakeGenericType(paramTypes[0]), target, unityEvent);
                     }
+                //case 2:
+                //    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,>).MakeGenericType(paramTypes), target, unityEvent);
+                //case 3:
+                //    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,,>).MakeGenericType(paramTypes), target, unityEvent);
+                //case 4:
+                //    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,,,>).MakeGenericType(paramTypes), target, unityEvent);
                 default:
                     throw new NotSupportedException("Too many parameters");
             }
@@ -251,22 +208,19 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         {
             MethodInfo info = type.GetMethod("Invoke");
             if (info == null)
-                return new Type[0];
+                throw new MemberAccessException($"{type.Name}.Invoke() method has been stripped, please declare to preserve this method in the link.xml file");
 
             ParameterInfo[] parameters = info.GetParameters();
             if (parameters == null || parameters.Length <= 0)
-                return new Type[0];
+                return EMPTY_TYPES;
 
-            List<Type> types = new List<Type>();
+            TYPES.Clear();
             foreach (ParameterInfo parameter in parameters)
             {
-                if (types.Contains(parameter.ParameterType))
-                    continue;
-
-                types.Add(parameter.ParameterType);
+                TYPES.Add(parameter.ParameterType);
             }
 
-            return types.ToArray();
+            return TYPES.ToArray();
         }
     }
 }

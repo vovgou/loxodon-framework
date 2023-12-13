@@ -28,6 +28,7 @@ using System.Collections.Generic;
 
 namespace Loxodon.Framework.Utilities
 {
+    [Obsolete("This type will be removed in version 3.0")]
     public class TransformEnumerator : IEnumerator
     {
         private IEnumerator enumerator;
@@ -57,6 +58,7 @@ namespace Loxodon.Framework.Utilities
         }
     }
 
+    [Obsolete("This type will be removed in version 3.0")]
     public class TransformEnumerator<TInput, TOutput> : IEnumerator<TOutput>
     {
         private IEnumerator<TInput> enumerator;

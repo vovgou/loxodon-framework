@@ -58,7 +58,8 @@ namespace Loxodon.Framework.Net.Http
             progressInfo.TotalCount = 1;
             using (UnityWebRequest www = new UnityWebRequest(this.GetAbsoluteUri(path).AbsoluteUri))
             {
-                www.downloadHandler = new DownloadFileHandler(fileInfo);
+                DownloadFileHandler downloadHandler = new DownloadFileHandler(www, fileInfo);
+                www.downloadHandler = downloadHandler;
 #if UNITY_2018_1_OR_NEWER
                 www.SendWebRequest();
 #else
@@ -66,11 +67,11 @@ namespace Loxodon.Framework.Net.Http
 #endif
                 while (!www.isDone)
                 {
-                    if (www.downloadProgress >= 0)
+                    if (downloadHandler.DownloadProgress > 0)
                     {
                         if (progressInfo.TotalSize <= 0)
-                            progressInfo.TotalSize = (long)(www.downloadedBytes / www.downloadProgress);
-                        progressInfo.CompletedSize = (long)www.downloadedBytes;
+                            progressInfo.TotalSize = downloadHandler.TotalSize;
+                        progressInfo.CompletedSize = downloadHandler.DownloadedSize;
                         promise.UpdateProgress(progressInfo);
                     }
                     yield return null;
@@ -154,7 +155,7 @@ namespace Loxodon.Framework.Net.Http
                     fileInfo.Directory.Create();
 
                 UnityWebRequest www = new UnityWebRequest(this.GetAbsoluteUri(path).AbsoluteUri);
-                www.downloadHandler = new DownloadFileHandler(fileInfo);
+                www.downloadHandler = new DownloadFileHandler(www, fileInfo);
 
 #if UNITY_2018_1_OR_NEWER
                 www.SendWebRequest();
@@ -174,7 +175,8 @@ namespace Loxodon.Framework.Net.Http
 
                         if (!_www.isDone)
                         {
-                            tmpSize += (long)Math.Max(0, _www.downloadedBytes);//the UnityWebRequest.downloadedProgress has a bug in android platform
+                            //tmpSize += (long)Math.Max(0, _www.downloadedBytes);//the UnityWebRequest.downloadedProgress has a bug in android platform
+                            tmpSize += (long)Math.Max(0, ((DownloadFileHandler)_www.downloadHandler).DownloadedSize);
                             continue;
                         }
 

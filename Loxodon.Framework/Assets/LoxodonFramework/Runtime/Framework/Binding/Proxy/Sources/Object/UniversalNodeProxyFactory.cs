@@ -34,8 +34,6 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 {
     public class UniversalNodeProxyFactory : INodeProxyFactory
     {
-        //private static readonly ILog log = LogManager.GetLogger(typeof(UniversalNodeProxyFactory));
-
         public ISourceProxy Create(object source, PathToken token)
         {
             IPathNode node = token.Current;
@@ -50,7 +48,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
         protected virtual ISourceProxy CreateProxy(object source, IPathNode node)
         {
-            Type type = source.GetType();           
+            Type type = source.GetType();
             if (node is IndexedNode)
             {
                 IProxyType proxyType = type.AsProxy();
@@ -77,7 +75,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 return null;
 
             var memberInfo = memberNode.MemberInfo;
-            if (memberInfo!=null && !memberInfo.DeclaringType.IsAssignableFrom(type))
+            if (memberInfo != null && !memberInfo.DeclaringType.IsAssignableFrom(type))
                 return null;
 
             if (memberInfo == null)

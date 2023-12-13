@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-fgui",
   "displayName": "Loxodon Framework FairyGUI",
-  "version": "2.6.0",
+  "version": "2.6.2",
   "unity": "2018.4",
   "description": "",  
   "license": "MIT",
@@ -26,7 +26,7 @@
   "category": "GUI",
   "relatedPackages": {},
   "dependencies": {
-    "com.vovgou.loxodon-framework": "2.0.4"
+    "com.vovgou.loxodon-framework": "2.6.2"
   },
   "samples": [
     {

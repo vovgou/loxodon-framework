@@ -23,7 +23,8 @@
  */
 
 using System;
-using System.Collections.Concurrent;
+//using System.Collections.Concurrent;
+using Loxodon.Framework.Utilities;
 
 namespace Loxodon.Framework.Messaging
 {

@@ -24,6 +24,7 @@
 
 using Loxodon.Framework.Binding.Reflection;
 using System;
+using System.Threading;
 using UnityEngine;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
@@ -31,6 +32,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
     public class MethodTargetProxy : TargetProxyBase, IObtainable, IProxyInvoker
     {
         protected readonly IProxyMethodInfo methodInfo;
+        protected SendOrPostCallback postCallback;
         public MethodTargetProxy(object target, IProxyMethodInfo methodInfo) : base(target)
         {
             this.methodInfo = methodInfo;
@@ -56,17 +58,42 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public object Invoke(params object[] args)
         {
-            if (this.methodInfo.IsStatic)
-                return this.methodInfo.Invoke(null, args);
+            if (UISynchronizationContext.InThread)
+            {
+                if (this.methodInfo.IsStatic)
+                {
+                    this.methodInfo.Invoke(null, args);
+                    return null;
+                }
 
-            var obj = this.Target;
-            if (obj == null)
+                var target = this.Target;
+                if (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled))
+                    return null;
+
+                return this.methodInfo.Invoke(target, args);
+            }
+            else
+            {
+                if (postCallback == null)
+                {
+                    postCallback = state =>
+                    {
+                        if (this.methodInfo.IsStatic)
+                        {
+                            this.methodInfo.Invoke(null, args);
+                            return;
+                        }
+
+                        var target = this.Target;
+                        if (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled))
+                            return;
+
+                        this.methodInfo.Invoke(target, (object[])state);
+                    };
+                }
+                UISynchronizationContext.Post(postCallback, args);
                 return null;
-
-            if (obj is Behaviour behaviour && !behaviour.isActiveAndEnabled)
-                return null;
-
-            return this.methodInfo.Invoke(obj, args);
+            }
         }
     }
 }

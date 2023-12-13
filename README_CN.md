@@ -15,9 +15,9 @@
 
 要求Unity 2018.4 或者更高版本
 
-LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是专门为Unity3D游戏开发设计的，参考了WPF和Android的MVVM设计，它提供了视图和视图模型的数据绑定、本地化、一个简单的对象容器、配置文件组件、线程工具组件、应用上下文和玩家上下文，异步线程和协程的任务组件等基本组件，同时还提供了一个UI视图的框架。所有代码都基于面向对象面向接口的思路设计，几乎所有功能都可以自定义。而且在数据绑定部分进行了性能优化，在支持JIT的平台上使用的是委托的方式绑定，在不支持JIT的平台，默认使用的是反射，但是可以通过注入委托函数的方式来优化，它支持绑定到UGUI、UIToolkit和FairyGUI控件，同时也很容易扩展对其他UI控件的支持。
+LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是专门为Unity3D游戏开发设计的，参考了WPF和Android的MVVM设计，它提供了视图和视图模型的数据绑定、本地化、一个简单的对象容器、配置文件组件、线程工具组件、应用上下文和玩家上下文，异步线程和协程的任务组件等基本组件，同时还提供了一个UI视图的框架。所有代码都基于面向对象面向接口的思路设计，几乎所有功能都可以自定义。而且在数据绑定部分进行了性能优化，避免值类型装箱拆箱，最小化垃圾回收的开销，使用动态委托/静态织入技术确保数据绑定和直接调用有相当的性能，0GC更新UI视图等等，它支持绑定到UGUI、UIToolkit和FairyGUI控件，同时也很容易扩展对其他UI控件的支持。此外，它已经在项目中得到验证（UWA评分SSS级，可在战斗中完全关闭GC，在6、7前手机都保证60FPS），性能优越，稳定可靠，架构清晰，可灵活扩展。 我们希望它能够帮助您更快、更轻松地开发游戏。
 
-本框架使用C#语言开发，同时也支持使用XLua或者ILRuntime来开发，XLua和ILRuntime插件是可选项，如果项目需要热更新，那么只要安装了XLua或者ILRuntime插件，则可以完全使用Lua或者ILRuntime来开发游戏。对于新立项的项目，建议使用HybridCLR来做热更新。
+本框架使用C#语言开发，同时也支持使用XLua或者ILRuntime来开发，如果项目需要热更新，那么只要安装了XLua或者ILRuntime插件，则可以完全使用Lua或者ILRuntime来开发游戏。对于新立项的项目，建议使用HybridCLR来做热更新。
 
 这个插件兼容 MacOSX,Windows,Linux,UWP,IOS and Android,WebGL等等，并且完全开源。
 
@@ -61,20 +61,24 @@ WebGL
 ## 关键功能：
 - MVVM框架，支持UGUI、UIToolkit和FairyGUI;
 - 支持XLua，可以完全使用Lua脚本开发（可选）;
-- 支持async&await (C#和Lua都支持); 
-- Lua支持了try&catch&finally; 
+- 支持async&await (C#和Lua都支持);
+- Lua支持了try&catch&finally;
 - 支持ILRuntime;
-- 多平台支持; 
-- 高扩展性，面向接口开发; 
+- 多平台支持;
+- 高扩展性，面向接口开发;
 - 运行时委托替代反射（包括IOS平台），尽可能的避免值类型的装箱拆箱;
-- 支持线程和协程的异步结果和异步任务，采用Future/Promise设计模式; 
-- 多线程组件和定时执行器; 
+- 支持线程和协程的异步结果和异步任务，采用Future/Promise设计模式;
+- 多线程组件和定时执行器;
 - 支持消息系统，订阅和发布事件;
-- 支持对象池; 
-- 支持Properties的配置文件; 
+- 支持对象池;
+- 支持Properties的配置文件;
 - 可加密的配置文件，支持对象存取，可以自定义对象转换器，支持更多的对象;
 - 本地化支持，支持xml、csv、asset等多种配置方式，支持图片等多媒体资源本地化;
 - 数据绑定支持:
+    - 避免了值类型的装箱和拆箱;
+    - 使用动态委托/静态织入技术优化性能，避免反射(绑定与直接调用性能相当);
+    - 最小化GC分配，避免字符串拼接，避免数字转字符串产生GC;
+    - 0GC更新UI视图;
     - Field绑定，只支持OneTime的模式，因无法支持改变通知;
     - 属性绑定，支持TwoWay双向绑定，值修改自动通知;
     - 普通字典、列表绑定，不支持改变通知;
@@ -93,15 +97,25 @@ WebGL
 - LoxodonFramework 2.0 支持 Mono 和 IL2CPP
 
 ## 插件与集成（可选）
-- [Loxodon Framework OSA](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.OSA) 
+- [Loxodon Framework OSA](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.OSA)
 
     这个插件是对Unity的列表插件[Optimized ScrollView Adapter](https://assetstore.unity.com/packages/tools/gui/optimized-scrollview-adapter-68436)进行扩展，为ListView和GridView增加了数据绑定功能。
 
     **注意：本插件依赖[Optimized ScrollView Adapter](https://assetstore.unity.com/packages/tools/gui/optimized-scrollview-adapter-68436)，请在使用前先安装Optimized ScrollView Adapter。**
 
-- [Loxodon Framework TextMeshPro](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.TextMeshPro) 
+- [Loxodon Framework TextFormatting](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.TextFormatting)
 
-    这个插件主要作用是为AlertDialog和Toast视图提供TextMeshPro的支持，使用TextMeshProUGUI代替Text。
+    这是一个基于C#官方库修改的文本格式化插件，它通过扩展StringBuilder的AppendFormat函数，旨在避免在字符串拼接或数字转为字符串时产生垃圾回收（GC）。这样可以提高性能，特别是在对性能要求较高的场景下。
+
+    此外，插件还对Unity的UGUI进行了扩展，引入了两个新的文本控件：TemplateText和FormattableText。这两个控件支持MVVM的数据绑定特性，可以将ViewModel或值类型的对象与控件进行绑定，同时避免了值类型对象的装箱和拆箱，以最大程度地优化垃圾回收(GC)。
+
+    值得注意的是，如果使用Loxodon.Framework.TextMeshPro中的TemplateTextMeshPro或者FormattableTextMeshProUGUI控件，可以进一步减少垃圾回收（GC），完全0GC的更新游戏视图。
+
+- [Loxodon Framework TextMeshPro](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.TextMeshPro)
+
+	这个插件主要作用是为AlertDialog和Toast视图提供TextMeshPro的支持，使用TextMeshProUGUI代替UnityEngine.UI.Text，来优化UI视图。
+
+	此外此插件依赖Loxodon.Framework.TextFormatting插件，进一步优化了垃圾收集，使用FormattableTextMeshProUGUI和TemplateTextMeshProUGUI控件更新UI视图完全不会产生垃圾回收(GC)，完全做到0GC更新视图。
 
     **注意：本插件依赖TextMeshPro**
 
@@ -110,6 +124,9 @@ WebGL
 
 	此插件支持从Excel文件中导出数据到Json文件、Lua文件或者LiteDB数据库，以及通过Json.Net将数据转为C#对象。推荐使用LiteDB存储配置数据，这是一个轻量级的NoSQL嵌入式数据库，它本身就支持ORM功能、支持BSON格式、支持数据索引功能，使用起来非常方便。
 
+    - [Loxodon.Framework.Data.LiteDB](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Data/Packages/com.vovgou.loxodon-framework-data-litedb)
+    - [Loxodon.Framework.Data.Newtonsoft](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Data/Packages/com.vovgou.loxodon-framework-data-newtonsoft)
+
 - [Loxodon Framework Fody](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody)
 
     这是一个静态织入代码的插件，它由多个子插件组成，支持为对象静态织入ToString函数，织入PropertyChanged事件，织入BindingProxy类等，在优化性能的同时也提高开发效率。
@@ -117,11 +134,11 @@ WebGL
     - [Loxodon.Framework.Fody.PropertyChanged](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody-propertychanged)
     - [Loxodon.Framework.Fody.ToString](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody-tostring)
     - [Loxodon.Framework.Fody.BindingProxy](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Fody/Packages/com.vovgou.loxodon-framework-fody-bindingproxy)
-    
+
 
 - [Loxodon Framework UIToolkit](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.UIToolkit)
 
-    此插件扩展了Loxodon.Framework框架针对UIToolkit的支持，增加UIToolkitWindow窗口，对UIToolkit的控件可以进行数据绑定，也支持UIToolkit和UGUI的界面混用。
+    此插件将UIToolkit整合到Loxodon.Framework框架中，增加了UIToolkitWindow类，支持数据绑定，支持UIToolkit和UGUI的混用。
 
 - [Loxodon Framework ILRuntime](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.ILRuntime)
 
@@ -140,15 +157,18 @@ WebGL
     AssetBundle加载和管理的工具，也是一个AssetBundle资源冗余分析工具。它能够自动管理AssetBundle之间复杂的依赖关系，它通过引用计数来维护AssetBundle之间的依赖。你既可以预加载一个AssetBundle，自己管理它的释放，也可以直接通过异步的资源加载函数直接加载资源，资源加载函数会自动去查找资源所在的AB包，自动加载AB，使用完后又会自动释放AB。 它还支持弱缓存，如果对象模板已经在缓存中，则不需要重新去打开AB。它支持多种加载方式，WWW加载，UnityWebRequest加载，File方式的加载等等（在Unity5.6以上版本，请不要使用WWW加载器，它会产生内存峰值）。它提供了一个AssetBundle的打包界面，支持加密AB包（只建议加密敏感资源，因为会影响性能）。同时它也绕开了Unity3D早期版本的一些bug，比如多个协程并发加载同一个资源，在android系统会出错。它的冗余分析是通过解包AssetBundle进行的，这比在编辑器模式下分析的冗余更准确。
 
     ![](docs/images/bundle.png)
-    
+
 - [Loxodon Framework FairyGUI](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.FairyGUI)
 
     框架已支持FairyGUI控件的数据绑定，请下载FairyGUI-unity和Loxodon Framework FairyGUI，并导入项目中。
-    
+
     **下载：**
-    [FairyGUI-unity](https://github.com/fairygui/FairyGUI-unity) 
+    [FairyGUI-unity](https://github.com/fairygui/FairyGUI-unity)
     [Loxodon Framework FairyGUI](https://github.com/vovgou/loxodon-framework/releases)  
 
+- [Loxodon Framework NLog](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.NLog)
+
+    支持使用NLog在Unity中打印日志，建议使用这个插件替代以前的Log4Net插件，他在日志打印过程中分配更少的堆内存。
 - [Loxodon Framework Log4Net](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.Log4Net)
 
     支持使用Log4Net在Unity中打印日志的插件，支持在局域网中远程调试。
@@ -173,8 +193,8 @@ WebGL
 - [DotNetty for Unity](https://github.com/vovgou/DotNettyForUnity)
 
     DotNetty是著名的java网络库[Netty](https://github.com/netty/netty)的一个C#版本，异步事件驱动网络应用框架，用于快速开发可维护的高性能协议服务器和客户端。  
- 
-    这个版本是基于[DotNetty](https://github.com/Azure/DotNetty)的0.7.2版本修改的，是一个为Unity开发平台定制的版本。 它删除了一些依赖库以适用Unity平台，并通过了IL2CPP下的测试。 
+
+    这个版本是基于[DotNetty](https://github.com/Azure/DotNetty)的0.7.5版本修改的，是一个为Unity开发平台定制的版本。 它删除了一些依赖库，修复了一些bug，优化了和提升了性能，以适用Unity平台上的游戏开发，并通过了IL2CPP下的测试。
 
 - [LiteDB](https://github.com/mbdavid/LiteDB)
 

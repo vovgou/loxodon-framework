@@ -139,7 +139,7 @@ namespace Loxodon.Framework.Utilities
             if (!this.dictionary.TryGetValue(item.Key, out value))
                 return false;
 
-            if (value.IsAlive && Equals(value.Target, item.Value))
+            if (value.IsAlive && EqualityComparer<TValue>.Default.Equals(value.Target, item.Value))
                 return true;
             return false;
         }

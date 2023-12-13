@@ -1,6 +1,6 @@
 ## Installation
 
-### Install via OpenUPM (recommended)
+### Install via OpenUPM 
 
 [OpenUPM](https://openupm.com/) can automatically manage dependencies, it is recommended to use it to install the framework.
 
@@ -15,11 +15,13 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
     #Install loxodon-framework
     openupm add com.vovgou.loxodon-framework
     
-### Install via Packages/manifest.json
+### Install via Packages/manifest.json (recommended)
 
 Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework" in the "dependencies" node.
 
-Installing the framework in this way does not require nodejs and openm-cli.
+The framework and all plugins have also been published to the npm repository. Users can install them using the npm repository at [https://registry.npmjs.org/](https://registry.npmjs.org/).You only need to change the URL in the configuration below from 'https://package.openupm.com' to 'https://registry.npmjs.org/'.
+
+**Installing the framework in this way does not require nodejs and openm-cli.**
 
     {
       "dependencies": {

@@ -92,7 +92,7 @@ namespace Loxodon.Framework.Configurations
         /// Returns the memory configuration. In this configuration changes are stored.
         /// </summary>
         /// <returns>the in memory configuration</returns>
-        public IConfiguration getMemoryConfiguration()
+        public IConfiguration GetMemoryConfiguration()
         {
             return memoryConfiguration;
         }
@@ -117,7 +117,7 @@ namespace Loxodon.Framework.Configurations
             }
         }
 
-        public int getNumberOfConfigurations()
+        public int GetNumberOfConfigurations()
         {
             return configurations.Count;
         }

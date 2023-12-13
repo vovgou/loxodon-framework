@@ -35,6 +35,7 @@ using Loxodon.Framework.Execution;
 
 namespace Loxodon.Framework.Asynchronous
 {
+    [Obsolete("This type will be removed in version 3.0")]
     public class AsyncTask : IAsyncTask
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(AsyncTask));
@@ -336,6 +337,7 @@ namespace Loxodon.Framework.Asynchronous
         }
     }
 
+    [Obsolete("This type will be removed in version 3.0")]
     public class AsyncTask<TResult> : IAsyncTask<TResult>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(AsyncTask<TResult>));

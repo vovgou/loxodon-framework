@@ -23,17 +23,17 @@
  */
 
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Text = TMPro.TextMeshProUGUI;
 
 namespace Loxodon.Framework.Views
 {
     public class TMPAlertDialogWindow : AlertDialogWindowBase
     {
-        public Text Title;
+        public TextMeshProUGUI Title;
 
-        public Text Message;
+        public TextMeshProUGUI Message;
 
         public Button ConfirmButton;
 
@@ -122,7 +122,7 @@ namespace Loxodon.Framework.Views
                 {
                     this.ConfirmButton.gameObject.SetActive(true);
                     this.ConfirmButton.onClick.AddListener(() => { this.Button_OnClick(AlertDialog.BUTTON_POSITIVE); });
-                    Text text = this.ConfirmButton.GetComponentInChildren<Text>();
+                    TextMeshProUGUI text = this.ConfirmButton.GetComponentInChildren<TextMeshProUGUI>();
                     if (text != null)
                         text.text = this.viewModel.ConfirmButtonText;
                 }
@@ -138,7 +138,7 @@ namespace Loxodon.Framework.Views
                 {
                     this.CancelButton.gameObject.SetActive(true);
                     this.CancelButton.onClick.AddListener(() => { this.Button_OnClick(AlertDialog.BUTTON_NEGATIVE); });
-                    Text text = this.CancelButton.GetComponentInChildren<Text>();
+                    TextMeshProUGUI text = this.CancelButton.GetComponentInChildren<TextMeshProUGUI>();
                     if (text != null)
                         text.text = this.viewModel.CancelButtonText;
                 }
@@ -154,7 +154,7 @@ namespace Loxodon.Framework.Views
                 {
                     this.NeutralButton.gameObject.SetActive(true);
                     this.NeutralButton.onClick.AddListener(() => { this.Button_OnClick(AlertDialog.BUTTON_NEUTRAL); });
-                    Text text = this.NeutralButton.GetComponentInChildren<Text>();
+                    TextMeshProUGUI text = this.NeutralButton.GetComponentInChildren<TextMeshProUGUI>();
                     if (text != null)
                         text.text = this.viewModel.NeutralButtonText;
                 }

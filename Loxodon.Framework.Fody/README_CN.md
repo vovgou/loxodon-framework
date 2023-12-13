@@ -183,68 +183,70 @@ User类代码如下，为User类添加[ToString]注解。
 
 织入后的代码如下，自动生成了ToString函数。
 
-	public string FirstName
+	public class User
 	{
-		[CompilerGenerated]
-		get
+		public string FirstName
 		{
-			return FirstName;
-		}
-		[CompilerGenerated]
-		set
-		{
-			if (!string.Equals(FirstName, value, StringComparison.Ordinal))
+			[CompilerGenerated]
+			get
 			{
-				FirstName = value;
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
+				return FirstName;
+			}
+			[CompilerGenerated]
+			set
+			{
+				if (!string.Equals(FirstName, value, StringComparison.Ordinal))
+				{
+					FirstName = value;
+					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
+					<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
+				}
 			}
 		}
-	}
-
-	public string LastName
-	{
-		[CompilerGenerated]
-		get
+	
+		public string LastName
 		{
-			return LastName;
-		}
-		[CompilerGenerated]
-		set
-		{
-			if (!string.Equals(LastName, value, StringComparison.Ordinal))
+			[CompilerGenerated]
+			get
 			{
-				LastName = value;
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
+				return LastName;
+			}
+			[CompilerGenerated]
+			set
+			{
+				if (!string.Equals(LastName, value, StringComparison.Ordinal))
+				{
+					LastName = value;
+					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
+					<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
+				}
 			}
 		}
-	}
-
-	public string FullName => FirstName + " " + LastName;
-
-	[field: NonSerialized]
-	public event PropertyChangedEventHandler PropertyChanged;
-
-	[GeneratedCode("PropertyChanged.Fody", "4.0.2.0")]
-	[DebuggerNonUserCode]
-	protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
-	{
-		this.PropertyChanged?.Invoke(this, eventArgs);
-	}
-
-	[GeneratedCode("Fody.ToString", "1.11.1.0")]
-	[DebuggerNonUserCode]
-	public override string ToString()
-	{
-		return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
+	
+		public string FullName => FirstName + " " + LastName;
+	
+		[field: NonSerialized]
+		public event PropertyChangedEventHandler PropertyChanged;
+	
+		[GeneratedCode("PropertyChanged.Fody", "4.0.2.0")]
+		[DebuggerNonUserCode]
+		protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
 		{
-			FirstName ?? "null",
-			LastName ?? "null",
-			FullName ?? "null"
-		});
+			this.PropertyChanged?.Invoke(this, eventArgs);
+		}
+	
+		[GeneratedCode("Fody.ToString", "1.11.1.0")]
+		[DebuggerNonUserCode]
+		public override string ToString()
+		{
+			return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
+			{
+				FirstName ?? "null",
+				LastName ?? "null",
+				FullName ?? "null"
+			});
+		}
 	}
-
 ### [BindingProxy.Fody](https://github.com/vovgou/BindingProxy)
 
 BindingProxy.Fody是一个性能优化组件，它可以为一个类的Property、Field和Method静态织入绑定代理类，在一些不允许JIT的平台上，可以绕过动态委托调用或者反射调用，达到直接调用Property、Field、Method的效果。 本插件仅会扫描所有继承了INotifyPropertyChanged接口的类，默认不会为类的Property和Field生成绑定代理对象（PropertyNodeProxy、FieldNodeProxy），但是可以通过修改FodyWeavers.xml配置文件中的defaultWeaveProperty ="true"   和defaultWeaveField="true"来改变默认值。但是对于Method，必须显示的为方法添加[GenerateMethodProxy]注解，才会织入方法代理类（MethodNodeProxy）。

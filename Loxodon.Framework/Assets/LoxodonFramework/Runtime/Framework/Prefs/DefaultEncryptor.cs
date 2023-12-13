@@ -71,11 +71,8 @@ namespace Loxodon.Framework.Prefs
         /// <param name="iv"></param>
         public DefaultEncryptor(byte[] key, byte[] iv)
         {
-            if (iv == null)
-                this.iv = DEFAULT_IV;
-
-            if (key == null)
-                this.key = DEFAULT_KEY;
+            this.iv = iv != null ? iv : DEFAULT_IV;
+            this.key = key != null ? key : DEFAULT_KEY;
 
             CheckIV(this.iv);
             CheckKey(this.key);

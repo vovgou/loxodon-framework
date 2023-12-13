@@ -53,7 +53,7 @@ namespace Loxodon.Framework.Observables
         private NotifyCollectionChangedEventHandler collectionChanged;
 
         private SimpleMonitor monitor = new SimpleMonitor();
-        private IList<T> items;
+        private List<T> items;
 
         [NonSerialized]
         private Object syncRoot;
@@ -81,12 +81,9 @@ namespace Loxodon.Framework.Observables
                 throw new ArgumentNullException("list");
 
             items = new List<T>();
-            using (IEnumerator<T> enumerator = list.GetEnumerator())
+            foreach (T item in list)
             {
-                while (enumerator.MoveNext())
-                {
-                    items.Add(enumerator.Current);
-                }
+                items.Add(item);
             }
         }
 
@@ -99,7 +96,7 @@ namespace Loxodon.Framework.Observables
             get { return items[index]; }
             set
             {
-                if (items.IsReadOnly)
+                if (IsReadOnly)
                     throw new NotSupportedException("ReadOnlyCollection");
 
                 if (index < 0 || index >= items.Count)
@@ -111,7 +108,7 @@ namespace Loxodon.Framework.Observables
 
         public void Add(T item)
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             int index = items.Count;
@@ -120,7 +117,7 @@ namespace Loxodon.Framework.Observables
 
         public void Clear()
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             ClearItems();
@@ -136,11 +133,6 @@ namespace Loxodon.Framework.Observables
             return items.Contains(item);
         }
 
-        public IEnumerator<T> GetEnumerator()
-        {
-            return items.GetEnumerator();
-        }
-
         public int IndexOf(T item)
         {
             return items.IndexOf(item);
@@ -148,7 +140,7 @@ namespace Loxodon.Framework.Observables
 
         public void Insert(int index, T item)
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             if (index < 0 || index > items.Count)
@@ -159,7 +151,7 @@ namespace Loxodon.Framework.Observables
 
         public bool Remove(T item)
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             int index = items.IndexOf(item);
@@ -171,7 +163,7 @@ namespace Loxodon.Framework.Observables
 
         public void RemoveAt(int index)
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             if (index < 0 || index >= items.Count)
@@ -187,7 +179,7 @@ namespace Loxodon.Framework.Observables
 
         public void AddRange(IEnumerable<T> collection)
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             int index = items.Count;
@@ -196,7 +188,7 @@ namespace Loxodon.Framework.Observables
 
         public void InsertRange(int index, IEnumerable<T> collection)
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             if (index < 0 || index > items.Count)
@@ -207,7 +199,7 @@ namespace Loxodon.Framework.Observables
 
         public void RemoveRange(int index, int count)
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             if (index < 0 || index >= items.Count)
@@ -216,9 +208,21 @@ namespace Loxodon.Framework.Observables
             RemoveItem(index, count);
         }
 
+        public List<T>.Enumerator GetEnumerator()
+        {
+            return items.GetEnumerator();
+        }
+
+        bool IsReadOnly { get { return Items.IsReadOnly; } }
+
         bool ICollection<T>.IsReadOnly
         {
-            get { return items.IsReadOnly; }
+            get { return IsReadOnly; }
+        }
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return items.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -244,7 +248,11 @@ namespace Loxodon.Framework.Observables
                     }
                     else
                     {
-                        Interlocked.CompareExchange<Object>(ref this.syncRoot, new Object(), null);
+#if UNITY_WEBGL
+                        this.syncRoot = new object();
+#else
+                        Interlocked.CompareExchange(ref this.syncRoot, new object(), null);
+#endif
                     }
                 }
                 return this.syncRoot;
@@ -318,7 +326,7 @@ namespace Loxodon.Framework.Observables
             }
         }
 
-        bool IList.IsReadOnly { get { return items.IsReadOnly; } }
+        bool IList.IsReadOnly { get { return IsReadOnly; } }
 
         bool IList.IsFixedSize
         {
@@ -329,13 +337,13 @@ namespace Loxodon.Framework.Observables
                 {
                     return list.IsFixedSize;
                 }
-                return items.IsReadOnly;
+                return IsReadOnly;
             }
         }
 
         int IList.Add(object value)
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             if (value == null && !(default(T) == null))
@@ -373,7 +381,7 @@ namespace Loxodon.Framework.Observables
 
         void IList.Insert(int index, object value)
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             if (value == null && !(default(T) == null))
@@ -392,7 +400,7 @@ namespace Loxodon.Framework.Observables
 
         void IList.Remove(object value)
         {
-            if (items.IsReadOnly)
+            if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             if (IsCompatibleObject(value))

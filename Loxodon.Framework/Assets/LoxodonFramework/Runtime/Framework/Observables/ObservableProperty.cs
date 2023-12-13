@@ -23,6 +23,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace Loxodon.Framework.Observables
 {
@@ -57,17 +58,18 @@ namespace Loxodon.Framework.Observables
 
         protected virtual bool Equals(T x, T y)
         {
-            if (x != null)
-            {
-                if (y != null)
-                    return x.Equals(y);
-                return false;
-            }
+            return EqualityComparer<T>.Default.Equals(x, y);
+            //if (x != null)
+            //{
+            //    if (y != null)
+            //        return x.Equals(y);
+            //    return false;
+            //}
 
-            if (y != null)
-                return false;
+            //if (y != null)
+            //    return false;
 
-            return true;
+            //return true;
         }
     }
 

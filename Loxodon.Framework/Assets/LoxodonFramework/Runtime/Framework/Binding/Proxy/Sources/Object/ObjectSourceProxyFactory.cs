@@ -23,6 +23,7 @@
  */
 
 using Loxodon.Framework.Binding.Paths;
+using Loxodon.Framework.Binding.Proxy.Sources.Text;
 using System.Collections.Generic;
 
 namespace Loxodon.Framework.Binding.Proxy.Sources.Object
@@ -36,19 +37,20 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             proxy = null;
             var path = description.Path;
             if (path.Count <= 0)
-                throw new ProxyException("The path nodes of the ObjectSourceDescription \"{0}\" is empty.", description.ToString());
-
-            PathToken token = path.AsPathToken();
+            {
+                proxy = new LiteralSourceProxy(source);
+                return true;
+            }
 
             if (path.Count == 1)
             {
-                proxy = this.Create(source, token);
+                proxy = this.Create(source, path.AsPathToken());
                 if (proxy != null)
                     return true;
                 return false;
             }
 
-            proxy = new ChainedObjectSourceProxy(source, token, this);
+            proxy = new ChainedObjectSourceProxy(source, path.AsPathToken(), this);
             return true;
         }
 

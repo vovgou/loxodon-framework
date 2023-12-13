@@ -1,0 +1,39 @@
+{
+  "name": "com.vovgou.loxodon-framework-textformatting",
+  "displayName": "Loxodon Framework TextFormatting",
+  "version": "2.6.2",
+  "unity": "2021.3",
+  "description": "This is a text formatting plug-in, which is modified based on the C# official library and reduces GC as much as possible.",
+  "license": "MIT",
+  "keywords": [
+    "Loxodon",
+    "Framework",
+    "Databinding",
+    "Localization",
+    "MVVM",
+    "UI",
+    "UGUI",
+    "TextFormatting"
+  ],
+  "author": {
+    "name": "Clark Yang",
+    "email": "yangpc.china@gmail.com"
+  },
+  "category": "GUI",
+  "homepage": "https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.TextFormatting",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vovgou/loxodon-framework"
+  },
+  "relatedPackages": {},
+  "dependencies": {
+    "com.vovgou.loxodon-framework": "2.6.2"
+  },
+  "samples": [
+    {
+      "displayName": "Tutorials",
+      "description": "Tutorials",
+      "path": "Samples~/Tutorials"
+    }
+  ]
+}

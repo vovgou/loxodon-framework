@@ -46,7 +46,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentException("The property types do not match!");
 
             if (!this.IsStatic)
-                throw new ArgumentException("The property isn't static!");
+                throw new ArgumentException($"The property \"{propertyInfo.DeclaringType}.{Name}\" isn't static.");
 
             this.getter = this.MakeGetter(propertyInfo);
             this.setter = this.MakeSetter(propertyInfo);
@@ -62,7 +62,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentException("The property types do not match!");
 
             if (!this.IsStatic)
-                throw new ArgumentException("The property isn't static!");
+                throw new ArgumentException($"The property \"{propertyInfo.DeclaringType}.{Name}\" isn't static.");
 
             this.getter = getter;
             this.setter = setter;

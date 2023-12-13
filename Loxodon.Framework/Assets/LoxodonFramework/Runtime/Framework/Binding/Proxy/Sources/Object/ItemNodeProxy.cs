@@ -33,14 +33,14 @@ using NotifyCollectionChangedEventArgs = System.Collections.Specialized.NotifyCo
 
 namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 {
-    public abstract class ItemNodeProxy<T> : NotifiableSourceProxyBase, IObtainable, IModifiable, INotifiable
+    public abstract class ItemNodeProxy<TKey> : NotifiableSourceProxyBase, IObtainable, IModifiable, INotifiable
     {
-        protected T key;
+        protected TKey key;
         protected IProxyItemInfo itemInfo;
         protected bool isList;
         protected Regex regex;
 
-        public ItemNodeProxy(ICollection source, T key, IProxyItemInfo itemInfo) : base(source)
+        public ItemNodeProxy(ICollection source, TKey key, IProxyItemInfo itemInfo) : base(source)
         {
             this.key = key;
             this.isList = (source is IList);
@@ -65,20 +65,39 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
         protected abstract void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e);
 
-
         public virtual object GetValue()
         {
             return this.itemInfo.GetValue(source, key);
         }
 
-        public abstract TValue GetValue<TValue>();
+        public virtual TValue GetValue<TValue>()
+        {
+            if (!typeof(TValue).IsAssignableFrom(this.itemInfo.ValueType))
+                throw new InvalidCastException();
+
+            var proxy = itemInfo as IProxyItemInfo<TKey, TValue>;
+            if (proxy != null)
+                return proxy.GetValue(source, key);
+
+            return (TValue)this.itemInfo.GetValue(source, key);
+        }
 
         public virtual void SetValue(object value)
         {
             this.itemInfo.SetValue(source, key, value);
         }
 
-        public abstract void SetValue<TValue>(TValue value);
+        public virtual void SetValue<TValue>(TValue value)
+        {
+            var proxy = itemInfo as IProxyItemInfo<TKey, TValue>;
+            if (proxy != null)
+            {
+                proxy.SetValue(source, key, value);
+                return;
+            }
+
+            this.itemInfo.SetValue(source, key, value);
+        }
 
         #region IDisposable Support    
         private bool disposedValue = false;
@@ -168,29 +187,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             }
         }
 
-        public override TValue GetValue<TValue>()
-        {
-            if (!typeof(TValue).IsAssignableFrom(this.itemInfo.ValueType))
-                throw new MemberAccessException();
 
-            var proxy = itemInfo as IProxyItemInfo<int, TValue>;
-            if (proxy != null)
-                return proxy.GetValue(source, key);
-
-            return (TValue)this.itemInfo.GetValue(source, key);
-        }
-
-        public override void SetValue<TValue>(TValue value)
-        {
-            var proxy = itemInfo as IProxyItemInfo<int, TValue>;
-            if (proxy != null)
-            {
-                proxy.SetValue(source, key, value);
-                return;
-            }
-
-            this.itemInfo.SetValue(source, key, value);
-        }
     }
 
     public class StringItemNodeProxy : ItemNodeProxy<string>
@@ -231,30 +228,6 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                     }
                 }
             }
-        }
-
-        public override TValue GetValue<TValue>()
-        {
-            if (!typeof(TValue).IsAssignableFrom(this.itemInfo.ValueType))
-                throw new InvalidCastException();
-
-            var proxy = itemInfo as IProxyItemInfo<string, TValue>;
-            if (proxy != null)
-                return proxy.GetValue(source, key);
-
-            return (TValue)this.itemInfo.GetValue(source, key);
-        }
-
-        public override void SetValue<TValue>(TValue value)
-        {
-            var proxy = itemInfo as IProxyItemInfo<string, TValue>;
-            if (proxy != null)
-            {
-                proxy.SetValue(source, key, value);
-                return;
-            }
-
-            this.itemInfo.SetValue(source, key, value);
         }
     }
 }

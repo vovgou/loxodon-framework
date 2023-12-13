@@ -72,6 +72,7 @@ namespace Loxodon.Framework.Configurations
         /// </summary>
         /// <param name="prefix">The prefix used to select the properties.</param>
         /// <returns></returns>
+        [Obsolete("This method will be removed in version 3.0")]
         IEnumerator<string> GetKeys(string prefix);
 
         /// <summary>

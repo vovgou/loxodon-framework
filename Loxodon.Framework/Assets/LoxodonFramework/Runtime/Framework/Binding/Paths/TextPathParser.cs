@@ -23,26 +23,28 @@
  */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Loxodon.Framework.Binding.Paths
 {
-    public class TextPathParser : IEnumerator<char>
+    public struct TextPathParser
     {
-        protected string text;
-        protected int total = 0;
-        protected int pos = -1;
-        protected Path path = null;
+        public static Path Parse(string text)
+        {
+            return new TextPathParser(text).Parse();
+        }
+
+        private string text;
+        private int total;
+        private int pos;
+
         public TextPathParser(string text)
         {
             if (string.IsNullOrEmpty(text))
                 throw new ArgumentException("Invalid argument", "text");
 
-            this.text = text.Replace(" ","");
-            if (string.IsNullOrEmpty(this.text) || this.text.StartsWith("."))
+            this.text = text.IndexOf(' ') == -1 ? text : text.Replace(" ", "");
+            if (string.IsNullOrEmpty(this.text) || this.text[0] == '.')
                 throw new ArgumentException("Invalid argument", "text");
 
             this.total = this.text.Length;
@@ -54,17 +56,6 @@ namespace Loxodon.Framework.Binding.Paths
             get { return this.text[pos]; }
         }
 
-        object IEnumerator.Current
-        {
-            get { return this.text[pos]; }
-        }
-
-        public void Dispose()
-        {
-            this.text = null;
-            this.pos = -1;
-        }
-
         public bool MoveNext()
         {
             if (this.pos++ < this.total - 1)
@@ -72,22 +63,14 @@ namespace Loxodon.Framework.Binding.Paths
             return false;
         }
 
-        public void Reset()
-        {
-            this.pos = -1;
-        }
-
-        protected bool IsEOF()
+        private bool IsEOF()
         {
             return this.pos >= this.total;
         }
 
         public Path Parse()
         {
-            if (path != null)
-                return path;
-
-            path = new Path();
+            Path path = new Path();
             this.MoveNext();
             do
             {
@@ -99,7 +82,7 @@ namespace Loxodon.Framework.Binding.Paths
                 if (this.Current.Equals('['))
                 {
                     //parse index
-                    this.ReadIndex();
+                    this.ParseIndex(path);
                     this.SkipWhiteSpace();
                     if (!this.Current.Equals(']'))
                         throw new BindingException("Error parsing indexer , unterminated in text {0}", this.text);
@@ -112,8 +95,9 @@ namespace Loxodon.Framework.Binding.Paths
                 }
                 else if (char.IsLetter(this.Current) || this.Current == '_')
                 {
-                    //parse member name
-                    this.ParseMemberName();
+                    //read member name
+                    string memberName = this.ReadMemberName();
+                    path.Append(new MemberNode(memberName));
                     if (!this.IsEOF() && !this.Current.Equals('.') && !this.Current.Equals('[') && !char.IsWhiteSpace(this.Current))
                         throw new BindingException("Error parsing path , unterminated in text {0}", this.text);
                 }
@@ -125,7 +109,7 @@ namespace Loxodon.Framework.Binding.Paths
             return path;
         }
 
-        protected void ReadIndex()
+        private void ParseIndex(Path path)
         {
             if (!this.MoveNext())
                 throw new BindingException("Error parsing string indexer , unterminated in text {0}", this.text);
@@ -149,44 +133,48 @@ namespace Loxodon.Framework.Binding.Paths
             throw new BindingException("Error parsing indexer , unterminated in text {0}", this.text);
         }
 
-        protected void ParseMemberName()
+        private unsafe string ReadMemberName()
         {
-            var buf = new StringBuilder();
+            char* buffer = stackalloc char[128];
+            int i = 0;
             do
             {
                 var ch = this.Current;
                 if (!char.IsLetterOrDigit(ch) && ch != '_')
                     break;
 
-                buf.Append(ch);
+                buffer[i++] = ch;
 
             } while (this.MoveNext());
 
-            if (buf.Length <= 0)
+            if (i <= 0)
                 throw new BindingException("Error parsing member name , unterminated in text {0}", this.text);
 
-            path.Append(new MemberNode(buf.ToString()));
+            return new string(buffer, 0, i);
         }
 
-        protected uint ReadUnsignedInteger()
+        private unsafe uint ReadUnsignedInteger()
         {
-            var buf = new StringBuilder();
+            char* buffer = stackalloc char[128];
+            int i = 0;
             do
             {
-                if (!char.IsDigit(this.Current))
+                var ch = this.Current;
+                if (!char.IsDigit(ch))
                     break;
 
-                buf.Append(this.Current);
+                buffer[i++] = ch;
 
             } while (this.MoveNext());
 
             uint index;
-            if (!uint.TryParse(buf.ToString(), out index))
-                throw new BindingException("Unable to parse integer text from {0} in {1}", buf.ToString(), this.text);
+            string num = new string(buffer, 0, i);
+            if (!uint.TryParse(num, out index))
+                throw new BindingException("Unable to parse integer text from {0} in {1}", num, this.text);
             return index;
         }
 
-        protected string ReadQuotedString()
+        private unsafe string ReadQuotedString()
         {
             char ch = this.Current;
             if (ch != '\'' && ch != '\"')
@@ -196,35 +184,36 @@ namespace Loxodon.Framework.Binding.Paths
             if (!this.MoveNext())
                 throw new BindingException("Error parsing string indexer , unterminated in text {0}", this.text);
 
-            var buf = new StringBuilder();
+            char* buffer = stackalloc char[128];
+            int i = 0;
             do
             {
                 ch = this.Current;
                 if (!char.IsLetterOrDigit(ch) && ch != '_' && ch != '-')
                     break;
 
-                buf.Append(ch);
+                buffer[i++] = ch;
             } while (this.MoveNext());
 
-            if (buf.Length <= 0 || (ch != '\'' && ch != '\"'))
+            if (i <= 0 || (ch != '\'' && ch != '\"'))
                 throw new BindingException("Error parsing string indexer , unexpected quote character {0} in text {1}",
                                        ch, this.text);
-            return buf.ToString();
+            return new string(buffer, 0, i);
         }
 
-        protected void SkipWhiteSpace()
+        private void SkipWhiteSpace()
         {
             while (char.IsWhiteSpace(this.Current) && this.MoveNext())
             {
             }
         }
 
-        protected bool IsWhiteSpaceOrCharacter(char ch, params char[] characters)
+        private bool IsWhiteSpaceOrCharacter(char ch, params char[] characters)
         {
             return char.IsWhiteSpace(ch) || characters.Contains(ch);
         }
 
-        protected void SkipWhiteSpaceAndCharacters(params char[] characters)
+        private void SkipWhiteSpaceAndCharacters(params char[] characters)
         {
             while (IsWhiteSpaceOrCharacter(this.Current, characters) && this.MoveNext())
             {

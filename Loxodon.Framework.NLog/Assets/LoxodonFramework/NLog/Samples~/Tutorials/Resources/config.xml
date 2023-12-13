@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <targets async="true">
+        <target name="logfile" xsi:type="File"
+				bufferSize="8192"
+				openFileCacheTimeout="30"
+				keepFileOpen="false"
+				deleteOldFileOnStartup="false"
+				fileName="${persistent-data-path}/logs/${shortdate}.log"
+				layout="${longdate} [${uppercase:${level}}] ${callsite}(${callsite-filename:includeSourcePath=False}:${callsite-linenumber}) - ${message} ${exception:format=ToString}" />
+		<target name="logconsole" xsi:type="UnityConsole"
+				layout="${longdate} [${uppercase:${level}}] ${callsite}(${callsite-filename:includeSourcePath=False}:${callsite-linenumber}) - ${message} ${exception:format=ToString}" />
+	</targets>
+    <rules>
+        <logger name="*" minlevel="Debug" writeTo="logconsole" />
+        <logger name="*" minlevel="Debug" writeTo="logfile" />
+    </rules>
+</nlog>

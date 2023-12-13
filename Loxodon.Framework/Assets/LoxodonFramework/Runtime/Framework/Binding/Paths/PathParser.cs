@@ -25,7 +25,7 @@
 using System;
 using System.Reflection;
 using System.Linq.Expressions;
-using System.Collections.Generic;
+using System.Text;
 #if UNITY_IOS || ENABLE_IL2CPP
 using Loxodon.Framework.Binding.Expressions;
 #endif
@@ -36,7 +36,7 @@ namespace Loxodon.Framework.Binding.Paths
     {
         public virtual Path Parse(string pathText)
         {
-            return new TextPathParser(pathText.Replace(" ", "")).Parse();
+            return TextPathParser.Parse(pathText);
         }
 
         public virtual Path Parse(LambdaExpression expression)
@@ -72,8 +72,8 @@ namespace Loxodon.Framework.Binding.Paths
                 this.Parse(binary, path);
                 return path;
             }
-
-            throw new ArgumentException(string.Format("Invalid expression:{0}", expression));
+            return path;
+            //throw new ArgumentException(string.Format("Invalid expression:{0}", expression));
         }
 
         private MethodInfo GetDelegateMethodInfo(MethodCallExpression expression)
@@ -107,10 +107,9 @@ namespace Loxodon.Framework.Binding.Paths
             if (expression == null || !(expression is MemberExpression || expression is MethodCallExpression || expression is BinaryExpression))
                 return;
 
-            if (expression is MemberExpression)
+            if (expression is MemberExpression memberExpression)
             {
-                MemberExpression me = (MemberExpression)expression;
-                var memberInfo = me.Member;
+                var memberInfo = memberExpression.Member;
                 if (memberInfo.IsStatic())
                 {
                     path.Prepend(new MemberNode(memberInfo));
@@ -119,18 +118,17 @@ namespace Loxodon.Framework.Binding.Paths
                 else
                 {
                     path.Prepend(new MemberNode(memberInfo));
-                    if (me.Expression != null)
-                        this.Parse(me.Expression, path);
+                    if (memberExpression.Expression != null)
+                        this.Parse(memberExpression.Expression, path);
                     return;
                 }
             }
 
-            if (expression is MethodCallExpression)
+            if (expression is MethodCallExpression methodCallExpression)
             {
-                MethodCallExpression methodCall = (MethodCallExpression)expression;
-                if (methodCall.Method.Name.Equals("get_Item") && methodCall.Arguments.Count == 1)
+                if (methodCallExpression.Method.Name.Equals("get_Item") && methodCallExpression.Arguments.Count == 1)
                 {
-                    var argument = methodCall.Arguments[0];
+                    var argument = methodCallExpression.Arguments[0];
                     if (!(argument is ConstantExpression))
                         argument = ConvertMemberAccessToConstant(argument);
 
@@ -143,15 +141,15 @@ namespace Loxodon.Framework.Binding.Paths
                     {
                         path.PrependIndexed((int)value);
                     }
-                    if (methodCall.Object != null)
-                        this.Parse(methodCall.Object, path);
+                    if (methodCallExpression.Object != null)
+                        this.Parse(methodCallExpression.Object, path);
                     return;
                 }
 
                 //Delegate.CreateDelegate(Type type, object firstArgument, MethodInfo method)
-                if (methodCall.Method.Name.Equals("CreateDelegate"))
+                if (methodCallExpression.Method.Name.Equals("CreateDelegate"))
                 {
-                    var info = this.GetDelegateMethodInfo(methodCall);
+                    var info = this.GetDelegateMethodInfo(methodCallExpression);
                     if (info == null)
                         throw new ArgumentException(string.Format("Invalid expression:{0}", expression));
 
@@ -163,14 +161,14 @@ namespace Loxodon.Framework.Binding.Paths
                     else
                     {
                         path.Prepend(new MemberNode(info));
-                        this.Parse(methodCall.Arguments[1], path);
+                        this.Parse(methodCallExpression.Arguments[1], path);
                         return;
                     }
                 }
 
-                if (methodCall.Method.ReturnType.Equals(typeof(void)))
+                if (methodCallExpression.Method.ReturnType.Equals(typeof(void)))
                 {
-                    var info = methodCall.Method;
+                    var info = methodCallExpression.Method;
                     if (info.IsStatic)
                     {
                         path.Prepend(new MemberNode(info));
@@ -179,8 +177,8 @@ namespace Loxodon.Framework.Binding.Paths
                     else
                     {
                         path.Prepend(new MemberNode(info));
-                        if (methodCall.Object != null)
-                            this.Parse(methodCall.Object, path);
+                        if (methodCallExpression.Object != null)
+                            this.Parse(methodCallExpression.Object, path);
                         return;
                     }
                 }
@@ -188,13 +186,12 @@ namespace Loxodon.Framework.Binding.Paths
                 throw new ArgumentException(string.Format("Invalid expression:{0}", expression));
             }
 
-            if (expression is BinaryExpression)
+            if (expression is BinaryExpression binaryExpression)
             {
-                var binary = expression as BinaryExpression;
-                if (binary.NodeType == ExpressionType.ArrayIndex)
+                if (binaryExpression.NodeType == ExpressionType.ArrayIndex)
                 {
-                    var left = binary.Left;
-                    var right = binary.Right;
+                    var left = binaryExpression.Left;
+                    var right = binaryExpression.Right;
                     if (!(right is ConstantExpression))
                         right = ConvertMemberAccessToConstant(right);
 
@@ -203,7 +200,7 @@ namespace Loxodon.Framework.Binding.Paths
                     {
                         path.PrependIndexed((string)value);
                     }
-                    else if (value is Int32)
+                    else if (value is int)
                     {
                         path.PrependIndexed((int)value);
                     }
@@ -316,17 +313,47 @@ namespace Loxodon.Framework.Binding.Paths
         {
             if (expression == null)
                 throw new ArgumentNullException("expression");
+            return ParseMemberName0(expression.Body);
+        }
 
-            var method = expression.Body as MethodCallExpression;
-            if (method != null)
-                return method.Method.Name;
+        protected string ParseMemberName0(Expression expression)
+        {
+            if (expression == null || !(expression is MemberExpression || expression is MethodCallExpression || expression is UnaryExpression))
+                return null;
+
+            if (expression is MethodCallExpression methodCallExpression)
+            {
+                if (methodCallExpression.Method.Name.Equals("get_Item") && methodCallExpression.Arguments.Count == 1)
+                {
+                    string temp = null;
+                    var argument = methodCallExpression.Arguments[0];
+                    if (!(argument is ConstantExpression))
+                        argument = ConvertMemberAccessToConstant(argument);
+
+                    object value = (argument as ConstantExpression).Value;
+                    if (value is string strIndex)
+                    {
+                        temp = string.Format("[\"{0}\"]", strIndex);
+                    }
+                    else if (value is int intIndex)
+                    {
+                        temp = string.Format("[{0}]", intIndex);
+                    }
+
+                    var memberExpression = methodCallExpression.Object as MemberExpression;
+                    if (memberExpression == null || !(memberExpression.Expression is ParameterExpression))
+                        return temp;
+
+                    return this.ParseMemberName0(memberExpression) + temp;
+                }
+                return methodCallExpression.Method.Name;
+            }
 
             //Delegate.CreateDelegate(Type type, object firstArgument, MethodInfo method)
-            var unary = expression.Body as UnaryExpression;
-            if (unary != null && unary.NodeType == ExpressionType.Convert)
+            //For<TTarget, TResult>(v => v.OnOpenLoginWindow); Support for method name parsing.
+            if (expression is UnaryExpression unaryExpression && unaryExpression.NodeType == ExpressionType.Convert)
             {
-                MethodCallExpression methodCall = (MethodCallExpression)unary.Operand;
-                if (methodCall.Method.Name.Equals("CreateDelegate"))
+                if (unaryExpression.Operand is MethodCallExpression methodCall && methodCall.Method.Name.Equals("CreateDelegate"))
                 {
                     var info = this.GetDelegateMethodInfo(methodCall);
                     if (info != null)
@@ -336,14 +363,45 @@ namespace Loxodon.Framework.Binding.Paths
                 throw new ArgumentException(string.Format("Invalid expression:{0}", expression));
             }
 
-            var body = expression.Body as MemberExpression;
-            if (body == null)
-                throw new ArgumentException(string.Format("Invalid expression:{0}", expression));
-
-            if (!(body.Expression is ParameterExpression))
+            var body = expression as MemberExpression;
+            if (body == null || !(body.Expression is ParameterExpression))
                 throw new ArgumentException(string.Format("Invalid expression:{0}", expression));
 
             return body.Member.Name;
         }
+
+        //public virtual string ParseMemberName(LambdaExpression expression)
+        //{
+        //    if (expression == null)
+        //        throw new ArgumentNullException("expression");
+
+        //    var method = expression.Body as MethodCallExpression;
+        //    if (method != null)
+        //        return method.Method.Name;
+
+        //    //Delegate.CreateDelegate(Type type, object firstArgument, MethodInfo method)
+        //    var unary = expression.Body as UnaryExpression;
+        //    if (unary != null && unary.NodeType == ExpressionType.Convert)
+        //    {
+        //        MethodCallExpression methodCall = (MethodCallExpression)unary.Operand;
+        //        if (methodCall.Method.Name.Equals("CreateDelegate"))
+        //        {
+        //            var info = this.GetDelegateMethodInfo(methodCall);
+        //            if (info != null)
+        //                return info.Name;
+        //        }
+
+        //        throw new ArgumentException(string.Format("Invalid expression:{0}", expression));
+        //    }
+
+        //    var body = expression.Body as MemberExpression;
+        //    if (body == null)
+        //        throw new ArgumentException(string.Format("Invalid expression:{0}", expression));
+
+        //    if (!(body.Expression is ParameterExpression))
+        //        throw new ArgumentException(string.Format("Invalid expression:{0}", expression));
+
+        //    return body.Member.Name;
+        //}
     }
 }

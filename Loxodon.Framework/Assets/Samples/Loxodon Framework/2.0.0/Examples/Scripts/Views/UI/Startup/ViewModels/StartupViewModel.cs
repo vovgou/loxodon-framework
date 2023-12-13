@@ -51,6 +51,7 @@ namespace Loxodon.Framework.Examples
 
         //public InteractionRequest<LoginViewModel> LoginRequest;
         public AsyncInteractionRequest<WindowNotification> LoginRequest { get; private set; }
+        public AsyncInteractionRequest<ProgressBar> LoadSceneRequest { get; private set; }
         public InteractionRequest DismissRequest { get; private set; }
 
 
@@ -67,6 +68,7 @@ namespace Loxodon.Framework.Examples
 
             //this.LoginRequest = new InteractionRequest<LoginViewModel>(this);          
             this.LoginRequest = new AsyncInteractionRequest<WindowNotification>(this);
+            this.LoadSceneRequest = new AsyncInteractionRequest<ProgressBar>(this);
             this.DismissRequest = new InteractionRequest(this);
 
             var loginViewModel = new LoginViewModel(accountService, localization, globalPreferences);
@@ -87,7 +89,10 @@ namespace Loxodon.Framework.Examples
                 await this.LoginRequest.Raise(WindowNotification.CreateShowNotification(loginViewModel, false, true));
                 this.command.Enabled = true;
                 if (loginViewModel.Account != null)
-                    this.LoadScene();
+                {
+                    await LoadSceneRequest.Raise(ProgressBar);
+                    this.DismissRequest.Raise();
+                }
             });
         }
 
@@ -131,34 +136,6 @@ namespace Loxodon.Framework.Examples
                 this.progressBar.Enable = false;
                 this.progressBar.Tip = "";
                 this.command.Execute(null);
-            }
-        }
-
-        /// <summary>
-        /// Simulate a loading task.
-        /// </summary>
-        public async void LoadScene()
-        {
-            try
-            {
-                this.progressBar.Enable = true;
-                this.ProgressBar.Tip = R.startup_progressbar_tip_loading;
-
-                ResourceRequest request = Resources.LoadAsync<GameObject>("Prefabs/Cube");
-                while (!request.isDone)
-                {
-                    this.ProgressBar.Progress = request.progress;/* update progress */
-                    await new WaitForSecondsRealtime(0.02f);
-                }
-
-                GameObject sceneTemplate = (GameObject)request.asset;
-                GameObject.Instantiate(sceneTemplate);
-            }
-            finally
-            {
-                this.ProgressBar.Tip = "";
-                this.progressBar.Enable = false;
-                this.DismissRequest.Raise();
             }
         }
     }

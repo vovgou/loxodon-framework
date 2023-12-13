@@ -84,10 +84,10 @@ namespace Loxodon.Framework.Binding.Reflection
         public virtual void SetValue(object target, object value)
         {
             if (fieldInfo.IsInitOnly)
-                throw new MemberAccessException("The value is read-only.");
+                throw new MemberAccessException($"The field \"{fieldInfo.DeclaringType}.{Name}\" is read-only.");
 
             if (IsValueType)
-                throw new NotSupportedException("Assignments of Value type are not supported.");
+                throw new NotSupportedException($"The type \"{fieldInfo.DeclaringType}\" is a value type, and non-reference types cannot support assignment operations.");
 
             this.fieldInfo.SetValue(target, value);
         }
@@ -211,10 +211,10 @@ namespace Loxodon.Framework.Binding.Reflection
         public void SetValue(T target, TValue value)
         {
             if (fieldInfo.IsInitOnly)
-                throw new MemberAccessException("The value is read-only.");
+                throw new MemberAccessException($"The field \"{fieldInfo.DeclaringType}.{Name}\" is read-only.");
 
             if (IsValueType)
-                throw new NotSupportedException("Assignments of Value type are not supported.");
+                throw new NotSupportedException($"The type \"{fieldInfo.DeclaringType}\" is a value type, and non-reference types cannot support assignment operations.");
 
             if (this.setter != null)
             {
@@ -228,10 +228,10 @@ namespace Loxodon.Framework.Binding.Reflection
         public override void SetValue(object target, object value)
         {
             if (fieldInfo.IsInitOnly)
-                throw new MemberAccessException("The value is read-only.");
+                throw new MemberAccessException($"The field \"{fieldInfo.DeclaringType}.{Name}\" is read-only.");
 
             if (IsValueType)
-                throw new NotSupportedException("Assignments of Value type are not supported.");
+                throw new NotSupportedException($"The type \"{fieldInfo.DeclaringType}\" is a value type, and non-reference types cannot support assignment operations.");
 
             if (this.setter != null)
             {

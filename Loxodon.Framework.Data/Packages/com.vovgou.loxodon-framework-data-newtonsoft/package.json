@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-data-newtonsoft",
   "displayName": "Loxodon Framework Data Newtonsoft.JSON",
-  "version": "2.6.0",
+  "version": "2.6.2",
   "unity": "2018.4",
   "description": "LoxodonFramework is a lightweight MVVM(Model-View-ViewModel) framework built specifically to target Unity3D. Databinding and localization are supported.It has a very flexible extensibility.It makes your game development faster and easier.\n\nFor tutorials,examples and support,please see the project.You can also discuss the project in the Unity Forums.\n\nThe plugin is compatible with MacOSX,Windows,Linux,UWP,IOS and Android,and provides all the source code of the project.",
   "license": "MIT",
@@ -21,7 +21,7 @@
   "category": "GUI",
   "relatedPackages": {},
   "dependencies": {
-    "com.vovgou.loxodon-framework-data": "2.5.6",
+    "com.vovgou.loxodon-framework-data": "2.6.2",
     "com.unity.nuget.newtonsoft-json": "2.0.0"
   },
   "repository": {

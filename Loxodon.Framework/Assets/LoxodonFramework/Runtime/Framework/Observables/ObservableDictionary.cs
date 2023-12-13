@@ -187,7 +187,12 @@ namespace Loxodon.Framework.Observables
             return Remove(item.Key);
         }
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        public Dictionary<TKey, TValue>.Enumerator GetEnumerator()
+        {
+            return dictionary.GetEnumerator();
+        }
+
+        IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
         {
             return dictionary.GetEnumerator();
         }
@@ -236,7 +241,7 @@ namespace Loxodon.Framework.Observables
                 if (add)
                     throw new ArgumentException("An item with the same key has already been added.");
 
-                if (Equals(item, value))
+                if (EqualityComparer<TValue>.Default.Equals(item, value))
                     return;
 
                 dictionary[key] = value;

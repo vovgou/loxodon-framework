@@ -59,7 +59,7 @@ namespace Loxodon.Framework.Binding.Builder
         public BindingBuilderBase(IBindingContext context, object target)
         {
             if (target == null)
-                throw new ArgumentNullException("target");
+                throw new ArgumentNullException("target", "Failed to create data binding, the bound UI control cannot be null.");
             if (context == null)
                 throw new ArgumentNullException("context");
 

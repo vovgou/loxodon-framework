@@ -35,6 +35,7 @@ using Loxodon.Framework.Execution;
 
 namespace Loxodon.Framework.Asynchronous
 {
+    [Obsolete("This type will be removed in version 3.0")]
     public class ProgressTask<TProgress> : IProgressTask<TProgress>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgressTask<TProgress>));
@@ -372,6 +373,7 @@ namespace Loxodon.Framework.Asynchronous
 
     }
 
+    [Obsolete("This type will be removed in version 3.0")]
     public class ProgressTask<TProgress, TResult> : IProgressTask<TProgress, TResult>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgressTask<TProgress, TResult>));

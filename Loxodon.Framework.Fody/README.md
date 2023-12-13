@@ -183,68 +183,70 @@ The code of the User class is as follows, and the [ToString] annotation is added
 
 The code after weaving the ToString method is as follows:
 
-	public string FirstName
+	public class User
 	{
-		[CompilerGenerated]
-		get
+		public string FirstName
 		{
-			return FirstName;
-		}
-		[CompilerGenerated]
-		set
-		{
-			if (!string.Equals(FirstName, value, StringComparison.Ordinal))
+			[CompilerGenerated]
+			get
 			{
-				FirstName = value;
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
+				return FirstName;
+			}
+			[CompilerGenerated]
+			set
+			{
+				if (!string.Equals(FirstName, value, StringComparison.Ordinal))
+				{
+					FirstName = value;
+					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
+					<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
+				}
 			}
 		}
-	}
-
-	public string LastName
-	{
-		[CompilerGenerated]
-		get
+	
+		public string LastName
 		{
-			return LastName;
-		}
-		[CompilerGenerated]
-		set
-		{
-			if (!string.Equals(LastName, value, StringComparison.Ordinal))
+			[CompilerGenerated]
+			get
 			{
-				LastName = value;
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
-				<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
+				return LastName;
+			}
+			[CompilerGenerated]
+			set
+			{
+				if (!string.Equals(LastName, value, StringComparison.Ordinal))
+				{
+					LastName = value;
+					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
+					<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
+				}
 			}
 		}
-	}
-
-	public string FullName => FirstName + " " + LastName;
-
-	[field: NonSerialized]
-	public event PropertyChangedEventHandler PropertyChanged;
-
-	[GeneratedCode("PropertyChanged.Fody", "4.0.2.0")]
-	[DebuggerNonUserCode]
-	protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
-	{
-		this.PropertyChanged?.Invoke(this, eventArgs);
-	}
-
-	[GeneratedCode("Fody.ToString", "1.11.1.0")]
-	[DebuggerNonUserCode]
-	public override string ToString()
-	{
-		return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
+	
+		public string FullName => FirstName + " " + LastName;
+	
+		[field: NonSerialized]
+		public event PropertyChangedEventHandler PropertyChanged;
+	
+		[GeneratedCode("PropertyChanged.Fody", "4.0.2.0")]
+		[DebuggerNonUserCode]
+		protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
 		{
-			FirstName ?? "null",
-			LastName ?? "null",
-			FullName ?? "null"
-		});
+			this.PropertyChanged?.Invoke(this, eventArgs);
+		}
+	
+		[GeneratedCode("Fody.ToString", "1.11.1.0")]
+		[DebuggerNonUserCode]
+		public override string ToString()
+		{
+			return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
+			{
+				FirstName ?? "null",
+				LastName ?? "null",
+				FullName ?? "null"
+			});
+		}
 	}
-
 ### [BindingProxy.Fody](https://github.com/vovgou/BindingProxy)
 
 BindingProxy.Fody is a performance optimization component, which can statically weave binding proxy classes for the Property, Field and Method of a class, and directly access the Field, Property and Method of the class without reflection. This plugin will only scan all classes that inherit the INotifyPropertyChanged interface. By default, it will not generate binding proxy objects (PropertyNodeProxy, FieldNodeProxy) for the Property and Field of the class, But you can change the default values by modifying the "defaultWeaveProperty" and "defaultWeaveField" in the FodyWeavers.xml file to true.If you need to weave a proxy class for the method of a class, you must explicitly add the [GenerateMethodProxy] annotation to the method.

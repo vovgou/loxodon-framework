@@ -37,6 +37,11 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             this.IsStatic = false;
         }
 
+        public ObjectSourceDescription(Path path)
+        {
+            this.Path = path;
+        }
+
         public virtual Path Path
         {
             get { return this.path; }

@@ -315,7 +315,6 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                     if (this.proxy != null)
                         this.proxy.Dispose();
                     this.proxy = null;
-                    this.Token = null;
                     disposedValue = true;
                 }
             }

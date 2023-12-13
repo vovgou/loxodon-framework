@@ -24,6 +24,7 @@
 
 using Loxodon.Framework.Configurations;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 namespace Loxodon.Framework.Tutorials
 {
@@ -31,9 +32,7 @@ namespace Loxodon.Framework.Tutorials
     {
         private void Start()
         {
-            TextAsset text = Resources.Load<TextAsset>("application.properties");
-            IConfiguration conf = new PropertiesConfiguration(text.text);
-
+            IConfiguration conf = CreateConfiguration();
             Version appVersion = conf.GetVersion("application.app.version");
             Version dataVersion = conf.GetVersion("application.data.version");
 
@@ -59,5 +58,24 @@ namespace Loxodon.Framework.Tutorials
             }
         }
 
+        private IConfiguration CreateConfiguration()
+        {
+            List<IConfiguration> list = new List<IConfiguration>();
+
+            //Load default configuration file
+            TextAsset text = Resources.Load<TextAsset>("application.properties");
+            list.Add(new PropertiesConfiguration(text.text));
+
+            //Load configuration files based on platform information. Configuration files loaded later 
+            //have a higher priority than configuration files loaded first.
+            text = Resources.Load<TextAsset>(string.Format("application.{0}.properties", Application.platform.ToString().ToLower()));
+            if (text != null)
+                list.Add(new PropertiesConfiguration(text.text));
+
+            if (list.Count == 1)
+                return list[0];
+
+            return new CompositeConfiguration(list);
+        }
     }
 }

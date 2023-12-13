@@ -33,18 +33,20 @@ namespace Loxodon.Framework.Views.InteractionActions
 {
     public class AsyncViewInteractionAction : AsyncLoadableInteractionActionBase<VisibilityNotification>
     {
+        private IViewGroup viewGroup;
         private UIView view;
         private bool autoDestroy;
-        public AsyncViewInteractionAction(string viewName, bool autoDestroy = true) : this(viewName, null, autoDestroy)
+        public AsyncViewInteractionAction(string viewName, IViewGroup viewGroup, bool autoDestroy = true) : this(viewName, viewGroup, null, autoDestroy)
         {
         }
 
-        public AsyncViewInteractionAction(string viewName, IUIViewLocator locator, bool autoDestroy = true) : base(viewName, locator)
+        public AsyncViewInteractionAction(string viewName, IViewGroup viewGroup, IUIViewLocator locator, bool autoDestroy = true) : base(viewName, locator)
         {
+            this.viewGroup = viewGroup;
             this.autoDestroy = autoDestroy;
         }
 
-        public AsyncViewInteractionAction(UIView view, bool autoDestroy = false) : base(null, null,null)
+        public AsyncViewInteractionAction(UIView view, bool autoDestroy = false) : base(null, null, null)
         {
             this.view = view;
             this.autoDestroy = autoDestroy;
@@ -60,7 +62,7 @@ namespace Loxodon.Framework.Views.InteractionActions
                 return Hide();
         }
 
-        protected async Task Show(object viewModel, bool waitDisabled)
+        protected virtual async Task Show(object viewModel, bool waitDisabled)
         {
             try
             {
@@ -69,6 +71,9 @@ namespace Loxodon.Framework.Views.InteractionActions
 
                 if (view == null)
                     throw new NotFoundException(string.Format("Not found the view named \"{0}\".", ViewName));
+
+                if (this.viewGroup != null)
+                    this.viewGroup.AddView(view);
 
                 if (autoDestroy)
                 {

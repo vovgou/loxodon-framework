@@ -24,7 +24,8 @@
 
 using Loxodon.Log;
 using System;
-using System.Collections.Concurrent;
+//using System.Collections.Concurrent;
+using Loxodon.Framework.Utilities;
 using System.Threading;
 
 namespace Loxodon.Framework.Messaging
@@ -98,9 +99,9 @@ namespace Loxodon.Framework.Messaging
                 try
                 {
                     if (this.context != null)
-                        context.Post(state => action((T)state), message);
+                        context.Post(state => action?.Invoke((T)state), message);
                     else
-                        action(message);
+                        action?.Invoke(message);
                 }
                 catch (Exception e)
                 {
@@ -120,28 +121,36 @@ namespace Loxodon.Framework.Messaging
             }
 
             #region IDisposable Support
-            private bool disposed = false;
+            private int disposed = 0;
 
             protected virtual void Dispose(bool disposing)
             {
-                if (this.disposed)
-                    return;
-
                 try
                 {
-                    if (this.disposed)
+#if UNITY_WEBGL
+                    if (this.disposed==1)
                         return;
 
+                    disposed = 1;
                     if (subject != null)
                         subject.Remove(this);
 
                     context = null;
                     action = null;
                     subject = null;
+#else
+                    if (Interlocked.CompareExchange(ref this.disposed, 1, 0) == 0)
+                    {
+                        if (subject != null)
+                            subject.Remove(this);
 
+                        context = null;
+                        action = null;
+                        subject = null;
+                    }
+#endif
                 }
                 catch (Exception) { }
-                disposed = true;
             }
 
             ~Subscription()

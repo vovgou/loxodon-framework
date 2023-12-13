@@ -33,6 +33,8 @@ using Loxodon.Framework.Binding;
 using Loxodon.Framework.Binding.Builder;
 using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.Views.InteractionActions;
+using Loxodon.Framework.Asynchronous;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Examples
 {
@@ -48,11 +50,13 @@ namespace Loxodon.Framework.Examples
         private StartupViewModel viewModel;
         private IUIViewLocator viewLocator;
         private AsyncWindowInteractionAction loginWindowInteractionAction;
+        private AsynSceneInteractionAction sceneInteractionAction;
 
         protected override void OnCreate(IBundle bundle)
         {
             this.viewLocator = Context.GetApplicationContext().GetService<IUIViewLocator>();
-            this.loginWindowInteractionAction = new AsyncWindowInteractionAction("UI/Logins/Login", viewLocator,this.WindowManager);
+            this.loginWindowInteractionAction = new AsyncWindowInteractionAction("UI/Logins/Login", viewLocator, this.WindowManager);
+            this.sceneInteractionAction = new AsynSceneInteractionAction("Prefabs/Cube");
             this.viewModel = new StartupViewModel();
 
             /* databinding, Bound to the ViewModel. */
@@ -60,6 +64,7 @@ namespace Loxodon.Framework.Examples
             //bindingSet.Bind().For(v => v.OnOpenLoginWindow).To(vm => vm.LoginRequest);
             bindingSet.Bind().For(v => v.loginWindowInteractionAction).To(vm => vm.LoginRequest);
             bindingSet.Bind().For(v => v.OnDismissRequest).To(vm => vm.DismissRequest);
+            bindingSet.Bind().For(v => v.sceneInteractionAction).To(vm => vm.LoadSceneRequest);
 
             bindingSet.Bind(this.progressBarSlider).For("value", "onValueChanged").To("ProgressBar.Progress").TwoWay();
             //bindingSet.Bind (this.progressBarSlider).For (v => v.value, v => v.onValueChanged).To (vm => vm.ProgressBar.Progress).TwoWay ();
@@ -117,5 +122,37 @@ namespace Loxodon.Framework.Examples
         //            log.Warn(e);
         //    }
         //}
+
+        //Load game objects in the scene using AsynSceneInteractionAction
+        class AsynSceneInteractionAction : AsyncInteractionActionBase<ProgressBar>
+        {
+            private string path;
+            public AsynSceneInteractionAction(string path)
+            {
+                this.path = path;
+            }
+            public override async Task Action(ProgressBar progressBar)
+            {
+                progressBar.Enable = true;
+                progressBar.Tip = R.startup_progressbar_tip_loading;
+                try
+                {
+                    var request = Resources.LoadAsync<GameObject>(path);
+                    while (!request.isDone)
+                    {
+                        progressBar.Progress = request.progress;/* update progress */
+                        await new WaitForSecondsRealtime(0.02f);
+                    }
+
+                    GameObject sceneTemplate = (GameObject)request.asset;
+                    GameObject.Instantiate(sceneTemplate);
+                }
+                finally
+                {
+                    progressBar.Tip = "";
+                    progressBar.Enable = false;
+                }
+            }
+        }
     }
 }

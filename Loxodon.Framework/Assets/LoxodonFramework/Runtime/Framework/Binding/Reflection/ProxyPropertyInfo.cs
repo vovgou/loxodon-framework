@@ -83,7 +83,7 @@ namespace Loxodon.Framework.Binding.Reflection
         public virtual object GetValue(object target)
         {
             if (this.getMethod == null)
-                throw new MemberAccessException();
+                throw new MemberAccessException($"The property \"{propertyInfo.DeclaringType}.{Name}\" is not public");
 
             return this.getMethod.Invoke(target, null);
         }
@@ -91,13 +91,13 @@ namespace Loxodon.Framework.Binding.Reflection
         public virtual void SetValue(object target, object value)
         {
             if (!propertyInfo.CanWrite)
-                throw new MemberAccessException("The value is read-only.");
+                throw new MemberAccessException($"The property \"{propertyInfo.DeclaringType}.{Name}\" is read-only.");
 
             if (this.IsValueType)
-                throw new NotSupportedException("Assignments of Value type are not supported.");
+                throw new NotSupportedException($"The type \"{propertyInfo.DeclaringType}\" is a value type, and non-reference types cannot support assignment operations.");
 
             if (this.setMethod == null)
-                throw new MemberAccessException("The value is read-only.");
+                throw new MemberAccessException($"The property \"{propertyInfo.DeclaringType}.{Name}\" is not public");
 
             this.setMethod.Invoke(target, new object[] { value });
         }
@@ -120,7 +120,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentException("The property types do not match!");
 
             if (this.IsStatic)
-                throw new ArgumentException("The property is static!");
+                throw new ArgumentException($"The property \"{propertyInfo.DeclaringType}.{Name}\" is static.");
 
             this.getter = this.MakeGetter(propertyInfo);
             this.setter = this.MakeSetter(propertyInfo);
@@ -136,7 +136,7 @@ namespace Loxodon.Framework.Binding.Reflection
                 throw new ArgumentException("The property types do not match!");
 
             if (this.IsStatic)
-                throw new ArgumentException("The property is static!");
+                throw new ArgumentException($"The property \"{propertyInfo.DeclaringType}.{Name}\" is static.");
 
             this.getter = getter;
             this.setter = setter;
@@ -211,7 +211,7 @@ namespace Loxodon.Framework.Binding.Reflection
         public void SetValue(T target, TValue value)
         {
             if (this.IsValueType)
-                throw new NotSupportedException("Assignments of Value type are not supported.");
+                throw new NotSupportedException($"The type \"{propertyInfo.DeclaringType}\" is a value type, and non-reference types cannot support assignment operations.");
 
             if (setter != null)
             {
@@ -230,7 +230,7 @@ namespace Loxodon.Framework.Binding.Reflection
         public override void SetValue(object target, object value)
         {
             if (this.IsValueType)
-                throw new NotSupportedException("Assignments of Value type are not supported.");
+                throw new NotSupportedException($"The type \"{propertyInfo.DeclaringType}\" is a value type, and non-reference types cannot support assignment operations.");
 
             if (setter != null)
             {
