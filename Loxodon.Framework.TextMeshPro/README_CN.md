@@ -6,6 +6,7 @@
 [![openupm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework-textmeshpro?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.vovgou.loxodon-framework-textmeshpro/)
 [![npm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework-textmeshpro)](https://www.npmjs.com/package/com.vovgou.loxodon-framework-textmeshpro)
 
+[(English)](README.md)
 
 *开发者 Clark*
 
