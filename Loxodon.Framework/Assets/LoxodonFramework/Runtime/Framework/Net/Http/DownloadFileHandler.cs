@@ -222,6 +222,10 @@ namespace Loxodon.Framework.Net.Http
         protected override void ReceiveContentLength(int contentLength)
 #endif
         {
+            //On the IOS platform, this method is called multiple times, ensuring that only the first call is valid to avoid program errors.
+            if (downloadFileStream != null)
+                return;
+
             if (!supportBreakpointResume)
             {
                 this.downloadInfo = new DownloadInfo();

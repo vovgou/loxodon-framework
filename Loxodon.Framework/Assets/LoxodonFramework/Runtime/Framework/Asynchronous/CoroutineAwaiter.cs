@@ -237,7 +237,7 @@ namespace Loxodon.Framework.Asynchronous
         }
     }
 
-    public struct AsyncResultAwaiter<T> : IAwaiter, ICriticalNotifyCompletion where T : IAsyncResult
+    public struct AsyncResultAwaiter<T> : IAwaiter<object>, ICriticalNotifyCompletion where T : IAsyncResult
     {
         private T asyncResult;
 
@@ -250,13 +250,15 @@ namespace Loxodon.Framework.Asynchronous
 
         public bool IsCompleted => asyncResult.IsDone;
 
-        public void GetResult()
+        public object GetResult()
         {
             if (!IsCompleted)
                 throw new Exception("The task is not finished yet");
 
             if (asyncResult.Exception != null)
                 ExceptionDispatchInfo.Capture(asyncResult.Exception).Throw();
+
+            return asyncResult.Result;
         }
 
         public void OnCompleted(Action continuation)

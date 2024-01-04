@@ -42,15 +42,14 @@
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
-        "com.vovgou.loxodon-framework": "2.0.0-preview"
+        "com.vovgou.loxodon-framework": "2.6.3",
       },
       "scopedRegistries": [
         {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
-            "com.vovgou",
-            "com.openupm"
+            "com.vovgou"
           ]
         }
       ]

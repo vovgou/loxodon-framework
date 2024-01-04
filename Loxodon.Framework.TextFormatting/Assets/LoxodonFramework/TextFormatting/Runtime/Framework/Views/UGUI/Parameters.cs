@@ -42,7 +42,11 @@ namespace Loxodon.Framework.Views.UGUI
             set { this.m_Text = value; }
         }
 
-        protected internal abstract void OnParameterChanged();
+        protected internal virtual void OnParameterChanged()
+        {
+            if (m_Text != null && m_Text.m_Parameters == null)
+                this.m_Text.m_Parameters = this;
+        }
     }
 
     [Serializable]
@@ -95,6 +99,7 @@ namespace Loxodon.Framework.Views.UGUI
         {
             try
             {
+                base.OnParameterChanged();
                 if (m_Text == null || !m_Text.enabled)
                     return;
 
@@ -187,6 +192,7 @@ namespace Loxodon.Framework.Views.UGUI
         {
             try
             {
+                base.OnParameterChanged();
                 if (m_Text == null || !m_Text.enabled)
                     return;
                 m_Text.SetText(BUFFER.Clear().AppendFormat<P1>(m_Text.Format, parameter1));
@@ -231,6 +237,7 @@ namespace Loxodon.Framework.Views.UGUI
         {
             try
             {
+                base.OnParameterChanged();
                 if (m_Text == null || !m_Text.enabled)
                     return;
 
@@ -287,6 +294,7 @@ namespace Loxodon.Framework.Views.UGUI
         {
             try
             {
+                base.OnParameterChanged();
                 if (m_Text == null || !m_Text.enabled)
                     return;
 
@@ -354,6 +362,7 @@ namespace Loxodon.Framework.Views.UGUI
         {
             try
             {
+                base.OnParameterChanged();
                 if (m_Text == null || !m_Text.enabled)
                     return;
 

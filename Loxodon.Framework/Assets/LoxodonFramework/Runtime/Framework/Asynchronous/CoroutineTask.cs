@@ -421,7 +421,7 @@ namespace Loxodon.Framework.Asynchronous
             return this.asyncResult.WaitForDone();
         }
 #if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
-        public virtual IAwaiter GetAwaiter()
+        public virtual IAwaiter<object> GetAwaiter()
         {
             return new AsyncResultAwaiter<AsyncResult>(asyncResult);
         }

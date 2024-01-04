@@ -36,7 +36,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
         protected string m_Format = "{0}";
         [SerializeField]
         protected int m_ParameterCount = 1;
-        private Parameters m_Parameters;
+        protected internal Parameters m_Parameters;
         public string Format
         {
             get { return this.m_Format; }
@@ -49,11 +49,11 @@ namespace Loxodon.Framework.Views.TextMeshPro
             set { this.m_ParameterCount = value; }
         }
 
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-            Initialize();
-        }
+        //protected override void OnEnable()
+        //{
+        //    base.OnEnable();
+        //    Initialize();
+        //}
 
         public override void SetAllDirty()
         {
@@ -63,7 +63,10 @@ namespace Loxodon.Framework.Views.TextMeshPro
 
         protected virtual void Initialize()
         {
-            SetText(BUFFER.Clear().Append(m_Format));
+            if (m_Parameters != null)
+                m_Parameters.OnParameterChanged();
+            else
+                SetText(BUFFER.Clear().Append(m_Format));
         }
 
         public ArrayParameters<T> AsArray<T>()

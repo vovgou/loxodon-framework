@@ -29,6 +29,7 @@ using NLog.Config;
 using System;
 using System.IO;
 using System.Xml;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Loxodon.Log.NLogger
@@ -84,6 +85,33 @@ namespace Loxodon.Log.NLogger
             }
 
             return new NLogFactory(NLog.LogManager.LogFactory);
+        }
+
+        public static NLogFactory LoadInResources(string filename)
+        {
+            try
+            {
+                string path = filename;
+                TextAsset configText = Resources.Load<TextAsset>(path);
+                if (configText == null)
+                {
+                    string extension = Path.GetExtension(path);
+                    if (!string.IsNullOrEmpty(extension))
+                        path = path.Replace(extension, "");
+                    configText = Resources.Load<TextAsset>(path);
+                }
+
+                using (XmlReader reader = XmlReader.Create(new StringReader(configText.text)))
+                {
+                    return Load(reader);
+                }
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogErrorFormat("Failed to load NLog configuration file from \"{0}\", default configuration will be used.exception:{1}", filename, e);
+                InitializeDefaultConfiguration();
+                return new NLogFactory(NLog.LogManager.LogFactory);
+            }
         }
 
         private static void InitializeDefaultConfiguration()

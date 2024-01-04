@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-textformatting",
   "displayName": "Loxodon Framework TextFormatting",
-  "version": "2.6.2",
+  "version": "2.6.2-fixed",
   "unity": "2021.3",
   "description": "This is a text formatting plug-in, which is modified based on the C# official library and reduces GC as much as possible.",
   "license": "MIT",
@@ -27,7 +27,7 @@
   },
   "relatedPackages": {},
   "dependencies": {
-    "com.vovgou.loxodon-framework": "2.6.2"
+    "com.vovgou.loxodon-framework": "2.6.3"
   },
   "samples": [
     {

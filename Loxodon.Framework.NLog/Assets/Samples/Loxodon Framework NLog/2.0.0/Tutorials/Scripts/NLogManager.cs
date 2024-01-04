@@ -1,6 +1,4 @@
 ﻿using Loxodon.Log.NLogger;
-using System.IO;
-using System.Xml;
 using UnityEngine;
 
 namespace Loxodon.Framework.Tutorials
@@ -13,15 +11,7 @@ namespace Loxodon.Framework.Tutorials
             //Loxodon.Log.LogManager.Registry(NLogFactory.Load(Application.streamingAssetsPath + "/config.xml"));
 
             //Load the NLog configuration file from the Resources directory
-            TextAsset configText = Resources.Load<TextAsset>("config");
-            if (configText != null)
-            {
-                using (XmlReader reader = XmlReader.Create(new StringReader(configText.text)))
-                {
-                    /* Initialize the Loxodon.Log.LogManager */
-                    Loxodon.Log.LogManager.Registry(NLogFactory.Load(reader));
-                }
-            }
+            Loxodon.Log.LogManager.Registry(NLogFactory.LoadInResources("config"));
 
             DontDestroyOnLoad(this.gameObject);
         }

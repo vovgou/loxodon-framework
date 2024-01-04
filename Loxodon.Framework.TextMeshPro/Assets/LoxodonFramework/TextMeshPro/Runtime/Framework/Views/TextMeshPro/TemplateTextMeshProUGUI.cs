@@ -86,7 +86,8 @@ namespace Loxodon.Framework.Views.TextMeshPro
 
         protected virtual void Initialize()
         {
-            SetText(BUFFER.Clear().Append(m_Template));
+            if (this.data == null)
+                SetText(BUFFER.Clear().Append(m_Template));
         }
 
         protected override void OnDestroy()

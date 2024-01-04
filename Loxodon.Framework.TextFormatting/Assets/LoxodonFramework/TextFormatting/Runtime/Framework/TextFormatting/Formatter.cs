@@ -103,14 +103,17 @@ namespace Loxodon.Framework.TextFormatting
 
         void Format(ReadOnlySpan<char> format, object value, StringBuilder builder);
 
-        void Format(string format, object value, StringBuilder builder);
+        // In UnityEditor, when the parameter type is ReadOnlySpan<char>, the first call is correct. 
+        // When the second call is made, the void Format(string format, object value, StringBuilder builder) function is actually called, 
+        // which will result in UnityEditor crashes.
+        //void Format(string format, object value, StringBuilder builder);
     }
 
     public interface IFormatter<T> : IFormatter
     {
         void Format(ReadOnlySpan<char> format, T value, StringBuilder builder);
 
-        void Format(string format, T value, StringBuilder builder);
+        //void Format(string format, T value, StringBuilder builder);
     }
 
     public abstract class FormatterBase : IFormatter
@@ -119,27 +122,21 @@ namespace Loxodon.Framework.TextFormatting
         {
             if (format.Length > 0 && value is IFormattable formattable)
                 builder.Append(formattable.ToString(format.ToString(), null));
-            else
-            {
-                if (value != null)
-                    builder.Append(value.ToString());
-                else
-                    builder.Append(format);
-            }
+            else if (value != null)
+                builder.Append(value.ToString());
+            else if (format.Length > 0)
+                builder.Append(format);
         }
 
-        public void Format(string format, object value, StringBuilder builder)
-        {
-            if (!string.IsNullOrEmpty(format) && value is IFormattable formattable)
-                builder.Append(formattable.ToString(format, null));
-            else
-            {
-                if (value != null)
-                    builder.Append(value.ToString());
-                else
-                    builder.Append(format);
-            }
-        }
+        //public void Format(string format, object value, StringBuilder builder)
+        //{
+        //    if (!string.IsNullOrEmpty(format) && value is IFormattable formattable)
+        //        builder.Append(formattable.ToString(format, null));
+        //    else if (value != null)
+        //        builder.Append(value.ToString());
+        //    else if (!string.IsNullOrEmpty(format))
+        //        builder.Append(format);
+        //}
     }
 
     internal class DefaultFormatter : FormatterBase, IFormatter<object>
@@ -153,10 +150,10 @@ namespace Loxodon.Framework.TextFormatting
             builder.Append(value ? "true" : "false");
         }
 
-        public void Format(string format, bool value, StringBuilder builder)
-        {
-            builder.Append(value ? "true" : "false");
-        }
+        //public void Format(string format, bool value, StringBuilder builder)
+        //{
+        //    builder.Append(value ? "true" : "false");
+        //}
     }
 
     internal class CharFormatter : FormatterBase, IFormatter<char>
@@ -166,10 +163,10 @@ namespace Loxodon.Framework.TextFormatting
             builder.Append(value);
         }
 
-        public void Format(string format, char value, StringBuilder builder)
-        {
-            builder.Append(value);
-        }
+        //public void Format(string format, char value, StringBuilder builder)
+        //{
+        //    builder.Append(value);
+        //}
     }
 
     internal class ByteFormatter : FormatterBase, IFormatter<byte>
@@ -179,10 +176,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, byte value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, byte value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class SByteFormatter : FormatterBase, IFormatter<sbyte>
@@ -192,10 +189,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, sbyte value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, sbyte value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class Int16Formatter : FormatterBase, IFormatter<short>
@@ -205,10 +202,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, short value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, short value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class UInt16Formatter : FormatterBase, IFormatter<ushort>
@@ -218,10 +215,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, ushort value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, ushort value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class Int32Formatter : FormatterBase, IFormatter<int>
@@ -231,10 +228,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, int value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, int value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class UInt32Formatter : FormatterBase, IFormatter<uint>
@@ -244,10 +241,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, uint value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, uint value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class Int64Formatter : FormatterBase, IFormatter<long>
@@ -257,10 +254,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, long value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, long value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class UInt64Formatter : FormatterBase, IFormatter<ulong>
@@ -270,10 +267,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, ulong value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, ulong value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class FloatFormatter : FormatterBase, IFormatter<float>
@@ -283,10 +280,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, float value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, float value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class DoubleFormatter : FormatterBase, IFormatter<double>
@@ -296,10 +293,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, double value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, double value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class DecimalFormatter : FormatterBase, IFormatter<decimal>
@@ -309,10 +306,10 @@ namespace Loxodon.Framework.TextFormatting
             NumberFormatter.NumberToString(format, value, null, builder);
         }
 
-        public void Format(string format, decimal value, StringBuilder builder)
-        {
-            NumberFormatter.NumberToString(format, value, null, builder);
-        }
+        //public void Format(string format, decimal value, StringBuilder builder)
+        //{
+        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //}
     }
 
     internal class DateTimeFormatter : FormatterBase, IFormatter<DateTime>
@@ -322,10 +319,10 @@ namespace Loxodon.Framework.TextFormatting
             DateTimeFormat.Format(value, format, builder);
         }
 
-        public void Format(string format, DateTime value, StringBuilder builder)
-        {
-            DateTimeFormat.Format(value, format, builder);
-        }
+        //public void Format(string format, DateTime value, StringBuilder builder)
+        //{
+        //    DateTimeFormat.Format(value, format, builder);
+        //}
     }
 
     internal class TimeSpanFormatter : FormatterBase, IFormatter<TimeSpan>
@@ -335,10 +332,10 @@ namespace Loxodon.Framework.TextFormatting
             TimeSpanFormat.Format(value, format, builder);
         }
 
-        public void Format(string format, TimeSpan value, StringBuilder builder)
-        {
-            TimeSpanFormat.Format(value, format, builder);
-        }
+        //public void Format(string format, TimeSpan value, StringBuilder builder)
+        //{
+        //    TimeSpanFormat.Format(value, format, builder);
+        //}
     }
 
     internal class Vector2Formatter : FormatterBase, IFormatter<Vector2>
@@ -355,11 +352,11 @@ namespace Loxodon.Framework.TextFormatting
             builder.Append(")");
         }
 
-        public void Format(string format, Vector2 value, StringBuilder builder)
-        {
-            ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
-            this.Format(f, value, builder);
-        }
+        //public void Format(string format, Vector2 value, StringBuilder builder)
+        //{
+        //    ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
+        //    this.Format(f, value, builder);
+        //}
     }
 
     internal class Vector3Formatter : FormatterBase, IFormatter<Vector3>
@@ -378,11 +375,11 @@ namespace Loxodon.Framework.TextFormatting
             builder.Append(")");
         }
 
-        public void Format(string format, Vector3 value, StringBuilder builder)
-        {
-            ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
-            this.Format(f, value, builder);
-        }
+        //public void Format(string format, Vector3 value, StringBuilder builder)
+        //{
+        //    ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
+        //    this.Format(f, value, builder);
+        //}
     }
 
     internal class Vector4Formatter : FormatterBase, IFormatter<Vector4>
@@ -403,11 +400,11 @@ namespace Loxodon.Framework.TextFormatting
             builder.Append(")");
         }
 
-        public void Format(string format, Vector4 value, StringBuilder builder)
-        {
-            ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
-            this.Format(f, value, builder);
-        }
+        //public void Format(string format, Vector4 value, StringBuilder builder)
+        //{
+        //    ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
+        //    this.Format(f, value, builder);
+        //}
     }
 
     internal class RectFormatter : FormatterBase, IFormatter<Rect>
@@ -428,10 +425,10 @@ namespace Loxodon.Framework.TextFormatting
             builder.Append(")");
         }
 
-        public void Format(string format, Rect value, StringBuilder builder)
-        {
-            ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
-            this.Format(f, value, builder);
-        }
+        //public void Format(string format, Rect value, StringBuilder builder)
+        //{
+        //    ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
+        //    this.Format(f, value, builder);
+        //}
     }
 }

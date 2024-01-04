@@ -143,7 +143,7 @@ namespace Loxodon.Framework.Asynchronous
             return new AsyncOperationAwaiter<UnityWebRequestAsyncOperation, UnityWebRequest>(target, (request) => request.webRequest);
         }
 
-        public static IAwaiter GetAwaiter(this IAsyncResult target)
+        public static IAwaiter<object> GetAwaiter(this IAsyncResult target)
         {
             return new AsyncResultAwaiter<IAsyncResult>(target);
         }
@@ -153,7 +153,7 @@ namespace Loxodon.Framework.Asynchronous
             return new AsyncResultAwaiter<IAsyncResult<TResult>, TResult>(target);
         }
 
-        public static IAwaiter GetAwaiter(this AsyncResult target)
+        public static IAwaiter<object> GetAwaiter(this AsyncResult target)
         {
             return new AsyncResultAwaiter<IAsyncResult>(target);
         }

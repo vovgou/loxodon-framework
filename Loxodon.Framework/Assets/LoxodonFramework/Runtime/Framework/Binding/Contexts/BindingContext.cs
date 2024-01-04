@@ -193,7 +193,11 @@ namespace Loxodon.Framework.Binding.Contexts
             if (key == null)
                 return;
 
-            List<IBinding> list = this.bindings[key];
+            List<IBinding> list;
+            if (!bindings.TryGetValue(key, out list))
+                return;
+
+            this.bindings.Remove(key);
             if (list != null && list.Count > 0)
             {
                 foreach (IBinding binding in list)
@@ -201,19 +205,24 @@ namespace Loxodon.Framework.Binding.Contexts
                     binding.Dispose();
                 }
             }
-            this.bindings.Remove(key);
         }
 
         public virtual void Clear()
         {
-            foreach (var kv in this.bindings)
+            try
             {
-                foreach (var binding in kv.Value)
+                foreach (var kv in this.bindings)
                 {
-                    binding.Dispose();
+                    foreach (var binding in kv.Value)
+                    {
+                        binding.Dispose();
+                    }
                 }
             }
-            this.bindings.Clear();
+            finally
+            {
+                this.bindings.Clear();
+            }
         }
 
         #region IDisposable Support
