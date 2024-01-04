@@ -36,7 +36,7 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
 
 ### Install via Packages/manifest.json
 
-Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-log4net" in the "dependencies" node.
+Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-nlog" in the "dependencies" node.
 
 Installing the framework in this way does not require nodejs and openm-cli.
 
