@@ -4,29 +4,29 @@
 
 [![license](https://img.shields.io/github/license/vovgou/loxodon-framework?color=blue)](https://github.com/vovgou/loxodon-framework/blob/master/LICENSE) [![release](https://img.shields.io/github/v/tag/vovgou/loxodon-framework?label=release)](https://github.com/vovgou/loxodon-framework/releases)
 
-[(中文版)](README_CN.md)
+[(English)](README.md)
 
 *Developed by Clark*
 
-This plugin is developed based on [Optimized ScrollView Adapter](https://assetstore.unity.com/packages/tools/gui/optimized-scrollview-adapter-68436), adding data binding features to it, making it compatible with the LoxodonFramework.
+这个插件是对Unity的列表插件[Optimized ScrollView Adapter](https://assetstore.unity.com/packages/tools/gui/optimized-scrollview-adapter-68436)进行扩展，为ListView和GridView增加了数据绑定功能。
 
-## Requires ##
+## 要求 ##
 
 [Loxodon Framework](https://github.com/vovgou/loxodon-framework)
 
 [Optimized ScrollView Adapter](https://assetstore.unity.com/packages/tools/gui/optimized-scrollview-adapter-68436)
 
-**Note: This project is a plugin for Loxodon.Framework, and must be used in the Loxodon.Framework environment. Please install Loxodon.Framework and Optimized ScrollView Adapter before installing and using it.**
+**注意：本项目作为Loxodon.Framework的插件，必须在Loxodon.Framework环境下使用，请在安装使用前先安装Loxodon.Framework和Optimized ScrollView Adapter。**
 
-## Installation
+## 安装
 
-### Install via *.unitypackage file
+### 通过 *.unitypackage 安装
 
-Download the Loxodon.Framework.OSA.unitypackage and import it into your project.
+从框架的发布地址下载 Loxodon.Framework.OSA.unitypackage, 导入到项目中即可.
 
 - [Releases](https://github.com/vovgou/loxodon-framework/releases)
 
-## Quick Start ##
+## 快速开始 ##
 
     public class ListViewExampleViewModel : ViewModelBase
     {
