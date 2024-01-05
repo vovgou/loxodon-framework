@@ -57,7 +57,7 @@ Installing the framework in this way does not require nodejs and openm-cli.
         "com.vovgou.loxodon-framework-fody": "2.6.0",
         "com.vovgou.loxodon-framework-fody-propertychanged": "2.6.0",
         "com.vovgou.loxodon-framework-fody-tostring": "2.6.0",
-		"com.vovgou.loxodon-framework-fody-bindingproxy": "2.6.0"
+        "com.vovgou.loxodon-framework-fody-bindingproxy": "2.6.0"
       },
       "scopedRegistries": [
         {
