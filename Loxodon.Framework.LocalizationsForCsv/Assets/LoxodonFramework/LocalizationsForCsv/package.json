@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-localization-csv",
   "displayName": "Loxodon Framework Localization CSV",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "unity": "2018.4",
   "description": "This is a plugin for the Loxodon.Framework, which supports reading localized resources from csv files.",
   "license": "MIT",
@@ -30,7 +30,7 @@
   },
   "relatedPackages": {},
   "dependencies": {
-    "com.vovgou.loxodon-framework": "2.6.3"
+    "com.vovgou.loxodon-framework": "2.6.4"
   },
   "samples": [
     {
