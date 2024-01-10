@@ -22,77 +22,52 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.Asynchronous;
-using Loxodon.Framework.Execution;
-using System;
+using Loxodon.Framework.Messaging;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Examples
 {
     public class AccountService : IAccountService
     {
         private IAccountRepository repository;
+        private IMessenger messenger;
 
-        public event EventHandler<LoginEventArgs> LoginFinished;
+        public IMessenger Messenger { get { return messenger; } }
 
         public AccountService(IAccountRepository repository)
         {
             this.repository = repository;
+            this.messenger = new Messenger();
         }
 
 
-        public virtual IAsyncResult<Account> Register(Account account)
+        public virtual async Task<Account> Register(Account account)
         {
-            return this.repository.Save(account);
+            await this.repository.Save(account);
+            messenger.Publish(new AccountEventArgs(AccountEventType.Register, account));
+            return account;
         }
 
-        public virtual IAsyncResult<Account> Update(Account account)
+        public virtual async Task<Account> Update(Account account)
         {
-            return this.repository.Update(account);
+            await this.repository.Update(account);
+            messenger.Publish(new AccountEventArgs(AccountEventType.Update, account));
+            return account;
         }
 
-        public virtual IAsyncResult<Account> Login(string username, string password)
+        public virtual async Task<Account> Login(string username, string password)
         {
-            AsyncResult<Account> result = new AsyncResult<Account>();
-            DoLogin(result, username, password);
-            return result;
+            Account account = await this.GetAccount(username);
+            if (account == null || !account.Password.Equals(password))
+                return null;
+
+            messenger.Publish(new AccountEventArgs(AccountEventType.Login, account));
+            return account;
         }
 
-        protected async void DoLogin(IPromise<Account> promise, string username, string password)
-        {
-            try
-            {
-                Account account = await this.GetAccount(username);
-                if (account == null || !account.Password.Equals(password))
-                {
-                    promise.SetResult(null);
-                    this.RaiseLoginFinished(false, null);
-                }
-                else
-                {
-                    promise.SetResult(account);
-                    this.RaiseLoginFinished(true, account);
-                }
-            }
-            catch (Exception e)
-            {
-                promise.SetException(e);
-                this.RaiseLoginFinished(false, null);
-            }
-        }
-
-        public virtual IAsyncResult<Account> GetAccount(string username)
+        public virtual Task<Account> GetAccount(string username)
         {
             return this.repository.Get(username);
-        }
-
-        protected virtual void RaiseLoginFinished(bool succeed, Account account)
-        {
-            try
-            {
-                if (this.LoginFinished != null)
-                    this.LoginFinished(this, new LoginEventArgs(succeed, account));
-            }
-            catch (Exception) { }
         }
     }
 }

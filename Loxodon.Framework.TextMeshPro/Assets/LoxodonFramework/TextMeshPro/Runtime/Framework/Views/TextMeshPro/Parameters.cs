@@ -26,8 +26,9 @@ using Loxodon.Framework.TextFormatting;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using static Loxodon.Framework.Views.TextMeshPro.FormattableTextMeshProUGUI;
+using static Loxodon.Framework.Views.TextMeshPro.IFormattableText;
 
 namespace Loxodon.Framework.Views.TextMeshPro
 {
@@ -35,17 +36,20 @@ namespace Loxodon.Framework.Views.TextMeshPro
     public abstract class Parameters
     {
         [SerializeField]
-        protected FormattableTextMeshProUGUI m_Text;
-        public FormattableTextMeshProUGUI Text
+        protected TMP_Text m_Text;
+        public TMP_Text Text
         {
             get { return this.m_Text; }
             set { this.m_Text = value; }
         }
 
+        protected IFormattableText FormattableText { get { return m_Text as IFormattableText; } }
+
         protected internal virtual void OnParameterChanged()
         {
-            if (m_Text != null && m_Text.m_Parameters == null)
-                this.m_Text.m_Parameters = this;
+            var formattableText = FormattableText;
+            if (formattableText != null && formattableText.Parameters == null)
+                formattableText.Parameters = this;
         }
     }
 
@@ -60,7 +64,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
         {
         }
 
-        internal ArrayParameters(FormattableTextMeshProUGUI text, int capacity)
+        internal ArrayParameters(TMP_Text text, int capacity)
         {
             if (capacity < 0)
                 throw new ArgumentException("The capacity cannot be less than 0.");
@@ -104,7 +108,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                     return;
 
                 this.Initialize();
-                m_Text.SetText(BUFFER.Clear().AppendFormat<T>(m_Text.Format, m_Items));
+                m_Text.SetText(BUFFER.Clear().AppendFormat<T>(FormattableText.Format, m_Items));
             }
             catch (Exception e)
             {
@@ -112,7 +116,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 if (Application.isEditor)
                     Debug.LogWarning(e);
 #endif               
-                m_Text.SetText(BUFFER.Clear().Append(m_Text.Format));
+                m_Text.SetText(BUFFER.Clear().Append(FormattableText.Format));
             }
         }
 
@@ -195,7 +199,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 base.OnParameterChanged();
                 if (m_Text == null || !m_Text.enabled)
                     return;
-                m_Text.SetText(BUFFER.Clear().AppendFormat<P1>(m_Text.Format, parameter1));
+                m_Text.SetText(BUFFER.Clear().AppendFormat<P1>(FormattableText.Format, parameter1));
             }
             catch (Exception e)
             {
@@ -203,7 +207,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 if (Application.isEditor)
                     Debug.LogWarning(e);
 #endif
-                m_Text.SetText(BUFFER.Clear().Append(m_Text.Format));
+                m_Text.SetText(BUFFER.Clear().Append(FormattableText.Format));
             }
         }
     }
@@ -241,7 +245,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 if (m_Text == null || !m_Text.enabled)
                     return;
 
-                m_Text.SetText(BUFFER.Clear().AppendFormat<P1, P2>(m_Text.Format, parameter1, parameter2));
+                m_Text.SetText(BUFFER.Clear().AppendFormat<P1, P2>(FormattableText.Format, parameter1, parameter2));
             }
             catch (Exception e)
             {
@@ -249,7 +253,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 if (Application.isEditor)
                     Debug.LogWarning(e);
 #endif
-                m_Text.SetText(BUFFER.Clear().Append(m_Text.Format));
+                m_Text.SetText(BUFFER.Clear().Append(FormattableText.Format));
             }
         }
     }
@@ -298,7 +302,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 if (m_Text == null || !m_Text.enabled)
                     return;
 
-                m_Text.SetText(BUFFER.Clear().AppendFormat<P1, P2, P3>(m_Text.Format, parameter1, parameter2, Parameter3));
+                m_Text.SetText(BUFFER.Clear().AppendFormat<P1, P2, P3>(FormattableText.Format, parameter1, parameter2, Parameter3));
             }
             catch (Exception e)
             {
@@ -306,7 +310,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 if (Application.isEditor)
                     Debug.LogWarning(e);
 #endif
-                m_Text.SetText(BUFFER.Clear().Append(m_Text.Format));
+                m_Text.SetText(BUFFER.Clear().Append(FormattableText.Format));
             }
         }
     }
@@ -366,7 +370,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 if (m_Text == null || !m_Text.enabled)
                     return;
 
-                m_Text.SetText(BUFFER.Clear().AppendFormat<P1, P2, P3, P4>(m_Text.Format, parameter1, parameter2, Parameter3, parameter4));
+                m_Text.SetText(BUFFER.Clear().AppendFormat<P1, P2, P3, P4>(FormattableText.Format, parameter1, parameter2, Parameter3, parameter4));
             }
             catch (Exception e)
             {
@@ -374,7 +378,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 if (Application.isEditor)
                     Debug.LogWarning(e);
 #endif
-                m_Text.SetText(BUFFER.Clear().Append(m_Text.Format));
+                m_Text.SetText(BUFFER.Clear().Append(FormattableText.Format));
             }
         }
     }

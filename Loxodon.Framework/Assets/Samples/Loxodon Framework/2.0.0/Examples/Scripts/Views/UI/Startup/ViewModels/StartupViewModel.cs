@@ -22,22 +22,15 @@
  * SOFTWARE.
  */
 
-using System;
-using System.Collections;
-using System.Threading;
-using UnityEngine;
-
-using Loxodon.Log;
-using Loxodon.Framework.Messaging;
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Commands;
-using Loxodon.Framework.ViewModels;
-using Loxodon.Framework.Localizations;
-using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.Contexts;
-#if NETFX_CORE
-using System.Threading.Tasks;
-#endif
+using Loxodon.Framework.Interactivity;
+using Loxodon.Framework.Localizations;
+using Loxodon.Framework.Messaging;
+using Loxodon.Framework.ViewModels;
+using Loxodon.Log;
+using UnityEngine;
 
 namespace Loxodon.Framework.Examples
 {

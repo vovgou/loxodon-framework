@@ -22,21 +22,18 @@
  * SOFTWARE.
  */
 
-using UnityEngine;
-using System.Collections;
-
-using Loxodon.Framework.Asynchronous;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Examples
 {
-	public interface IAccountRepository
+    public interface IAccountRepository
 	{
-		IAsyncResult<Account> Get (string username);
+		Task<Account> Get (string username);
 
-		IAsyncResult<Account> Save (Account account);
+		Task<Account> Save (Account account);
 
-		IAsyncResult<Account> Update (Account account);
+		Task<Account> Update (Account account);
 
-		IAsyncResult<bool> Delete (string username);
+		Task<bool> Delete (string username);
 	}
 }

@@ -22,34 +22,41 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.Asynchronous;
-using System;
+using Loxodon.Framework.Messaging;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Examples
 {
-    public class LoginEventArgs : EventArgs
+    public enum AccountEventType
     {
-        public LoginEventArgs(bool succeed, Account account)
+        Register,
+        Update,
+        Deleted,
+        Login
+    }
+    public class AccountEventArgs
+    {
+        public AccountEventArgs(AccountEventType type, Account account)
         {
-            this.IsSucceed = succeed;
+            this.Type = type;
             this.Account = account;
         }
 
-        public bool IsSucceed { get; private set; }
+        public AccountEventType Type { get; private set; }
 
         public Account Account { get; private set; }
     }
 
     public interface IAccountService
     {
-        event EventHandler<LoginEventArgs> LoginFinished;
+        IMessenger Messenger { get; }
 
-        IAsyncResult<Account> Register(Account account);
+        Task<Account> Register(Account account);
 
-        IAsyncResult<Account> Update(Account account);
+        Task<Account> Update(Account account);
 
-        IAsyncResult<Account> Login(string username, string password);
+        Task<Account> Login(string username, string password);
 
-        IAsyncResult<Account> GetAccount(string username);
+        Task<Account> GetAccount(string username);
     }
 }

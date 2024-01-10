@@ -22,11 +22,9 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.Asynchronous;
-using Loxodon.Framework.Execution;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Examples
 {
@@ -43,42 +41,28 @@ namespace Loxodon.Framework.Examples
             cache.Add(account.Username, account);
         }
 
-        public virtual IAsyncResult<Account> Get(string username)
-        {
-            return Executors.RunOnCoroutine<Account>(promise => DoGet(promise, username));
-        }
-
-        protected virtual IEnumerator DoGet(IPromise<Account> promise, string username)
+        public virtual Task<Account> Get(string username)
         {
             Account account = null;
             this.cache.TryGetValue(username, out account);
-            yield return null;
-            promise.SetResult(account);
+            return Task.FromResult(account);
         }
 
-        public virtual IAsyncResult<Account> Save(Account account)
-        {
-            return Executors.RunOnCoroutine<Account>(promise => DoSave(promise, account));
-        }
-
-        protected virtual IEnumerator DoSave(IPromise<Account> promise, Account account)
+        public virtual async Task<Account> Save(Account account)
         {
             if (cache.ContainsKey(account.Username))
-            {
-                promise.SetException(new Exception("The account already exists."));
-                yield break;
-            }
+                throw new Exception("The account already exists.");
 
             cache.Add(account.Username, account);
-            promise.SetResult(account);
+            return account;
         }
 
-        public virtual IAsyncResult<Account> Update(Account account)
+        public virtual Task<Account> Update(Account account)
         {
             throw new NotImplementedException();
         }
 
-        public virtual IAsyncResult<bool> Delete(string username)
+        public virtual Task<bool> Delete(string username)
         {
             throw new NotImplementedException();
         }

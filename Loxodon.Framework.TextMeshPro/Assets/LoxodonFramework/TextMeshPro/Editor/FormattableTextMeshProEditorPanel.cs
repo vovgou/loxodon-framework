@@ -28,8 +28,8 @@ using UnityEngine;
 
 namespace Loxodon.Framework.Views.TextMeshPro.Editor
 {
-    [CustomEditor(typeof(FormattableTextMeshProUGUI), true), CanEditMultipleObjects]
-    public class FormattableTextMeshProUIEditorPanel : TMP_EditorPanelUI
+    [CustomEditor(typeof(FormattableTextMeshPro), true), CanEditMultipleObjects]
+    public class FormattableTextMeshProEditorPanel : TMP_EditorPanel
     {
         static readonly GUIContent k_FormatLabel = new GUIContent("Format", "text formatting");
         static readonly GUIContent k_ParameterCountLabel = new GUIContent("Parameter Count", "Parameter Count");

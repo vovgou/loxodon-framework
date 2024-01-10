@@ -1,4 +1,4 @@
-﻿/*
+/*
  * MIT License
  *
  * Copyright (c) 2018 Clark Yang
@@ -22,18 +22,17 @@
  * SOFTWARE.
  */
 
-using System.Threading.Tasks;
+using System.Text;
 
-namespace Loxodon.Framework.Examples
+namespace Loxodon.Framework.Views.TextMeshPro
 {
-    public interface IAccountRepository
-	{
-		Task<Account> Get (string username);
+    public interface IFormattableText
+    {
+        internal static StringBuilder BUFFER = new StringBuilder();
+        string Format { get; set; }
 
-		Task<Account> Save (Account account);
+        int ParameterCount { get; set; }
 
-		Task<Account> Update (Account account);
-
-		Task<bool> Delete (string username);
-	}
+        Parameters Parameters { get; set; }
+    }
 }

@@ -30,7 +30,9 @@ using Loxodon.Framework.Observables;
 using Loxodon.Framework.Prefs;
 using Loxodon.Framework.ViewModels;
 using Loxodon.Log;
+using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Loxodon.Framework.Examples
 {
@@ -167,18 +169,7 @@ namespace Loxodon.Framework.Examples
                 if (!(this.ValidateUsername() && this.ValidatePassword()))
                     return;
 
-                IAsyncResult<Account> result = this.accountService.Login(this.username, this.password);
-                Account account = await result;
-                if (result.Exception != null)
-                {
-                    if (log.IsErrorEnabled)
-                        log.ErrorFormat("Exception:{0}", result.Exception);
-
-                    var tipContent = this.localization.GetText("login.exception.tip", "Login exception.");
-                    this.toastRequest.Raise(new ToastNotification(tipContent,2f));/* show toast */
-                    return;
-                }
-
+                Account account = await this.accountService.Login(this.username, this.password);
                 if (account != null)
                 {
                     /* login success */
@@ -191,8 +182,16 @@ namespace Loxodon.Framework.Examples
                 {
                     /* Login failure */
                     var tipContent = this.localization.GetText("login.failure.tip", "Login failure.");
-                    this.toastRequest.Raise(new ToastNotification(tipContent,2f));/* show toast */
+                    this.toastRequest.Raise(new ToastNotification(tipContent, 2f));/* show toast */
                 }
+            }
+            catch (Exception e)
+            {
+                if (log.IsErrorEnabled)
+                    log.ErrorFormat("Exception:{0}", e);
+
+                var tipContent = this.localization.GetText("login.exception.tip", "Login exception.");
+                this.toastRequest.Raise(new ToastNotification(tipContent, 2f));/* show toast */
             }
             finally
             {
@@ -200,7 +199,7 @@ namespace Loxodon.Framework.Examples
             }
         }
 
-        public IAsyncResult<Account> GetAccount()
+        public Task<Account> GetAccount()
         {
             return this.accountService.GetAccount(this.Username);
         }

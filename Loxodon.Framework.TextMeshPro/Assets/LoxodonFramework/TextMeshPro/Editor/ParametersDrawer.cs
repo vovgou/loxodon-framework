@@ -47,7 +47,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             {
                 if (textProperty.objectReferenceValue != null)
                 {
-                    FormattableTextMeshProUGUI formableText = (FormattableTextMeshProUGUI)textProperty.objectReferenceValue;
+                    IFormattableText formableText = (IFormattableText)textProperty.objectReferenceValue;
                     if (capacityProperty != null)
                     {
                         int count = formableText.ParameterCount;
