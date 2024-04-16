@@ -40,8 +40,8 @@ puppeteer:
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework-data": "2.4.9", //必选
-        "com.vovgou.loxodon-framework-litedb": "2.4.9", //可选
-        "com.vovgou.loxodon-framework-newtonsoft": "2.4.9" //可选
+        "com.vovgou.loxodon-framework-data-litedb": "2.4.9", //可选
+        "com.vovgou.loxodon-framework-data-newtonsoft": "2.4.9" //可选
       },
       "scopedRegistries": [
         {
