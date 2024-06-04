@@ -1,4 +1,4 @@
-name: Temp Publish To NPMJS
+name: Patch Publish To NPMJS
 
 on:
   workflow_dispatch: 
