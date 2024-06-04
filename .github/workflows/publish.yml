@@ -85,6 +85,11 @@ jobs:
           cd $GITHUB_WORKSPACE/Loxodon.Framework.TextFormatting/Assets/LoxodonFramework/TextFormatting
           npm publish
 
+      - name: Publish Loxodon.Framework.TextUGUI
+        run: |
+          cd $GITHUB_WORKSPACE/Loxodon.Framework.TextUGUI/Assets/LoxodonFramework/TextUGUI
+          npm publish
+
       - name: Publish Loxodon.Framework.TextMeshPro
         run: |
           cd $GITHUB_WORKSPACE/Loxodon.Framework.TextMeshPro/Assets/LoxodonFramework/TextMeshPro
