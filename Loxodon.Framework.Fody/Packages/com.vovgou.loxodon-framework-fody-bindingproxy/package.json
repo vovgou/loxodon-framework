@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-fody-bindingproxy",
   "displayName": "Loxodon Framework Fody BindingProxy",
-  "version": "2.6.4",
+  "version": "2.6.5",
   "unity": "2018.4",
   "description": "This is a plugin for static weaving code that integrates BindingProxy.Fody into a Unity project.",
   "license": "MIT",

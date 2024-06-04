@@ -29,6 +29,7 @@ using UnityEngine.Events;
 
 using Loxodon.Framework.Binding.Reflection;
 using Loxodon.Framework.Observables;
+using UnityEngine;
 
 namespace Loxodon.Framework.Binding.Proxy.Targets
 {
@@ -134,7 +135,18 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.Double: return new UnityPropertyProxy<double>(target, propertyInfo, (UnityEvent<double>)updateTrigger);
                 case TypeCode.Decimal: return new UnityPropertyProxy<decimal>(target, propertyInfo, (UnityEvent<decimal>)updateTrigger);
                 case TypeCode.DateTime: return new UnityPropertyProxy<DateTime>(target, propertyInfo, (UnityEvent<DateTime>)updateTrigger);
-                default: return (ITargetProxy)Activator.CreateInstance(typeof(UnityPropertyProxy<>).MakeGenericType(propertyInfo.ValueType), target, propertyInfo, updateTrigger);
+                default:
+                    {
+                        Type valueType = propertyInfo.ValueType;
+                        if (valueType.Equals(typeof(Vector2)))
+                            return new UnityPropertyProxy<Vector2>(target, propertyInfo, (UnityEvent<Vector2>)updateTrigger);
+                        else if (valueType.Equals(typeof(Vector3)))
+                            return new UnityPropertyProxy<Vector3>(target, propertyInfo, (UnityEvent<Vector3>)updateTrigger);
+                        else if (valueType.Equals(typeof(Vector4)))
+                            return new UnityPropertyProxy<Vector4>(target, propertyInfo, (UnityEvent<Vector4>)updateTrigger);
+                        else
+                            return (ITargetProxy)Activator.CreateInstance(typeof(UnityPropertyProxy<>).MakeGenericType(valueType), target, propertyInfo, updateTrigger);//JIT Exception
+                    }
             }
         }
 
@@ -158,7 +170,18 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.Double: return new UnityFieldProxy<double>(target, fieldInfo, (UnityEvent<double>)updateTrigger);
                 case TypeCode.Decimal: return new UnityFieldProxy<decimal>(target, fieldInfo, (UnityEvent<decimal>)updateTrigger);
                 case TypeCode.DateTime: return new UnityFieldProxy<DateTime>(target, fieldInfo, (UnityEvent<DateTime>)updateTrigger);
-                default: return (ITargetProxy)Activator.CreateInstance(typeof(UnityFieldProxy<>).MakeGenericType(fieldInfo.ValueType), target, fieldInfo, updateTrigger);
+                default:
+                    {
+                        Type valueType = fieldInfo.ValueType;
+                        if (valueType.Equals(typeof(Vector2)))
+                            return new UnityFieldProxy<Vector2>(target, fieldInfo, (UnityEvent<Vector2>)updateTrigger);
+                        else if (valueType.Equals(typeof(Vector3)))
+                            return new UnityFieldProxy<Vector3>(target, fieldInfo, (UnityEvent<Vector3>)updateTrigger);
+                        else if (valueType.Equals(typeof(Vector4)))
+                            return new UnityFieldProxy<Vector4>(target, fieldInfo, (UnityEvent<Vector4>)updateTrigger);
+                        else
+                            return (ITargetProxy)Activator.CreateInstance(typeof(UnityFieldProxy<>).MakeGenericType(valueType), target, fieldInfo, updateTrigger);//JIT Exception
+                    }
             }
         }
 
@@ -191,14 +214,25 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                         case TypeCode.Double: return new UnityEventProxy<double>(target, (UnityEvent<double>)unityEvent);
                         case TypeCode.Decimal: return new UnityEventProxy<decimal>(target, (UnityEvent<decimal>)unityEvent);
                         case TypeCode.DateTime: return new UnityEventProxy<DateTime>(target, (UnityEvent<DateTime>)unityEvent);
-                        default: return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<>).MakeGenericType(paramTypes[0]), target, unityEvent);
+                        default:
+                            {
+                                Type valueType = paramTypes[0];
+                                if (valueType.Equals(typeof(Vector2)))
+                                    return new UnityEventProxy<Vector2>(target, (UnityEvent<Vector2>)unityEvent);
+                                else if (valueType.Equals(typeof(Vector3)))
+                                    return new UnityEventProxy<Vector3>(target, (UnityEvent<Vector3>)unityEvent);
+                                else if (valueType.Equals(typeof(Vector4)))
+                                    return new UnityEventProxy<Vector4>(target, (UnityEvent<Vector4>)unityEvent);
+                                else
+                                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<>).MakeGenericType(valueType), target, unityEvent);//JIT Exception
+                            }
                     }
-                //case 2:
-                //    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,>).MakeGenericType(paramTypes), target, unityEvent);
-                //case 3:
-                //    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,,>).MakeGenericType(paramTypes), target, unityEvent);
-                //case 4:
-                //    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,,,>).MakeGenericType(paramTypes), target, unityEvent);
+                case 2:
+                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,>).MakeGenericType(paramTypes), target, unityEvent);//If creating an exception, define a static type:static Type t = tyeof(UnityEventProxy<P1,P2>)
+                case 3:
+                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,,>).MakeGenericType(paramTypes), target, unityEvent);
+                case 4:
+                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,,,>).MakeGenericType(paramTypes), target, unityEvent);
                 default:
                     throw new NotSupportedException("Too many parameters");
             }

@@ -26,7 +26,7 @@ require("framework.System")
 
 local Loading = CS.Loxodon.Framework.Views.Loading
 local Context = CS.Loxodon.Framework.Contexts.Context
-
+local AsyncWindowInteractionAction = CS.Loxodon.Framework.Views.InteractionActions.AsyncWindowInteractionAction
 local StartupViewModel = require("Views.UI.Startup.StartupViewModel")
 
 ---
@@ -42,10 +42,12 @@ function M:onCreate(bundle)
 	local context = Context.GetApplicationContext() 
 
 	self.locator = context:GetService("IUIViewLocator")
+	self.openLoginWindowAction = AsyncWindowInteractionAction("LuaUI/Logins/Login",self.WindowManager)
 
 	local bindingSet = self:CreateBindingSet()
 
-	bindingSet:Bind():For("onOpenLoginWindow"):To("loginRequest")
+	--bindingSet:Bind():For("onOpenLoginWindow"):To("loginRequest")
+	bindingSet:Bind():For("openLoginWindowAction"):To("loginRequest")
 	bindingSet:Bind():For("onDismissRequest"):To("dismissRequest")
 
 	bindingSet:Bind(self.progressBarSlider):For("value", "onValueChanged"):To("progressBar.progress"):TwoWay()
@@ -62,6 +64,8 @@ function M:onDismissRequest(sender, args)
 	self:Dismiss()
 end
 
+--[[
+-- Use AsyncWindowInteractionAction instead of the following function
 function M:onOpenLoginWindow(sender, args)
 	local loginWindow = self.locator:LoadWindow(self.WindowManager, "LuaUI/Logins/Login"); 
 
@@ -83,5 +87,6 @@ function M:onOpenLoginWindow(sender, args)
 	loginWindow:Create()	
 	loginWindow:Show()
 end
+--]]
 
 return M

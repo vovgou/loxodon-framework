@@ -23,6 +23,7 @@
  */
 
 using Com.TheFallenGames.OSA.Demos.Common;
+using Com.TheFallenGames.OSA.Util.PullToRefresh;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Commands;
 using Loxodon.Framework.Contexts;
@@ -123,6 +124,23 @@ namespace Loxodon.Framework.Tutorials.OSA
             items.Clear();
         }
 
+        public void RefreshItems(float sign)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                if (sign == -1)
+                {
+                    //Add Item at the bottom
+                    items.Add(CreateItem());
+                }
+                else
+                {
+                    //Add Item at the top
+                    items.Insert(i, CreateItem());
+                }
+            }
+        }
+
         private void CreateItems(int count)
         {
             this.items = new ObservableList<ItemViewModel>();
@@ -168,6 +186,7 @@ namespace Loxodon.Framework.Tutorials.OSA
             bindingSet.Bind(moveButton).For(v => v.onClick).To(vm => vm.MoveItem);
             bindingSet.Bind(resetButton).For(v => v.onClick).To(vm => vm.ResetItem);
             bindingSet.Bind(listView).For(v => v.Items).To(vm => vm.Items);
+            bindingSet.Bind(listView.GetComponent<PullToRefreshBehaviour>()).For(v => v.OnRefreshWithSign).To<float>(vm => vm.RefreshItems);
             bindingSet.Bind(itemDetailView).For(v => v.Item).To(vm => vm.SelectedItem);
             //bindingSet.Bind().For(v => v.OnOpenItemEditView).To(vm => vm.ItemEditRequest);
             bindingSet.Bind().For(v => v.editViewInteractionAction).To(vm => vm.ItemEditRequest);

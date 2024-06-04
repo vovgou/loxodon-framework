@@ -42,7 +42,7 @@ Installing the framework in this way does not require nodejs and openm-cli.
     {
       "dependencies": {
         ...
-        "com.vovgou.loxodon-framework-textmeshpro": "2.6.2"
+        "com.vovgou.loxodon-framework-textmeshpro": "2.6.5"
       },
       "scopedRegistries": [
         {

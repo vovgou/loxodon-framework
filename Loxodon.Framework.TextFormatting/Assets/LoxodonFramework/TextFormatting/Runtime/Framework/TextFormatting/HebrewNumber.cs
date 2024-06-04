@@ -97,7 +97,7 @@ namespace Loxodon.Framework.TextFormatting
         //
         ////////////////////////////////////////////////////////////////////////////
 
-        internal static void ToString(int Number,StringBuilder result)
+        internal static void ToString(int Number, ref ValueStringBuilder result)
         {
             char cTens = '\x0';
             char cUnits;               // tens and units chars
@@ -214,7 +214,7 @@ namespace Loxodon.Framework.TextFormatting
 
             if (result.Length > 1)
             {
-                result.Insert(result.Length - 1, '"');
+                result.Insert(result.Length - 1, '"', 1);
             }
             else
             {

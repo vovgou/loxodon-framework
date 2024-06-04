@@ -33,9 +33,9 @@ namespace Loxodon.Framework.TextFormatting
             Full = 2,
         }
 
-        internal static void Format(TimeSpan value, ReadOnlySpan<char> format, StringBuilder result)
+        internal static void Format(TimeSpan value, ReadOnlySpan<char> format,ref ValueStringBuilder result)
         {
-            Format(value, format, null, result);
+            Format(value, format, null,ref result);
         }
 
         //
@@ -43,7 +43,7 @@ namespace Loxodon.Framework.TextFormatting
         //
         //  Actions: Main method called from TimeSpan.ToString
         // 
-        internal static void Format(TimeSpan value, ReadOnlySpan<char> format, IFormatProvider formatProvider, StringBuilder result)
+        internal static void Format(TimeSpan value, ReadOnlySpan<char> format, IFormatProvider formatProvider, ref ValueStringBuilder result)
         {
             // standard formats
             if (format == null || format.Length <= 1)
@@ -52,7 +52,7 @@ namespace Loxodon.Framework.TextFormatting
 
                 if (f == 'c' || f == 't' || f == 'T')
                 {
-                    FormatStandard(value, true, format, Pattern.Minimum, result);
+                    FormatStandard(value, true, format, Pattern.Minimum, ref result);
                     return;
                 }
 
@@ -70,13 +70,13 @@ namespace Loxodon.Framework.TextFormatting
                     else
                         pattern = Pattern.Full;
 
-                    FormatStandard(value, false, format, pattern, result);
+                    FormatStandard(value, false, format, pattern, ref result);
                     return;
                 }
                 throw new FormatException("Invalid Format");
             }
 
-            FormatCustomized(value, format, DateTimeFormatInfo.GetInstance(formatProvider), result);
+            FormatCustomized(value, format, DateTimeFormatInfo.GetInstance(formatProvider), ref result);
         }
 
         //
@@ -84,7 +84,7 @@ namespace Loxodon.Framework.TextFormatting
         //
         //  Actions: Format the TimeSpan instance using the specified format.
         // 
-        private static void FormatStandard(TimeSpan value, bool isInvariant, ReadOnlySpan<char> format, Pattern pattern, StringBuilder result)
+        private static void FormatStandard(TimeSpan value, bool isInvariant, ReadOnlySpan<char> format, Pattern pattern, ref ValueStringBuilder result)
         {
             int day = (int)(value.Ticks / TimeSpan.TicksPerDay);
             long time = value.Ticks % TimeSpan.TicksPerDay;
@@ -122,18 +122,19 @@ namespace Loxodon.Framework.TextFormatting
 
             result.Append(literal.Start);                           // [-]
             if (pattern == Pattern.Full || day != 0)
-            {          //
-                result.Append(day);                                 // [dd]
+            {
+                //result.Append(day);                                 // [dd]
+                NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.dd - 1], day, CultureInfo.InvariantCulture, ref result);
                 result.Append(literal.DayHourSep);                  // [.]
             }                                                   //
             //sb.Append(IntToString(hours, literal.hh));          // hh
-            NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.hh - 1], hours, CultureInfo.InvariantCulture, result);
+            NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.hh - 1], hours, CultureInfo.InvariantCulture, ref result);
             result.Append(literal.HourMinuteSep);                   // :
             //sb.Append(IntToString(minutes, literal.mm));        // mm
-            NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.mm - 1], minutes, CultureInfo.InvariantCulture, result);
+            NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.mm - 1], minutes, CultureInfo.InvariantCulture, ref result);
             result.Append(literal.MinuteSecondSep);                 // :
             //sb.Append(IntToString(seconds, literal.ss));        // ss
-            NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.ss - 1], seconds, CultureInfo.InvariantCulture, result);
+            NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.ss - 1], seconds, CultureInfo.InvariantCulture, ref result);
             if (!isInvariant && pattern == Pattern.Minimum)
             {
                 int effectiveDigits = literal.ff;
@@ -153,14 +154,14 @@ namespace Loxodon.Framework.TextFormatting
                 {
                     result.Append(literal.SecondFractionSep);           // [.FFFFFFF]
                     //outputBuffer.Append((fraction).ToString(DateTimeFormat.fixedNumberFormats[effectiveDigits - 1], CultureInfo.InvariantCulture));
-                    NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[effectiveDigits - 1], fraction, CultureInfo.InvariantCulture, result);
+                    NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[effectiveDigits - 1], fraction, CultureInfo.InvariantCulture, ref result);
                 }
             }
             else if (pattern == Pattern.Full || fraction != 0)
             {
                 result.Append(literal.SecondFractionSep);           // [.]
                 //sb.Append(IntToString(fraction, literal.ff));   // [fffffff]
-                NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.ff - 1], fraction, CultureInfo.InvariantCulture, result);
+                NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.ff - 1], fraction, CultureInfo.InvariantCulture, ref result);
             }                                                   //
             result.Append(literal.End);
         }
@@ -171,12 +172,12 @@ namespace Loxodon.Framework.TextFormatting
         //  Actions: Format the TimeSpan instance using the specified format.
         // 
 
-        internal static void FormatCustomized(TimeSpan value, ReadOnlySpan<char> format, DateTimeFormatInfo dtfi, StringBuilder result)
+        internal static void FormatCustomized(TimeSpan value, ReadOnlySpan<char> format, DateTimeFormatInfo dtfi, ref ValueStringBuilder result)
         {
-            FormatCustomized(value, format, 0, format.Length, dtfi, result);
+            FormatCustomized(value, format, 0, format.Length, dtfi, ref result);
         }
 
-        internal static void FormatCustomized(TimeSpan value, ReadOnlySpan<char> format, int index, int length, DateTimeFormatInfo dtfi, StringBuilder result)
+        internal static void FormatCustomized(TimeSpan value, ReadOnlySpan<char> format, int index, int length, DateTimeFormatInfo dtfi, ref ValueStringBuilder result)
         {
 
             Contract.Assert(dtfi != null, "dtfi == null");
@@ -209,19 +210,19 @@ namespace Loxodon.Framework.TextFormatting
                         tokenLen = DateTimeFormat.ParseRepeatPattern(format, i, ch);
                         if (tokenLen > 2)
                             throw new FormatException("Invalid Format");
-                        DateTimeFormat.FormatDigits(hours, tokenLen, result);
+                        DateTimeFormat.FormatDigits(hours, tokenLen, ref result);
                         break;
                     case 'm':
                         tokenLen = DateTimeFormat.ParseRepeatPattern(format, i, ch);
                         if (tokenLen > 2)
                             throw new FormatException("Invalid Format");
-                        DateTimeFormat.FormatDigits(minutes, tokenLen, result);
+                        DateTimeFormat.FormatDigits(minutes, tokenLen, ref result);
                         break;
                     case 's':
                         tokenLen = DateTimeFormat.ParseRepeatPattern(format, i, ch);
                         if (tokenLen > 2)
                             throw new FormatException("Invalid Format");
-                        DateTimeFormat.FormatDigits(seconds, tokenLen, result);
+                        DateTimeFormat.FormatDigits(seconds, tokenLen, ref result);
                         break;
                     case 'f':
                         //
@@ -234,7 +235,7 @@ namespace Loxodon.Framework.TextFormatting
                         tmp = (long)fraction;
                         tmp /= (long)Math.Pow(10, DateTimeFormat.MaxSecondsFractionDigits - tokenLen);
                         //result.Append((tmp).ToString(DateTimeFormat.fixedNumberFormats[tokenLen - 1], CultureInfo.InvariantCulture));
-                        NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[tokenLen - 1], (int)tmp, CultureInfo.InvariantCulture, result);
+                        NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[tokenLen - 1], (int)tmp, CultureInfo.InvariantCulture, ref result);
                         break;
                     case 'F':
                         //
@@ -262,7 +263,7 @@ namespace Loxodon.Framework.TextFormatting
                         if (effectiveDigits > 0)
                         {
                             //result.Append((tmp).ToString(DateTimeFormat.fixedNumberFormats[effectiveDigits - 1], CultureInfo.InvariantCulture));
-                            NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[effectiveDigits - 1], tmp, CultureInfo.InvariantCulture, result);
+                            NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[effectiveDigits - 1], tmp, CultureInfo.InvariantCulture, ref result);
                         }
                         break;
                     case 'd':
@@ -273,11 +274,11 @@ namespace Loxodon.Framework.TextFormatting
                         tokenLen = DateTimeFormat.ParseRepeatPattern(format, i, ch);
                         if (tokenLen > 8)
                             throw new FormatException("Invalid Format");
-                        DateTimeFormat.FormatDigits(day, tokenLen, true, result);
+                        DateTimeFormat.FormatDigits(day, tokenLen, true, ref result);
                         break;
                     case '\'':
                     case '\"':
-                        tokenLen = DateTimeFormat.ParseQuoteString(format, i, result);
+                        tokenLen = DateTimeFormat.ParseQuoteString(format, i, ref result);
                         break;
                     case '%':
                         // Optional format character.
@@ -289,7 +290,7 @@ namespace Loxodon.Framework.TextFormatting
                         if (nextChar >= 0 && nextChar != (int)'%')
                         {
                             //result.Append(FormatCustomized(value, ((char)nextChar).ToString(), dtfi));
-                            FormatCustomized(value, format, i + 1, 1, dtfi, result);
+                            FormatCustomized(value, format, i + 1, 1, dtfi, ref result);
                             tokenLen = 2;
                         }
                         else

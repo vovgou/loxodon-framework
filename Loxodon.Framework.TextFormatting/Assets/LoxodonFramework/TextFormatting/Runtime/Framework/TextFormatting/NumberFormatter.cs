@@ -36,7 +36,6 @@
 
 using System;
 using System.Globalization;
-using System.Text;
 using System.Threading;
 using static Loxodon.Framework.TextFormatting.NumberConstants;
 
@@ -812,39 +811,39 @@ namespace Loxodon.Framework.TextFormatting
                 threadNumberFormatter = this;
         }
 
-        public static void NumberToString(ReadOnlySpan<char> format, uint value, IFormatProvider fp, StringBuilder result)
+        public static void NumberToString(ReadOnlySpan<char> format, uint value, IFormatProvider fp, ref ValueStringBuilder result)
         {
             NumberFormatter inst = GetInstance(fp);
             inst.Init(format, value, Int32DefPrecision);
-            inst.IntegerToString(format, fp, result);
+            inst.IntegerToString(format, fp, ref result);
             inst.Release();
         }
 
-        public static void NumberToString(ReadOnlySpan<char> format, int value, IFormatProvider fp, StringBuilder result)
+        public static void NumberToString(ReadOnlySpan<char> format, int value, IFormatProvider fp, ref ValueStringBuilder result)
         {
             NumberFormatter inst = GetInstance(fp);
             inst.Init(format, value, UInt32DefPrecision);
-            inst.IntegerToString(format, fp, result);
+            inst.IntegerToString(format, fp, ref result);
             inst.Release();
         }
 
-        public static void NumberToString(ReadOnlySpan<char> format, ulong value, IFormatProvider fp, StringBuilder result)
+        public static void NumberToString(ReadOnlySpan<char> format, ulong value, IFormatProvider fp, ref ValueStringBuilder result)
         {
             NumberFormatter inst = GetInstance(fp);
             inst.Init(format, value);
-            inst.IntegerToString(format, fp, result);
+            inst.IntegerToString(format, fp, ref result);
             inst.Release();
         }
 
-        public static void NumberToString(ReadOnlySpan<char> format, long value, IFormatProvider fp, StringBuilder result)
+        public static void NumberToString(ReadOnlySpan<char> format, long value, IFormatProvider fp, ref ValueStringBuilder result)
         {
             NumberFormatter inst = GetInstance(fp);
             inst.Init(format, value);
-            inst.IntegerToString(format, fp, result);
+            inst.IntegerToString(format, fp, ref result);
             inst.Release();
         }
 
-        public static void NumberToString(ReadOnlySpan<char> format, float value, IFormatProvider fp, StringBuilder result)
+        public static void NumberToString(ReadOnlySpan<char> format, float value, IFormatProvider fp, ref ValueStringBuilder result)
         {
             NumberFormatter inst = GetInstance(fp);
             inst.Init(format, value, SingleDefPrecision);
@@ -857,14 +856,14 @@ namespace Loxodon.Framework.TextFormatting
                 else
                     result.Append(nfi.NegativeInfinitySymbol);
             else if (inst._specifier == 'R')
-                inst.FormatRoundtrip(value, nfi, result);
+                inst.FormatRoundtrip(value, nfi, ref result);
             else
-                inst.NumberToString(format, nfi, result);
+                inst.NumberToString(format, nfi, ref result);
 
             inst.Release();
         }
 
-        public static void NumberToString(ReadOnlySpan<char> format, double value, IFormatProvider fp, StringBuilder result)
+        public static void NumberToString(ReadOnlySpan<char> format, double value, IFormatProvider fp, ref ValueStringBuilder result)
         {
             NumberFormatter inst = GetInstance(fp);
             inst.Init(format, value, DoubleDefPrecision);
@@ -878,21 +877,21 @@ namespace Loxodon.Framework.TextFormatting
                 else
                     res = nfi.NegativeInfinitySymbol;
             else if (inst._specifier == 'R')
-                inst.FormatRoundtrip(value, nfi, result);
+                inst.FormatRoundtrip(value, nfi, ref result);
             else
-                inst.NumberToString(format, nfi, result);
+                inst.NumberToString(format, nfi, ref result);
             inst.Release();
         }
 
-        public static void NumberToString(ReadOnlySpan<char> format, decimal value, IFormatProvider fp, StringBuilder result)
+        public static void NumberToString(ReadOnlySpan<char> format, decimal value, IFormatProvider fp, ref ValueStringBuilder result)
         {
             NumberFormatter inst = GetInstance(fp);
             inst.Init(format, value);
-            inst.NumberToString(format, inst.GetNumberFormatInstance(fp), result);
+            inst.NumberToString(format, inst.GetNumberFormatInstance(fp), ref result);
             inst.Release();
         }
 
-        private void IntegerToString(ReadOnlySpan<char> format, IFormatProvider fp, StringBuilder result)
+        private void IntegerToString(ReadOnlySpan<char> format, IFormatProvider fp, ref ValueStringBuilder result)
         {
             NumberFormatInfo nfi = GetNumberFormatInstance(fp);
             switch (_specifier)
@@ -960,7 +959,7 @@ namespace Loxodon.Framework.TextFormatting
                     {
                         if (_isCustomFormat)
                         {
-                            FormatCustom(format, nfi, result);
+                            FormatCustom(format, nfi, ref result);
                             break;
                         }
                         throw new FormatException("The specified format '" + format.ToString() + "' is invalid");
@@ -968,7 +967,7 @@ namespace Loxodon.Framework.TextFormatting
             }
         }
 
-        private void NumberToString(ReadOnlySpan<char> format, NumberFormatInfo nfi, StringBuilder result)
+        private void NumberToString(ReadOnlySpan<char> format, NumberFormatInfo nfi, ref ValueStringBuilder result)
         {
             switch (_specifier)
             {
@@ -1019,7 +1018,7 @@ namespace Loxodon.Framework.TextFormatting
                     {
                         if (_isCustomFormat)
                         {
-                            FormatCustom(format, nfi, result);
+                            FormatCustom(format, nfi, ref result);
                             break;
                         }
                         throw new FormatException("The specified format '" + format.ToString() + "' is invalid");
@@ -1231,7 +1230,7 @@ namespace Loxodon.Framework.TextFormatting
             output = new ReadOnlySpan<char>(_cbuf, 0, _ind);
         }
 
-        private void FormatRoundtrip(double origval, NumberFormatInfo nfi, StringBuilder result)
+        private void FormatRoundtrip(double origval, NumberFormatInfo nfi, ref ValueStringBuilder result)
         {
             ReadOnlySpan<char> output;
             if (origval >= MinRoundtripVal && origval <= MaxRoundtripVal)
@@ -1248,7 +1247,7 @@ namespace Loxodon.Framework.TextFormatting
             result.Append(output);
         }
 
-        private void FormatRoundtrip(float origval, NumberFormatInfo nfi, StringBuilder result)
+        private void FormatRoundtrip(float origval, NumberFormatInfo nfi, ref ValueStringBuilder result)
         {
             ReadOnlySpan<char> output;
             FormatGeneral(_defPrecision, nfi, out output);
@@ -1461,13 +1460,7 @@ namespace Loxodon.Framework.TextFormatting
             output = new ReadOnlySpan<char>(_cbuf, 0, _ind);
         }
 
-        [ThreadStatic]
-        static StringBuilder SB_INT = new StringBuilder(256);
-        [ThreadStatic]
-        static StringBuilder SB_DEC = new StringBuilder(256);
-        [ThreadStatic]
-        static StringBuilder SB_EXP = new StringBuilder(256);
-        void FormatCustom(ReadOnlySpan<char> format, NumberFormatInfo nfi, StringBuilder result)
+        void FormatCustom(ReadOnlySpan<char> format, NumberFormatInfo nfi, ref ValueStringBuilder result)
         {
             bool p = _positive;
             int offset = 0;
@@ -1483,28 +1476,29 @@ namespace Loxodon.Framework.TextFormatting
 
             CustomInfo info = CustomInfo.Parse(format, offset, length, nfi);
 #if false
-			Console.WriteLine ("Format : {0}",format);
-			Console.WriteLine ("DecimalDigits : {0}",info.DecimalDigits);
-			Console.WriteLine ("DecimalPointPos : {0}",info.DecimalPointPos);
-			Console.WriteLine ("DecimalTailSharpDigits : {0}",info.DecimalTailSharpDigits);
-			Console.WriteLine ("IntegerDigits : {0}",info.IntegerDigits);
-			Console.WriteLine ("IntegerHeadSharpDigits : {0}",info.IntegerHeadSharpDigits);
-			Console.WriteLine ("IntegerHeadPos : {0}",info.IntegerHeadPos);
-			Console.WriteLine ("UseExponent : {0}",info.UseExponent);
-			Console.WriteLine ("ExponentDigits : {0}",info.ExponentDigits);
-			Console.WriteLine ("ExponentTailSharpDigits : {0}",info.ExponentTailSharpDigits);
-			Console.WriteLine ("ExponentNegativeSignOnly : {0}",info.ExponentNegativeSignOnly);
-			Console.WriteLine ("DividePlaces : {0}",info.DividePlaces);
-			Console.WriteLine ("Percents : {0}",info.Percents);
-			Console.WriteLine ("Permilles : {0}",info.Permilles);
+            			Console.WriteLine ("Format : {0}",format);
+            			Console.WriteLine ("DecimalDigits : {0}",info.DecimalDigits);
+            			Console.WriteLine ("DecimalPointPos : {0}",info.DecimalPointPos);
+            			Console.WriteLine ("DecimalTailSharpDigits : {0}",info.DecimalTailSharpDigits);
+            			Console.WriteLine ("IntegerDigits : {0}",info.IntegerDigits);
+            			Console.WriteLine ("IntegerHeadSharpDigits : {0}",info.IntegerHeadSharpDigits);
+            			Console.WriteLine ("IntegerHeadPos : {0}",info.IntegerHeadPos);
+            			Console.WriteLine ("UseExponent : {0}",info.UseExponent);
+            			Console.WriteLine ("ExponentDigits : {0}",info.ExponentDigits);
+            			Console.WriteLine ("ExponentTailSharpDigits : {0}",info.ExponentTailSharpDigits);
+            			Console.WriteLine ("ExponentNegativeSignOnly : {0}",info.ExponentNegativeSignOnly);
+            			Console.WriteLine ("DividePlaces : {0}",info.DividePlaces);
+            			Console.WriteLine ("Percents : {0}",info.Percents);
+            			Console.WriteLine ("Permilles : {0}",info.Permilles);
 #endif
             //StringBuilder sb_int = new StringBuilder(info.IntegerDigits * 2);
             //StringBuilder sb_dec = new StringBuilder(info.DecimalDigits * 2);
             //StringBuilder sb_exp = (info.UseExponent ? new StringBuilder(info.ExponentDigits * 2) : null);
 
-            StringBuilder sb_int = SB_INT.Clear();
-            StringBuilder sb_dec = SB_DEC.Clear();
-            StringBuilder sb_exp = (info.UseExponent ? SB_EXP.Clear() : null);
+            //Initial size is 64 byte to avoid length overflow.
+            ValueStringBuilder sb_int = new ValueStringBuilder(stackalloc char[64]);
+            ValueStringBuilder sb_dec = new ValueStringBuilder(stackalloc char[64]);
+            ValueStringBuilder sb_exp = (info.UseExponent ? new ValueStringBuilder(stackalloc char[64]) : new ValueStringBuilder(stackalloc char[0]));
 
             int diff = 0;
             if (info.Percents > 0)
@@ -1525,15 +1519,15 @@ namespace Loxodon.Framework.TextFormatting
                 }
 
                 expPositive = diff <= 0;
-                AppendNonNegativeNumber(sb_exp, diff < 0 ? -diff : diff);
+                AppendNonNegativeNumber(ref sb_exp, diff < 0 ? -diff : diff);
             }
             else
                 RoundDecimal(info.DecimalDigits);
 
             if (info.IntegerDigits != 0 || !IsZeroInteger)
-                AppendIntegerString(IntegerDigits, sb_int);
+                AppendIntegerString(IntegerDigits, ref sb_int);
 
-            AppendDecimalString(DecimalDigits, sb_dec);
+            AppendDecimalString(DecimalDigits, ref sb_dec);
 
             if (info.UseExponent)
             {
@@ -1541,10 +1535,10 @@ namespace Loxodon.Framework.TextFormatting
                     _positive = true;
 
                 if (sb_int.Length < info.IntegerDigits)
-                    sb_int.Insert(0, "0", info.IntegerDigits - sb_int.Length);
+                    sb_int.Insert(0, '0', info.IntegerDigits - sb_int.Length);
 
                 while (sb_exp.Length < info.ExponentDigits - info.ExponentTailSharpDigits)
-                    sb_exp.Insert(0, '0');
+                    sb_exp.Insert(0, '0', 1);
 
                 if (expPositive && !info.ExponentNegativeSignOnly)
                     sb_exp.Insert(0, nfi.PositiveSign);
@@ -1554,24 +1548,28 @@ namespace Loxodon.Framework.TextFormatting
             else
             {
                 if (sb_int.Length < info.IntegerDigits - info.IntegerHeadSharpDigits)
-                    sb_int.Insert(0, "0", info.IntegerDigits - info.IntegerHeadSharpDigits - sb_int.Length);
-                if (info.IntegerDigits == info.IntegerHeadSharpDigits && IsZeroOnly(sb_int))
+                    sb_int.Insert(0, '0', info.IntegerDigits - info.IntegerHeadSharpDigits - sb_int.Length);
+                if (info.IntegerDigits == info.IntegerHeadSharpDigits && IsZeroOnly(ref sb_int))
                     sb_int.Remove(0, sb_int.Length);
             }
 
-            ZeroTrimEnd(sb_dec, true);
+            ZeroTrimEnd(ref sb_dec, true);
             while (sb_dec.Length < info.DecimalDigits - info.DecimalTailSharpDigits)
                 sb_dec.Append('0');
             if (sb_dec.Length > info.DecimalDigits)
                 sb_dec.Remove(info.DecimalDigits, sb_dec.Length - info.DecimalDigits);
 
-            info.Format(format, offset, length, nfi, _positive, sb_int, sb_dec, sb_exp, result);
+            Span<char> output = stackalloc char[512];
+            info.Format(format, offset, length, nfi, _positive, sb_int.AsSpan(), sb_dec.AsSpan(), sb_exp.AsSpan(), ref output);
+            int len = output.Length;
+            for (int i = 0; i < len; i++)
+                result.Append(output[i]);
         }
         #endregion public number formatting methods
 
         #region StringBuilder formatting helpers
 
-        private static void ZeroTrimEnd(StringBuilder sb, bool canEmpty)
+        private static void ZeroTrimEnd(ref ValueStringBuilder sb, bool canEmpty)
         {
             int len = 0;
             for (int i = sb.Length - 1; (canEmpty ? i >= 0 : i > 0); i--)
@@ -1585,7 +1583,7 @@ namespace Loxodon.Framework.TextFormatting
                 sb.Remove(sb.Length - len, len);
         }
 
-        private static bool IsZeroOnly(StringBuilder sb)
+        private static bool IsZeroOnly(ref ValueStringBuilder sb)
         {
             for (int i = 0; i < sb.Length; i++)
                 if (char.IsDigit(sb[i]) && sb[i] != '0')
@@ -1593,7 +1591,7 @@ namespace Loxodon.Framework.TextFormatting
             return true;
         }
 
-        private static void AppendNonNegativeNumber(StringBuilder sb, int v)
+        private static void AppendNonNegativeNumber(ref ValueStringBuilder sb, int v)
         {
             if (v < 0)
                 throw new ArgumentException();
@@ -1611,7 +1609,7 @@ namespace Loxodon.Framework.TextFormatting
 
         #region Append helpers
 
-        private void AppendIntegerString(int minLength, StringBuilder sb)
+        private void AppendIntegerString(int minLength, ref ValueStringBuilder sb)
         {
             if (_decPointPos <= 0)
             {
@@ -1622,7 +1620,7 @@ namespace Loxodon.Framework.TextFormatting
             if (_decPointPos < minLength)
                 sb.Append('0', minLength - _decPointPos);
 
-            AppendDigits(_digitsLen - _decPointPos, _digitsLen, sb);
+            AppendDigits(_digitsLen - _decPointPos, _digitsLen, ref sb);
         }
 
         private void AppendIntegerString(int minLength)
@@ -1639,9 +1637,9 @@ namespace Loxodon.Framework.TextFormatting
             AppendDigits(_digitsLen - _decPointPos, _digitsLen);
         }
 
-        private void AppendDecimalString(int precision, StringBuilder sb)
+        private void AppendDecimalString(int precision, ref ValueStringBuilder sb)
         {
-            AppendDigits(_digitsLen - precision - _decPointPos, _digitsLen - _decPointPos, sb);
+            AppendDigits(_digitsLen - precision - _decPointPos, _digitsLen - _decPointPos, ref sb);
         }
 
         private void AppendDecimalString(int precision)
@@ -1846,7 +1844,7 @@ namespace Loxodon.Framework.TextFormatting
             }
         }
 
-        private void AppendDigits(int start, int end, StringBuilder sb)
+        private void AppendDigits(int start, int end, ref ValueStringBuilder sb)
         {
             if (start >= end)
                 return;
@@ -2064,7 +2062,24 @@ namespace Loxodon.Framework.TextFormatting
                 bool exponentArea = false;
                 bool sharpContinues = true;
 
-                CustomInfo info = new CustomInfo();
+                CustomInfo info = new CustomInfo()
+                {
+                    UseGroup = false,
+                    DecimalDigits = 0,
+                    DecimalPointPos = -1,
+                    DecimalTailSharpDigits = 0,
+                    IntegerDigits = 0,
+                    IntegerHeadSharpDigits = 0,
+                    IntegerHeadPos = 0,
+                    UseExponent = false,
+                    ExponentDigits = 0,
+                    ExponentTailSharpDigits = 0,
+                    ExponentNegativeSignOnly = true,
+                    DividePlaces = 0,
+                    Percents = 0,
+                    Permilles = 0,
+                };
+
                 int groupSeparatorCounter = 0;
 
                 for (int i = offset; i - offset < length; i++)
@@ -2193,14 +2208,16 @@ namespace Loxodon.Framework.TextFormatting
                 return info;
             }
 
-            public void Format(ReadOnlySpan<char> format, int offset, int length, NumberFormatInfo nfi, bool positive, StringBuilder sb_int, StringBuilder sb_dec, StringBuilder sb_exp, StringBuilder outputBuffer)
+            public void Format(ReadOnlySpan<char> format, int offset, int length, NumberFormatInfo nfi, bool positive, ReadOnlySpan<char> sb_int, ReadOnlySpan<char> sb_dec, ReadOnlySpan<char> sb_exp, ref Span<char> output)
             {
                 char literal = '\0';
                 bool integerArea = true;
                 bool decimalArea = false;
+                bool has_sb_exp = UseExponent;
                 int intSharpCounter = 0;
                 int sb_int_index = 0;
                 int sb_dec_index = 0;
+                int index = 0;
 
                 int[] groups = UseGroup ? nfi.NumberGroupSizes : null;
                 string groupSeparator = nfi.NumberGroupSeparator;
@@ -2238,6 +2255,9 @@ namespace Loxodon.Framework.TextFormatting
                 else
                     UseGroup = false;
 
+                if (!positive)
+                    Append(ref output, ref index, nfi.NegativeSign);
+
                 for (int i = offset; i - offset < length; i++)
                 {
                     char c = format[i];
@@ -2249,7 +2269,7 @@ namespace Loxodon.Framework.TextFormatting
                     }
                     if (literal != '\0')
                     {
-                        outputBuffer.Append(c);
+                        Append(ref output, ref index, c);//outputBuffer.Append(c);
                         continue;
                     }
 
@@ -2258,7 +2278,7 @@ namespace Loxodon.Framework.TextFormatting
                         case '\\':
                             i++;
                             if (i - offset < length)
-                                outputBuffer.Append(format[i]);
+                                Append(ref output, ref index, format[i]); //outputBuffer.Append(format[i]);
                             continue;
                         case '\'':
                         case '\"':
@@ -2274,10 +2294,10 @@ namespace Loxodon.Framework.TextFormatting
                                 if (IntegerDigits - intSharpCounter < sb_int.Length + sb_int_index || c == '0')
                                     while (IntegerDigits - intSharpCounter + sb_int_index < sb_int.Length)
                                     {
-                                        outputBuffer.Append(sb_int[sb_int_index++]);
+                                        Append(ref output, ref index, sb_int[sb_int_index++]); //outputBuffer.Append(sb_int[sb_int_index++]);
                                         if (UseGroup && --intLen > 0 && --counter == 0)
                                         {
-                                            outputBuffer.Append(groupSeparator);
+                                            Append(ref output, ref index, groupSeparator);//outputBuffer.Append(groupSeparator);
                                             if (--groupIndex < groups.Length && groupIndex >= 0)
                                                 groupSize = groups[groupIndex];
                                             counter = groupSize;
@@ -2288,17 +2308,17 @@ namespace Loxodon.Framework.TextFormatting
                             else if (decimalArea)
                             {
                                 if (sb_dec_index < sb_dec.Length)
-                                    outputBuffer.Append(sb_dec[sb_dec_index++]);
+                                    Append(ref output, ref index, sb_dec[sb_dec_index++]);//outputBuffer.Append(sb_dec[sb_dec_index++]);
                                 break;
                             }
 
-                            outputBuffer.Append(c);
+                            Append(ref output, ref index, c);//outputBuffer.Append(c);
                             break;
                         case 'e':
                         case 'E':
-                            if (sb_exp == null || !UseExponent)
+                            if (has_sb_exp || !UseExponent)
                             {
-                                outputBuffer.Append(c);
+                                Append(ref output, ref index, c);//outputBuffer.Append(c);
                                 break;
                             }
 
@@ -2326,12 +2346,13 @@ namespace Loxodon.Framework.TextFormatting
                                 integerArea = (DecimalPointPos < 0);
                                 decimalArea = !integerArea;
 
-                                outputBuffer.Append(c);
-                                outputBuffer.Append(sb_exp);
-                                sb_exp = null;
+                                Append(ref output, ref index, c); //outputBuffer.Append(c);
+                                Append(ref output, ref index, sb_exp); //outputBuffer.Append(sb_exp);
+                                //sb_exp = null;
+                                has_sb_exp = false;
                             }
                             else
-                                outputBuffer.Append(c);
+                                Append(ref output, ref index, c);//outputBuffer.Append(c);
 
                             break;
                         case '.':
@@ -2340,10 +2361,10 @@ namespace Loxodon.Framework.TextFormatting
                                 if (DecimalDigits > 0)
                                 {
                                     while (sb_int_index < sb_int.Length)
-                                        outputBuffer.Append(sb_int[sb_int_index++]);
+                                        Append(ref output, ref index, sb_int[sb_int_index++]);//outputBuffer.Append(sb_int[sb_int_index++]);
                                 }
                                 if (sb_dec.Length > 0)
-                                    outputBuffer.Append(nfi.NumberDecimalSeparator);
+                                    Append(ref output, ref index, nfi.NumberDecimalSeparator);//outputBuffer.Append(nfi.NumberDecimalSeparator);
                             }
                             integerArea = false;
                             decimalArea = true;
@@ -2351,19 +2372,37 @@ namespace Loxodon.Framework.TextFormatting
                         case ',':
                             break;
                         case '%':
-                            outputBuffer.Append(nfi.PercentSymbol);
+                            Append(ref output, ref index, nfi.PercentSymbol);//outputBuffer.Append(nfi.PercentSymbol);
                             break;
                         case '\u2030':
-                            outputBuffer.Append(nfi.PerMilleSymbol);
+                            Append(ref output, ref index, nfi.PerMilleSymbol); //outputBuffer.Append(nfi.PerMilleSymbol);
                             break;
                         default:
-                            outputBuffer.Append(c);
+                            Append(ref output, ref index, c); //outputBuffer.Append(c);
                             break;
                     }
                 }
 
-                if (!positive)
-                    outputBuffer.Insert(0, nfi.NegativeSign);
+                output = output.Slice(0, index);
+                //if (!positive)
+                //    outputBuffer.Insert(0, nfi.NegativeSign);
+            }
+
+            void Append(ref Span<char> output, ref int index, ReadOnlySpan<char> s)
+            {
+                foreach (char c in s)
+                    output[index++] = c;
+            }
+
+            void Append(ref Span<char> output, ref int index, char c)
+            {
+                output[index++] = c;
+            }
+
+            void Append(ref Span<char> output, ref int index, string value)
+            {
+                foreach (char c in value)
+                    output[index++] = c;
             }
         }
 

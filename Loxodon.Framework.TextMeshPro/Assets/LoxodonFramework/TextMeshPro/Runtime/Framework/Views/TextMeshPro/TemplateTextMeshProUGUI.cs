@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.TextFormatting;
 using TMPro;
 using UnityEngine;
 using static Loxodon.Framework.Views.TextMeshPro.IFormattableText;

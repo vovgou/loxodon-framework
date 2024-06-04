@@ -25,6 +25,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using UnityEngine.Networking;
 
 namespace Loxodon.Framework.Net.Http
@@ -37,7 +38,7 @@ namespace Loxodon.Framework.Net.Http
         private readonly bool supportBreakpointResume;
         private FileStream downloadFileStream;
         private DownloadInfo downloadInfo;
-
+        private int initialized = 0;
         public DownloadFileHandler(string fileName) : this(null, new FileInfo(fileName))
         {
         }
@@ -110,34 +111,6 @@ namespace Loxodon.Framework.Net.Http
             }
         }
 
-        protected override byte[] GetData() { return null; }
-
-        protected override bool ReceiveData(byte[] data, int dataLength)
-        {
-            if (data == null || data.Length < 1)
-                return false;
-
-            if (supportBreakpointResume)
-            {
-                downloadFileStream.Position = downloadInfo.DownloadedSize;
-                downloadFileStream.Write(data, 0, dataLength);
-                downloadFileStream.Flush();
-
-                downloadInfo.DownloadedSize += dataLength;
-
-                downloadFileStream.Position = downloadInfo.FileSize;
-                downloadInfo.WriteDownloadedTo(downloadFileStream);
-                downloadFileStream.Flush();
-            }
-            else
-            {
-                downloadFileStream.Write(data, 0, dataLength);
-                downloadFileStream.Flush();
-                downloadInfo.DownloadedSize += dataLength;
-            }
-            return true;
-        }
-
         public long TotalSize
         {
             get { return downloadInfo != null ? downloadInfo.FileSize : 0; }
@@ -158,6 +131,36 @@ namespace Loxodon.Framework.Net.Http
             if (this.downloadInfo == null)
                 return 0;
             return downloadInfo.GetProgress();
+        }
+
+        protected override byte[] GetData() { return null; }
+
+        protected override bool ReceiveData(byte[] data, int dataLength)
+        {
+            if (data == null || data.Length < 1)
+                return false;
+
+            InitializeDownloadFileStream(0);
+
+            if (supportBreakpointResume)
+            {
+                downloadFileStream.Position = downloadInfo.DownloadedSize;
+                downloadFileStream.Write(data, 0, dataLength);
+                downloadFileStream.Flush();
+
+                downloadInfo.DownloadedSize += dataLength;
+
+                downloadFileStream.Position = downloadInfo.FileSize;
+                downloadInfo.WriteDownloadedTo(downloadFileStream);
+                downloadFileStream.Flush();
+            }
+            else
+            {
+                downloadFileStream.Write(data, 0, dataLength);
+                downloadFileStream.Flush();
+                downloadInfo.DownloadedSize += dataLength;
+            }
+            return true;
         }
 
         protected override void CompleteContent()
@@ -210,7 +213,7 @@ namespace Loxodon.Framework.Net.Http
         {
             try
             {
-                if (file.Exists)
+                if (file != null && file.Exists)
                     file.Delete();
             }
             catch (Exception) { }
@@ -223,29 +226,45 @@ namespace Loxodon.Framework.Net.Http
 #endif
         {
             //On the IOS platform, this method is called multiple times, ensuring that only the first call is valid to avoid program errors.
-            if (downloadFileStream != null)
-                return;
+            if (!InitializeDownloadFileStream((long)contentLength) && this.downloadInfo != null && this.downloadInfo.FileSize <= 0)
+                this.downloadInfo.FileSize = (long)contentLength;
+        }
 
-            if (!supportBreakpointResume)
+        private bool InitializeDownloadFileStream(long contentLength)
+        {
+#if UNITY_WEBGL
+            if(initialized == 0)
             {
-                this.downloadInfo = new DownloadInfo();
-                this.downloadInfo.DownloadedSize = 0;
-                this.downloadInfo.FileSize = (int)contentLength;
-                this.downloadFileStream = downloadFileInfo.Create();
-                return;
-            }
-
-            if (www.responseCode == 200)//206 breakpoint resume.
+                initialized = 1;
+#else
+            if (Interlocked.CompareExchange(ref initialized, 1, 0) == 0)
             {
-                this.downloadInfo = new DownloadInfo();
-                this.downloadInfo.DownloadedSize = 0;
-                this.downloadInfo.FileSize = (int)contentLength;
-                this.downloadInfo.ETag = www.GetResponseHeader("ETag");
-                this.downloadInfo.LastModified = www.GetResponseHeader("Last-Modified");
-                this.CreateDownloadFile(this.downloadInfo);
-            }
+#endif
+                if (!supportBreakpointResume)
+                {
+                    this.downloadInfo = new DownloadInfo();
+                    this.downloadInfo.DownloadedSize = 0;
+                    this.downloadInfo.FileSize = contentLength;
+                    this.downloadFileStream = downloadFileInfo.Create();
+                    return true;
+                }
 
-            this.downloadFileStream = downloadFileInfo.OpenWrite();
+                if (www.responseCode == 200)//206 breakpoint resume.
+                {
+                    if (contentLength <= 0)
+                        Int64.TryParse(www.GetResponseHeader("Content-Length"), out contentLength);
+                    this.downloadInfo = new DownloadInfo();
+                    this.downloadInfo.DownloadedSize = 0;
+                    this.downloadInfo.FileSize = contentLength;
+                    this.downloadInfo.ETag = www.GetResponseHeader("ETag");
+                    this.downloadInfo.LastModified = www.GetResponseHeader("Last-Modified");
+                    this.CreateDownloadFile(this.downloadInfo);
+                }
+
+                this.downloadFileStream = downloadFileInfo.OpenWrite();
+                return true;
+            }
+            return false;
         }
 
 #if UNITY_2021_3_OR_NEWER

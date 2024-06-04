@@ -43,13 +43,13 @@ namespace Loxodon.Framework.Binding.Proxy.Sources
 
         public virtual object GetValue()
         {
-            DebugWarning();
+            //DebugWarning();
             return null;
         }
 
         public virtual TValue GetValue<TValue>()
         {
-            DebugWarning();
+            //DebugWarning();
             return default(TValue);
         }
 

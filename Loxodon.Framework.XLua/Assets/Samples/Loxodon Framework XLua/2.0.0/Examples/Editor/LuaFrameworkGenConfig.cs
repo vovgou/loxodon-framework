@@ -36,6 +36,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using XLua;
 using IAsyncResult = Loxodon.Framework.Asynchronous.IAsyncResult;
@@ -101,6 +102,8 @@ namespace Loxodon.Framework.Editors
             typeof(EventHandler),
             typeof(Func<object>),
             typeof(IViewModel),
+            typeof(TaskAwaiter),
+            typeof(TaskAwaiter<object>),
             typeof(IAwaiter),
             typeof(IAwaiter<object>),
             typeof(IAwaiter<int>),

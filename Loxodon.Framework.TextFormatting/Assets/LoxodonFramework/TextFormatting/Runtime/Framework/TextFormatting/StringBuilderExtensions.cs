@@ -29,11 +29,8 @@ namespace Loxodon.Framework.TextFormatting
 {
     public static class StringBuilderExtensions
     {
-        private const int FORMAT_SPAN_SIZE = 128;
         private static readonly object EMPTY = new object();
-
-        [ThreadStatic]
-        private static StringBuilder result = new StringBuilder(128);
+        public static int FORMAT_SPAN_SIZE = 128;
 
         public static StringBuilder AppendFormat<T>(this StringBuilder builder, string format, T[] values)
         {
@@ -99,182 +96,200 @@ namespace Loxodon.Framework.TextFormatting
             int len = format.Length;
             char ch = '\x0';
             Span<char> formatSpan = stackalloc char[FORMAT_SPAN_SIZE];
+            ValueStringBuilder result = new ValueStringBuilder(stackalloc char[FORMAT_SPAN_SIZE]);
             int formatIndex = 0;
-            while (true)
+            try
             {
-                while (pos < len)
+                while (true)
                 {
-                    ch = format[pos];
-
-                    pos++;
-                    if (ch == '}')
+                    while (pos < len)
                     {
-                        if (pos < len && format[pos] == '}') // Treat as escape character for }}
-                            pos++;
-                        else
-                            FormatError();
+                        ch = format[pos];
+
+                        pos++;
+                        if (ch == '}')
+                        {
+                            if (pos < len && format[pos] == '}') // Treat as escape character for }}
+                                pos++;
+                            else
+                                FormatError();
+                        }
+
+                        if (ch == '{')
+                        {
+                            if (pos < len && format[pos] == '{') // Treat as escape character for {{
+                                pos++;
+                            else
+                            {
+                                pos--;
+                                break;
+                            }
+                        }
+
+                        builder.Append(ch);
                     }
 
-                    if (ch == '{')
+                    if (pos == len)
+                        break;
+
+                    pos++;
+                    if (pos == len || (ch = format[pos]) < '0' || ch > '9')
+                        FormatError();
+                    int index = 0;
+                    do
                     {
-                        if (pos < len && format[pos] == '{') // Treat as escape character for {{
+                        index = index * 10 + ch - '0';
+                        pos++;
+                        if (pos == len)
+                            FormatError();
+                        ch = format[pos];
+                    } while (ch >= '0' && ch <= '9' && index < 1000000);
+
+                    if (index >= paramCount)
+                        throw new FormatException("The index of the format is out of range.");
+
+                    while (pos < len && (ch = format[pos]) == ' ')
+                        pos++;
+
+                    bool leftJustify = false;
+                    int width = 0;
+                    if (ch == ',')
+                    {
+                        pos++;
+                        while (pos < len && format[pos] == ' ')
                             pos++;
-                        else
+
+                        if (pos == len)
+                            FormatError();
+                        ch = format[pos];
+                        if (ch == '-')
                         {
-                            pos--;
-                            break;
+                            leftJustify = true;
+                            pos++;
+                            if (pos == len)
+                                FormatError();
+                            ch = format[pos];
+                        }
+                        if (ch < '0' || ch > '9')
+                            FormatError();
+                        do
+                        {
+                            width = width * 10 + ch - '0';
+                            pos++;
+                            if (pos == len)
+                                FormatError();
+                            ch = format[pos];
+                        } while (ch >= '0' && ch <= '9' && width < 1000000);
+                    }
+
+                    while (pos < len && (ch = format[pos]) == ' ')
+                        pos++;
+
+                    formatIndex = 0;
+                    if (ch == ':')
+                    {
+                        pos++;
+                        while (true)
+                        {
+                            if (pos == len)
+                                FormatError();
+                            ch = format[pos];
+                            if (!IsValidFormatChar(ch))
+                                break;
+
+                            formatSpan[formatIndex++] = ch;
+                            pos++;
+
+                            ///Delete the following code. There is a bug here. When there are three curly brackets next to each other, 
+                            ///the format will not meet the expectations. For example, {{this is test,my age is {Age:D2}}}, 
+                            ///the format after parsing is "D2} " instead of "D2"
+
+                            //if (ch == '{')
+                            //{
+                            //    if (pos < len && format[pos] == '{')  // Treat as escape character for {{
+                            //        pos++;
+                            //    else
+                            //        FormatError();
+                            //}
+                            //else if (ch == '}')
+                            //{
+                            //    if (pos < len && format[pos] == '}')  // Treat as escape character for }}
+                            //        pos++;
+                            //    else
+                            //    {
+                            //        pos--;
+                            //        break;
+                            //    }
+                            //}                       
                         }
                     }
 
-                    builder.Append(ch);
-                }
-
-                if (pos == len)
-                    break;
-
-                pos++;
-                if (pos == len || (ch = format[pos]) < '0' || ch > '9')
-                    FormatError();
-                int index = 0;
-                do
-                {
-                    index = index * 10 + ch - '0';
-                    pos++;
-                    if (pos == len)
-                        FormatError();
-                    ch = format[pos];
-                } while (ch >= '0' && ch <= '9' && index < 1000000);
-
-                if (index >= paramCount)
-                    throw new FormatException("The index of the format is out of range.");
-
-                while (pos < len && (ch = format[pos]) == ' ')
-                    pos++;
-
-                bool leftJustify = false;
-                int width = 0;
-                if (ch == ',')
-                {
-                    pos++;
-                    while (pos < len && format[pos] == ' ')
+                    while (pos < len && (ch = format[pos]) == ' ')
                         pos++;
 
-                    if (pos == len)
+                    if (ch != '}')
                         FormatError();
-                    ch = format[pos];
-                    if (ch == '-')
-                    {
-                        leftJustify = true;
-                        pos++;
-                        if (pos == len)
-                            FormatError();
-                        ch = format[pos];
-                    }
-                    if (ch < '0' || ch > '9')
-                        FormatError();
-                    do
-                    {
-                        width = width * 10 + ch - '0';
-                        pos++;
-                        if (pos == len)
-                            FormatError();
-                        ch = format[pos];
-                    } while (ch >= '0' && ch <= '9' && width < 1000000);
-                }
-
-                while (pos < len && (ch = format[pos]) == ' ')
                     pos++;
 
-                formatIndex = 0;
-                if (ch == ':')
-                {
-                    pos++;
-                    while (true)
+                    ReadOnlySpan<char> fmt = formatSpan.Slice(0, formatIndex);
+                    switch (index)
                     {
-                        if (pos == len)
-                            FormatError();
-                        ch = format[pos];
-                        if (!IsValidFormatChar(ch))
+                        case 0:
+                            result.Clear();
+                            Format(fmt, t0, ref result);
                             break;
-
-                        formatSpan[formatIndex++] = ch;
-                        pos++;
-
-                        ///Delete the following code. There is a bug here. When there are three curly brackets next to each other, 
-                        ///the format will not meet the expectations. For example, {{this is test,my age is {Age:D2}}}, 
-                        ///the format after parsing is "D2} " instead of "D2"
-
-                        //if (ch == '{')
-                        //{
-                        //    if (pos < len && format[pos] == '{')  // Treat as escape character for {{
-                        //        pos++;
-                        //    else
-                        //        FormatError();
-                        //}
-                        //else if (ch == '}')
-                        //{
-                        //    if (pos < len && format[pos] == '}')  // Treat as escape character for }}
-                        //        pos++;
-                        //    else
-                        //    {
-                        //        pos--;
-                        //        break;
-                        //    }
-                        //}                       
+                        case 1:
+                            result.Clear();
+                            Format(fmt, t1, ref result);
+                            break;
+                        case 2:
+                            result.Clear();
+                            Format(fmt, t2, ref result);
+                            break;
+                        case 3:
+                            result.Clear();
+                            Format(fmt, t3, ref result);
+                            break;
+                        case 4:
+                            result.Clear();
+                            Format(fmt, t4, ref result);
+                            break;
+                        case 5:
+                            result.Clear();
+                            Format(fmt, t5, ref result);
+                            break;
+                        case 6:
+                            result.Clear();
+                            Format(fmt, t6, ref result);
+                            break;
+                        case 7:
+                            result.Clear();
+                            Format(fmt, t7, ref result);
+                            break;
+                        case 8:
+                            result.Clear();
+                            Format(fmt, t8, ref result);
+                            break;
+                        case 9:
+                            result.Clear();
+                            Format(fmt, t9, ref result);
+                            break;
+                        default:
+                            throw new NotSupportedException();
                     }
+
+                    int pad = width - result.Length;
+                    if (!leftJustify && pad > 0)
+                        builder.Append(' ', pad);
+                    AppendStringBuilder(builder, ref result);
+                    result.Clear();
+                    if (leftJustify && pad > 0)
+                        builder.Append(' ', pad);
                 }
-
-                while (pos < len && (ch = format[pos]) == ' ')
-                    pos++;
-
-                if (ch != '}')
-                    FormatError();
-                pos++;
-
-                ReadOnlySpan<char> fmt = formatSpan.Slice(0, formatIndex);
-                switch (index)
-                {
-                    case 0:
-                        Format(fmt, t0, result.Clear());
-                        break;
-                    case 1:
-                        Format(fmt, t1, result.Clear());
-                        break;
-                    case 2:
-                        Format(fmt, t2, result.Clear());
-                        break;
-                    case 3:
-                        Format(fmt, t3, result.Clear());
-                        break;
-                    case 4:
-                        Format(fmt, t4, result.Clear());
-                        break;
-                    case 5:
-                        Format(fmt, t5, result.Clear());
-                        break;
-                    case 6:
-                        Format(fmt, t6, result.Clear());
-                        break;
-                    case 7:
-                        Format(fmt, t7, result.Clear());
-                        break;
-                    case 8:
-                        Format(fmt, t8, result.Clear());
-                        break;
-                    case 9:
-                        Format(fmt, t9, result.Clear());
-                        break;
-                    default:
-                        throw new NotSupportedException();
-                }
-
-                int pad = width - result.Length;
-                if (!leftJustify && pad > 0)
-                    builder.Append(' ', pad);
-                AppendStringBuilder(builder, result);
-                result.Clear();
-                if (leftJustify && pad > 0)
-                    builder.Append(' ', pad);
+            }
+            finally
+            {
+                result.Dispose();
             }
             return builder;
         }
@@ -288,147 +303,156 @@ namespace Loxodon.Framework.TextFormatting
             int len = format.Length;
             char ch = '\x0';
             Span<char> formatSpan = stackalloc char[FORMAT_SPAN_SIZE];
+            ValueStringBuilder result = new ValueStringBuilder(stackalloc char[FORMAT_SPAN_SIZE]);
             int formatIndex = 0;
-            while (true)
+            try
             {
-                while (pos < len)
+                while (true)
                 {
-                    ch = format[pos];
-
-                    pos++;
-                    if (ch == '}')
+                    while (pos < len)
                     {
-                        if (pos < len && format[pos] == '}') // Treat as escape character for }}
-                            pos++;
-                        else
-                            FormatError();
+                        ch = format[pos];
+
+                        pos++;
+                        if (ch == '}')
+                        {
+                            if (pos < len && format[pos] == '}') // Treat as escape character for }}
+                                pos++;
+                            else
+                                FormatError();
+                        }
+
+                        if (ch == '{')
+                        {
+                            if (pos < len && format[pos] == '{') // Treat as escape character for {{
+                                pos++;
+                            else
+                            {
+                                pos--;
+                                break;
+                            }
+                        }
+
+                        builder.Append(ch);
                     }
 
-                    if (ch == '{')
+                    if (pos == len)
+                        break;
+
+                    pos++;
+                    if (pos == len || (ch = format[pos]) < '0' || ch > '9')
+                        FormatError();
+                    int index = 0;
+                    do
                     {
-                        if (pos < len && format[pos] == '{') // Treat as escape character for {{
+                        index = index * 10 + ch - '0';
+                        pos++;
+                        if (pos == len)
+                            FormatError();
+                        ch = format[pos];
+                    } while (ch >= '0' && ch <= '9' && index < 1000000);
+                    if (index >= 1)
+                        throw new FormatException("The index of the format is out of range.");
+
+                    while (pos < len && (ch = format[pos]) == ' ')
+                        pos++;
+
+                    bool leftJustify = false;
+                    int width = 0;
+                    if (ch == ',')
+                    {
+                        pos++;
+                        while (pos < len && format[pos] == ' ')
                             pos++;
-                        else
+
+                        if (pos == len)
+                            FormatError();
+                        ch = format[pos];
+                        if (ch == '-')
                         {
-                            pos--;
-                            break;
+                            leftJustify = true;
+                            pos++;
+                            if (pos == len)
+                                FormatError();
+                            ch = format[pos];
+                        }
+                        if (ch < '0' || ch > '9')
+                            FormatError();
+                        do
+                        {
+                            width = width * 10 + ch - '0';
+                            pos++;
+                            if (pos == len)
+                                FormatError();
+                            ch = format[pos];
+                        } while (ch >= '0' && ch <= '9' && width < 1000000);
+                    }
+
+                    while (pos < len && (ch = format[pos]) == ' ')
+                        pos++;
+                    //object arg = args[index];
+                    formatIndex = 0;
+                    if (ch == ':')
+                    {
+                        pos++;
+                        while (true)
+                        {
+                            if (pos == len)
+                                FormatError();
+                            ch = format[pos];
+                            if (!IsValidFormatChar(ch))
+                                break;
+
+                            formatSpan[formatIndex++] = ch;
+                            pos++;
+
+                            ///Delete the following code. There is a bug here. When there are three curly brackets next to each other, 
+                            ///the format will not meet the expectations. For example, {{this is test,my age is {Age:D2}}}, 
+                            ///the format after parsing is "D2} " instead of "D2"
+
+                            //if (ch == '{')
+                            //{
+                            //    if (pos < len && format[pos] == '{')  // Treat as escape character for {{
+                            //        pos++;
+                            //    else
+                            //        FormatError();
+                            //}
+                            //else if (ch == '}')
+                            //{
+                            //    if (pos < len && format[pos] == '}')  // Treat as escape character for }}
+                            //        pos++;
+                            //    else
+                            //    {
+                            //        pos--;
+                            //        break;
+                            //    }
+                            //}                        
                         }
                     }
 
-                    builder.Append(ch);
-                }
+                    while (pos < len && (ch = format[pos]) == ' ')
+                        pos++;
 
-                if (pos == len)
-                    break;
-
-                pos++;
-                if (pos == len || (ch = format[pos]) < '0' || ch > '9')
-                    FormatError();
-                int index = 0;
-                do
-                {
-                    index = index * 10 + ch - '0';
-                    pos++;
-                    if (pos == len)
+                    if (ch != '}')
                         FormatError();
-                    ch = format[pos];
-                } while (ch >= '0' && ch <= '9' && index < 1000000);
-                if (index >= 1)
-                    throw new FormatException("The index of the format is out of range.");
-
-                while (pos < len && (ch = format[pos]) == ' ')
                     pos++;
 
-                bool leftJustify = false;
-                int width = 0;
-                if (ch == ',')
-                {
-                    pos++;
-                    while (pos < len && format[pos] == ' ')
-                        pos++;
+                    ReadOnlySpan<char> fmt = formatSpan.Slice(0, formatIndex);
+                    result.Clear();
+                    Format(fmt, value, formatter, ref result);
 
-                    if (pos == len)
-                        FormatError();
-                    ch = format[pos];
-                    if (ch == '-')
-                    {
-                        leftJustify = true;
-                        pos++;
-                        if (pos == len)
-                            FormatError();
-                        ch = format[pos];
-                    }
-                    if (ch < '0' || ch > '9')
-                        FormatError();
-                    do
-                    {
-                        width = width * 10 + ch - '0';
-                        pos++;
-                        if (pos == len)
-                            FormatError();
-                        ch = format[pos];
-                    } while (ch >= '0' && ch <= '9' && width < 1000000);
+                    int pad = width - result.Length;
+                    if (!leftJustify && pad > 0)
+                        builder.Append(' ', pad);
+                    AppendStringBuilder(builder, ref result);
+                    result.Clear();
+                    if (leftJustify && pad > 0)
+                        builder.Append(' ', pad);
                 }
-
-                while (pos < len && (ch = format[pos]) == ' ')
-                    pos++;
-                //object arg = args[index];
-                formatIndex = 0;
-                if (ch == ':')
-                {
-                    pos++;
-                    while (true)
-                    {
-                        if (pos == len)
-                            FormatError();
-                        ch = format[pos];
-                        if (!IsValidFormatChar(ch))
-                            break;
-
-                        formatSpan[formatIndex++] = ch;
-                        pos++;
-
-                        ///Delete the following code. There is a bug here. When there are three curly brackets next to each other, 
-                        ///the format will not meet the expectations. For example, {{this is test,my age is {Age:D2}}}, 
-                        ///the format after parsing is "D2} " instead of "D2"
-
-                        //if (ch == '{')
-                        //{
-                        //    if (pos < len && format[pos] == '{')  // Treat as escape character for {{
-                        //        pos++;
-                        //    else
-                        //        FormatError();
-                        //}
-                        //else if (ch == '}')
-                        //{
-                        //    if (pos < len && format[pos] == '}')  // Treat as escape character for }}
-                        //        pos++;
-                        //    else
-                        //    {
-                        //        pos--;
-                        //        break;
-                        //    }
-                        //}                        
-                    }
-                }
-
-                while (pos < len && (ch = format[pos]) == ' ')
-                    pos++;
-
-                if (ch != '}')
-                    FormatError();
-                pos++;
-
-                ReadOnlySpan<char> fmt = formatSpan.Slice(0, formatIndex);
-                Format(fmt, value, formatter, result.Clear());
-
-                int pad = width - result.Length;
-                if (!leftJustify && pad > 0)
-                    builder.Append(' ', pad);
-                AppendStringBuilder(builder, result);
-                result.Clear();
-                if (leftJustify && pad > 0)
-                    builder.Append(' ', pad);
+            }
+            finally
+            {
+                result.Dispose();
             }
             return builder;
         }
@@ -442,148 +466,157 @@ namespace Loxodon.Framework.TextFormatting
             int len = format.Length;
             char ch = '\x0';
             Span<char> formatSpan = stackalloc char[FORMAT_SPAN_SIZE];
+            ValueStringBuilder result = new ValueStringBuilder(stackalloc char[FORMAT_SPAN_SIZE]);
             int formatIndex = 0;
-            while (true)
+            try
             {
-                while (pos < len)
+                while (true)
                 {
-                    ch = format[pos];
-
-                    pos++;
-                    if (ch == '}')
+                    while (pos < len)
                     {
-                        if (pos < len && format[pos] == '}') // Treat as escape character for }}
-                            pos++;
-                        else
-                            FormatError();
+                        ch = format[pos];
+
+                        pos++;
+                        if (ch == '}')
+                        {
+                            if (pos < len && format[pos] == '}') // Treat as escape character for }}
+                                pos++;
+                            else
+                                FormatError();
+                        }
+
+                        if (ch == '{')
+                        {
+                            if (pos < len && format[pos] == '{') // Treat as escape character for {{
+                                pos++;
+                            else
+                            {
+                                pos--;
+                                break;
+                            }
+                        }
+
+                        builder.Append(ch);
                     }
 
-                    if (ch == '{')
+                    if (pos == len)
+                        break;
+
+                    pos++;
+                    if (pos == len || (ch = format[pos]) < '0' || ch > '9')
+                        FormatError();
+                    int index = 0;
+                    do
                     {
-                        if (pos < len && format[pos] == '{') // Treat as escape character for {{
+                        index = index * 10 + ch - '0';
+                        pos++;
+                        if (pos == len)
+                            FormatError();
+                        ch = format[pos];
+                    } while (ch >= '0' && ch <= '9' && index < 1000000);
+                    if (index >= values.Length)
+                        throw new FormatException("The index of the format is out of range.");
+
+                    while (pos < len && (ch = format[pos]) == ' ')
+                        pos++;
+
+                    bool leftJustify = false;
+                    int width = 0;
+                    if (ch == ',')
+                    {
+                        pos++;
+                        while (pos < len && format[pos] == ' ')
                             pos++;
-                        else
+
+                        if (pos == len)
+                            FormatError();
+                        ch = format[pos];
+                        if (ch == '-')
                         {
-                            pos--;
-                            break;
+                            leftJustify = true;
+                            pos++;
+                            if (pos == len)
+                                FormatError();
+                            ch = format[pos];
+                        }
+                        if (ch < '0' || ch > '9')
+                            FormatError();
+                        do
+                        {
+                            width = width * 10 + ch - '0';
+                            pos++;
+                            if (pos == len)
+                                FormatError();
+                            ch = format[pos];
+                        } while (ch >= '0' && ch <= '9' && width < 1000000);
+                    }
+
+                    while (pos < len && (ch = format[pos]) == ' ')
+                        pos++;
+                    T value = values[index];
+
+                    formatIndex = 0;
+                    if (ch == ':')
+                    {
+                        pos++;
+                        while (true)
+                        {
+                            if (pos == len)
+                                FormatError();
+                            ch = format[pos];
+                            if (!IsValidFormatChar(ch))
+                                break;
+
+                            formatSpan[formatIndex++] = ch;
+                            pos++;
+
+                            ///Delete the following code. There is a bug here. When there are three curly brackets next to each other, 
+                            ///the format will not meet the expectations. For example, {{this is test,my age is {Age:D2}}}, 
+                            ///the format after parsing is "D2} " instead of "D2"
+
+                            //if (ch == '{')
+                            //{
+                            //    if (pos < len && format[pos] == '{')  // Treat as escape character for {{
+                            //        pos++;
+                            //    else
+                            //        FormatError();
+                            //}
+                            //else if (ch == '}')
+                            //{
+                            //    if (pos < len && format[pos] == '}')  // Treat as escape character for }}
+                            //        pos++;
+                            //    else
+                            //    {
+                            //        pos--;
+                            //        break;
+                            //    }
+                            //}                       
                         }
                     }
 
-                    builder.Append(ch);
-                }
+                    while (pos < len && (ch = format[pos]) == ' ')
+                        pos++;
 
-                if (pos == len)
-                    break;
-
-                pos++;
-                if (pos == len || (ch = format[pos]) < '0' || ch > '9')
-                    FormatError();
-                int index = 0;
-                do
-                {
-                    index = index * 10 + ch - '0';
-                    pos++;
-                    if (pos == len)
+                    if (ch != '}')
                         FormatError();
-                    ch = format[pos];
-                } while (ch >= '0' && ch <= '9' && index < 1000000);
-                if (index >= values.Length)
-                    throw new FormatException("The index of the format is out of range.");
-
-                while (pos < len && (ch = format[pos]) == ' ')
                     pos++;
 
-                bool leftJustify = false;
-                int width = 0;
-                if (ch == ',')
-                {
-                    pos++;
-                    while (pos < len && format[pos] == ' ')
-                        pos++;
+                    ReadOnlySpan<char> fmt = formatSpan.Slice(0, formatIndex);
+                    result.Clear();
+                    Format(fmt, value, formatter, ref result);
 
-                    if (pos == len)
-                        FormatError();
-                    ch = format[pos];
-                    if (ch == '-')
-                    {
-                        leftJustify = true;
-                        pos++;
-                        if (pos == len)
-                            FormatError();
-                        ch = format[pos];
-                    }
-                    if (ch < '0' || ch > '9')
-                        FormatError();
-                    do
-                    {
-                        width = width * 10 + ch - '0';
-                        pos++;
-                        if (pos == len)
-                            FormatError();
-                        ch = format[pos];
-                    } while (ch >= '0' && ch <= '9' && width < 1000000);
+                    int pad = width - result.Length;
+                    if (!leftJustify && pad > 0)
+                        builder.Append(' ', pad);
+                    AppendStringBuilder(builder, ref result);
+                    result.Clear();
+                    if (leftJustify && pad > 0)
+                        builder.Append(' ', pad);
                 }
-
-                while (pos < len && (ch = format[pos]) == ' ')
-                    pos++;
-                T value = values[index];
-
-                formatIndex = 0;
-                if (ch == ':')
-                {
-                    pos++;
-                    while (true)
-                    {
-                        if (pos == len)
-                            FormatError();
-                        ch = format[pos];
-                        if (!IsValidFormatChar(ch))
-                            break;
-
-                        formatSpan[formatIndex++] = ch;
-                        pos++;
-
-                        ///Delete the following code. There is a bug here. When there are three curly brackets next to each other, 
-                        ///the format will not meet the expectations. For example, {{this is test,my age is {Age:D2}}}, 
-                        ///the format after parsing is "D2} " instead of "D2"
-
-                        //if (ch == '{')
-                        //{
-                        //    if (pos < len && format[pos] == '{')  // Treat as escape character for {{
-                        //        pos++;
-                        //    else
-                        //        FormatError();
-                        //}
-                        //else if (ch == '}')
-                        //{
-                        //    if (pos < len && format[pos] == '}')  // Treat as escape character for }}
-                        //        pos++;
-                        //    else
-                        //    {
-                        //        pos--;
-                        //        break;
-                        //    }
-                        //}                       
-                    }
-                }
-
-                while (pos < len && (ch = format[pos]) == ' ')
-                    pos++;
-
-                if (ch != '}')
-                    FormatError();
-                pos++;
-
-                ReadOnlySpan<char> fmt = formatSpan.Slice(0, formatIndex);
-                Format(fmt, value, formatter, result.Clear());
-
-                int pad = width - result.Length;
-                if (!leftJustify && pad > 0)
-                    builder.Append(' ', pad);
-                AppendStringBuilder(builder, result);
-                result.Clear();
-                if (leftJustify && pad > 0)
-                    builder.Append(' ', pad);
+            }
+            finally
+            {
+                result.Dispose();
             }
             return builder;
         }
@@ -598,30 +631,31 @@ namespace Loxodon.Framework.TextFormatting
             return false;
         }
 
-        private static void Format<T>(ReadOnlySpan<char> format, T value, IFormatter formatter, StringBuilder builder)
+        private static void Format<T>(ReadOnlySpan<char> format, T value, IFormatter formatter, ref ValueStringBuilder builder)
         {
             if (formatter is IFormatter<T> genericFormatter)
-                genericFormatter.Format(format, value, builder);
+                genericFormatter.Format(format, value, ref builder);
             else
-                formatter.Format(format, value, builder);
+                formatter.Format(format, value, ref builder);
         }
 
-        private static void Format<T>(ReadOnlySpan<char> format, T value, StringBuilder builder)
+        private static void Format<T>(ReadOnlySpan<char> format, T value, ref ValueStringBuilder builder)
         {
             IFormatter formatter = GetFormatter<T>();
             if (formatter is IFormatter<T> genericFormatter)
-                genericFormatter.Format(format, value, builder);
+                genericFormatter.Format(format, value, ref builder);
             else
-                formatter.Format(format, value, builder);
+                formatter.Format(format, value, ref builder);
         }
 
-        private static StringBuilder AppendStringBuilder(StringBuilder builder, StringBuilder value)
+        private static StringBuilder AppendStringBuilder(StringBuilder builder, ref ValueStringBuilder value)
         {
-            int len = value.Length;
-            for (int i = 0; i < len; i++)
-            {
-                builder.Append(value[i]);
-            }
+            //int len = value.Length;
+            //for (int i = 0; i < len; i++)
+            //{
+            //    builder.Append(value[i]);
+            //}
+            builder.Append(value.AsSpan());
             return builder;
         }
 

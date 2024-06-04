@@ -42,7 +42,7 @@
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
-        "com.vovgou.loxodon-framework-textmeshpro": "2.6.2"
+        "com.vovgou.loxodon-framework-textmeshpro": "2.6.5"
       },
       "scopedRegistries": [
         {

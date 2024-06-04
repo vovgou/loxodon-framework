@@ -26,6 +26,7 @@ using Loxodon.Framework.Binding;
 using Loxodon.Framework.Binding.Builder;
 using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.Views;
+using Loxodon.Framework.Views.InteractionActions;
 using Loxodon.Log;
 using UnityEngine.UI;
 
@@ -42,12 +43,15 @@ namespace Loxodon.Framework.Examples
         public Button confirmButton;
         public Button cancelButton;
 
+        private ToastInteractionAction toastAction;
 
         protected override void OnCreate(IBundle bundle)
         {
+            this.toastAction = new ToastInteractionAction(this);
             BindingSet<LoginWindow, LoginViewModel> bindingSet = this.CreateBindingSet<LoginWindow, LoginViewModel>();
             bindingSet.Bind().For(v => v.OnInteractionFinished).To(vm => vm.InteractionFinished);
-            bindingSet.Bind().For(v => v.OnToastShow).To(vm => vm.ToastRequest);
+            //bindingSet.Bind().For(v => v.OnToastShow).To(vm => vm.ToastRequest);
+            bindingSet.Bind().For(v => v.toastAction).To(vm => vm.ToastRequest);
 
             bindingSet.Bind(this.username).For(v => v.text, v => v.onEndEdit).To(vm => vm.Username).TwoWay();
             bindingSet.Bind(this.usernameErrorPrompt).For(v => v.text).To(vm => vm.Errors["username"]).OneWay();
@@ -63,13 +67,14 @@ namespace Loxodon.Framework.Examples
             this.Dismiss();
         }
 
-        public virtual void OnToastShow(object sender, InteractionEventArgs args)
-        {
-            ToastNotification notification = args.Context as ToastNotification;
-            if (notification == null)
-                return;
+        ////Use ToastInteractionAction instead of this method.
+        //public virtual void OnToastShow(object sender, InteractionEventArgs args)
+        //{
+        //    ToastNotification notification = args.Context as ToastNotification;
+        //    if (notification == null)
+        //        return;
 
-            Toast.Show(this, notification.Message, notification.Duration);
-        }
+        //    Toast.Show(this, notification.Message, notification.Duration);
+        //}
     }
 }

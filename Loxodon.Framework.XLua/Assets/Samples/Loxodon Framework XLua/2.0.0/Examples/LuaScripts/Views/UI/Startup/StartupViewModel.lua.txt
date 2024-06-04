@@ -30,6 +30,8 @@ local Executors = require("framework.Executors")
 
 local ObservableObject = require("framework.ObservableObject")
 local InteractionRequest = require("framework.InteractionRequest")
+local AsyncInteractionRequest = require("framework.AsyncInteractionRequest")
+local WindowNotification = CS.Loxodon.Framework.Interactivity.WindowNotification
 local ProgressBar = require("Views.UI.Startup.ProgressBar")
 local LoginViewModel = require("Views.UI.Logins.LoginViewModel")
 
@@ -50,21 +52,31 @@ function M:ctor()
 	self.accountService = context:GetService("accountService")
 	self.globalPreferences = context:GetGlobalPreferences()
 	
-	self.loginRequest = InteractionRequest(self)
+	
+	self.loginRequest = AsyncInteractionRequest(self)
 	self.dismissRequest = InteractionRequest(self)
 	
 	self.progressBar = ProgressBar()
 	
-	self.command = SimpleCommand(function()
+	self.command = SimpleCommand(async(function()
 			self.command.Enabled = false
 			local loginViewModel = LoginViewModel({accountService = self.accountService, localization = self.localization, globalPreferences = self.globalPreferences})
+			local notification = WindowNotification.CreateShowNotification(loginViewModel,false,true)
+			await(self.loginRequest:Raise(notification))
+			self.command.Enabled = true
+			if loginViewModel.account then
+				self:loadScene()
+			end
+
+			--[[
 			self.loginRequest:Raise(loginViewModel, function(vm)
-					self.command.Enabled = true
-					if vm.account then
-						self:loadScene()
-					end
-				end)
-		end,true)
+				self.command.Enabled = true
+				if vm.account then
+					self:loadScene()
+				end
+			end)
+			--]]
+		end),true)
 end
 
 function M:unzip()

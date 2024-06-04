@@ -1,0 +1,16 @@
+{
+    "name": "Loxodon.Framework.TextUGUI.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2e49c12c2beb247448c9b585b6178fc4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

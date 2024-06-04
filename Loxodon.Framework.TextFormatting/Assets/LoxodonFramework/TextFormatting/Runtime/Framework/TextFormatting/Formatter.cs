@@ -101,7 +101,7 @@ namespace Loxodon.Framework.TextFormatting
             return formatter as IFormatter<T>;
         }
 
-        void Format(ReadOnlySpan<char> format, object value, StringBuilder builder);
+        void Format(ReadOnlySpan<char> format, object value, ref ValueStringBuilder builder);
 
         // In UnityEditor, when the parameter type is ReadOnlySpan<char>, the first call is correct. 
         // When the second call is made, the void Format(string format, object value, StringBuilder builder) function is actually called, 
@@ -111,14 +111,14 @@ namespace Loxodon.Framework.TextFormatting
 
     public interface IFormatter<T> : IFormatter
     {
-        void Format(ReadOnlySpan<char> format, T value, StringBuilder builder);
+        void Format(ReadOnlySpan<char> format, T value, ref ValueStringBuilder builder);
 
-        //void Format(string format, T value, StringBuilder builder);
+        //void Format(string format, T value, ref ValueStringBuilder builder);
     }
 
     public abstract class FormatterBase : IFormatter
     {
-        public void Format(ReadOnlySpan<char> format, object value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, object value, ref ValueStringBuilder builder)
         {
             if (format.Length > 0 && value is IFormattable formattable)
                 builder.Append(formattable.ToString(format.ToString(), null));
@@ -128,7 +128,7 @@ namespace Loxodon.Framework.TextFormatting
                 builder.Append(format);
         }
 
-        //public void Format(string format, object value, StringBuilder builder)
+        //public void Format(string format, object value, ref ValueStringBuilder builder)
         //{
         //    if (!string.IsNullOrEmpty(format) && value is IFormattable formattable)
         //        builder.Append(formattable.ToString(format, null));
@@ -145,12 +145,12 @@ namespace Loxodon.Framework.TextFormatting
 
     internal class BooleanFormatter : FormatterBase, IFormatter<bool>
     {
-        public void Format(ReadOnlySpan<char> format, bool value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, bool value, ref ValueStringBuilder builder)
         {
             builder.Append(value ? "true" : "false");
         }
 
-        //public void Format(string format, bool value, StringBuilder builder)
+        //public void Format(string format, bool value, ref ValueStringBuilder builder)
         //{
         //    builder.Append(value ? "true" : "false");
         //}
@@ -158,12 +158,12 @@ namespace Loxodon.Framework.TextFormatting
 
     internal class CharFormatter : FormatterBase, IFormatter<char>
     {
-        public void Format(ReadOnlySpan<char> format, char value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, char value, ref ValueStringBuilder builder)
         {
             builder.Append(value);
         }
 
-        //public void Format(string format, char value, StringBuilder builder)
+        //public void Format(string format, char value, ref ValueStringBuilder builder)
         //{
         //    builder.Append(value);
         //}
@@ -171,25 +171,25 @@ namespace Loxodon.Framework.TextFormatting
 
     internal class ByteFormatter : FormatterBase, IFormatter<byte>
     {
-        public void Format(ReadOnlySpan<char> format, byte value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, byte value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, byte value, StringBuilder builder)
+        //public void Format(string format, byte value, ref ValueStringBuilder builder)
         //{
-        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //    NumberFormatter.NumberToString(format, value, null, ref builder);
         //}
     }
 
     internal class SByteFormatter : FormatterBase, IFormatter<sbyte>
     {
-        public void Format(ReadOnlySpan<char> format, sbyte value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, sbyte value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, sbyte value, StringBuilder builder)
+        //public void Format(string format, sbyte value, ref ValueStringBuilder builder)
         //{
         //    NumberFormatter.NumberToString(format, value, null, builder);
         //}
@@ -197,12 +197,12 @@ namespace Loxodon.Framework.TextFormatting
 
     internal class Int16Formatter : FormatterBase, IFormatter<short>
     {
-        public void Format(ReadOnlySpan<char> format, short value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, short value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, short value, StringBuilder builder)
+        //public void Format(string format, short value, ref ValueStringBuilder builder)
         //{
         //    NumberFormatter.NumberToString(format, value, null, builder);
         //}
@@ -210,12 +210,12 @@ namespace Loxodon.Framework.TextFormatting
 
     internal class UInt16Formatter : FormatterBase, IFormatter<ushort>
     {
-        public void Format(ReadOnlySpan<char> format, ushort value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, ushort value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, ushort value, StringBuilder builder)
+        //public void Format(string format, ushort value, ref ValueStringBuilder builder)
         //{
         //    NumberFormatter.NumberToString(format, value, null, builder);
         //}
@@ -223,38 +223,38 @@ namespace Loxodon.Framework.TextFormatting
 
     internal class Int32Formatter : FormatterBase, IFormatter<int>
     {
-        public void Format(ReadOnlySpan<char> format, int value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, int value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, int value, StringBuilder builder)
+        //public void Format(string format, int value, ref ValueStringBuilder builder)
         //{
-        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //    NumberFormatter.NumberToString(format, value, null, ref builder);
         //}
     }
 
     internal class UInt32Formatter : FormatterBase, IFormatter<uint>
     {
-        public void Format(ReadOnlySpan<char> format, uint value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, uint value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, uint value, StringBuilder builder)
+        //public void Format(string format, uint value, ref ValueStringBuilder builder)
         //{
-        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //    NumberFormatter.NumberToString(format, value, null, ref builder);
         //}
     }
 
     internal class Int64Formatter : FormatterBase, IFormatter<long>
     {
-        public void Format(ReadOnlySpan<char> format, long value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, long value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, long value, StringBuilder builder)
+        //public void Format(string format, long value, ref ValueStringBuilder builder)
         //{
         //    NumberFormatter.NumberToString(format, value, null, builder);
         //}
@@ -262,12 +262,12 @@ namespace Loxodon.Framework.TextFormatting
 
     internal class UInt64Formatter : FormatterBase, IFormatter<ulong>
     {
-        public void Format(ReadOnlySpan<char> format, ulong value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, ulong value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, ulong value, StringBuilder builder)
+        //public void Format(string format, ulong value, ref ValueStringBuilder builder)
         //{
         //    NumberFormatter.NumberToString(format, value, null, builder);
         //}
@@ -275,160 +275,160 @@ namespace Loxodon.Framework.TextFormatting
 
     internal class FloatFormatter : FormatterBase, IFormatter<float>
     {
-        public void Format(ReadOnlySpan<char> format, float value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, float value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, float value, StringBuilder builder)
+        //public void Format(string format, float value, ref ValueStringBuilder builder)
         //{
-        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //    NumberFormatter.NumberToString(format, value, null, ref builder);
         //}
     }
 
     internal class DoubleFormatter : FormatterBase, IFormatter<double>
     {
-        public void Format(ReadOnlySpan<char> format, double value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, double value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, double value, StringBuilder builder)
+        //public void Format(string format, double value, ref ValueStringBuilder builder)
         //{
-        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //    NumberFormatter.NumberToString(format, value, null, ref builder);
         //}
     }
 
     internal class DecimalFormatter : FormatterBase, IFormatter<decimal>
     {
-        public void Format(ReadOnlySpan<char> format, decimal value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, decimal value, ref ValueStringBuilder builder)
         {
-            NumberFormatter.NumberToString(format, value, null, builder);
+            NumberFormatter.NumberToString(format, value, null, ref builder);
         }
 
-        //public void Format(string format, decimal value, StringBuilder builder)
+        //public void Format(string format, decimal value, ref ValueStringBuilder builder)
         //{
-        //    NumberFormatter.NumberToString(format, value, null, builder);
+        //    NumberFormatter.NumberToString(format, value, null, ref builder);
         //}
     }
 
     internal class DateTimeFormatter : FormatterBase, IFormatter<DateTime>
     {
-        public void Format(ReadOnlySpan<char> format, DateTime value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, DateTime value, ref ValueStringBuilder builder)
         {
-            DateTimeFormat.Format(value, format, builder);
+            DateTimeFormat.Format(value, format, ref builder);
         }
 
-        //public void Format(string format, DateTime value, StringBuilder builder)
+        //public void Format(string format, DateTime value, ref ValueStringBuilder builder)
         //{
-        //    DateTimeFormat.Format(value, format, builder);
+        //    DateTimeFormat.Format(value, format, ref builder);
         //}
     }
 
     internal class TimeSpanFormatter : FormatterBase, IFormatter<TimeSpan>
     {
-        public void Format(ReadOnlySpan<char> format, TimeSpan value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, TimeSpan value, ref ValueStringBuilder builder)
         {
-            TimeSpanFormat.Format(value, format, builder);
+            TimeSpanFormat.Format(value, format, ref builder);
         }
 
-        //public void Format(string format, TimeSpan value, StringBuilder builder)
+        //public void Format(string format, TimeSpan value, ref ValueStringBuilder builder)
         //{
-        //    TimeSpanFormat.Format(value, format, builder);
+        //    TimeSpanFormat.Format(value, format, ref builder);
         //}
     }
 
     internal class Vector2Formatter : FormatterBase, IFormatter<Vector2>
     {
-        public void Format(ReadOnlySpan<char> format, Vector2 value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, Vector2 value, ref ValueStringBuilder builder)
         {
             if (format.Length <= 0)
                 format = "F2";
 
             builder.Append("(");
-            NumberFormatter.NumberToString(format, value.x, null, builder);
+            NumberFormatter.NumberToString(format, value.x, null, ref builder);
             builder.Append(",");
-            NumberFormatter.NumberToString(format, value.y, null, builder);
+            NumberFormatter.NumberToString(format, value.y, null, ref builder);
             builder.Append(")");
         }
 
-        //public void Format(string format, Vector2 value, StringBuilder builder)
+        //public void Format(string format, Vector2 value, ref ValueStringBuilder builder)
         //{
         //    ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
-        //    this.Format(f, value, builder);
+        //    this.Format(f, value, ref builder);
         //}
     }
 
     internal class Vector3Formatter : FormatterBase, IFormatter<Vector3>
     {
-        public void Format(ReadOnlySpan<char> format, Vector3 value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, Vector3 value, ref ValueStringBuilder builder)
         {
             if (format.Length <= 0)
                 format = "F2";
 
             builder.Append("(");
-            NumberFormatter.NumberToString(format, value.x, null, builder);
+            NumberFormatter.NumberToString(format, value.x, null, ref builder);
             builder.Append(",");
-            NumberFormatter.NumberToString(format, value.y, null, builder);
+            NumberFormatter.NumberToString(format, value.y, null, ref builder);
             builder.Append(",");
-            NumberFormatter.NumberToString(format, value.z, null, builder);
+            NumberFormatter.NumberToString(format, value.z, null, ref builder);
             builder.Append(")");
         }
 
-        //public void Format(string format, Vector3 value, StringBuilder builder)
+        //public void Format(string format, Vector3 value, ref ValueStringBuilder builder)
         //{
         //    ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
-        //    this.Format(f, value, builder);
+        //    this.Format(f, value, ref builder);
         //}
     }
 
     internal class Vector4Formatter : FormatterBase, IFormatter<Vector4>
     {
-        public void Format(ReadOnlySpan<char> format, Vector4 value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, Vector4 value, ref ValueStringBuilder builder)
         {
             if (format.Length <= 0)
                 format = "F2";
 
             builder.Append("(");
-            NumberFormatter.NumberToString(format, value.x, null, builder);
+            NumberFormatter.NumberToString(format, value.x, null, ref builder);
             builder.Append(",");
-            NumberFormatter.NumberToString(format, value.y, null, builder);
+            NumberFormatter.NumberToString(format, value.y, null, ref builder);
             builder.Append(",");
-            NumberFormatter.NumberToString(format, value.z, null, builder);
+            NumberFormatter.NumberToString(format, value.z, null, ref builder);
             builder.Append(",");
-            NumberFormatter.NumberToString(format, value.w, null, builder);
+            NumberFormatter.NumberToString(format, value.w, null, ref builder);
             builder.Append(")");
         }
 
-        //public void Format(string format, Vector4 value, StringBuilder builder)
+        //public void Format(string format, Vector4 value, ref ValueStringBuilder builder)
         //{
         //    ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
-        //    this.Format(f, value, builder);
+        //    this.Format(f, value, ref builder);
         //}
     }
 
     internal class RectFormatter : FormatterBase, IFormatter<Rect>
     {
-        public void Format(ReadOnlySpan<char> format, Rect value, StringBuilder builder)
+        public void Format(ReadOnlySpan<char> format, Rect value, ref ValueStringBuilder builder)
         {
             if (format.Length <= 0)
                 format = "F2";
 
             builder.Append("(x:");
-            NumberFormatter.NumberToString(format, value.x, null, builder);
+            NumberFormatter.NumberToString(format, value.x, null, ref builder);
             builder.Append(",y:");
-            NumberFormatter.NumberToString(format, value.y, null, builder);
+            NumberFormatter.NumberToString(format, value.y, null, ref builder);
             builder.Append(",width:");
-            NumberFormatter.NumberToString(format, value.width, null, builder);
+            NumberFormatter.NumberToString(format, value.width, null, ref builder);
             builder.Append(",height:");
-            NumberFormatter.NumberToString(format, value.height, null, builder);
+            NumberFormatter.NumberToString(format, value.height, null, ref builder);
             builder.Append(")");
         }
 
-        //public void Format(string format, Rect value, StringBuilder builder)
+        //public void Format(string format, Rect value, ref ValueStringBuilder builder)
         //{
         //    ReadOnlySpan<char> f = string.IsNullOrEmpty(format) ? "F2" : format;
-        //    this.Format(f, value, builder);
+        //    this.Format(f, value, ref builder);
         //}
     }
 }

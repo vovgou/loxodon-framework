@@ -72,6 +72,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         {
             try
             {
+                if (target == null)
+                    return false;
+
                 if (target is UIBehaviour)
                 {
                     if (((UIBehaviour)target).IsDestroyed())

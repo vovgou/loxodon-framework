@@ -212,15 +212,24 @@ function try(block)
 	end
 end
 
-function M.Delay(millisecond)
-	local action = async(function(millisecond)
-			await(Executors.RunLuaOnCoroutine(function(delay)
+---
+--延时
+--示例如下：
+-- await(AsyncTask.Delay(1000)) --Delay 1000 milliseconds
+-- await(AsyncTask.Delay(CS.UnityEngine.WaitForSeconds(0.1))) --Delay 100 milliseconds
+--@param #delay 延时时间，单位毫秒，或者是CS.UnityEngine.WaitForSeconds或者CS.UnityEngine.WaitForSecondsRealtime对象
+--
+function M.Delay(delay)	
+	if type(delay) == 'userdata' then
+		return Executors.RunLuaOnCoroutine(function(delay)
+						coroutine.yield(delay)			
+					end,delay)
+	else
+		return Executors.RunLuaOnCoroutine(function(delay)
 						local wait = CS.UnityEngine.WaitForSecondsRealtime(delay)
 						coroutine.yield(wait)					
-					end,millisecond/1000.0))
-		end)
-	
-	return action(millisecond)
+					end,delay/1000.0)
+	end
 end
 
 function M.Run(func,...)

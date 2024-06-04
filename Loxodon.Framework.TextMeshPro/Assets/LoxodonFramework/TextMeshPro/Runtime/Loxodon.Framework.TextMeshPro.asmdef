@@ -2,8 +2,8 @@
     "name": "Loxodon.Framework.TextMeshPro",
     "rootNamespace": "",
     "references": [
-        "Loxodon.Framework",
         "Unity.TextMeshPro",
+        "Loxodon.Framework",
         "Loxodon.Framework.TextFormatting"
     ],
     "includePlatforms": [],
