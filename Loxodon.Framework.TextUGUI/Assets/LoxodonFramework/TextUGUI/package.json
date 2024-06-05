@@ -1,6 +1,6 @@
 {
   "name": "com.vovgou.loxodon-framework-textugui",
-  "displayName": "Loxodon Framework UGUI TextFormatting",
+  "displayName": "Loxodon Framework Text UGUI",
   "version": "2.6.5",
   "unity": "2021.3",
   "description": "This is a text formatting plug-in, which is modified based on the C# official library and reduces GC as much as possible.",
