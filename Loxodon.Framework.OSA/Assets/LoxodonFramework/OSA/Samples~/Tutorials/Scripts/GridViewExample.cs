@@ -46,6 +46,8 @@ namespace Loxodon.Framework.Tutorials.OSA
             this.items = this.CreateItems(3);
         }
 
+        public SimpleCommand<ItemViewModel> ItemSelectCommand { get { return this.itemSelectCommand; } }
+
         public ObservableList<ItemViewModel> Items
         {
             get { return this.items; }
@@ -112,7 +114,7 @@ namespace Loxodon.Framework.Tutorials.OSA
 
         private ItemViewModel CreateItem()
         {
-            return new ItemViewModel(this.itemSelectCommand)
+            return new ItemViewModel()
             {
                 Title = "Item #" + (id++),
             };
@@ -143,6 +145,7 @@ namespace Loxodon.Framework.Tutorials.OSA
             bindingSet.Bind(moveButton).For(v => v.onClick).To(vm => vm.MoveItem);
             bindingSet.Bind(resetButton).For(v => v.onClick).To(vm => vm.ResetItem);
             bindingSet.Bind(gridView).For(v => v.Items).To(vm => vm.Items);
+            bindingSet.Bind(gridView.GetComponent<ItemButtonEventBehaviour>()).For(v => v.OnSelected).To(vm => vm.ItemSelectCommand);
             bindingSet.Build();
 
             this.SetDataContext(new GridViewExampleViewModel());

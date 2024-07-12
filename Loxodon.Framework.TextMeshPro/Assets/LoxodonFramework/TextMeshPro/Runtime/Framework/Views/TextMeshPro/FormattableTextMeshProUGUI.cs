@@ -29,9 +29,15 @@ using static Loxodon.Framework.Views.TextMeshPro.IFormattableText;
 
 namespace Loxodon.Framework.Views.TextMeshPro
 {
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(CanvasRenderer))]
+    [AddComponentMenu("UI/FormattableTextMeshProUGUI - FormattableText (UI)", 11)]
+    [ExecuteAlways]   
     public class FormattableTextMeshProUGUI : TextMeshProUGUI, IFormattableText
     {       
         [SerializeField]
+        [TextArea]
         protected string m_Format = "{0}";
         [SerializeField]
         protected int m_ParameterCount = 1;
@@ -53,12 +59,6 @@ namespace Loxodon.Framework.Views.TextMeshPro
             get { return m_Parameters; }
             set { this.m_Parameters = value; }
         }
-
-        //protected override void OnEnable()
-        //{
-        //    base.OnEnable();
-        //    Initialize();
-        //}
 
         public override void SetAllDirty()
         {

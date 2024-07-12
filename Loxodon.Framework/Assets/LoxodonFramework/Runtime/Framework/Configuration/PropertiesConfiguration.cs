@@ -32,7 +32,7 @@ namespace Loxodon.Framework.Configurations
     public class PropertiesConfiguration : ConfigurationBase
     {
         private readonly Dictionary<string, object> dict = new Dictionary<string, object>();
-        public PropertiesConfiguration(string text)
+        public PropertiesConfiguration(string text):base()
         {
             this.Load(text);
         }

@@ -29,12 +29,14 @@ using UnityEngine.UI;
 
 namespace Loxodon.Framework.Views.UGUI
 {
-
+    [RequireComponent(typeof(CanvasRenderer))]
+    [AddComponentMenu("UI/Legacy/FormattableText", 100)]
     public class FormattableText : Text
     {
         internal static StringBuilder BUFFER = new StringBuilder();
 
         [SerializeField]
+        [TextArea]
         protected string m_Format = "{0}";
         [SerializeField]
         protected int m_ParameterCount = 1;

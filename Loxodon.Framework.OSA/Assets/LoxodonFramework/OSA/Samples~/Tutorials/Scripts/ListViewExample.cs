@@ -72,6 +72,10 @@ namespace Loxodon.Framework.Tutorials.OSA
             set { Set(ref selectedItem, value); }
         }
 
+        public SimpleCommand<ItemViewModel> ItemSelectCommand { get { return this.itemSelectCommand; } }
+
+        public SimpleCommand<ItemViewModel> ItemClickCommand { get { return this.itemClickCommand; } }
+
         private void OnItemClick(ItemViewModel item)
         {
             Debug.LogFormat("click item:{0}", item.Title);
@@ -150,7 +154,7 @@ namespace Loxodon.Framework.Tutorials.OSA
 
         private ItemViewModel CreateItem()
         {
-            return new ItemViewModel(this.itemSelectCommand, this.itemClickCommand)
+            return new ItemViewModel()
             {
                 Title = "Item #" + (id++)
             };
@@ -187,6 +191,8 @@ namespace Loxodon.Framework.Tutorials.OSA
             bindingSet.Bind(resetButton).For(v => v.onClick).To(vm => vm.ResetItem);
             bindingSet.Bind(listView).For(v => v.Items).To(vm => vm.Items);
             bindingSet.Bind(listView.GetComponent<PullToRefreshBehaviour>()).For(v => v.OnRefreshWithSign).To<float>(vm => vm.RefreshItems);
+            bindingSet.Bind(listView.GetComponent<ItemButtonEventBehaviour>()).For(v => v.OnSelected).To(vm => vm.ItemSelectCommand);
+            bindingSet.Bind(listView.GetComponent<ItemButtonEventBehaviour>()).For(v => v.OnClick).To(vm => vm.ItemClickCommand);
             bindingSet.Bind(itemDetailView).For(v => v.Item).To(vm => vm.SelectedItem);
             //bindingSet.Bind().For(v => v.OnOpenItemEditView).To(vm => vm.ItemEditRequest);
             bindingSet.Bind().For(v => v.editViewInteractionAction).To(vm => vm.ItemEditRequest);

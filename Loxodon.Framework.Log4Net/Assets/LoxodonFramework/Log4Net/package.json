@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-log4net",
   "displayName": "Loxodon Framework Log4Net",
-  "version": "2.6.5",
+  "version": "2.6.6",
   "unity": "2018.4",
   "description": "This is a plugin for the logging feature of Loxodon.Framework, which helps you use Log4Net in your Unity project.",  
   "license": "MIT",

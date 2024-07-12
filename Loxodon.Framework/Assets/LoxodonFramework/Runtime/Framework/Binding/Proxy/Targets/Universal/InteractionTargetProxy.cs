@@ -56,12 +56,12 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         private void OnRequest(object sender, InteractionEventArgs args)
         {
+            var target = this.Target;
+            if (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled))
+                throw new InvalidOperationException("The window or view has been closed, so the operation is invalid.");
+
             if (UISynchronizationContext.InThread)
             {
-                var target = this.Target;
-                if (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled))
-                    return;
-
                 this.interactionAction.OnRequest(sender, args);
             }
             else
@@ -71,10 +71,6 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     postCallback = state =>
                     {
                         PostArgs postArgs = (PostArgs)state;
-                        var target = this.Target;
-                        if (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled))
-                            return;
-
                         this.interactionAction.OnRequest(postArgs.sender, postArgs.args);
                     };
                 }

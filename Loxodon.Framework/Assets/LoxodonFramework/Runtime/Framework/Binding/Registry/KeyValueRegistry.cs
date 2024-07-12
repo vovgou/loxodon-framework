@@ -22,17 +22,18 @@
  * SOFTWARE.
  */
 
+using System;
 using System.Collections.Generic;
 using Loxodon.Log;
 
 namespace Loxodon.Framework.Binding.Registry
 {
-    
-    public class KeyValueRegistry<K,V> : IKeyValueRegistry<K,V>
+
+    public class KeyValueRegistry<K, V> : IKeyValueRegistry<K, V>
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(KeyValueRegistry<K, V>));
 
-        private readonly Dictionary<K, V> lookups = new Dictionary<K, V>();
+        protected readonly Dictionary<K, V> lookups = new Dictionary<K, V>();
 
         public virtual V Find(K key)
         {
@@ -41,7 +42,7 @@ namespace Loxodon.Framework.Binding.Registry
             return toReturn;
         }
 
-        public virtual V Find(K key,V defaultValue)
+        public virtual V Find(K key, V defaultValue)
         {
             V toReturn;
             if (this.lookups.TryGetValue(key, out toReturn))
@@ -58,6 +59,11 @@ namespace Loxodon.Framework.Binding.Registry
                     log.WarnFormat("The Key({0}) already exists", key);
             }
             this.lookups[key] = value;
+        }
+
+        public virtual void Unregister(K key)
+        {
+            this.lookups.Remove(key);
         }
     }
 }

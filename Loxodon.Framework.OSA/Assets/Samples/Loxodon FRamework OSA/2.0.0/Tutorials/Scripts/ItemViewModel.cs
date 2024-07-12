@@ -33,36 +33,36 @@ namespace Loxodon.Framework.Tutorials.OSA
         private string title;
         private Color color;
         private bool selected = false;
-        private ICommand clickCommand;
-        private ICommand selectCommand;
+        //private ICommand clickCommand;
+        //private ICommand selectCommand;
 
         public ItemViewModel()
         {
             this.color = GetRandomColor();
         }
 
-        public ItemViewModel(ICommand selectCommand)
-        {
-            this.selectCommand = selectCommand;
-            this.color = GetRandomColor();
-        }
+        //public ItemViewModel(ICommand selectCommand)
+        //{
+        //    this.selectCommand = selectCommand;
+        //    this.color = GetRandomColor();
+        //}
+        //
+        //public ItemViewModel(ICommand selectCommand, ICommand clickCommand)
+        //{
+        //    this.selectCommand = selectCommand;
+        //    this.clickCommand = clickCommand;      
+        //    this.color = GetRandomColor();
+        //}
+        //
+        //public ICommand ClickCommand
+        //{
+        //    get { return this.clickCommand; }
+        //}
 
-        public ItemViewModel(ICommand selectCommand, ICommand clickCommand)
-        {
-            this.selectCommand = selectCommand;
-            this.clickCommand = clickCommand;      
-            this.color = GetRandomColor();
-        }
-
-        public ICommand ClickCommand
-        {
-            get { return this.clickCommand; }
-        }
-
-        public ICommand SelectCommand
-        {
-            get { return this.selectCommand; }
-        }      
+        //public ICommand SelectCommand
+        //{
+        //    get { return this.selectCommand; }
+        //}      
 
         public string Title
         {

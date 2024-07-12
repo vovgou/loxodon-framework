@@ -33,14 +33,14 @@ namespace Loxodon.Framework.Views.InteractionActions
 {
     public class AsyncViewInteractionAction : AsyncLoadableInteractionActionBase<VisibilityNotification>
     {
-        private IViewGroup viewGroup;
+        private IUIViewGroup viewGroup;
         private UIView view;
         private bool autoDestroy;
-        public AsyncViewInteractionAction(string viewName, IViewGroup viewGroup, bool autoDestroy = true) : this(viewName, viewGroup, null, autoDestroy)
+        public AsyncViewInteractionAction(string viewName, IUIViewGroup viewGroup, bool autoDestroy = true) : this(viewName, viewGroup, null, autoDestroy)
         {
         }
 
-        public AsyncViewInteractionAction(string viewName, IViewGroup viewGroup, IUIViewLocator locator, bool autoDestroy = true) : base(viewName, locator)
+        public AsyncViewInteractionAction(string viewName, IUIViewGroup viewGroup, IUIViewLocator locator, bool autoDestroy = true) : base(viewName, locator)
         {
             this.viewGroup = viewGroup;
             this.autoDestroy = autoDestroy;

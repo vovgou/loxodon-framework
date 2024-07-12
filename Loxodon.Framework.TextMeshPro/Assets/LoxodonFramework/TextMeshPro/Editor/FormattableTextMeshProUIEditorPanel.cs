@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+using System;
 using TMPro.EditorUtilities;
 using UnityEditor;
 using UnityEngine;
@@ -69,19 +70,152 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
 
         protected void DrawFormatParameters()
         {
+            GUILayout.Label(new GUIContent("<b>Format Settings</b>"), TMP_UIStyleManager.sectionHeader);
+
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(m_FormatProp, k_FormatLabel);
             if (EditorGUI.EndChangeCheck())
             {
+                try
+                {
+                    int count = ParamsCount(m_FormatProp.stringValue);
+                    m_ParameterCountProp.intValue = count;
+                }
+                catch (Exception) { }
                 m_HavePropertiesChanged = true;
             }
 
-            EditorGUI.BeginChangeCheck();
+            GUI.enabled = false;
             EditorGUILayout.PropertyField(m_ParameterCountProp, k_ParameterCountLabel);
-            if (EditorGUI.EndChangeCheck())
+            GUI.enabled = true;
+        }
+
+        private static int ParamsCount(string format)
+        {
+            if (string.IsNullOrEmpty(format))
+                return 0;
+
+            int pos = 0;
+            int len = format.Length;
+            char ch = '\x0';
+            int maxIndex = -1;
+            while (true)
             {
-                m_HavePropertiesChanged = true;
+                while (pos < len)
+                {
+                    ch = format[pos];
+                    pos++;
+                    if (ch == '}')
+                    {
+                        if (pos < len && format[pos] == '}') // Treat as escape character for }}
+                            pos++;
+                        else
+                            FormatError();
+                    }
+
+                    if (ch == '{')
+                    {
+                        if (pos < len && format[pos] == '{') // Treat as escape character for {{
+                            pos++;
+                        else
+                        {
+                            pos--;
+                            break;
+                        }
+                    }
+                }
+
+                if (pos == len)
+                    break;
+
+                pos++;
+                if (pos == len || (ch = format[pos]) < '0' || ch > '9')
+                    FormatError();
+                int index = 0;
+                do
+                {
+                    index = index * 10 + ch - '0';
+                    pos++;
+                    if (pos == len)
+                        FormatError();
+                    ch = format[pos];
+                } while (ch >= '0' && ch <= '9' && index < 1000000);
+
+                maxIndex = Math.Max(maxIndex, index);
+
+                while (pos < len && (ch = format[pos]) == ' ')
+                    pos++;
+
+                int width = 0;
+                if (ch == ',')
+                {
+                    pos++;
+                    while (pos < len && format[pos] == ' ')
+                        pos++;
+
+                    if (pos == len)
+                        FormatError();
+                    ch = format[pos];
+                    if (ch == '-')
+                    {
+                        pos++;
+                        if (pos == len)
+                            FormatError();
+                        ch = format[pos];
+                    }
+                    if (ch < '0' || ch > '9')
+                        FormatError();
+                    do
+                    {
+                        width = width * 10 + ch - '0';
+                        pos++;
+                        if (pos == len)
+                            FormatError();
+                        ch = format[pos];
+                    } while (ch >= '0' && ch <= '9' && width < 1000000);
+                }
+
+                while (pos < len && (ch = format[pos]) == ' ')
+                    pos++;
+
+                if (ch == ':')
+                {
+                    pos++;
+                    while (true)
+                    {
+                        if (pos == len)
+                            FormatError();
+                        ch = format[pos];
+                        if (!IsValidFormatChar(ch))
+                            break;
+
+                        pos++;
+                    }
+                }
+
+                while (pos < len && (ch = format[pos]) == ' ')
+                    pos++;
+
+                if (ch != '}')
+                    FormatError();
+                pos++;
             }
+            return maxIndex + 1;
+        }
+
+        private static bool IsValidFormatChar(char ch)
+        {
+            if (ch == 123 || ch == 125)//{ } 
+                return false;
+
+            if ((ch >= 32 && ch <= 122) || ch == 124)
+                return true;
+            return false;
+        }
+
+        private static void FormatError()
+        {
+            throw new FormatException("Invalid Format");
         }
     }
 }

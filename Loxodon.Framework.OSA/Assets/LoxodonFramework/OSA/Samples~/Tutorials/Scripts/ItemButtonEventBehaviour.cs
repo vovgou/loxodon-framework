@@ -22,16 +22,25 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Binding.Registry
+using System;
+using UnityEngine;
+using UnityEngine.Events;
+namespace Loxodon.Framework.Tutorials.OSA
 {
-    public interface IKeyValueRegistry<K,V>
+    public class ItemButtonEventBehaviour : MonoBehaviour
     {
-        V Find(K key);
+        [Serializable]
+        public class SelectedEvent : UnityEvent<ItemViewModel>
+        {
+        }
 
-        V Find(K key, V defaultValue);
+        [Serializable]
+        public class ClickEvent : UnityEvent<ItemViewModel>
+        {
+        }
 
-        void Register(K key, V value);
+        public readonly SelectedEvent OnSelected = new SelectedEvent();
 
-        void Unregister(K key);
+        public readonly ClickEvent OnClick = new ClickEvent();
     }
 }

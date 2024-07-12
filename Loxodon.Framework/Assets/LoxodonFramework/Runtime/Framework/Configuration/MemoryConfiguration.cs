@@ -30,11 +30,11 @@ namespace Loxodon.Framework.Configurations
     {
         private readonly Dictionary<string, object> dict = new Dictionary<string, object>();
 
-        public MemoryConfiguration()
+        public MemoryConfiguration():base()
         {
         }
 
-        public MemoryConfiguration(Dictionary<string, object> dict)
+        public MemoryConfiguration(Dictionary<string, object> dict):base()
         {
             if (dict != null && dict.Count > 0)
             {

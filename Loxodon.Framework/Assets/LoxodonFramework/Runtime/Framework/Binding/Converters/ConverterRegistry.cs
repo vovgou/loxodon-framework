@@ -23,10 +23,11 @@
  */
 
 using Loxodon.Framework.Binding.Registry;
+using System;
 
 namespace Loxodon.Framework.Binding.Converters
 {
-    public class ConverterRegistry: KeyValueRegistry<string,IConverter>, IConverterRegistry
+    public class ConverterRegistry : KeyValueRegistry<string, IConverter>, IConverterRegistry
     {
         public ConverterRegistry()
         {
@@ -35,6 +36,20 @@ namespace Loxodon.Framework.Binding.Converters
 
         protected virtual void Init()
         {
+        }
+
+        public override void Unregister(string key)
+        {
+            if (this.lookups.ContainsKey(key))
+            {
+                try
+                {
+                    if (lookups[key] is IDisposable disposable)
+                        disposable.Dispose();
+                }
+                catch (Exception) { }
+                this.lookups.Remove(key);
+            }
         }
     }
 }

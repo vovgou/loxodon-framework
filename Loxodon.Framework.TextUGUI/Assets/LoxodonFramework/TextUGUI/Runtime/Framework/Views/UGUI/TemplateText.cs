@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-using Loxodon.Framework.TextFormatting;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,6 +29,8 @@ using static Loxodon.Framework.Views.UGUI.FormattableText;
 
 namespace Loxodon.Framework.Views.UGUI
 {
+    [RequireComponent(typeof(CanvasRenderer))]
+    [AddComponentMenu("UI/Legacy/TemplateText", 100)]
     public class TemplateText : Text
     {
         [SerializeField]

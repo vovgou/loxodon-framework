@@ -161,6 +161,7 @@ GameObject:
   - component: {fileID: 25762547}
   - component: {fileID: 25762549}
   - component: {fileID: 25762545}
+  - component: {fileID: 25762546}
   m_Layer: 5
   m_Name: ListView
   m_TagString: Untagged
@@ -234,6 +235,18 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: Com.TheFallenGames.OSA.Util.PullToRefresh.PullToRefreshBehaviour+UnityEventFloat,
       OSA, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+--- !u!114 &25762546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25762543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70741ba1a79bf7c448fd1b7ef035b198, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &25762547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4307,6 +4320,7 @@ MonoBehaviour:
   border: {fileID: 324259011}
   selectButton: {fileID: 1990119469}
   clickButton: {fileID: 842416022}
+  eventBehaviour: {fileID: 25762546}
 --- !u!1 &2020271446
 GameObject:
   m_ObjectHideFlags: 0

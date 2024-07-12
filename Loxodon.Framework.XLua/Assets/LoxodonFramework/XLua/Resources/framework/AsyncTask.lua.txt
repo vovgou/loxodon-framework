@@ -213,11 +213,11 @@ function try(block)
 end
 
 ---
---ÑÓÊ±
---Ê¾ÀıÈçÏÂ£º
+--å»¶æ—¶
+--ç¤ºä¾‹å¦‚ä¸‹ï¼š
 -- await(AsyncTask.Delay(1000)) --Delay 1000 milliseconds
 -- await(AsyncTask.Delay(CS.UnityEngine.WaitForSeconds(0.1))) --Delay 100 milliseconds
---@param #delay ÑÓÊ±Ê±¼ä£¬µ¥Î»ºÁÃë£¬»òÕßÊÇCS.UnityEngine.WaitForSeconds»òÕßCS.UnityEngine.WaitForSecondsRealtime¶ÔÏó
+--@param #delay å»¶æ—¶æ—¶é—´ï¼Œå•ä½æ¯«ç§’ï¼Œæˆ–è€…æ˜¯CS.UnityEngine.WaitForSecondsæˆ–è€…CS.UnityEngine.WaitForSecondsRealtimeå¯¹è±¡
 --
 function M.Delay(delay)	
 	if type(delay) == 'userdata' then

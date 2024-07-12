@@ -38,6 +38,7 @@ namespace Loxodon.Framework.Tutorials
         public FormattableTextMeshProUGUI paramBinding1;//参数绑定示例1，支持1-4个不同参数
         public GenericParameters<DateTime, int> paramBinding2;//参数绑定的另外一种方式，支持1-4个不同参数
         public FormattableTextMeshProUGUI arrayBinding;//也可以使用 ArrayParameters<float>
+        public GenericParameters<string, int> nameAndAgeBinding;
         public TemplateTextMeshProUGUI template;//模版绑定
 
         private ExampleViewModel viewModel;
@@ -48,7 +49,7 @@ namespace Loxodon.Framework.Tutorials
             IServiceContainer container = context.GetContainer();
             BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
             bundle.Start();
-            
+
             BindingSet<FormattableTextMeshProUGUIExample, ExampleViewModel> bindingSet = this.CreateBindingSet<FormattableTextMeshProUGUIExample, ExampleViewModel>();
 
             //使用AsParameters<P1,P2,...>() 函数创建一个参数集合，然后绑定，支持1-4个参数，没有值对象的装箱拆箱，没有字符串拼接，无GC（请在手机上测试，Editor下需要修改TMP_Text.SetText和TMP_Text.StringBuilderToIntArray的源码，关闭调试代码）
@@ -66,6 +67,9 @@ namespace Loxodon.Framework.Tutorials
             bindingSet.Bind(arrayBinding.AsArray<float>()).For(v => v[0]).To(vm => vm.Hero.MoveSpeed);
             bindingSet.Bind(arrayBinding.AsArray<float>()).For(v => v[1]).To(vm => vm.Hero.AttackSpeed);
 
+            bindingSet.Bind(nameAndAgeBinding).For(v => v.Parameter1).To(vm => vm.Hero.Name);
+            bindingSet.Bind(nameAndAgeBinding).For(v => v.Parameter2).To(vm => vm.Hero.Age);
+
             //使用文本模版（TemplateTextMeshProUGUI）绑定，直接将一个对象绑定到模板的Data属性上即可。
             //文本模版格式与string.Format类似，仅需要将{0},{1}中的数字，替换为对象属性名即可
             //template text：当前时间：{Time:yyyy-MM-dd HH:mm:ss} 
@@ -78,6 +82,8 @@ namespace Loxodon.Framework.Tutorials
             this.viewModel.Time = DateTime.Now;
             this.viewModel.TimeSpan = TimeSpan.FromSeconds(0);
             this.viewModel.Hero = new Hero();
+            this.viewModel.Hero.Name = "Tom";
+            this.viewModel.Hero.Age = 20;
             this.SetDataContext(this.viewModel);
         }
 
@@ -134,6 +140,20 @@ namespace Loxodon.Framework.Tutorials
         private int health = 100;
         private int attackDamage = 20;
         private int armor = 30;
+        private string name;
+        private int age;
+
+        public string Name
+        {
+            get { return this.name; }
+            set { this.Set(ref name, value); }
+        }
+
+        public int Age
+        {
+            get { return this.age; }
+            set { this.Set(ref age, value); }
+        }
 
         public float AttackSpeed
         {

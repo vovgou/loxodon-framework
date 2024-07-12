@@ -72,6 +72,13 @@ namespace Loxodon.Framework.Tutorials
             converterRegistry.Register("spriteConverter", new SpriteConverter(sprites));
         }
 
+        void OnDestroy()
+        {
+            ApplicationContext context = Context.GetApplicationContext();
+            IConverterRegistry converterRegistry = context.GetContainer().Resolve<IConverterRegistry>();
+            converterRegistry.Unregister("spriteConverter");
+        }
+
         void Start()
         {
             editViewInteractionAction = new AsyncViewInteractionAction(editView);

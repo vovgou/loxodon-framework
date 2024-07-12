@@ -28,6 +28,11 @@ using static Loxodon.Framework.Views.TextMeshPro.IFormattableText;
 
 namespace Loxodon.Framework.Views.TextMeshPro
 {
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(CanvasRenderer))]
+    [AddComponentMenu("UI/TemplateTextMeshProUGUI - TemplateText (UI)", 11)]
+    [ExecuteAlways]
     public class TemplateTextMeshProUGUI : TextMeshProUGUI
     {
         [SerializeField]
