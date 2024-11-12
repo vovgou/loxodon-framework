@@ -38,7 +38,7 @@ local __index = function(t,k)
 	if string.find(k, "^_") == 1 then
 		return getmetatable(t)[k]
 	else
-	    local stage = rawget(t, "_state")
+		local stage = rawget(t, "_stage")
 		local v = stage[k]
 		if v ~= nil then
 			return v
@@ -57,7 +57,7 @@ local __newindex = function(t,k,v)
 	if type(v)=="function" or string.find(k, "^_") == 1 then
 		rawset(t,k,v)
 	else
-	    local stage = rawget(t, "_state")
+		local stage = rawget(t, "_stage")
 		stage[k] = v
 		getmetatable(t).raisePropertyChanged(t,k)
 	end
