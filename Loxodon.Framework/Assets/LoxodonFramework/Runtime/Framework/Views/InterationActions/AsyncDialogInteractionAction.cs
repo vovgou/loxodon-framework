@@ -79,28 +79,7 @@ namespace Loxodon.Framework.Views.InteractionActions
                 if (window == null)
                     throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", ViewName));
 
-                if (window is AlertDialogWindowBase && viewModel is AlertDialogViewModel)
-                {
-                    (window as AlertDialogWindowBase).ViewModel = viewModel as AlertDialogViewModel;
-                }
-                else if (window is AlertDialogWindowBase && viewModel is DialogNotification notification)
-                {
-                    AlertDialogViewModel dialogViewModel = new AlertDialogViewModel();
-                    dialogViewModel.Message = notification.Message;
-                    dialogViewModel.Title = notification.Title;
-                    dialogViewModel.ConfirmButtonText = notification.ConfirmButtonText;
-                    dialogViewModel.NeutralButtonText = notification.NeutralButtonText;
-                    dialogViewModel.CancelButtonText = notification.CancelButtonText;
-                    dialogViewModel.CanceledOnTouchOutside = notification.CanceledOnTouchOutside;
-                    dialogViewModel.Click = (result) => notification.DialogResult = result;
-                    (window as AlertDialogWindowBase).ViewModel = dialogViewModel;
-                }
-                else
-                {
-                    if (viewModel != null)
-                        window.SetDataContext(viewModel);
-                }
-
+                SetDataContext(window, viewModel);
                 window.Create();
             }
             catch (Exception e)
@@ -116,6 +95,8 @@ namespace Loxodon.Framework.Views.InteractionActions
             {
                 if (window == null)
                     await Create(viewModel);
+                else if (viewModel != null)
+                    SetDataContext(window, viewModel);
 
                 await window.Show(ignoreAnimation);
                 await window.WaitDismissed();
@@ -140,6 +121,33 @@ namespace Loxodon.Framework.Views.InteractionActions
         {
             if (window != null)
                 await window.Dismiss(ignoreAnimation);
+        }
+
+        protected void SetDataContext(Window window, object viewModel)
+        {
+            if (viewModel == null)
+                return;
+
+            if (window is AlertDialogWindowBase && viewModel is AlertDialogViewModel)
+            {
+                (window as AlertDialogWindowBase).ViewModel = viewModel as AlertDialogViewModel;
+            }
+            else if (window is AlertDialogWindowBase && viewModel is DialogNotification notification)
+            {
+                AlertDialogViewModel dialogViewModel = new AlertDialogViewModel();
+                dialogViewModel.Message = notification.Message;
+                dialogViewModel.Title = notification.Title;
+                dialogViewModel.ConfirmButtonText = notification.ConfirmButtonText;
+                dialogViewModel.NeutralButtonText = notification.NeutralButtonText;
+                dialogViewModel.CancelButtonText = notification.CancelButtonText;
+                dialogViewModel.CanceledOnTouchOutside = notification.CanceledOnTouchOutside;
+                dialogViewModel.Click = (result) => notification.DialogResult = result;
+                (window as AlertDialogWindowBase).ViewModel = dialogViewModel;
+            }
+            else
+            {
+                window.SetDataContext(viewModel);
+            }
         }
     }
 }

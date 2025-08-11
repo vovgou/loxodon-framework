@@ -94,23 +94,24 @@ namespace Loxodon.Framework.Views.InteractionActions
             catch (Exception e)
             {
                 if (autoDestroy)
-                    Destroy();
+                    Destroy(view);
                 throw e;
             }
         }
 
         protected Task Hide()
         {
+            UIView view = this.view;
             if (view != null)
             {
-                this.view.Visibility = false;
+                view.Visibility = false;
                 if (autoDestroy)
-                    Destroy();
+                    Destroy(view);
             }
             return Task.CompletedTask;
         }
 
-        private void Destroy()
+        private void Destroy(UIView view)
         {
             if (view == null)
                 return;

@@ -58,17 +58,17 @@ namespace Loxodon.Framework.Views.Animations
                         (this.view as IWindowView).PassivationAnimation = this;
                     break;
             }
-
-            if (this.AnimationType == AnimationType.ActivationAnimation || this.AnimationType == AnimationType.EnterAnimation)
-            {
-                this.view.CanvasGroup.alpha = from;
-            }
         }
 
         public override IAnimation Play()
         {
+            if (this.AnimationType == AnimationType.ActivationAnimation || this.AnimationType == AnimationType.EnterAnimation)
+            {
+                this.view.CanvasGroup.alpha = from;
+            }
+
             ////use the DoTween
-            //this.view.CanvasGroup.DOFade (this.to, this.duration).OnStart (this.OnStart).OnComplete (this.OnEnd).Play ();		
+            //this.view.CanvasGroup.DOFade (this.to, this.duration).OnStart (this.OnStart).OnComplete (this.OnEnd).Play ();
 
             this.StartCoroutine(DoPlay());
             return this;

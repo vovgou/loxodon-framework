@@ -23,6 +23,7 @@
  */
 
 using Loxodon.Framework.Interactivity;
+using Loxodon.Log;
 using System;
 using System.Threading;
 using UnityEngine;
@@ -31,6 +32,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 {
     public class InteractionTargetProxy : TargetProxyBase, IObtainable
     {
+        protected static readonly ILog log = LogManager.GetLogger(typeof(InteractionTargetProxy));
+        protected static readonly Exception INVALID_OPERATION_EXCEPTION = new InvalidOperationException("The window or view has been disabled, so the operation is invalid.");
         private readonly EventHandler<InteractionEventArgs> handler;
         private readonly IInteractionAction interactionAction;
         private SendOrPostCallback postCallback;
@@ -56,12 +59,11 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         private void OnRequest(object sender, InteractionEventArgs args)
         {
-            var target = this.Target;
-            if (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled))
-                throw new InvalidOperationException("The window or view has been closed, so the operation is invalid.");
-
             if (UISynchronizationContext.InThread)
             {
+                if (!Check(Target, args))
+                    return;
+
                 this.interactionAction.OnRequest(sender, args);
             }
             else
@@ -71,11 +73,30 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     postCallback = state =>
                     {
                         PostArgs postArgs = (PostArgs)state;
+                        if (!Check(Target, postArgs.args))
+                            return;
+
                         this.interactionAction.OnRequest(postArgs.sender, postArgs.args);
                     };
                 }
                 UISynchronizationContext.Post(postCallback, new PostArgs(sender, args));
             }
+        }
+
+        bool Check(object target, InteractionEventArgs args)
+        {
+            if (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled))
+            {
+                if (log.IsErrorEnabled)
+                    log.Error("The window or view has been disabled, so the operation is invalid.", INVALID_OPERATION_EXCEPTION);
+
+                if (args is AsyncInteractionEventArgs eventArgs)
+                    eventArgs.Source.SetException(INVALID_OPERATION_EXCEPTION);
+                else
+                    args.Callback?.Invoke();
+                return false;
+            }
+            return true;
         }
 
         class PostArgs

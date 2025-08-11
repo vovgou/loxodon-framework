@@ -266,7 +266,7 @@ namespace Loxodon.Framework.Execution
             private Action wrappedAction;
             private ThreadScheduledExecutor executor;
 
-            public OneTimeDelayTask(ThreadScheduledExecutor executor, Func<TResult> command, TimeSpan delay)
+            public OneTimeDelayTask(ThreadScheduledExecutor executor, Func<TResult> command, TimeSpan delay) : base(true)
             {
                 this.startTime = DateTime.Now.Ticks;
                 this.delay = delay;
@@ -341,7 +341,7 @@ namespace Loxodon.Framework.Execution
             private Action wrappedAction;
             private int count = 0;
 
-            public FixedRateDelayTask(ThreadScheduledExecutor executor, Action command, TimeSpan initialDelay, TimeSpan period) : base()
+            public FixedRateDelayTask(ThreadScheduledExecutor executor, Action command, TimeSpan initialDelay, TimeSpan period) : base(true)
             {
                 this.startTime = DateTime.Now.Ticks;
                 this.initialDelay = initialDelay;
@@ -413,7 +413,7 @@ namespace Loxodon.Framework.Execution
             private ThreadScheduledExecutor executor;
             private Action wrappedAction;
 
-            public FixedDelayDelayTask(ThreadScheduledExecutor executor, Action command, TimeSpan initialDelay, TimeSpan delay) : base()
+            public FixedDelayDelayTask(ThreadScheduledExecutor executor, Action command, TimeSpan initialDelay, TimeSpan delay) : base(true)
             {
                 this.delay = delay;
                 this.executor = executor;

@@ -42,8 +42,6 @@ namespace Loxodon.Framework.Contexts
         public ApplicationContext(IServiceContainer container, IMainLoopExecutor mainLoopExecutor) : base(container, null)
         {
             this.mainLoopExecutor = mainLoopExecutor;
-            if (this.mainLoopExecutor == null)
-                this.mainLoopExecutor = new MainLoopExecutor();
         }
 
         /// <summary>
@@ -52,6 +50,8 @@ namespace Loxodon.Framework.Contexts
         /// <returns></returns>
         public virtual IMainLoopExecutor GetMainLoopExcutor()
         {
+            if (this.mainLoopExecutor == null)
+                this.mainLoopExecutor = new MainLoopExecutor();
             return mainLoopExecutor;
         }
 

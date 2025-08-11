@@ -94,6 +94,8 @@ namespace Loxodon.Framework.Views.InteractionActions
             {
                 if (window == null)
                     await Create(viewModel);
+                else if (viewModel != null)
+                    window.SetDataContext(viewModel);
 
                 window.WaitDismissed().Callbackable().OnCallback(r =>
                 {

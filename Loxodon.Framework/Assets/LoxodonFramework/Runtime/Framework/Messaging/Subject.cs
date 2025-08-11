@@ -84,12 +84,14 @@ namespace Loxodon.Framework.Messaging
             private Subject<T> subject;
             private Action<T> action;
             private SynchronizationContext context;
+            private SendOrPostCallback sendOrPostCallback;
             public string Key { get; private set; }
 
             public Subscription(Subject<T> subject, Action<T> action)
             {
                 this.subject = subject;
                 this.action = action;
+                this.sendOrPostCallback = (state) => this.action?.Invoke((T)state);
                 this.Key = Guid.NewGuid().ToString();
                 this.subject.Add(this);
             }
@@ -99,7 +101,7 @@ namespace Loxodon.Framework.Messaging
                 try
                 {
                     if (this.context != null)
-                        context.Post(state => action?.Invoke((T)state), message);
+                        context.Post(sendOrPostCallback, message);
                     else
                         action?.Invoke(message);
                 }

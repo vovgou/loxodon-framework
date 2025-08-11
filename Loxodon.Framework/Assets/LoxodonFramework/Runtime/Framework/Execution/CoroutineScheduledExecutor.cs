@@ -191,7 +191,7 @@ namespace Loxodon.Framework.Execution
             private Action command;
             private CoroutineScheduledExecutor executor;
             private ITime time;
-            public OneTimeDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan delay)
+            public OneTimeDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan delay) : base(true)
             {
                 this.time = executor.Time;
                 this.startTime = (long)(time.Time * TimeSpan.TicksPerSecond);
@@ -252,7 +252,7 @@ namespace Loxodon.Framework.Execution
             private CoroutineScheduledExecutor executor;
             private ITime time;
 
-            public OneTimeDelayTask(CoroutineScheduledExecutor executor, Func<TResult> command, TimeSpan delay)
+            public OneTimeDelayTask(CoroutineScheduledExecutor executor, Func<TResult> command, TimeSpan delay) : base(true)
             {
                 this.time = executor.Time;
                 this.startTime = (long)(time.Time * TimeSpan.TicksPerSecond);
@@ -313,7 +313,7 @@ namespace Loxodon.Framework.Execution
             private Action command;
             private int count = 0;
             private ITime time;
-            public FixedRateDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan initialDelay, TimeSpan period) : base()
+            public FixedRateDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan initialDelay, TimeSpan period) : base(true)
             {
                 this.time = executor.Time;
                 this.startTime = (long)(time.Time * TimeSpan.TicksPerSecond);
@@ -372,7 +372,7 @@ namespace Loxodon.Framework.Execution
             private CoroutineScheduledExecutor executor;
             private Action command;
             private ITime time;
-            public FixedDelayDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan initialDelay, TimeSpan delay) : base()
+            public FixedDelayDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan initialDelay, TimeSpan delay) : base(true)
             {
                 this.time = executor.Time;
                 this.delay = delay;

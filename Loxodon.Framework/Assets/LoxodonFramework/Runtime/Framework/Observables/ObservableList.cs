@@ -111,8 +111,7 @@ namespace Loxodon.Framework.Observables
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
-            int index = items.Count;
-            InsertItem(index, item);
+            InsertItem(items.Count, item);
         }
 
         public void Clear()
@@ -213,7 +212,12 @@ namespace Loxodon.Framework.Observables
             return items.GetEnumerator();
         }
 
-        bool IsReadOnly { get { return Items.IsReadOnly; } }
+        protected virtual bool ReadOnly()
+        {
+            return Items.IsReadOnly;
+        }
+
+        bool IsReadOnly { get { return ReadOnly(); } }
 
         bool ICollection<T>.IsReadOnly
         {
@@ -441,6 +445,11 @@ namespace Loxodon.Framework.Observables
             OnPropertyChanged(CountEventArgs);
             OnPropertyChanged(IndexerEventArgs);
             OnCollectionChanged(NotifyCollectionChangedAction.Remove, changedItems, index);
+        }
+
+        protected virtual void AddItem(T item)
+        {
+            InsertItem(items.Count, item);
         }
 
         protected virtual void InsertItem(int index, T item)

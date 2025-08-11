@@ -228,7 +228,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                             }
                     }
                 case 2:
-                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,>).MakeGenericType(paramTypes), target, unityEvent);//If creating an exception, define a static type:static Type t = tyeof(UnityEventProxy<P1,P2>)
+                    return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,>).MakeGenericType(paramTypes), target, unityEvent);//If creating an exception, define a static type:static Type t = typeof(UnityEventProxy<P1,P2>)
                 case 3:
                     return (ITargetProxy)Activator.CreateInstance(typeof(UnityEventProxy<,,>).MakeGenericType(paramTypes), target, unityEvent);
                 case 4:

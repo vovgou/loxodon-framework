@@ -39,14 +39,14 @@ namespace Loxodon.Framework.Execution
     public class InterceptableEnumerator : IEnumerator
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(InterceptableEnumerator));
-        private const int CAPACITY = 100;
-        private static readonly ConcurrentQueue<InterceptableEnumerator> pools = new ConcurrentQueue<InterceptableEnumerator>();
+        private const int CAPACITY = 128;
+        private static readonly Queue<InterceptableEnumerator> pools = new Queue<InterceptableEnumerator>();
 
         public static InterceptableEnumerator Create(IEnumerator routine)
-        {
-            InterceptableEnumerator enumerator;
-            if (pools.TryDequeue(out enumerator))
+        {            
+            if (pools.Count > 0)
             {
+                InterceptableEnumerator enumerator = pools.Dequeue();
                 enumerator.stack.Push(routine);
                 return enumerator;
             }
@@ -55,7 +55,7 @@ namespace Loxodon.Framework.Execution
 
         private static void Free(InterceptableEnumerator enumerator)
         {
-            if (pools.Count > CAPACITY)
+            if (pools.Count >= CAPACITY)
                 return;
 
             enumerator.Clear();

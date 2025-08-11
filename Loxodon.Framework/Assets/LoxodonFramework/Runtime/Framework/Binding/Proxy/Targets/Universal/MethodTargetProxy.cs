@@ -23,6 +23,8 @@
  */
 
 using Loxodon.Framework.Binding.Reflection;
+using Loxodon.Framework.Interactivity;
+using Loxodon.Log;
 using System;
 using System.Threading;
 using UnityEngine;
@@ -31,6 +33,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 {
     public class MethodTargetProxy : TargetProxyBase, IObtainable, IProxyInvoker
     {
+        protected static readonly ILog log = LogManager.GetLogger(typeof(MethodTargetProxy));
+        protected static readonly Exception INVALID_OPERATION_EXCEPTION = new InvalidOperationException("The window or view has been disabled, so the operation is invalid.");
         protected readonly IProxyMethodInfo methodInfo;
         protected SendOrPostCallback postCallback;
         public MethodTargetProxy(object target, IProxyMethodInfo methodInfo) : base(target)
@@ -60,14 +64,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         {
             if (UISynchronizationContext.InThread)
             {
-                if (this.methodInfo.IsStatic)
-                {
-                    this.methodInfo.Invoke(null, args);
-                    return null;
-                }
-
-                var target = this.Target;
-                if (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled))
+                var target = this.methodInfo.IsStatic ? null : this.Target;
+                if (!Check(target, args))
                     return null;
 
                 return this.methodInfo.Invoke(target, args);
@@ -78,22 +76,36 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 {
                     postCallback = state =>
                     {
-                        if (this.methodInfo.IsStatic)
-                        {
-                            this.methodInfo.Invoke(null, args);
-                            return;
-                        }
-
-                        var target = this.Target;
-                        if (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled))
+                        object[] parameters = (object[])state;
+                        var target = this.methodInfo.IsStatic ? null : this.Target;
+                        if (!Check(target, parameters))
                             return;
 
-                        this.methodInfo.Invoke(target, (object[])state);
+                        this.methodInfo.Invoke(target, parameters);
                     };
                 }
                 UISynchronizationContext.Post(postCallback, args);
                 return null;
             }
+        }
+
+        bool Check(object target, object[] args)
+        {
+            if (!methodInfo.IsStatic && (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled)))
+            {
+                if (log.IsErrorEnabled)
+                    log.Error("The window or view has been disabled, so the operation is invalid.", INVALID_OPERATION_EXCEPTION);
+
+                if (args != null && args.Length == 2 && args[0] is object sender && args[1] is InteractionEventArgs eventArgs)
+                {
+                    if (eventArgs is AsyncInteractionEventArgs asyncEventArgs)
+                        asyncEventArgs.Source.SetException(INVALID_OPERATION_EXCEPTION);
+                    else
+                        eventArgs.Callback?.Invoke();
+                }
+                return false;
+            }
+            return true;
         }
     }
 }

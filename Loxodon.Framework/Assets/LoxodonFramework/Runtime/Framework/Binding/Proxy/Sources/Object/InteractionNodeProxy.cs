@@ -166,8 +166,13 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             }
             catch (Exception e)
             {
-                if (log.IsWarnEnabled)
-                    log.WarnFormat("{0}", e);
+                if (log.IsErrorEnabled)
+                    log.Error("", e);
+
+                if (args is AsyncInteractionEventArgs eventArgs)
+                    eventArgs.Source.SetException(e);
+                else
+                    args.Callback?.Invoke();
             }
         }
 
