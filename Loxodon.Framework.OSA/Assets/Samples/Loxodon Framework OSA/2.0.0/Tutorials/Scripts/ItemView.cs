@@ -43,9 +43,6 @@ namespace Loxodon.Framework.Tutorials.OSA
             bindingSet.Bind(this.titleText).For(v => v.text).To(vm => vm.Title).OneWay();
             bindingSet.Bind(this.background).For(v => v.color).To(vm => vm.Color).OneWay();
             bindingSet.Bind(this.border).For(v => v.enabled).To(vm => vm.Selected).OneWay();
-            //bindingSet.Bind(this.selectButton).For(v => v.onClick).To(vm => vm.SelectCommand).CommandParameter(this.GetDataContext);
-            //if (this.clickButton != null)
-            //    bindingSet.Bind(this.clickButton).For(v => v.onClick).To(vm => vm.ClickCommand).CommandParameter(this.GetDataContext);
             bindingSet.Build();
 
             if (this.selectButton != null)

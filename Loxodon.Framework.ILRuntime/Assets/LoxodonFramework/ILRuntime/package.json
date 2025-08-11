@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-ilruntime",
   "displayName": "Loxodon Framework ILRuntime",
-  "version": "2.6.6",
+  "version": "2.6.7",
   "unity": "2018.4",
   "description": "ILRuntime",  
   "license": "MIT",
@@ -26,7 +26,7 @@
   "relatedPackages": {},
   "dependencies": {
     "com.ourpalm.ilruntime": "2.0.2",
-    "com.vovgou.loxodon-framework": "2.6.4"
+    "com.vovgou.loxodon-framework": "2.6.7"
   },
   "samples": [
     {

@@ -1,7 +1,7 @@
 {
   "name": "com.vovgou.loxodon-framework-nlog",
   "displayName": "Loxodon Framework NLog",
-  "version": "2.6.6",
+  "version": "2.6.7",
   "unity": "2018.4",
   "description": "This is a plugin for the logging feature of Loxodon.Framework, which helps you use NLog in your Unity project.",
   "license": "MIT",
@@ -23,7 +23,7 @@
   },
   "relatedPackages": {},
   "dependencies": {
-    "com.vovgou.loxodon-framework": "2.6.4"
+    "com.vovgou.loxodon-framework": "2.6.7"
   },
   "samples": [
     {

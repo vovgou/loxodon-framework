@@ -57,7 +57,6 @@ namespace Loxodon.Framework.Views.TextMeshPro
         public TextTemplateBinding(Action<StringBuilder> output)
         {
             this.output = output;
-
         }
         public string Template
         {
@@ -86,30 +85,24 @@ namespace Loxodon.Framework.Views.TextMeshPro
 
         protected void OnTemplateChanged()
         {
-            if (string.IsNullOrEmpty(m_Template) || data == null)
-                return;
-
             this.Unbind();
-            this.dataType = data.GetType();
-            this.Parse(m_Template, dataType);
+            this.dataType = data == null ? typeof(object) : data.GetType();
+            this.Parse(m_Template != null ? m_Template : string.Empty, dataType);
             this.Bind();
             this.OnValueChanged();
-
         }
 
         protected void OnDataChanged()
         {
-            if (string.IsNullOrEmpty(m_Template) || data == null)
-                return;
-
-            if (this.dataType == null || !dataType.Equals(data.GetType()))
+            Type currType = data == null ? typeof(object) : data.GetType();
+            if (this.dataType == null || !this.dataType.Equals(currType))
             {
                 this.Unbind();
-                this.dataType = data.GetType();
-                this.Parse(m_Template, dataType);
+                this.dataType = currType;
+                this.Parse(m_Template != null ? m_Template : string.Empty, this.dataType);
                 this.Bind();
-                this.OnValueChanged();
             }
+            this.OnValueChanged();
         }
 
         private void OnValueChanged()
