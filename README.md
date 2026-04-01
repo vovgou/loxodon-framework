@@ -7,7 +7,9 @@
 [![openupm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.vovgou.loxodon-framework/)
 [![npm](https://img.shields.io/npm/v/com.vovgou.loxodon-framework)](https://www.npmjs.com/package/com.vovgou.loxodon-framework)
 
-[(中文版)](README_CN.md)
+[(中文版)](README_CN.md) 
+
+[国内托管 AtomGit](https://atomgit.com/vovgou/loxodon-framework)
 
 **MVVM and Databinding for Unity3d(C# & XLua & ILRuntime)**
 
